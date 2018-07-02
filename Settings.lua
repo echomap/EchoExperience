@@ -29,7 +29,7 @@ function EchoExperience.LoadSettings()
         },
         [3] = {
             type = "dropdown",
-            name = "My Dropdown",
+            name = "Window Dropdown",
             tooltip = "Dropdown's tooltip text.",
             choices = {"table", "of", "choices"},
             getFunc = function() return "of" end,
@@ -39,7 +39,7 @@ function EchoExperience.LoadSettings()
         },
         [4] = {
             type = "dropdown",
-            name = "My Dropdown",
+            name = "Tab Dropdown",
             tooltip = "Dropdown's tooltip text.",
             choices = {"table", "of", "choices"},
             getFunc = function() return "of" end,

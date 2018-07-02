@@ -2,7 +2,7 @@
   <Layer name="SI_KEYBINDINGS_CATEGORY_GENERAL">
     <Category name="EchoExperience">
       <Action name="EchoExperience_DISPLAY">
-		    <Up>EchoExperience.AnimateText()</Up>
+	<Up></Up>
       </Action>
     </Category>
   </Layer>

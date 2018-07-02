@@ -16,3 +16,5 @@ Check/Test:
 TODO:
 -color
 -style
+-settings GUI
+-testing

@@ -30,6 +30,13 @@ function EchoExperience.outputToChanel(text)
 	end
 end
 
+function EchoExperience.RestoreSettings()
+	--todo check
+	EchoExperience.debug = EchoExperience.savedVariables.debug
+	EchoExperience.tab = tonumber(EchoExperience.savedVariables.tab)
+	EchoExperience.window = tonumber(EchoExperience.savedVariables.window)
+end
+
 -- Wraps text with a color.
 function EchoExperience.Colorize(text, color)
     -- Default to addon's .color.
@@ -55,21 +62,19 @@ function EchoExperience.SlashCommandHandler(text)
 		local dg = EchoExperience.debug
 		EchoExperience.debug = not dg
 		d("EchoExperience: Debug = " .. tostring(EchoExperience.debug) )
+		EchoExperience.savedVariables.debug = EchoExperience.debug
 	elseif (#options == 0 or options[1] == "tab") and options[2] ~= nil then
 		d("EchoExperience: tab = " .. tostring(options[2]) )
+		EchoExperience.tab = tonumber(options[2])
+		EchoExperience.savedVariables.tab = EchoExperience.tab
 	elseif (#options == 0 or options[1] == "window") and options[2] ~= nil then
 		d("EchoExperience: window = " .. tostring(options[2]) )
+		EchoExperience.window = tonumber(options[2])
+		EchoExperience.savedVariables.window = EchoExperience.window
 	end
 
 end
 
-function EchoExperience.OnCombatState(eventCode, inCombat)
-	--if inCombat and not EchoExperienceActive:IsHidden() and self.sv.closeInCombat then
-		--self:CloseStatusWindow()
-	--elseif not inCombat and self.showStatusWindowLater then
-		--self:TryShowStatusWindow()
-	--end
-end
 function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex, reason, rank, previousXP, currentXP)
 	EchoExperience.debugMsg("OnSkillExperienceUpdate")
 
@@ -98,7 +103,6 @@ function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex
 	end
 
 	-- Output
-
 	local diff = nextRankXP - currentXP
 	if skillLineName ~= nil and available then
 		local XPgain  = currentXP - previousXP
@@ -109,47 +113,11 @@ function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex
 		EchoExperience.outputToChanel("Gained "..XPgain.."xp in [" ..skillLineName.."] ("..curCur.."/"..curNext..") need " .. diff .. "xp")
 	end
 end
-function EchoExperience.OnAbitilyExperienceUpdate(eventCode, pIndex, lastRankXP, nextRankXP, currentXP, atmorph)
-	if not nextRankXP or nextRankXP <= 0 then
-		return
-	end
-	EchoExperience.debugMsg("OnAbitilyExperienceUpdate Called")
-	if EchoExperience.debug then
-		d(EchoExperience.name .. " eventCode="  .. eventCode) -- Prints to chat.
-		d(EchoExperience.name .. " pIndex="     .. pIndex) -- Prints to chat.
-		d(EchoExperience.name .. " lastRankXP=" .. lastRankXP) -- Prints to chat.
-		d(EchoExperience.name .. " nextRankXP=" .. tostring(nextRankXP) ) -- Prints to chat.
-		d(EchoExperience.name .. " currentXP="  .. tostring(currentXP)  ) -- Prints to chat.
-		d(EchoExperience.name .. " atmorph="    .. tostring(atmorph)    ) -- Prints to chat.
-	end
-
-	--string _name_, integer _morph_, integer _rank_
-	local name, morph, rank = GetAbilityProgressionInfo(pIndex)
-	local morphName = GetAbilityProgressionAbilityInfo(pIndex, rank, morph)
-	if EchoExperience.debug then
-		d(EchoExperience.name .. " name="  .. name ) -- Prints to chat.
-		d(EchoExperience.name .. " morph=" .. morph) -- Prints to chat.
-		d(EchoExperience.name .. " rank="  .. rank ) -- Prints to chat.
-		d(EchoExperience.name .. " morphName="  .. morphName ) -- Prints to chat.
-	end
-	EchoExperience.debugMsg("OnAbitilyExperienceUpdate Done")
-end
 function EchoExperience.OnSkillLineAdded(event, eventCode, skillType, skillIndex)
 	EchoExperience.debugMsg("OnSkillLineAdded")
 end
 function EchoExperience.OnChampionUnlocked(...)
 	EchoExperience.debugMsg("OnChampionUnlocked")
-end
--- (string unitTag, integer currentExp, integer maxExp, integer reason)
---(eventCode, tag, exp, maxExp, reason, ...)
-function EchoExperience.OnExperienceUpdate(event,  unitTag, currentExp, maxExp, reason)
-	if ( unitTag ~= 'player' ) then return end
-	if EchoExperience.debug then
-		--d(EchoExperience.name .. " currentExp=" .. currentExp) -- Prints to chat.
-		--d(EchoExperience.name .. " maxExp=" .. maxExp) -- Prints to chat.
-		--d(EchoExperience.name .. " reason=" .. reason) -- Prints to chat.
-	end
-	--EchoExperience.outputToChanel("You gained experience.")
 end
 
 --(number eventCode, ProgressReason reason, number level, number previousExperience, number currentExperience, number championPoints)
@@ -173,11 +141,11 @@ end
 function EchoExperience.DelayedStart()
 	--https://wiki.esoui.com/Events
 	EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."SkillXPGain",	EVENT_SKILL_XP_UPDATE,     EchoExperience.OnSkillExperienceUpdate)
-	EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnCombatState",	EVENT_PLAYER_COMBAT_STATE, EchoExperience.OnCombatState )
-	EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."AbilityProgression",EVENT_ABILITY_PROGRESSION_XP_UPDATE, EchoExperience.OnAbitilyExperienceUpdate)
+	--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnCombatState",	EVENT_PLAYER_COMBAT_STATE, EchoExperience.OnCombatState )
+	--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."AbilityProgression",EVENT_ABILITY_PROGRESSION_XP_UPDATE, EchoExperience.OnAbitilyExperienceUpdate)
 	EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."SkillLineAdded",	EVENT_SKILL_LINE_ADDED,  EchoExperience.OnSkillLineAdded)
 	EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."ChampionUnlocked", EVENT_CHAMPION_SYSTEM_UNLOCKED, EchoExperience.OnChampionUnlocked)
-	EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPUpdate",		EVENT_EXPERIENCE_UPDATE, EchoExperience.OnExperienceUpdate)
+	--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPUpdate",		EVENT_EXPERIENCE_UPDATE, EchoExperience.OnExperienceUpdate)
 	EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPGain",		EVENT_EXPERIENCE_GAIN,   EchoExperience.OnExperienceGain)
 	--EVENT_CLAIM_LEVEL_UP_REWARD_RESULT
 	--EVENT_DISCOVERY_EXPERIENCE (
@@ -186,14 +154,9 @@ end
 
 function EchoExperience.Activated(e)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name, EVENT_PLAYER_ACTIVATED)
-
     d(EchoExperience.name .. GetString(SI_NEW_ADDON_MESSAGE)) -- Prints to chat.
-
     ZO_AlertNoSuppression(UI_ALERT_CATEGORY_ALERT, nil,
         EchoExperience.name .. GetString(SI_NEW_ADDON_MESSAGE)) -- Top-right alert.
-
-    -- Animate the xml UI center text, after a delay.
-    --zo_callLater(EchoExperience.AnimateText, 3000)
     zo_callLater(EchoExperience.DelayedStart, 3000)
 end
 -- When player is ready, after everything has been loaded.
@@ -207,6 +170,7 @@ function EchoExperience.OnAddOnLoaded(event, addonName)
 
     -- Settings menu in Settings.lua.
     EchoExperience.LoadSettings()
+    EchoExperience:RestoreSettings()
 
     -- Slash commands must be lowercase. Set to nil to disable.
     SLASH_COMMANDS["/echoexp"] = EchoExperience.SlashCommandHandler

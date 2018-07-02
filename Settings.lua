@@ -31,8 +31,8 @@ function EchoExperience.LoadSettings()
             type = "dropdown",
             name = "Window Dropdown",
             tooltip = "Dropdown's tooltip text.",
-            choices = {"table", "of", "choices"},
-            getFunc = function() return "of" end,
+            choices = {"1", "2", "3"},
+            getFunc = function() return "1" end,
             setFunc = function(var) print(var) end,
             width = "half",	--or "half" (optional)
             warning = "Will need to reload the UI.",	--(optional)
@@ -41,47 +41,20 @@ function EchoExperience.LoadSettings()
             type = "dropdown",
             name = "Tab Dropdown",
             tooltip = "Dropdown's tooltip text.",
-            choices = {"table", "of", "choices"},
-            getFunc = function() return "of" end,
+            choices = {"1", "2", "3"},
+            getFunc = function() return "1" end,
             setFunc = function(var) print(var) end,
             width = "half",	--or "half" (optional)
-            warning = "Will need to reload the UI.",	--(optional)
         },
-        [5] = {
-            type = "slider",
-            name = "My Slider",
-            tooltip = "Slider's tooltip text.",
-            min = 0,
-            max = 20,
-            step = 1,	--(optional)
-            getFunc = function() return 3 end,
-            setFunc = function(value) d(value) end,
-            width = "half",	--or "half" (optional)
-            default = 5,	--(optional)
-        },
-        [6] = {
-            type = "button",
-            name = "My Button",
-            tooltip = "Button's tooltip text.",
-            func = function() d("button pressed!") end,
-            width = "half",	--or "half" (optional)
-            warning = "Will need to reload the UI.",	--(optional)
-        },
-        [7] = {
-            type = "submenu",
-            name = "Submenu Title",
-            tooltip = "My submenu tooltip",	--(optional)
-            controls = {
-                [1] = {
+	[5] = {
                     type = "checkbox",
-                    name = "My Checkbox",
-                    tooltip = "Checkbox's tooltip text.",
+                    name = "Debug",
+                    tooltip = "Debug on or off.",
                     getFunc = function() return true end,
                     setFunc = function(value) d(value) end,
                     width = "half",	--or "half" (optional)
-                    warning = "Will need to reload the UI.",	--(optional)
-                },
-                [2] = {
+        },
+        [6] = {
                     type = "colorpicker",
                     name = "My Color Picker",
                     tooltip = "Color Picker's tooltip text.",
@@ -89,27 +62,8 @@ function EchoExperience.LoadSettings()
                     setFunc = function(r,g,b,a) print(r, g, b, a) end,	--(alpha is optional)
                     width = "half",	--or "half" (optional)
                     warning = "warning text",
-                },
-                [3] = {
-                    type = "editbox",
-                    name = "My Editbox",
-                    tooltip = "Editbox's tooltip text.",
-                    getFunc = function() return "this is some text" end,
-                    setFunc = function(text) print(text) end,
-                    isMultiline = false,	--boolean
-                    width = "half",	--or "half" (optional)
-                    warning = "Will need to reload the UI.",	--(optional)
-                    default = "",	--(optional)
-                },
-            },
         },
-        [8] = {
-            type = "custom",
-            reference = "MyAddonCustomControl",	--unique name for your control to use as reference
-            refreshFunc = function(customControl) end,	--(optional) function to call when panel/controls refresh
-            width = "half",	--or "half" (optional)
-        },
-        [9] = {
+        [7] = {
             type = "texture",
             image = "EsoUI\\Art\\ActionBar\\abilityframe64_up.dds",
             imageWidth = 64,	--max of 250 for half width, 510 for full

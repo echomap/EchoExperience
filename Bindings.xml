@@ -1,9 +1,5 @@
 <Bindings>
   <Layer name="SI_KEYBINDINGS_CATEGORY_GENERAL">
-    <Category name="EchoExperience">
-      <Action name="EchoExperience_DISPLAY">
-	<Up></Up>
-      </Action>
-    </Category>
+
   </Layer>
 </Bindings>

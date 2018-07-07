@@ -24,7 +24,7 @@ function EchoExperience.LoadSettings()
             type = "description",
             --title = "My Title",	--(optional)
             title = nil,	--(optional)
-            text = "My description text to display.",
+            text = "Output Experience gains to chat.",
             width = "full",	--or "half" (optional)
         },
         [3] = {
@@ -35,33 +35,32 @@ function EchoExperience.LoadSettings()
             getFunc = function() return "1" end,
             setFunc = function(var) print(var) end,
             width = "half",	--or "half" (optional)
-            warning = "Will need to reload the UI.",	--(optional)
         },
         [4] = {
             type = "dropdown",
             name = "Tab Dropdown",
             tooltip = "Dropdown's tooltip text.",
-            choices = {"1", "2", "3"},
-            getFunc = function() return "1" end,
-            setFunc = function(var) print(var) end,
+            choices = {"1", "2", "3", "4", "5", "6"},
+            getFunc = function() return EchoExperience.tab  end,
+            setFunc = function(var) EchoExperience.tab = tonumber(var) end,
             width = "half",	--or "half" (optional)
         },
 	[5] = {
-                    type = "checkbox",
-                    name = "Debug",
-                    tooltip = "Debug on or off.",
-                    getFunc = function() return true end,
-                    setFunc = function(value) d(value) end,
-                    width = "half",	--or "half" (optional)
+            type = "checkbox",
+            name = "Debug",
+            tooltip = "Debug on or off.",
+            getFunc = function() return EchoExperience.debug end,
+            setFunc = function(value) EchoExperience.debug = value end,
+            width = "half",	--or "half" (optional)
         },
         [6] = {
-                    type = "colorpicker",
-                    name = "My Color Picker",
-                    tooltip = "Color Picker's tooltip text.",
-                    getFunc = function() return 1, 0, 0, 1 end,	--(alpha is optional)
-                    setFunc = function(r,g,b,a) print(r, g, b, a) end,	--(alpha is optional)
-                    width = "half",	--or "half" (optional)
-                    warning = "warning text",
+            type = "colorpicker",
+            name = "My Color Picker",
+            tooltip = "Color Picker's tooltip text.",
+            getFunc = function() return 1, 0, 0, 1 end,	--(alpha is optional)
+            setFunc = function(r,g,b,a) print(r, g, b, a) end,	--(alpha is optional)
+            width = "half",	--or "half" (optional)
+            warning = "warning text",
         },
         [7] = {
             type = "texture",

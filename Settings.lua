@@ -17,23 +17,24 @@ function EchoExperience.LoadSettings()
     local optionsTable = {
         [1] = {
             type = "header",
-            name = "My Header",
+            name = "",
             width = "full",	--or "half" (optional)
         },
         [2] = {
             type = "description",
             --title = "My Title",	--(optional)
             title = nil,	--(optional)
-            text = "Output Experience gains to chat.",
+            text = "Output Experience gains as text to a specified chat window/tab."..
+					"  Slashcommands are: /echoexp [debug/testoutput/tab #/window $]",
             width = "full",	--or "half" (optional)
         },
         [3] = {
             type = "dropdown",
             name = "Window Dropdown",
             tooltip = "Dropdown's tooltip text.",
-            choices = {"1", "2", "3"},
-            getFunc = function() return "1" end,
-            setFunc = function(var) print(var) end,
+            choices = {"1", "2", "3","4"},
+            getFunc = function() return tostring(EchoExperience.window) end,
+            setFunc = function(var) EchoExperience.window = tonumber(var) end,
             width = "half",	--or "half" (optional)
         },
         [4] = {
@@ -41,11 +42,11 @@ function EchoExperience.LoadSettings()
             name = "Tab Dropdown",
             tooltip = "Dropdown's tooltip text.",
             choices = {"1", "2", "3", "4", "5", "6"},
-            getFunc = function() return EchoExperience.tab  end,
+            getFunc = function() return tostring(EchoExperience.tab)   end,
             setFunc = function(var) EchoExperience.tab = tonumber(var) end,
             width = "half",	--or "half" (optional)
         },
-	[5] = {
+		[5] = {
             type = "checkbox",
             name = "Debug",
             tooltip = "Debug on or off.",
@@ -55,19 +56,26 @@ function EchoExperience.LoadSettings()
         },
         [6] = {
             type = "colorpicker",
-            name = "My Color Picker",
-            tooltip = "Color Picker's tooltip text.",
-            getFunc = function() return 1, 0, 0, 1 end,	--(alpha is optional)
-            setFunc = function(r,g,b,a) print(r, g, b, a) end,	--(alpha is optional)
-            width = "half",	--or "half" (optional)
-            warning = "warning text",
-        },
-        [7] = {
-            type = "texture",
-            image = "EsoUI\\Art\\ActionBar\\abilityframe64_up.dds",
-            imageWidth = 64,	--max of 250 for half width, 510 for full
-            imageHeight = 64,	--max of 100
-            tooltip = "Image's tooltip text.",	--(optional)
+            name = "Chat Color Picker",
+            tooltip = "What Color to use for text.",
+            getFunc = function() return
+							EchoExperience.rgba.r,
+							EchoExperience.rgba.g,
+							EchoExperience.rgba.b,
+							EchoExperience.rgba.a
+						end,	--(alpha is optional)
+            setFunc = 	function(r,g,b,a)
+							--(alpha is optional)
+							--d(r, g, b, a)
+							local c = ZO_ColorDef:New(r,g,b,a)
+							--c:Colorize(text)
+							EchoExperience.rgba = {}
+							EchoExperience.rgba.r = r
+							EchoExperience.rgba.g = g
+							EchoExperience.rgba.b = b
+							EchoExperience.rgba.a = a
+						end,
+
             width = "half",	--or "half" (optional)
         },
     }

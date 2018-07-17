@@ -2,14 +2,13 @@ EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
     -- version         = "1.0",                -- A nuisance to match to the Manifest.
     author          = "Echomap",
-    color           = "DDFFEE",             -- Used in menu titles and so on.
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
     debug           = false,
-    tab		    = 2,
+    tab             = 2,
     window          = 1,
-    color           = nil,
-    -- Default settings.
+	rgba            = {255,255,255, 0.9},
+    -- Saved settings.
     savedVariables = {},
 }
 
@@ -30,19 +29,31 @@ function EchoExperience.outputToChanel(text)
 	end
 end
 
+function EchoExperience:Savesettings()
+	EchoExperience.savedVariables.debug  = EchoExperience.debug
+	EchoExperience.savedVariables.tab    = EchoExperience.tab
+	EchoExperience.savedVariables.window = EchoExperience.window
+	EchoExperience.savedVariables.rgba   = EchoExperience.rgba
+end
 function EchoExperience.RestoreSettings()
 	--todo check
-	EchoExperience.debug = EchoExperience.savedVariables.debug
-	EchoExperience.tab = tonumber(EchoExperience.savedVariables.tab)
+	EchoExperience.debug  = EchoExperience.savedVariables.debug
+	EchoExperience.tab    = tonumber(EchoExperience.savedVariables.tab)
 	EchoExperience.window = tonumber(EchoExperience.savedVariables.window)
+	EchoExperience.rgba   = EchoExperience.savedVariables.rgba
 end
 
 -- Wraps text with a color.
 function EchoExperience.Colorize(text, color)
-    -- Default to addon's .color.
-    if  color == nil then return text end
-    if not color then color = EchoExperience.color end
-    text = "|c" .. color .. text .. "|r"
+	--d("SlashCommandHandler: color" .. tostring(EchoExperience.rgba) )
+	-- Default to default color.
+	if EchoExperience.rgba == nil then return text end
+    --if  color == nil then return text end
+    --if not color then color = EchoExperience.color end
+    --text = "|c" .. color .. text .. "|r"
+	local rgba = EchoExperience.rgba
+	local c = ZO_ColorDef:New(rgba.r,rgba.g,rgba.b,rgba.a)
+	text = c:Colorize(text)
     return text
 end
 
@@ -58,6 +69,8 @@ function EchoExperience.SlashCommandHandler(text)
 
 	if #options == 0 or options[1] == "help" then
 		-- Display help
+	elseif #options == 0 or options[1] == "testoutput" then
+		EchoExperience.outputToChanel("Gained 0 xp in [Test] (1000/10000) need 9000xp")
 	elseif #options == 0 or options[1] == "debug" then
 		local dg = EchoExperience.debug
 		EchoExperience.debug = not dg
@@ -152,6 +165,12 @@ function EchoExperience.DelayedStart()
 	--EVENT_LEVEL_UPDATE
 end
 
+function EchoExperience.OnAddOnUnloaded(event)
+  --EchoExperience.debugMsg("OnAddOnUnloaded called") -- Prints to chat.
+  EchoExperience:Savesettings()
+  --EchoExperience.debugMsg("OnAddOnUnloaded done") -- Prints to chat.
+end
+
 function EchoExperience.Activated(e)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name, EVENT_PLAYER_ACTIVATED)
     d(EchoExperience.name .. GetString(SI_NEW_ADDON_MESSAGE)) -- Prints to chat.
@@ -179,3 +198,4 @@ function EchoExperience.OnAddOnLoaded(event, addonName)
 end
 -- When any addon is loaded, but before UI (Chat) is loaded.
 EVENT_MANAGER:RegisterForEvent(EchoExperience.name, EVENT_ADD_ON_LOADED, EchoExperience.OnAddOnLoaded)
+EVENT_MANAGER:RegisterForEvent(EchoExperience.name, EVENT_PLAYER_DEACTIVATED, EchoExperience.OnAddOnUnloaded)

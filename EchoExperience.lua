@@ -1,13 +1,13 @@
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    -- version         = "1.0",                -- A nuisance to match to the Manifest.
+    version         = "0.0.4",                    -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
     debug           = false,
     tab             = 2,
     window          = 1,
-	rgba            = {255,255,255, 0.9},
+	rgba            = nil,
     -- Saved settings.
     savedVariables = {},
 }
@@ -18,14 +18,12 @@ function EchoExperience.debugMsg(text)
 	end
 end
 function EchoExperience.outputToChanel(text)
-	--Todo options/color/etc
 	if (EchoExperience.tab == nil or EchoExperience.tab < 1) then
 		d(text);
 	else
-		--CHAT_SYSTEM:AddMessage(<message String>)'
-		--container 1-10
-		local text2 = EchoExperience.Colorize(text)
-		CHAT_SYSTEM.containers[1].windows[EchoExperience.tab].buffer:AddMessage(text2)
+		--CHAT_SYSTEM:AddMessage(<message String>)' --container 1-10
+		local text2 = EchoExperience:ColorizeText(text)
+		CHAT_SYSTEM.containers[EchoExperience.window].windows[EchoExperience.tab].buffer:AddMessage(text2)
 	end
 end
 
@@ -40,17 +38,37 @@ function EchoExperience.RestoreSettings()
 	EchoExperience.debug  = EchoExperience.savedVariables.debug
 	EchoExperience.tab    = tonumber(EchoExperience.savedVariables.tab)
 	EchoExperience.window = tonumber(EchoExperience.savedVariables.window)
-	EchoExperience.rgba   = EchoExperience.savedVariables.rgba
+
+	if EchoExperience.tab == nil then
+		EchoExperience.tab = 1
+	end
+	if EchoExperience.window == nil then
+		EchoExperience.window = 1
+	end
+
+	if EchoExperience.savedVariables.rgba == nil then
+		EchoExperience.rgba   = {}
+		--EchoExperience.rgba   = {255,255,255, 0.9}
+		EchoExperience.rgba.r = 1
+		EchoExperience.rgba.g = 1
+		EchoExperience.rgba.b = 1
+		EchoExperience.rgba.a = 0.9
+	else
+		EchoExperience.rgba   = EchoExperience.savedVariables.rgba
+	end
 end
 
 -- Wraps text with a color.
 function EchoExperience.Colorize(text, color)
-	--d("SlashCommandHandler: color" .. tostring(EchoExperience.rgba) )
-	-- Default to default color.
+    if  color == nil then return text end
+    text = "|c" .. color .. text .. "|r"
+    return text
+end
+
+-- Wraps text with a color.
+function EchoExperience:ColorizeText(text)
+	--d("ct: text="..text)
 	if EchoExperience.rgba == nil then return text end
-    --if  color == nil then return text end
-    --if not color then color = EchoExperience.color end
-    --text = "|c" .. color .. text .. "|r"
 	local rgba = EchoExperience.rgba
 	local c = ZO_ColorDef:New(rgba.r,rgba.g,rgba.b,rgba.a)
 	text = c:Colorize(text)
@@ -188,8 +206,9 @@ function EchoExperience.OnAddOnLoaded(event, addonName)
     EchoExperience.savedVariables = ZO_SavedVars:New("EchoExperienceSavedVariables", 1, nil, EchoExperience.savedVariables)
 
     -- Settings menu in Settings.lua.
-    EchoExperience.LoadSettings()
     EchoExperience:RestoreSettings()
+    EchoExperience.LoadSettings()
+
 
     -- Slash commands must be lowercase. Set to nil to disable.
     SLASH_COMMANDS["/echoexp"] = EchoExperience.SlashCommandHandler

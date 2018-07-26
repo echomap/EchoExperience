@@ -46,18 +46,10 @@ function EchoExperience.LoadSettings()
             setFunc = function(var) EchoExperience.tab = tonumber(var) end,
             width = "half",	--or "half" (optional)
         },
-		[5] = {
-            type = "checkbox",
-            name = "Debug",
-            tooltip = "Debug on or off.",
-            getFunc = function() return EchoExperience.debug end,
-            setFunc = function(value) EchoExperience.debug = value end,
-            width = "half",	--or "half" (optional)
-        },
-        [6] = {
+        [5] = {
             type = "colorpicker",
-            name = "Chat Color Picker",
-            tooltip = "What Color to use for text.",
+            name = "EXP Chat Color",
+            tooltip = "What Color to use for EXP text.",
             getFunc = function() return
 							EchoExperience.rgba.r,
 							EchoExperience.rgba.g,
@@ -78,6 +70,62 @@ function EchoExperience.LoadSettings()
 
             width = "half",	--or "half" (optional)
         },
+        [6] = {
+            type = "colorpicker",
+            name = "LOOT Chat Color",
+            tooltip = "What Color to use for LOOT text.",
+            getFunc = function() return
+							EchoExperience.rgba2.r,
+							EchoExperience.rgba2.g,
+							EchoExperience.rgba2.b,
+							EchoExperience.rgba2.a
+						end,	--(alpha is optional)
+            setFunc = 	function(r,g,b,a)
+							--(alpha is optional)
+							--d(r, g, b, a)
+							local c = ZO_ColorDef:New(r,g,b,a)
+							--c:Colorize(text)
+							EchoExperience.rgba2 = {}
+							EchoExperience.rgba2.r = r
+							EchoExperience.rgba2.g = g
+							EchoExperience.rgba2.b = b
+							EchoExperience.rgba2.a = a
+						end,
+
+            width = "half",	--or "half" (optional)
+        },
+		[7] = {
+            type = "checkbox",
+            name = "Experience",
+            tooltip = "Report? on or off.",
+            getFunc = function() return EchoExperience.showExp end,
+            setFunc = function(value) EchoExperience.showExp = value end,
+            width = "half",	--or "half" (optional)
+        },
+		[8] = {
+            type = "checkbox",
+            name = "Looted Items",
+            tooltip = "Report? on or off.",
+            getFunc = function() return EchoExperience.showLoot end,
+            setFunc = function(value)
+						EchoExperience.showLoot = value
+						if (EchoExperience.showLoot) then
+							EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."LootReceived",	EVENT_LOOT_RECEIVED, EchoExperience.OnLootReceived)
+						else
+							EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."LootReceived",	EVENT_LOOT_RECEIVED, EchoExperience.OnLootReceived)
+						end
+					end,
+            width = "half",	--or "half" (optional)
+        },
+		[9] = {
+            type = "checkbox",
+            name = "Debug",
+            tooltip = "Debug on or off.",
+            getFunc = function() return EchoExperience.debug end,
+            setFunc = function(value) EchoExperience.debug = value end,
+            width = "half",	--or "half" (optional)
+        },
+
     }
     LAM:RegisterOptionControls(EchoExperience.menuName, optionsTable)
 end

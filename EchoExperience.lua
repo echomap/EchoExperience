@@ -1,81 +1,48 @@
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.4",                    -- A nuisance to match to the Manifest.
+    version         = "0.0.6",                    -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
-    debug           = false,
-	showLoot        = false,
-	showExp         = true,
-    tab             = 2,
-    window          = 1,
-	rgba            = nil,
-	rgba2           = nil,
     -- Saved settings.
     savedVariables = {},
 }
 
+local defaultSettings = {
+	sversion   = EchoExperience.version,
+    debug      = false,
+	showLoot   = false,
+	showExp    = true,
+	verboseExp = true,
+	groupLoot  = false,
+    tab        = 1,
+    window     = 1,
+	rgba    = {
+      ["r"] = 1,
+      ["g"] = 1,
+      ["b"] = 1,
+      ["a"] = 0.9,
+	},
+	rgba2   = {
+      ["r"] = 1,
+      ["g"] = 1,
+      ["b"] = 1,
+      ["a"] = 0.9,
+	},
+}
+
 function EchoExperience.debugMsg(text)
-	if EchoExperience.debug then
+	if EchoExperience.savedVariables.debug then
 		d("(" .. EchoExperience.name .. ") " .. text);
 	end
 end
 function EchoExperience.outputToChanel(text,msgType)
-	if (EchoExperience.tab == nil or EchoExperience.tab < 1) then
+	if (EchoExperience.savedVariables.tab == nil or EchoExperience.savedVariables.tab < 1) then
 		d(text);
 	else
 		--CHAT_SYSTEM:AddMessage(<message String>)' --container 1-10
 		local text2 = EchoExperience:ColorizeText(text,msgType)
-		CHAT_SYSTEM.containers[EchoExperience.window].windows[EchoExperience.tab].buffer:AddMessage(text2)
-	end
-end
-
-function EchoExperience:Savesettings()
-	EchoExperience.savedVariables.debug  = EchoExperience.debug
-	EchoExperience.savedVariables.tab    = EchoExperience.tab
-	EchoExperience.savedVariables.window = EchoExperience.window
-	EchoExperience.savedVariables.rgba   = EchoExperience.rgba
-	EchoExperience.savedVariables.rgba2  = EchoExperience.rgba2
-	EchoExperience.savedVariables.showExp  = EchoExperience.showExp
-	EchoExperience.savedVariables.showLoot = EchoExperience.showLoot
-end
-function EchoExperience.RestoreSettings()
-	--todo check
-	EchoExperience.debug    = EchoExperience.savedVariables.debug
-	EchoExperience.tab      = tonumber(EchoExperience.savedVariables.tab)
-	EchoExperience.window   = tonumber(EchoExperience.savedVariables.window)
-	EchoExperience.showExp  = EchoExperience.savedVariables.showExp
-	EchoExperience.showLoot = EchoExperience.savedVariables.showLoot
-	if(EchoExperience.showExp==nil) then
-		EchoExperience.showExp = true
-	end
-
-	if EchoExperience.tab == nil then
-		EchoExperience.tab = 1
-	end
-	if EchoExperience.window == nil then
-		EchoExperience.window = 1
-	end
-
-	if EchoExperience.savedVariables.rgba == nil then
-		EchoExperience.rgba   = {}
-		--EchoExperience.rgba   = {255,255,255, 0.9}
-		EchoExperience.rgba.r = 1
-		EchoExperience.rgba.g = 1
-		EchoExperience.rgba.b = 1
-		EchoExperience.rgba.a = 0.9
-	else
-		EchoExperience.rgba   = EchoExperience.savedVariables.rgba
-	end
-	if EchoExperience.savedVariables.rgba2 == nil then
-		EchoExperience.rgba2   = {}
-		--EchoExperience.rgba   = {255,255,255, 0.9}
-		EchoExperience.rgba2.r = 1
-		EchoExperience.rgba2.g = 1
-		EchoExperience.rgba2.b = 1
-		EchoExperience.rgba2.a = 0.9
-	else
-		EchoExperience.rgba2   = EchoExperience.savedVariables.rgba2
+		CHAT_SYSTEM.containers[EchoExperience.savedVariables.window].windows[EchoExperience.savedVariables.tab].buffer:AddMessage(text2)
 	end
 end
 
@@ -89,10 +56,10 @@ end
 -- Wraps text with a color.
 function EchoExperience:ColorizeText(text,msgType)
 	--d("ct: text="..text)
-	if EchoExperience.rgba == nil then return text end
-	local rgba = EchoExperience.rgba
+	if EchoExperience.savedVariables.rgba == nil then return text end
+	local rgba = EchoExperience.savedVariables.rgba
 	if(msgType~=nil and msgType==2) then
-		rgba = EchoExperience.rgba2
+		rgba = EchoExperience.savedVariables.rgba2
 	end
 	local c = ZO_ColorDef:New(rgba.r,rgba.g,rgba.b,rgba.a)
 	text = c:Colorize(text)
@@ -114,18 +81,15 @@ function EchoExperience.SlashCommandHandler(text)
 	elseif #options == 0 or options[1] == "testoutput" then
 		EchoExperience.outputToChanel("Gained 0 xp in [Test] (1000/10000) need 9000xp")
 	elseif #options == 0 or options[1] == "debug" then
-		local dg = EchoExperience.debug
-		EchoExperience.debug = not dg
-		d("EchoExperience: Debug = " .. tostring(EchoExperience.debug) )
-		EchoExperience.savedVariables.debug = EchoExperience.debug
+		local dg = EchoExperience.savedVariables.debug
+		EchoExperience.savedVariables.debug = not dg
+		d("EchoExperience: Debug = " .. tostring(EchoExperience.savedVariables.debug) )
 	elseif (#options == 0 or options[1] == "tab") and options[2] ~= nil then
 		d("EchoExperience: tab = " .. tostring(options[2]) )
-		EchoExperience.tab = tonumber(options[2])
-		EchoExperience.savedVariables.tab = EchoExperience.tab
+		EchoExperience.savedVariables.tab = tonumber(options[2])
 	elseif (#options == 0 or options[1] == "window") and options[2] ~= nil then
 		d("EchoExperience: window = " .. tostring(options[2]) )
-		EchoExperience.window = tonumber(options[2])
-		EchoExperience.savedVariables.window = EchoExperience.window
+		EchoExperience.savedVariables.window = tonumber(options[2])
 	end
 
 end
@@ -133,7 +97,9 @@ end
 function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex, reason, rank, previousXP, currentXP)
 	EchoExperience.debugMsg("OnSkillExperienceUpdate")
 
-	if EchoExperience.debug then
+	--[[
+	if EchoExperience.savedVariables.debug then
+		d(EchoExperience.name .. " eventCode="  .. eventCode) -- Prints to chat.
 		d(EchoExperience.name .. " eventCode="  .. eventCode) -- Prints to chat.
 		d(EchoExperience.name .. " skillType="  .. skillType) -- Prints to chat.
 		d(EchoExperience.name .. " skillIndex=" .. skillIndex) -- Prints to chat.
@@ -142,24 +108,33 @@ function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex
 		d(EchoExperience.name .. " previousXP=" .. previousXP) -- Prints to chat.
 		d(EchoExperience.name .. " currentXP="  .. currentXP) -- Prints to chat.
 	end
-
+	]]
 	local skillLineName, currentSkillRank, available = GetSkillLineInfo(skillType, skillIndex)
-	if EchoExperience.debug then
-		d(EchoExperience.name .. " skillLineName="     .. skillLineName ) -- Prints to chat.
-		d(EchoExperience.name .. " currentSkillRank="  .. currentSkillRank ) -- Prints to chat.
-		d(EchoExperience.name .. " available="         .. tostring(available) ) -- Prints to chat.
+	--if EchoExperience.savedVariables.debug then
+		--d(EchoExperience.name .. " skillLineName="     .. skillLineName ) -- Prints to chat.
+		--d(EchoExperience.name .. " currentSkillRank="  .. currentSkillRank ) -- Prints to chat.
+		--d(EchoExperience.name .. " available="         .. tostring(available) ) -- Prints to chat.
+	--end
+	--[[
+	if not available then
+		if EchoExperience.savedVariables.debug then
+		d(EchoExperience.name .. "(CANT USE)"
+		.." name=".. skillLineName
+		.." eventCode=".. eventCode
+		.." skillType="  .. skillType
+		.." skillIndex=" .. skillIndex
+		)
+		end
 	end
-
+	]]
 	local lastRankXP, nextRankXP, currentXP = GetSkillLineXPInfo(skillType, skillIndex)
-	if EchoExperience.debug then
-		d(EchoExperience.name .. " lastRankXP="  .. lastRankXP ) -- Prints to chat.
-		d(EchoExperience.name .. " nextRankXP="  .. nextRankXP ) -- Prints to chat.
-		d(EchoExperience.name .. " currentXP="   .. currentXP ) -- Prints to chat.
+	if EchoExperience.savedVariables.debug and available then
+		d(EchoExperience.name .."name="..skillLineName .." lastRankXP="..lastRankXP .." nextRankXP=".. nextRankXP .." currentXP=".. currentXP)
 	end
 
 	-- Output
 	local diff = nextRankXP - currentXP
-	if skillLineName ~= nil and available then
+	if skillLineName ~= nil and available and EchoExperience.savedVariables.verboseExp then
 		local XPgain  = currentXP - previousXP
 		local curCur  = currentXP - lastRankXP
 		local curNext = nextRankXP - lastRankXP
@@ -179,21 +154,56 @@ function EchoExperience.OnChampionUnlocked(eventCode)
 	EchoExperience.outputToChanel("You unlocked Champion points!".." eventcode="..tostring(eventCode))
 end
 
+
+--EVENT_DISCOVERY_EXPERIENCE
+-- (num eventCode, str areaName, num level, num previousExperience, num currentExperience, num championPoints)
+function EchoExperience.OnDiscoveryExperienceGain(event, eventCode, areaName, level, previousExperience, currentExperience, championPoints)
+	EchoExperience.debugMsg("OnDiscoveryExperienceGain Called")
+	--local XPgain = currentExperience - previousExperience -
+	--EchoExperience.outputToChanel("You gained " .. XPgain .. " experience.")
+	if EchoExperience.savedVariables.debug then
+		d(EchoExperience.name .. " previousExperience=" .. previousExperience
+		.. " currentExperience="  .. currentExperience
+		.. " eventCode=" .. eventCode
+		.. " reason=" .. areaName
+		.. "level="  .. level
+		.. " champ="  .. tostring(championPoints) )
+	end
+
+	--TODO championPoints
+	EchoExperience.debugMsg("OnDiscoveryExperienceGain Done")
+end
+
+--EVENT_ALLIANCE_POINT_UPDATE OnAlliancePtGain
+-- (number eventCode, number alliancePoints, boolean playSound, number difference, CurrencyChangeReason reason)
+function EchoExperience.OnAlliancePtGain(eventCode,  alliancePoints,  playSound,  difference,  reason)
+	EchoExperience.debugMsg("OnAlliancePtGain Called")
+	if difference < 0 then
+		EchoExperience.outputToChanel("You subtracted " .. difference .. " AP.")
+	else
+		EchoExperience.outputToChanel("You gained " .. difference .. " AP.")
+	end
+	EchoExperience.debugMsg("OnAlliancePtGain Done")
+end
+
 --(number eventCode, ProgressReason reason, number level, number previousExperience, number currentExperience, number championPoints)
 --_, _, _, prevXp, curXp, championPoints)
 function EchoExperience.OnExperienceGain(event, eventCode, reason, level, previousExperience, currentExperience, championPoints)
 	EchoExperience.debugMsg("OnExperienceGain Called")
 	--if ( unitTag ~= 'player' ) then return end
 	--local xpPrev = previousExperience;
-	if EchoExperience.debug then
-		d(EchoExperience.name .. " previousExperience=" .. previousExperience) -- Prints to chat.
-		d(EchoExperience.name .. " currentExperience="  .. currentExperience) -- Prints to chat.
+	if EchoExperience.savedVariables.debug then
+		d(EchoExperience.name .. " previousExperience=" .. previousExperience)
+		d(EchoExperience.name .. " currentExperience="  .. currentExperience)
 		d(EchoExperience.name .. " eventCode=" .. eventCode) -- Prints to chat.
 		d(EchoExperience.name .. " reason=" .. reason) -- Prints to chat.
 		d(EchoExperience.name .. " level="  .. level) -- Prints to chat.
+		d(EchoExperience.name .. " champ="  .. tostring(championPoints)) --allways nil?
 	end
 	local XPgain = previousExperience - level
 	EchoExperience.outputToChanel("You gained " .. XPgain .. " experience.")
+
+	--TODO championPoints
 	EchoExperience.debugMsg("OnExperienceGain Done")
 end
 
@@ -201,43 +211,70 @@ end
 --(num eventCode, str receivedBy, str itemName, num quantity,
 --ItemUISoundCategory soundCategory, LootItemType lootType,
 --bool self, bool isPickpocketLoot, str questItemIcon, num itemId, bool isStolen)
-function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,soundCategory,lootType,self2,isPickpocketLoot,questItemIcon,itemId,isStolen)
-	EchoExperience.outputToChanel("You looted " .. tostring(itemName) .. ".",2)
+function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,isPickpocketLoot,questItemIcon,itemId,isStolen)
+	if(isSelf) then
+		EchoExperience.outputToChanel("You looted " .. tostring(itemName) .. ".",2)
+	elseif (EchoExperience.savedVariables.groupLoot and receivedBy~=nil) then
+		EchoExperience.outputToChanel(receivedBy.." looted " .. tostring(itemName) .. ".",2)
+	end
 end
 
-function EchoExperience.DelayedStart()
-	--https://wiki.esoui.com/Events
-	-- Experience Related
-	if (EchoExperience.showExp) then
+--https://wiki.esoui.com/Events
+--EVENT_CLAIM_LEVEL_UP_REWARD_RESULT
+--EVENT_DISCOVERY_EXPERIENCE (
+--EVENT_LEVEL_UPDATE
+function EchoExperience.SetupExpGainsEvents()
+	if (EchoExperience.savedVariables.showExp) then
+		EchoExperience.outputToChanel("EchoExp is showing Experience Gains")
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."SkillXPGain",	EVENT_SKILL_XP_UPDATE,     EchoExperience.OnSkillExperienceUpdate)
 		--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnCombatState",	EVENT_PLAYER_COMBAT_STATE, EchoExperience.OnCombatState )
 		--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."AbilityProgression",EVENT_ABILITY_PROGRESSION_XP_UPDATE, EchoExperience.OnAbitilyExperienceUpdate)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."SkillLineAdded",	EVENT_SKILL_LINE_ADDED,  EchoExperience.OnSkillLineAdded)
+		--TODO dont need sometimes
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."ChampionUnlocked", EVENT_CHAMPION_SYSTEM_UNLOCKED, EchoExperience.OnChampionUnlocked)
 		--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPUpdate",		EVENT_EXPERIENCE_UPDATE, EchoExperience.OnExperienceUpdate)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPGain",		EVENT_EXPERIENCE_GAIN,   EchoExperience.OnExperienceGain)
+		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnAlliancePtGain",		EVENT_ALLIANCE_POINT_UPDATE,   EchoExperience.OnAlliancePtGain)
+		--
+	else
+		EchoExperience.outputToChanel("EchoExp is no longer showing Experience Gains")
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."SkillXPGain",	EVENT_SKILL_XP_UPDATE)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."SkillLineAdded",	EVENT_SKILL_LINE_ADDED)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."ChampionUnlocked", EVENT_CHAMPION_SYSTEM_UNLOCKED)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."XPGain",		EVENT_EXPERIENCE_GAIN)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnAlliancePtGain",		EVENT_ALLIANCE_POINT_UPDATE)
+		--
 	end
-	-- Loot Related
-	if (EchoExperience.showLoot) then
+end
+function EchoExperience.SetupLootGainsEvents()
+	if (EchoExperience.savedVariables.showLoot) then
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."LootReceived",	EVENT_LOOT_RECEIVED, EchoExperience.OnLootReceived)
+		EchoExperience.outputToChanel("EchoExp is showing Loot Gains")
+	else
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."LootReceived",	EVENT_LOOT_RECEIVED, EchoExperience.OnLootReceived)
+		EchoExperience.outputToChanel("EchoExp is no longer showing Loot Gains")
 	end
-	--
-	--EVENT_CLAIM_LEVEL_UP_REWARD_RESULT
-	--EVENT_DISCOVERY_EXPERIENCE (
-	--EVENT_LEVEL_UPDATE
+
+end
+
+function EchoExperience.DelayedStart()
+	-- Experience Related
+	EchoExperience.SetupExpGainsEvents()
+	-- Loot Related
+	EchoExperience.SetupLootGainsEvents()
 end
 
 function EchoExperience.OnAddOnUnloaded(event)
   --EchoExperience.debugMsg("OnAddOnUnloaded called") -- Prints to chat.
-  EchoExperience:Savesettings()
+  --EchoExperience:Savesettings()
   --EchoExperience.debugMsg("OnAddOnUnloaded done") -- Prints to chat.
 end
 
 function EchoExperience.Activated(e)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name, EVENT_PLAYER_ACTIVATED)
     d(EchoExperience.name .. GetString(SI_NEW_ADDON_MESSAGE)) -- Prints to chat.
-    ZO_AlertNoSuppression(UI_ALERT_CATEGORY_ALERT, nil,
-        EchoExperience.name .. GetString(SI_NEW_ADDON_MESSAGE)) -- Top-right alert.
+    --ZO_AlertNoSuppression(UI_ALERT_CATEGORY_ALERT, nil,
+    --    EchoExperience.name .. GetString(SI_NEW_ADDON_MESSAGE)) -- Top-right alert.
     zo_callLater(EchoExperience.DelayedStart, 3000)
 end
 -- When player is ready, after everything has been loaded.
@@ -247,12 +284,11 @@ function EchoExperience.OnAddOnLoaded(event, addonName)
     if addonName ~= EchoExperience.name then return end
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name, EVENT_ADD_ON_LOADED)
 
-    EchoExperience.savedVariables = ZO_SavedVars:New("EchoExperienceSavedVariables", 1, nil, EchoExperience.savedVariables)
+    EchoExperience.savedVariables = ZO_SavedVars:New("EchoExperienceSavedVariables", 1, nil, defaultSettings)
 
     -- Settings menu in Settings.lua.
-    EchoExperience:RestoreSettings()
-    EchoExperience.LoadSettings()
-
+    --EchoExperience:RestoreSettings()
+    EchoExperience.LoadSettings() --Setup Addon Settings MENU
 
     -- Slash commands must be lowercase. Set to nil to disable.
     SLASH_COMMANDS["/echoexp"] = EchoExperience.SlashCommandHandler

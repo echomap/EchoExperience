@@ -1,0 +1,7 @@
+EchoExperience
+0.0.6 update save settings code/ can show AP gain/loss. discovery exp/ looted items can be reported
+0.0.5 Show loot option, w/ different color
+0.0.4 update settings save/restore
+0.0.3 Repackage my failed format
+0.0.2 Added color option, added slashcommand to test: /echoexp testoutput
+0.0.1 Initial

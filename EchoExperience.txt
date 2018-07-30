@@ -1,5 +1,5 @@
 ## Title: EchoExperience
-## Version: 0.0.5
+## Version: 0.0.6
 ## APIVersion: 100023
 ## Author: Echomap
 ## Description: EchoExperience will show experience gains in chat.

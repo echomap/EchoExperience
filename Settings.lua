@@ -33,8 +33,8 @@ function EchoExperience.LoadSettings()
             name = "Window Dropdown",
             tooltip = "Dropdown's tooltip text.",
             choices = {"1", "2", "3","4"},
-            getFunc = function() return tostring(EchoExperience.window) end,
-            setFunc = function(var) EchoExperience.window = tonumber(var) end,
+            getFunc = function() return tostring(EchoExperience.savedVariables.window) end,
+            setFunc = function(var) EchoExperience.savedVariables.window = tonumber(var) end,
             width = "half",	--or "half" (optional)
         },
         [4] = {
@@ -42,8 +42,8 @@ function EchoExperience.LoadSettings()
             name = "Tab Dropdown",
             tooltip = "Dropdown's tooltip text.",
             choices = {"1", "2", "3", "4", "5", "6"},
-            getFunc = function() return tostring(EchoExperience.tab)   end,
-            setFunc = function(var) EchoExperience.tab = tonumber(var) end,
+            getFunc = function() return tostring(EchoExperience.savedVariables.tab)   end,
+            setFunc = function(var) EchoExperience.savedVariables.tab = tonumber(var) end,
             width = "half",	--or "half" (optional)
         },
         [5] = {
@@ -51,21 +51,21 @@ function EchoExperience.LoadSettings()
             name = "EXP Chat Color",
             tooltip = "What Color to use for EXP text.",
             getFunc = function() return
-							EchoExperience.rgba.r,
-							EchoExperience.rgba.g,
-							EchoExperience.rgba.b,
-							EchoExperience.rgba.a
+							EchoExperience.savedVariables.rgba.r,
+							EchoExperience.savedVariables.rgba.g,
+							EchoExperience.savedVariables.rgba.b,
+							EchoExperience.savedVariables.rgba.a
 						end,	--(alpha is optional)
             setFunc = 	function(r,g,b,a)
 							--(alpha is optional)
 							--d(r, g, b, a)
 							local c = ZO_ColorDef:New(r,g,b,a)
 							--c:Colorize(text)
-							EchoExperience.rgba = {}
-							EchoExperience.rgba.r = r
-							EchoExperience.rgba.g = g
-							EchoExperience.rgba.b = b
-							EchoExperience.rgba.a = a
+							EchoExperience.savedVariables.rgba = {}
+							EchoExperience.savedVariables.rgba.r = r
+							EchoExperience.savedVariables.rgba.g = g
+							EchoExperience.savedVariables.rgba.b = b
+							EchoExperience.savedVariables.rgba.a = a
 						end,
 
             width = "half",	--or "half" (optional)
@@ -75,21 +75,21 @@ function EchoExperience.LoadSettings()
             name = "LOOT Chat Color",
             tooltip = "What Color to use for LOOT text.",
             getFunc = function() return
-							EchoExperience.rgba2.r,
-							EchoExperience.rgba2.g,
-							EchoExperience.rgba2.b,
-							EchoExperience.rgba2.a
+							EchoExperience.savedVariables.rgba2.r,
+							EchoExperience.savedVariables.rgba2.g,
+							EchoExperience.savedVariables.rgba2.b,
+							EchoExperience.savedVariables.rgba2.a
 						end,	--(alpha is optional)
             setFunc = 	function(r,g,b,a)
 							--(alpha is optional)
 							--d(r, g, b, a)
 							local c = ZO_ColorDef:New(r,g,b,a)
 							--c:Colorize(text)
-							EchoExperience.rgba2 = {}
-							EchoExperience.rgba2.r = r
-							EchoExperience.rgba2.g = g
-							EchoExperience.rgba2.b = b
-							EchoExperience.rgba2.a = a
+							EchoExperience.savedVariables.rgba2 = {}
+							EchoExperience.savedVariables.rgba2.r = r
+							EchoExperience.savedVariables.rgba2.g = g
+							EchoExperience.savedVariables.rgba2.b = b
+							EchoExperience.savedVariables.rgba2.a = a
 						end,
 
             width = "half",	--or "half" (optional)
@@ -98,31 +98,51 @@ function EchoExperience.LoadSettings()
             type = "checkbox",
             name = "Experience",
             tooltip = "Report? on or off.",
-            getFunc = function() return EchoExperience.showExp end,
-            setFunc = function(value) EchoExperience.showExp = value end,
+            getFunc = function() return EchoExperience.savedVariables.showExp end,
+            setFunc = function(value)
+						EchoExperience.savedVariables.showExp = value
+						EchoExperience.SetupExpGainsEvents()
+					end,
             width = "half",	--or "half" (optional)
         },
 		[8] = {
             type = "checkbox",
             name = "Looted Items",
             tooltip = "Report? on or off.",
-            getFunc = function() return EchoExperience.showLoot end,
+            getFunc = function() return EchoExperience.savedVariables.showLoot end,
             setFunc = function(value)
-						EchoExperience.showLoot = value
-						if (EchoExperience.showLoot) then
-							EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."LootReceived",	EVENT_LOOT_RECEIVED, EchoExperience.OnLootReceived)
-						else
-							EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."LootReceived",	EVENT_LOOT_RECEIVED, EchoExperience.OnLootReceived)
-						end
+						EchoExperience.savedVariables.showLoot = value
+						EchoExperience.SetupLootGainsEvents()
 					end,
             width = "half",	--or "half" (optional)
         },
 		[9] = {
             type = "checkbox",
+            name = "Show other group member's Looted items?",
+            tooltip = "Verbose reporting if experience is on?",
+            getFunc = function() return EchoExperience.savedVariables.groupLoot end,
+            setFunc = function(value)
+						EchoExperience.savedVariables.groupLoot = value
+					end,
+            width = "half",	--or "half" (optional)
+        },
+		[10] = {
+            type = "checkbox",
+            name = "Verbose Experience",
+            tooltip = "Verbose reporting if experience is on?",
+            getFunc = function() return EchoExperience.savedVariables.verboseExp end,
+            setFunc = function(value)
+						EchoExperience.savedVariables.verboseExp = value
+						--EchoExperience.SetupExpGainsEvents()
+					end,
+            width = "half",	--or "half" (optional)
+        },
+		[11] = {
+            type = "checkbox",
             name = "Debug",
             tooltip = "Debug on or off.",
-            getFunc = function() return EchoExperience.debug end,
-            setFunc = function(value) EchoExperience.debug = value end,
+            getFunc = function() return EchoExperience.savedVariables.debug end,
+            setFunc = function(value) EchoExperience.savedVariables.debug = value end,
             width = "half",	--or "half" (optional)
         },
 

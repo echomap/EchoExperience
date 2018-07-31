@@ -21,11 +21,10 @@ function EchoExperience.LoadSettings()
             width = "full",	--or "half" (optional)
         },
         [2] = {
-            type = "description",
-            --title = "My Title",	--(optional)
+            type = "header",
             title = nil,	--(optional)
-            text = "Output Experience gains as text to a specified chat window/tab."..
-					"  Slashcommands are: /echoexp [debug/testoutput/tab #/window $]",
+            text = "Experience Options",
+			name = "Experience Options",
             width = "full",	--or "half" (optional)
         },
         [3] = {
@@ -68,9 +67,61 @@ function EchoExperience.LoadSettings()
 							EchoExperience.savedVariables.rgba.a = a
 						end,
 
+            --width = "half",	--or "half" (optional)
+        },
+		[6] = {
+            type = "checkbox",
+            name = "Experience",
+            tooltip = "Report? on or off.",
+            getFunc = function() return EchoExperience.savedVariables.showExp end,
+            setFunc = function(value)
+						EchoExperience.savedVariables.showExp = value
+						EchoExperience.SetupExpGainsEvents(false)
+					end,
+            --width = "half",	--or "half" (optional)
+        },
+		[7] = {
+            type = "checkbox",
+            name = "Verbose Experience",
+            tooltip = "Verbose reporting if experience is on?",
+            getFunc = function() return EchoExperience.savedVariables.verboseExp end,
+            setFunc = function(value)
+						EchoExperience.savedVariables.verboseExp = value
+						--EchoExperience.SetupExpGainsEvents(false)
+					end,
+            --width = "half",	--or "half" (optional)
+        },
+        [8] = {
+            type = "header",
+            name = "",
+            width = "full",	--or "half" (optional)
+        },
+        [9] = {
+            type = "header",
+            --title = "My Title",	--(optional)
+            text = "Loot Options",
+			name = "Loot Options",
+            width = "full",	--or "half" (optional)
+        },
+        [10] = {
+            type = "dropdown",
+            name = "Window Dropdown",
+            tooltip = "Dropdown's tooltip text.",
+            choices = {"1", "2", "3","4"},
+            getFunc = function() return tostring(EchoExperience.savedVariables.windowloot) end,
+            setFunc = function(var) EchoExperience.savedVariables.windowloot = tonumber(var) end,
             width = "half",	--or "half" (optional)
         },
-        [6] = {
+        [11] = {
+            type = "dropdown",
+            name = "Tab Dropdown",
+            tooltip = "Dropdown's tooltip text.",
+            choices = {"1", "2", "3", "4", "5", "6"},
+            getFunc = function() return tostring(EchoExperience.savedVariables.tabloot)   end,
+            setFunc = function(var) EchoExperience.savedVariables.tabloot = tonumber(var) end,
+            width = "half",	--or "half" (optional)
+        },
+        [12] = {
             type = "colorpicker",
             name = "LOOT Chat Color",
             tooltip = "What Color to use for LOOT text.",
@@ -94,29 +145,18 @@ function EchoExperience.LoadSettings()
 
             width = "half",	--or "half" (optional)
         },
-		[7] = {
-            type = "checkbox",
-            name = "Experience",
-            tooltip = "Report? on or off.",
-            getFunc = function() return EchoExperience.savedVariables.showExp end,
-            setFunc = function(value)
-						EchoExperience.savedVariables.showExp = value
-						EchoExperience.SetupExpGainsEvents()
-					end,
-            width = "half",	--or "half" (optional)
-        },
-		[8] = {
+		[13] = {
             type = "checkbox",
             name = "Looted Items",
             tooltip = "Report? on or off.",
             getFunc = function() return EchoExperience.savedVariables.showLoot end,
             setFunc = function(value)
 						EchoExperience.savedVariables.showLoot = value
-						EchoExperience.SetupLootGainsEvents()
+						EchoExperience.SetupLootGainsEvents(false)
 					end,
             width = "half",	--or "half" (optional)
         },
-		[9] = {
+		[14] = {
             type = "checkbox",
             name = "Show other group member's Looted items?",
             tooltip = "Verbose reporting if experience is on?",
@@ -126,18 +166,13 @@ function EchoExperience.LoadSettings()
 					end,
             width = "half",	--or "half" (optional)
         },
-		[10] = {
-            type = "checkbox",
-            name = "Verbose Experience",
-            tooltip = "Verbose reporting if experience is on?",
-            getFunc = function() return EchoExperience.savedVariables.verboseExp end,
-            setFunc = function(value)
-						EchoExperience.savedVariables.verboseExp = value
-						--EchoExperience.SetupExpGainsEvents()
-					end,
-            width = "half",	--or "half" (optional)
+		[15] = {
+            type = "header",
+            --title = "My Title",	--(optional)
+            text = "Dev. Options",
+            width = "full",	--or "half" (optional)
         },
-		[11] = {
+		[16] = {
             type = "checkbox",
             name = "Debug",
             tooltip = "Debug on or off.",
@@ -145,7 +180,6 @@ function EchoExperience.LoadSettings()
             setFunc = function(value) EchoExperience.savedVariables.debug = value end,
             width = "half",	--or "half" (optional)
         },
-
     }
     LAM:RegisterOptionControls(EchoExperience.menuName, optionsTable)
 end

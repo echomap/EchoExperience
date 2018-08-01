@@ -67,7 +67,7 @@ function EchoExperience.LoadSettings()
 							EchoExperience.savedVariables.rgba.a = a
 						end,
 
-            --width = "half",	--or "half" (optional)
+            width = "half",	--or "half" (optional)
         },
 		[6] = {
             type = "checkbox",
@@ -78,7 +78,7 @@ function EchoExperience.LoadSettings()
 						EchoExperience.savedVariables.showExp = value
 						EchoExperience.SetupExpGainsEvents(false)
 					end,
-            --width = "half",	--or "half" (optional)
+            width = "half",	--or "half" (optional)
         },
 		[7] = {
             type = "checkbox",
@@ -89,7 +89,7 @@ function EchoExperience.LoadSettings()
 						EchoExperience.savedVariables.verboseExp = value
 						--EchoExperience.SetupExpGainsEvents(false)
 					end,
-            --width = "half",	--or "half" (optional)
+            width = "half",	--or "half" (optional)
         },
         [8] = {
             type = "header",

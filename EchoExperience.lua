@@ -113,6 +113,11 @@ function EchoExperience.SlashCommandHandler(text)
 		EchoExperience.outputToChanel("Gained 0 xp in [Test] (1000/10000) need 9000xp",msgTypeEXP)
 	elseif #options == 0 or options[1] == "testloot" then
 		EchoExperience.outputToChanel("You looted TESTITEM.",msgTypeLOOT)
+	elseif #options == 0 or options[1] == "testfull" then
+		--eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,isPickpocketLoot,questItemIcon,itemId,isStolen)
+		EchoExperience.OnLootReceived(0,"testuser","testitem",1,nil,nil,true,false,false,0,false)
+		EchoExperience.OnLootReceived(0,"testuser","testitem",2,nil,nil,true,false,false,0,false)
+		EchoExperience.OnLootReceived(0,"testuser","testitem",2,nil,nil,false,false,false,0,false)
 	elseif #options == 0 or options[1] == "debug" then
 		local dg = EchoExperience.savedVariables.debug
 		EchoExperience.savedVariables.debug = not dg
@@ -129,24 +134,23 @@ end
 
 function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex, reason, rank, previousXP, currentXP)
 	EchoExperience.debugMsg("OnSkillExperienceUpdate")
-
 	--[[
 	if EchoExperience.savedVariables.debug then
-		d(EchoExperience.name .. " eventCode="  .. eventCode) -- Prints to chat.
-		d(EchoExperience.name .. " eventCode="  .. eventCode) -- Prints to chat.
-		d(EchoExperience.name .. " skillType="  .. skillType) -- Prints to chat.
-		d(EchoExperience.name .. " skillIndex=" .. skillIndex) -- Prints to chat.
-		d(EchoExperience.name .. " reason="     .. reason) -- Prints to chat.
-		d(EchoExperience.name .. " rank="       .. rank) -- Prints to chat.
-		d(EchoExperience.name .. " previousXP=" .. previousXP) -- Prints to chat.
-		d(EchoExperience.name .. " currentXP="  .. currentXP) -- Prints to chat.
+		d(EchoExperience.name .. " eventCode="  .. eventCode
+		.. " eventCode="  .. eventCode
+		.. " skillType="  .. skillType
+		.. " skillIndex=" .. skillIndex
+		.. " reason="     .. reason
+		.. " rank="       .. rank
+		.. " previousXP=" .. previousXP
+		.. " currentXP="  .. currentXP)
 	end
 	]]
 	local skillLineName, currentSkillRank, available = GetSkillLineInfo(skillType, skillIndex)
 	--if EchoExperience.savedVariables.debug then
-		--d(EchoExperience.name .. " skillLineName="     .. skillLineName ) -- Prints to chat.
-		--d(EchoExperience.name .. " currentSkillRank="  .. currentSkillRank ) -- Prints to chat.
-		--d(EchoExperience.name .. " available="         .. tostring(available) ) -- Prints to chat.
+		--d(EchoExperience.name .. " skillLineName="     .. skillLineName
+		--.. " currentSkillRank="  .. currentSkillRank
+		--.. " available="         .. tostring(available) )
 	--end
 	--[[
 	if not available then
@@ -212,7 +216,8 @@ end
 function EchoExperience.OnAlliancePtGain(eventCode,  alliancePoints,  playSound,  difference,  reason)
 	EchoExperience.debugMsg("OnAlliancePtGain Called")
 	if difference < 0 then
-		EchoExperience.outputToChanel("You subtracted " .. difference .. " AP.",msgTypeEXP)
+		local Ldifference = difference*-1.0
+		EchoExperience.outputToChanel("You subtracted " .. Ldifference .. " AP.",msgTypeEXP)
 	else
 		EchoExperience.outputToChanel("You gained " .. difference .. " AP.",msgTypeEXP)
 	end
@@ -226,12 +231,12 @@ function EchoExperience.OnExperienceGain(event, eventCode, reason, level, previo
 	--if ( unitTag ~= 'player' ) then return end
 	--local xpPrev = previousExperience;
 	if EchoExperience.savedVariables.debug then
-		d(EchoExperience.name .. " previousExperience=" .. previousExperience)
-		d(EchoExperience.name .. " currentExperience="  .. currentExperience)
-		d(EchoExperience.name .. " eventCode=" .. eventCode) -- Prints to chat.
-		d(EchoExperience.name .. " reason=" .. reason) -- Prints to chat.
-		d(EchoExperience.name .. " level="  .. level) -- Prints to chat.
-		d(EchoExperience.name .. " champ="  .. tostring(championPoints)) --allways nil?
+		d(EchoExperience.name .. " previousExperience=" .. previousExperience
+		.. " currentExperience="  .. currentExperience
+		.. " eventCode=" .. eventCode
+		.. " reason=" .. reason
+		.. " level="  .. level
+		.. " champ="  .. tostring(championPoints)) --allways nil?
 	end
 	local XPgain = previousExperience - level
 	EchoExperience.outputToChanel("You gained " .. XPgain .. " experience.",msgTypeEXP)
@@ -244,11 +249,32 @@ end
 --(num eventCode, str receivedBy, str itemName, num quantity,
 --ItemUISoundCategory soundCategory, LootItemType lootType,
 --bool self, bool isPickpocketLoot, str questItemIcon, num itemId, bool isStolen)
+--LOOTTPE=    LOOT_TYPE_ANY,    LOOT_TYPE_CHAOTIC_CREATIA, ,    LOOT_TYPE_COLLECTIBLE,     LOOT_TYPE_ITEM,     LOOT_TYPE_MONEY,     LOOT_TYPE_QUEST_ITEM,     LOOT_TYPE_STYLE_STONES,     LOOT_TYPE_TELVAR_STONES,    LOOT_TYPE_WRIT_VOUCHERS
 function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,isPickpocketLoot,questItemIcon,itemId,isStolen)
 	if(isSelf) then
-		EchoExperience.outputToChanel("You looted " .. tostring(itemName) .. ".",msgTypeLOOT)
+		local verb2 = 1
+		if(quantity>1) then verb2 = 2 end
+		local verb = GetString("SI_ECHOLOOT_YOU_GAIN_",verb2)
+
+		if(isPickpocketLoot) then
+			verb = GetString("SI_ECHOLOOT_YOU_PICK_",verb2)
+		elseif(lootType==LOOT_TYPE_QUEST_ITEM)then
+			verb = GetString("SI_ECHOLOOT_YOU_QUEST_",verb2)
+		end
+		local strL = string.format(verb,tostring(itemName),tostring(quantity))
+		EchoExperience.outputToChanel(strL,msgTypeLOOT)
 	elseif (EchoExperience.savedVariables.groupLoot and receivedBy~=nil) then
-		EchoExperience.outputToChanel(receivedBy.." looted " .. tostring(itemName) .. ".",msgTypeLOOT)
+		local verb2 = 1
+		if(quantity>1) then verb2 = 2 end
+		local verb = GetString(SI_ECHOLOOT_OTHER_GAIN)
+
+		if(isPickpocketLoot) then
+			verb = GetString(SI_ECHOLOOT_OTHER_PICK)
+		elseif(lootType==LOOT_TYPE_QUEST_ITEM) then
+			verb = GetString(SI_ECHOLOOT_OTHER_QUEST)
+		end
+		local strL = string.format(verb,receivedBy,tostring(itemName))
+		EchoExperience.outputToChanel(strL,msgTypeLOOT)
 	end
 end
 
@@ -312,7 +338,7 @@ end
 
 function EchoExperience.Activated(e)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name, EVENT_PLAYER_ACTIVATED)
-    d(EchoExperience.name .. GetString(SI_NEW_ADDON_MESSAGE)) -- Prints to chat.
+    --d(EchoExperience.name .. GetString(SI_ECHOEXP_MESSAGE)) -- Prints to chat.
     --ZO_AlertNoSuppression(UI_ALERT_CATEGORY_ALERT, nil,
     --    EchoExperience.name .. GetString(SI_NEW_ADDON_MESSAGE)) -- Top-right alert.
     zo_callLater(EchoExperience.DelayedStart, 3000)

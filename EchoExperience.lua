@@ -147,41 +147,13 @@ end
 --RETURNS:(num eventCode, SkillType skillType, num skillIndex, num reason, num rank, num previousXP, num currentXP)
 --NOTES:  XX
 function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex, reason, rank, previousXP, currentXP)
-	EchoExperience.debugMsg("OnSkillExperienceUpdate")
-	--[[
-	if EchoExperience.savedVariables.debug then
-		d(EchoExperience.name .. " eventCode="  .. eventCode
-		.. " eventCode="  .. eventCode
-		.. " skillType="  .. skillType
-		.. " skillIndex=" .. skillIndex
-		.. " reason="     .. reason
-		.. " rank="       .. rank
-		.. " previousXP=" .. previousXP
-		.. " currentXP="  .. currentXP)
-	end
-	]]
+
 	local skillLineName, currentSkillRank, available = GetSkillLineInfo(skillType, skillIndex)
-	--if EchoExperience.savedVariables.debug then
-		--d(EchoExperience.name .. " skillLineName="     .. skillLineName
-		--.. " currentSkillRank="  .. currentSkillRank
-		--.. " available="         .. tostring(available) )
-	--end
-	--[[
-	if not available then
-		if EchoExperience.savedVariables.debug then
-		d(EchoExperience.name .. "(CANT USE)"
-		.." name=".. skillLineName
-		.." eventCode=".. eventCode
-		.." skillType="  .. skillType
-		.." skillIndex=" .. skillIndex
-		)
-		end
-	end
-	]]
+
 	local lastRankXP, nextRankXP, currentXP = GetSkillLineXPInfo(skillType, skillIndex)
-	if available then
-		EchoExperience.debugMsg(" name="..skillLineName .." lastRankXP="..lastRankXP .." nextRankXP=".. nextRankXP .." currentXP=".. currentXP)
-	end
+	--if available then
+		--EchoExperience.debugMsg(" name="..skillLineName .." lastRankXP="..lastRankXP .." nextRankXP=".. nextRankXP .." currentXP=".. currentXP)
+	--end
 
 	-- Output
 	local diff = nextRankXP - currentXP
@@ -201,19 +173,31 @@ end
 
 --ONEvent  TODO
 --EVENT:   xx
---RETURNS:(num eventCode, xx)
+--RETURNS: (number eventCode, SkillType skillType, number skillIndex, boolean advised)
 --NOTES:  XX
-function EchoExperience.OnSkillLineAdded(event, eventCode, skillType, skillIndex)
+function EchoExperience.OnSkillLineAdded(eventCode, skillType, skillIndex)
 	--EchoExperience.debugMsg("OnSkillLineAdded. skillType="..tostring(skillType) .. " skillIndex="..tostring(skillIndex))
-	d("echoexp test osla: skillType="..tostring(skillType) .. " skillIndex="..tostring(skillIndex))
-	--EchoExperience.outputToChanel("Gained "..XPgain.."xp in [" ..skillLineName.."] ("..curCur.."/"..curNext..") need " .. diff .. "xp",msgTypeEXP)
+	EchoExperience.debugMsg("echoexp test osla: skillType="..tostring(skillType) .. " skillIndex="..tostring(skillIndex))
+	--learn clothing, skillType=3 skillIndex=false
+	if skillType ~= nil then
+		local name, rank, discovered, skillLineId, advised, unlockText = GetSkillLineInfo(skillType, skillIndex)
+		EchoExperience.debugMsg("echoexp test osla: name="..tostring(name) .. " discovered="..tostring(discovered))
+		--GetSkillLineInfo(number SkillType skillType, number skillIndex)
+        --Returns: string name, number rank, boolean discovered, number skillLineId, boolean advised, string unlockText
+		if name ~= nil then --TODO discovered and ??
+			--local strI = "You learned the skillline, <<1>>"
+			local strI = GetString(SI_ECHOEXP_SKILLINE)
+			local strL = zo_strformat(strI, name)
+			EchoExperience.outputToChanel(strL,msgTypeEXP)
+		end
+	end
 end
 
 --ONEvent  TODO
 --EVENT:   xx
 --RETURNS:(num eventCode, xx)
 function EchoExperience.OnChampionUnlocked(eventCode)
-	EchoExperience.debugMsg("OnChampionUnlocked")
+	--EchoExperience.debugMsg("OnChampionUnlocked")
 	--FORMAT
 	local strI = GetString(SI_ECHOEXP_CP_UNLOCKED)
 	EchoExperience.outputToChanel(strI.." eventcode="..tostring(eventCode),msgTypeEXP)
@@ -225,7 +209,7 @@ end
 --RETURNS:(number eventCode, number progressionIndex, number lastRankXP, number nextRankXP, number currentXP, boolean atMorph)
 --NOTES:  currentXP is new total xp, last is all the way back.
 function EchoExperience.OnAbilityExperienceUpdate(eventCode, progressionIndex, lastRankXP, nextRankXP, currentXP, atMorph)
-	EchoExperience.debugMsg("OnAbilityExperienceUpdate Called")
+	--EchoExperience.debugMsg("OnAbilityExperienceUpdate Called")
 	--EchoExperience.debugMsg("OnAbilityExperienceUpdate eventCode="..eventCode.." progressionIndex="..progressionIndex .." lastRankXP="..lastRankXP
 	--.." nextRankXP="..nextRankXP
 	--.." currentXP="..currentXP
@@ -233,7 +217,7 @@ function EchoExperience.OnAbilityExperienceUpdate(eventCode, progressionIndex, l
 	--)
 	local name, morph, rank = GetAbilityProgressionInfo(progressionIndex)
 	--EchoExperience.outputToChanel("You gained exp in "..name.."." )
-	EchoExperience.debugMsg("OnAbilityExperienceUpdate Done")
+	--EchoExperience.debugMsg("OnAbilityExperienceUpdate Done")
 end
 
 --ONEvent  shows that you discovered something/somewhere
@@ -241,7 +225,7 @@ end
 --RETURNS:(num eventCode, str areaName, num level, num previousExperience, num currentExperience, num championPoints)
 --NOTES:  XX
 function EchoExperience.OnDiscoveryExperienceGain(event, eventCode, areaName, level, previousExperience, currentExperience, championPoints)
-	EchoExperience.debugMsg("OnDiscoveryExperienceGain Called")
+	--EchoExperience.debugMsg("OnDiscoveryExperienceGain Called")
 	--local XPgain = currentExperience - previousExperience -
 	--EchoExperience.outputToChanel("You gained " .. XPgain .. " experience.",msgTypeEXP)
 	--[[
@@ -261,7 +245,7 @@ function EchoExperience.OnDiscoveryExperienceGain(event, eventCode, areaName, le
 	local strL = zo_strformat(strI, eventCode )
 	EchoExperience.outputToChanel(strL,msgTypeEXP)
 	--TODO championPoints??
-	EchoExperience.debugMsg("OnDiscoveryExperienceGain Done")
+	--EchoExperience.debugMsg("OnDiscoveryExperienceGain Done")
 end
 
 --ONEvent  TODO   WORKING ON
@@ -269,7 +253,7 @@ end
 --RETURNS:(num eventCode, num pointsBefore, num pointsNow, num partialPointsBefore, num partialPointsNow)
 --NOTES:  Hopefully Skyshards are the only thing that gives partial points
 function EchoExperience.OnSkillPtChange(eventCode, pointsBefore, pointsNow, partialPointsBefore, partialPointsNow)
-	EchoExperience.debugMsg("OnSkillPtChange Called")
+	--EchoExperience.debugMsg("OnSkillPtChange Called")
 	EchoExperience.debugMsg("EE skptchange: eventCode="..tostring(eventCode) .." pointsBefore="..tostring(pointsBefore).." pointsNow="..tostring(pointsNow)
 	.." partialPointsBefore="..tostring(partialPointsBefore).." partialPointsNow="..tostring(partialPointsNow)
 	)
@@ -277,15 +261,19 @@ function EchoExperience.OnSkillPtChange(eventCode, pointsBefore, pointsNow, part
 	if partialPointsBefore~=nil and partialPointsNow~=nil and partialPointsBefore==2 and partialPointsNow==0 then
 		skyShardSkillUP = true
 	end
+	if partialPointsBefore > partialPointsNow then
+		EchoExperience.debugMsg("Returned since probably just spend points")
+		return
+	end
 	if partialPointsBefore~=nil and partialPointsNow~=nil and partialPointsNow > partialPointsBefore then
-		d("echoexp(ospc test): eventCode="..tostring(eventCode))
+		EchoExperience.debugMsg("echoexp(ospc test): eventCode="..tostring(eventCode))
 		local strI = GetString(SI_ECHOEXP_SKY_1)
 		--local strI = "You absorbed a skyshard! (<<1>> of <<2>>)."
 		local strL = zo_strformat(strI, partialPointsNow, 3 )
 		EchoExperience.outputToChanel(strL,msgTypeEXP)
 	end
 	if pointsBefore~=nil and partialPointsNow~=nil and pointsNow > pointsBefore then
-		d("echoexp(ospc test): eventCode="..tostring(eventCode))
+		EchoExperience.debugMsg("echoexp(ospc test): eventCode="..tostring(eventCode))
 		local diff =  pointsNow - pointsBefore
 		local strI = GetString(SI_ECHOEXP_SKY_2)
 		--local strI = "You gained a skill point! (<<1>>)."
@@ -300,7 +288,7 @@ function EchoExperience.OnSkillPtChange(eventCode, pointsBefore, pointsNow, part
 		--EchoExperience.outputToChanel(strL,msgTypeEXP)
 	end
 	]]
-	EchoExperience.debugMsg("OnSkillPtChange Done")
+	--EchoExperience.debugMsg("OnSkillPtChange Done")
 end
 
 --ONEvent  shows alliance point gains
@@ -323,7 +311,7 @@ function EchoExperience.OnAlliancePtGain(eventCode,  alliancePoints,  playSound,
 		EchoExperience.outputToChanel(strL,msgTypeEXP)
 		--EchoExperience.outputToChanel("You gained " .. difference .. " AP.",msgTypeEXP)
 	end
-	EchoExperience.debugMsg("OnAlliancePtGain Done")
+	--EchoExperience.debugMsg("OnAlliancePtGain Done")
 end
 
 --ONEvent  shows skill exp gains and CP gains
@@ -331,17 +319,17 @@ end
 --RETURNS:(num eventCode, ProgressReason reason, num level, num previousExperience, num currentExperience, num championPoints)
 --NOTES:  XX
 function EchoExperience.OnExperienceGain(event, eventCode, reason, level, previousExperience, currentExperience, championPoints)
-	EchoExperience.debugMsg("OnExperienceGain Called")
+	--EchoExperience.debugMsg("OnExperienceGain Called")
 	--if ( unitTag ~= 'player' ) then return end
 	--local xpPrev = previousExperience;
-	if EchoExperience.savedVariables.debug then
-		d(EchoExperience.name .. " previousExperience=" .. previousExperience
+	--[[
+	EchoExperience.debugMsg(EchoExperience.name .. " previousExperience=" .. previousExperience
 		.. " currentExperience="  .. currentExperience
 		.. " eventCode=" .. eventCode
 		.. " reason=" .. reason
 		.. " level="  .. level
 		.. " champ="  .. tostring(championPoints)) --allways nil?
-	end
+	]]
 	local XPgain = previousExperience - level
 	--FORMAT
 	local strI = GetString(SI_ECHOEXP_XP_GAIN)
@@ -353,7 +341,7 @@ function EchoExperience.OnExperienceGain(event, eventCode, reason, level, previo
 		--TODO FORMAT
 		EchoExperience.outputToChanel("You gained " .. tostring(championPoints) .. " CP(3).",msgTypeEXP)
 	end
-	EchoExperience.debugMsg("OnExperienceGain Done")
+	--EchoExperience.debugMsg("OnExperienceGain Done")
 end
 
 --ONEvent  shows loot gains
@@ -365,15 +353,31 @@ end
 --LOOTTPE=LOOT_TYPE_ANY,LOOT_TYPE_CHAOTIC_CREATIA, LOOT_TYPE_COLLECTIBLE, LOOT_TYPE_ITEM, LOOT_TYPE_MONEY,
 --				LOOT_TYPE_QUEST_ITEM, LOOT_TYPE_STYLE_STONES, LOOT_TYPE_TELVAR_STONES,LOOT_TYPE_WRIT_VOUCHERS
 function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,isPickpocketLoot,questItemIcon,itemId,isStolen)
-	--GetItemLinkTraitInfo(string itemLink)
-    --Returns: number ItemTraitType traitType, string traitDescription
-	--TODO extract TRAIT info?
+	--Search on ESOUI Source Code GetItemLinkQuality(string itemLink)
+	--Returns: number ItemQuality quality
+
+	local traitIS = nil
+	if itemType ~= nil then
+		--if itemType ~= ITEMTYPE_ARMOR_TRAIT and itemType ~= ITEMTYPE_WEAPON_TRAIT then
+		traitIS = EchoExperience:GetTraitInfo(lootType)
+		--end
+		EchoExperience.debugMsg(EchoExperience.name
+			.." lootType=" .. tostring(lootType)
+			.." traitIS="  .. tostring(traitIS)
+		)
+	end
 
 	if(isSelf) then
 		--<<1>> is itemname
 		--<<2>> is quantity
 		local qualifier = 1
-		if(quantity>1) then qualifier = 2 end
+		if(quantity>1 and traitIS ~=nil) then
+			qualifier = 4
+		elseif(quantity>1) then
+			qualifier = 2
+		elseif traitIS ~=nil then
+			qualifier = 3
+		end
 		local sentence = GetString("SI_ECHOLOOT_YOU_GAIN_",qualifier)
 		if(isPickpocketLoot) then
 			sentence = GetString("SI_ECHOLOOT_YOU_PICK_",qualifier)
@@ -381,7 +385,7 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 			sentence = GetString("SI_ECHOLOOT_YOU_QUEST_",qualifier)
 		end
 		--local strL = string.format(verb,tostring(itemName),tostring(quantity))
-		local strL = zo_strformat(sentence, tostring(itemName), tostring(quantity))
+		local strL = zo_strformat(sentence, tostring(itemName), tostring(quantity), tostring(traitIS) )
 		EchoExperience.outputToChanel(strL,msgTypeLOOT)
 	elseif (EchoExperience.savedVariables.groupLoot and receivedBy~=nil) then
 		--<<1>> is who looted
@@ -396,9 +400,21 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 			sentence = GetString("SI_ECHOLOOT_OTHER_QUEST_",qualifier)
 		end
 		--local strL = string.format(sentence,receivedBy,tostring(itemName))
-		local strL = zo_strformat(sentence, receivedBy, tostring(itemName), tostring(quantity))
+		local strL = zo_strformat(sentence, receivedBy, tostring(itemName), tostring(quantity), tostring(traitIS) )
 		EchoExperience.outputToChanel(strL,msgTypeLOOT)
 	end
+end
+
+function EchoExperience:GetTraitInfo(itemName)
+	local traitName = nil
+	local traitType, traitDescription = GetItemLinkTraitInfo(itemName)
+	if (traitType ~= ITEM_TRAIT_TYPE_NONE) then
+		traitName = GetString("SI_ITEMTRAITTYPE", traitType)
+	end
+    --Returns: number ItemTraitType traitType, string traitDescription
+	--lootType ~= LOOT_TYPE_COLLECTIBLE
+	--	local traitType = GetItemLinkTraitInfo(itemName);
+	return traitName
 end
 
 -----------------------------
@@ -415,17 +431,16 @@ function EchoExperience.SetupExpGainsEvents(reportMe)
 			EchoExperience.outputToChanel(GetString(SI_ECHOEXP_EXPGAINS_SHOW),msgTypeSYS)
 			--EchoExperience.outputToChanel("EchoExp is showing Experience Gains",msgTypeSYS)
 		end
-		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."SkillXPGain",	EVENT_SKILL_XP_UPDATE,     EchoExperience.OnSkillExperienceUpdate)
-		--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnCombatState",	EVENT_PLAYER_COMBAT_STATE, EchoExperience.OnCombatState )
-		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."SkillLineAdded",	EVENT_SKILL_LINE_ADDED,  EchoExperience.OnSkillLineAdded)
+		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."SkillXPGain",	    EVENT_SKILL_XP_UPDATE,          EchoExperience.OnSkillExperienceUpdate)
+		--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnCombatState",	EVENT_PLAYER_COMBAT_STATE,      EchoExperience.OnCombatState )
+		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."SkillLineAdded",	EVENT_SKILL_LINE_ADDED,         EchoExperience.OnSkillLineAdded)
 		--TODO dont need sometimes?
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."ChampionUnlocked", EVENT_CHAMPION_SYSTEM_UNLOCKED, EchoExperience.OnChampionUnlocked)
-		--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPUpdate",		EVENT_EXPERIENCE_UPDATE, EchoExperience.OnExperienceUpdate)
-		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPGain",		EVENT_EXPERIENCE_GAIN,   EchoExperience.OnExperienceGain)
-		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnAlliancePtGain",		EVENT_ALLIANCE_POINT_UPDATE,   EchoExperience.OnAlliancePtGain)
-		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnSkillPtChange",		EVENT_SKILL_POINTS_CHANGED,   EchoExperience.OnSkillPtChange)
-
-		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnDiscoveryExp",		EVENT_DISCOVERY_EXPERIENCE,   EchoExperience.OnDiscoveryExperienceGain)
+		--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPUpdate",		EVENT_EXPERIENCE_UPDATE,        EchoExperience.OnExperienceUpdate)
+		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPGain",		    EVENT_EXPERIENCE_GAIN,          EchoExperience.OnExperienceGain)
+		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnAlliancePtGain",	EVENT_ALLIANCE_POINT_UPDATE,    EchoExperience.OnAlliancePtGain)
+		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnSkillPtChange",	EVENT_SKILL_POINTS_CHANGED,     EchoExperience.OnSkillPtChange)
+		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnDiscoveryExp",	EVENT_DISCOVERY_EXPERIENCE,     EchoExperience.OnDiscoveryExperienceGain)
 		--not really needed
 		--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."AbilityProgression",EVENT_ABILITY_PROGRESSION_XP_UPDATE, EchoExperience.OnAbilityExperienceUpdate)
 		--

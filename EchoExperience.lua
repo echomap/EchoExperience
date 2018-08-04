@@ -357,14 +357,15 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 	--Search on ESOUI Source Code GetItemLinkQuality(string itemLink)
 	--Returns: number ItemQuality quality
 
-	local traitIS = nil
-	if lootType ~= nil then
+	local traitName = nil
+	if lootType ~= nil and lootType ~= LOOT_TYPE_MONEY and lootType ~= LOOT_TYPE_QUEST_ITEM then
 		--if itemType ~= ITEMTYPE_ARMOR_TRAIT and itemType ~= ITEMTYPE_WEAPON_TRAIT then
-		traitIS = EchoExperience:GetTraitInfo(itemName)
+		--lootType ~= LOOT_TYPE_COLLECTIBLE
+		traitName = EchoExperience:GetTraitInfo(itemName)
 		--end
 		EchoExperience.debugMsg(EchoExperience.name
 			.." lootType=" .. tostring(lootType)
-			.." traitIS="  .. tostring(traitIS)
+			.." traitName="  .. tostring(traitName)
 		)
 	end
 
@@ -372,13 +373,21 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 		--<<1>> is itemname
 		--<<2>> is quantity
 		local qualifier = 1
-		if(quantity>1 and traitIS ~=nil) then
-			qualifier = 4
-		elseif(quantity>1) then
-			qualifier = 2
-		elseif traitIS ~=nil then
-			qualifier = 3
+		if(quantity==1) then
+			if(traitName ~= nil) then
+				qualifier = 3
+			else
+				qualifier = 1
+			end
+		else
+			if(traitName ~=nil) then
+				qualifier = 4
+			else
+				qualifier = 2
+			end
 		end
+		EchoExperience.debugMsg("qualifier=" ..tostring(qualifier) )
+
 		local sentence = GetString("SI_ECHOLOOT_YOU_GAIN_",qualifier)
 		if(isPickpocketLoot) then
 			sentence = GetString("SI_ECHOLOOT_YOU_PICK_",qualifier)
@@ -386,7 +395,7 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 			sentence = GetString("SI_ECHOLOOT_YOU_QUEST_",qualifier)
 		end
 		--local strL = string.format(verb,tostring(itemName),tostring(quantity))
-		local strL = zo_strformat(sentence, tostring(itemName), tostring(quantity), tostring(traitIS) )
+		local strL = zo_strformat(sentence, tostring(itemName), tostring(quantity), tostring(traitName) )
 		EchoExperience.outputToChanel(strL,msgTypeLOOT)
 	elseif (EchoExperience.savedVariables.groupLoot and receivedBy~=nil) then
 		--<<1>> is who looted
@@ -401,7 +410,7 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 			sentence = GetString("SI_ECHOLOOT_OTHER_QUEST_",qualifier)
 		end
 		--local strL = string.format(sentence,receivedBy,tostring(itemName))
-		local strL = zo_strformat(sentence, receivedBy, tostring(itemName), tostring(quantity), tostring(traitIS) )
+		local strL = zo_strformat(sentence, receivedBy, tostring(itemName), tostring(quantity), tostring(traitName) )
 		EchoExperience.outputToChanel(strL,msgTypeLOOT)
 	end
 end
@@ -409,12 +418,13 @@ end
 function EchoExperience:GetTraitInfo(itemName)
 	local traitName = nil
 	local traitType, traitDescription = GetItemLinkTraitInfo(itemName)
+	--
+	EchoExperience.debugMsg(" traitType=" .. tostring(traitType)
+			.." traitDescription="  .. tostring(traitDescription)
+		)
 	if (traitType ~= ITEM_TRAIT_TYPE_NONE) then
 		traitName = GetString("SI_ITEMTRAITTYPE", traitType)
 	end
-    --Returns: number ItemTraitType traitType, string traitDescription
-	--lootType ~= LOOT_TYPE_COLLECTIBLE
-	--	local traitType = GetItemLinkTraitInfo(itemName);
 	return traitName
 end
 

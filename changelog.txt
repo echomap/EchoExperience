@@ -1,5 +1,7 @@
 EchoExperience
-0.0.X starting localization, /echoexp testfull, xx, Skyshard notification, discovery notification, loot details/messages
+0.0.X
+0.0.8 starting localization, /echoexp testfull, xx, Skyshard notification, discovery notification, loot details/messages
+		updated code, added comments, cp reporting stared, and loot's traits started
 0.0.7 added ability to send loot messages to a different window/tab
 0.0.6 update save settings code/ can show AP gain/loss. discovery exp/ looted items can be reported
 0.0.5 Show loot option, w/ different color

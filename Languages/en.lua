@@ -29,23 +29,20 @@ local localization_strings = {
 
 	--LOOT
 	--<<1>> is itemname
+	--<<2>> is quantity
+	--<<3>> is traitname
     SI_ECHOLOOT_YOU_GAIN_1  = "You looted: <<1>>.",
 	SI_ECHOLOOT_YOU_PICK_1  = "You acquired: <<1>>.",
 	SI_ECHOLOOT_YOU_QUEST_1 = "You looted: <<1>> (quest item).",
-	--<<1>> is itemname
-	--<<2>> is traitname
-    SI_ECHOLOOT_YOU_GAIN_3  = "You looted: <<1>> (<<2>>).",
-	SI_ECHOLOOT_YOU_PICK_3  = "You acquired: <<1>> (<<2>>).",
-	SI_ECHOLOOT_YOU_QUEST_3 = "You looted: <<1>> (<<2>>) (quest item).",
 
-	--<<1>> is itemname
-	--<<2>> is quantity
+    SI_ECHOLOOT_YOU_GAIN_3  = "You looted: <<1>> (<<3>>).",
+	SI_ECHOLOOT_YOU_PICK_3  = "You acquired: <<1>> (<<3>>).",
+	SI_ECHOLOOT_YOU_QUEST_3 = "You looted: <<1>> (<<3>>) (quest item).",
+
     SI_ECHOLOOT_YOU_GAIN_2  = "You looted: <<2>>x <<1>>.",
 	SI_ECHOLOOT_YOU_PICK_2  = "You acquired: <<2>>x <<1>>.",
 	SI_ECHOLOOT_YOU_QUEST_2 = "You looted(quest): <<1>>.",
-	--<<1>> is itemname
-	--<<2>> is quantity
-	--<<3>> is traitname
+
     SI_ECHOLOOT_YOU_GAIN_4  = "You looted: <<2>>x <<1>> (<<3>>).",
 	SI_ECHOLOOT_YOU_PICK_4  = "You acquired: <<2>>x <<1>> (<<3>>).",
 	SI_ECHOLOOT_YOU_QUEST_5 = "You looted(quest): <<1>> (<<3>>).",

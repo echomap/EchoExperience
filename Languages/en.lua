@@ -16,6 +16,7 @@ local localization_strings = {
 	SI_ECHOEXP_XP_GAIN       = "You gained <<1>> experience.",
 	SI_ECHOEXP_XP_SKILL_GAIN = "Gained <<1>>xp in [<<2>>] (<<3>>/<<4>>) need <<5>>xp",
 	SI_ECHOEXP_CP_UNLOCKED   = "You unlocked Champion points!",
+	SI_ECHOEXP_CP_EARNED     = "You gained <<1>>cp.",
 	SI_ECHOEXP_DISCOVERY     = "You discovered: <<1>>.",
 	SI_ECHOEXP_SKILLINE      = "You learned the skillline: <<1>>",
 

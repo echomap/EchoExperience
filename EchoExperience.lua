@@ -261,7 +261,7 @@ function EchoExperience.OnSkillPtChange(eventCode, pointsBefore, pointsNow, part
 	if partialPointsBefore~=nil and partialPointsNow~=nil and partialPointsBefore==2 and partialPointsNow==0 then
 		skyShardSkillUP = true
 	end
-	if partialPointsBefore > partialPointsNow then
+	if pointsBefore > pointsNow then
 		EchoExperience.debugMsg("Returned since probably just spend points")
 		return
 	end
@@ -336,10 +336,11 @@ function EchoExperience.OnExperienceGain(event, eventCode, reason, level, previo
 	local strL = zo_strformat(strI, XPgain )
 	EchoExperience.outputToChanel(strL,msgTypeEXP)
 	--EchoExperience.outputToChanel("You gained " .. XPgain .. " experience.",msgTypeEXP)
-	--TODO championPoints
 	if(championPoints) then
-		--TODO FORMAT
-		EchoExperience.outputToChanel("You gained " .. tostring(championPoints) .. " CP(3).",msgTypeEXP)
+		local strI = GetString(SI_ECHOEXP_CP_EARNED)
+		local strL = zo_strformat(strI, championPoints)
+		EchoExperience.outputToChanel(strL,msgTypeEXP)
+		--EchoExperience.outputToChanel("You gained " .. tostring(championPoints) .. " CP(3).",msgTypeEXP)
 	end
 	--EchoExperience.debugMsg("OnExperienceGain Done")
 end
@@ -357,9 +358,9 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 	--Returns: number ItemQuality quality
 
 	local traitIS = nil
-	if itemType ~= nil then
+	if lootType ~= nil then
 		--if itemType ~= ITEMTYPE_ARMOR_TRAIT and itemType ~= ITEMTYPE_WEAPON_TRAIT then
-		traitIS = EchoExperience:GetTraitInfo(lootType)
+		traitIS = EchoExperience:GetTraitInfo(itemName)
 		--end
 		EchoExperience.debugMsg(EchoExperience.name
 			.." lootType=" .. tostring(lootType)

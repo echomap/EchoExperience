@@ -9,7 +9,9 @@ EchoExperience = {
 }
 local 	msgTypeSYS     = 1
 local	msgTypeEXP     = 2
-local   msgTypeLOOT    = 3
+local	msgTypeEXP2    = 3
+local   msgTypeLOOT    = 4
+local   msgTypeLOOT2   = 5
 
 local defaultSettings = {
 	sversion   = EchoExperience.version,
@@ -18,16 +20,20 @@ local defaultSettings = {
 	verboseExp = true,
     tab        = 1,
     window     = 1,
+    tabexp2    = 0,
+    windowexp2 = 0,
 	rgba    = {
       ["r"] = 1,
       ["g"] = 1,
       ["b"] = 1,
       ["a"] = 0.9,
 	},
-	showLoot   = false,
-	groupLoot  = false,
-	tabloot    = 1,
-    windowloot = 1,
+	showLoot    = false,
+	groupLoot   = false,
+	tabloot     = 1,
+    windowloot  = 1,
+	tabloot2    = 0,
+    windowloot2 = 0,
 	rgba2   = {
       ["r"] = 1,
       ["g"] = 1,
@@ -53,13 +59,23 @@ function EchoExperience.outputToChanel(text,msgType)
 	elseif msgType == msgTypeEXP then
 		lTab = EchoExperience.savedVariables.tab
 		lWin  = EchoExperience.savedVariables.window
+	elseif msgType == msgTypeEXP2 then
+		lTab = EchoExperience.savedVariables.tabexp2
+		lWin  = EchoExperience.savedVariables.windowexp2
 	elseif msgType == msgTypeLOOT then
 		lTab = EchoExperience.savedVariables.tabloot
 		lWin  = EchoExperience.savedVariables.windowloot
+	elseif msgType == msgTypeLOOT2 then
+		lTab = EchoExperience.savedVariables.tabloot2
+		lWin  = EchoExperience.savedVariables.windowloot2
 	else
 		--
 	end
 	--EchoExperience.debugMsg("EE. lTab="..tostring(lTab) .." lWin="..tostring(lWin) .." msgType="..tostring(msgType) )
+	if( lTab == 0 or lWin == 0 ) then
+		EchoExperience.debugMsg("EchoExp returning per no TAB/Window set")
+		return
+	end
 
 	--Output what
 	if( text == nil or text == "" ) then
@@ -88,8 +104,12 @@ function EchoExperience:ColorizeText(text,msgType)
 		return text
 	elseif msgType == msgTypeEXP then
 		rgba = EchoExperience.savedVariables.rgba
+	elseif msgType == msgTypeEXP2 then
+		rgba = EchoExperience.savedVariables.rgba --TODO rgbaE2
 	elseif msgType == msgTypeLOOT then
 		rgba = EchoExperience.savedVariables.rgba2
+	elseif msgType == msgTypeLOOT2 then
+		rgba = EchoExperience.savedVariables.rgba --TODO rgbaL2
 	else
 		return text
 	end
@@ -117,8 +137,10 @@ function EchoExperience.SlashCommandHandler(text)
 		-- Display help
 	elseif #options == 0 or options[1] == "testexp" then
 		EchoExperience.outputToChanel("Gained 0 xp in [Test] (1000/10000) need 9000xp",msgTypeEXP)
+		EchoExperience.outputToChanel("Gained 0 xp in [Test] (1000/10000) need 9000xp",msgTypeEXP2)
 	elseif #options == 0 or options[1] == "testloot" then
 		EchoExperience.outputToChanel("You looted TESTITEM.",msgTypeLOOT)
+		EchoExperience.outputToChanel("You looted TESTITEM.",msgTypeLOOT2)
 	elseif #options == 0 or options[1] == "testfull" then
 		--eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,isPickpocketLoot,questItemIcon,itemId,isStolen)
 		EchoExperience.OnLootReceived(0,"testuser","testitem",1,nil,nil,true,false,false,0,false)
@@ -167,6 +189,7 @@ function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex
 		local strI = GetString(SI_ECHOEXP_XP_SKILL_GAIN)
 		local strL = zo_strformat(strI, XPgain, skillLineName, curCur, curNext, diff )
 		EchoExperience.outputToChanel(strL,msgTypeEXP)
+		EchoExperience.outputToChanel(strL,msgTypeEXP2)
 		--EchoExperience.outputToChanel("Gained "..XPgain.."xp in [" ..skillLineName.."] ("..curCur.."/"..curNext..") need " .. diff .. "xp",msgTypeEXP)
 	end
 end
@@ -189,6 +212,7 @@ function EchoExperience.OnSkillLineAdded(eventCode, skillType, skillIndex)
 			local strI = GetString(SI_ECHOEXP_SKILLINE)
 			local strL = zo_strformat(strI, name)
 			EchoExperience.outputToChanel(strL,msgTypeEXP)
+			EchoExperience.outputToChanel(strL,msgTypeEXP2)
 		end
 	end
 end
@@ -201,6 +225,7 @@ function EchoExperience.OnChampionUnlocked(eventCode)
 	--FORMAT
 	local strI = GetString(SI_ECHOEXP_CP_UNLOCKED)
 	EchoExperience.outputToChanel(strI.." eventcode="..tostring(eventCode),msgTypeEXP)
+	EchoExperience.outputToChanel(strI.." eventcode="..tostring(eventCode),msgTypeEXP2)
 	--EchoExperience.outputToChanel("You unlocked Champion points!".." eventcode="..tostring(eventCode),msgTypeEXP)
 end
 
@@ -244,6 +269,7 @@ function EchoExperience.OnDiscoveryExperienceGain(event, eventCode, areaName, le
 	local strI = GetString(SI_ECHOEXP_DISCOVERY)
 	local strL = zo_strformat(strI, eventCode )
 	EchoExperience.outputToChanel(strL,msgTypeEXP)
+	EchoExperience.outputToChanel(strL,msgTypeEXP2)
 	--TODO championPoints??
 	--EchoExperience.debugMsg("OnDiscoveryExperienceGain Done")
 end
@@ -271,6 +297,7 @@ function EchoExperience.OnSkillPtChange(eventCode, pointsBefore, pointsNow, part
 		--local strI = "You absorbed a skyshard! (<<1>> of <<2>>)."
 		local strL = zo_strformat(strI, partialPointsNow, 3 )
 		EchoExperience.outputToChanel(strL,msgTypeEXP)
+		EchoExperience.outputToChanel(strL,msgTypeEXP2)
 	end
 	if pointsBefore~=nil and partialPointsNow~=nil and pointsNow > pointsBefore then
 		EchoExperience.debugMsg("echoexp(ospc test): eventCode="..tostring(eventCode))
@@ -279,6 +306,7 @@ function EchoExperience.OnSkillPtChange(eventCode, pointsBefore, pointsNow, part
 		--local strI = "You gained a skill point! (<<1>>)."
 		local strL = zo_strformat(strI, diff )
 		EchoExperience.outputToChanel(strL,msgTypeEXP)
+		EchoExperience.outputToChanel(strL,msgTypeEXP2)
 	end
 	--[[
 	if partialPointsBefore~=nil and partialPointsNow~=nil and partialPointsBefore==2 and partialPointsNow=0 then
@@ -303,12 +331,14 @@ function EchoExperience.OnAlliancePtGain(eventCode,  alliancePoints,  playSound,
 		local strI = GetString(SI_ECHOEXP_AP_LOSS)
 		local strL = zo_strformat(strI, Ldifference )
 		EchoExperience.outputToChanel(strL,msgTypeEXP)
+		EchoExperience.outputToChanel(strL,msgTypeEXP2)
 		--EchoExperience.outputToChanel("You subtracted " .. Ldifference .. " AP.",msgTypeEXP)
 	else
 		--FORMAT
 		local strI = GetString(SI_ECHOEXP_AP_GAIN)
 		local strL = zo_strformat(strI, difference )
 		EchoExperience.outputToChanel(strL,msgTypeEXP)
+		EchoExperience.outputToChanel(strL,msgTypeEXP2)
 		--EchoExperience.outputToChanel("You gained " .. difference .. " AP.",msgTypeEXP)
 	end
 	--EchoExperience.debugMsg("OnAlliancePtGain Done")
@@ -335,11 +365,13 @@ function EchoExperience.OnExperienceGain(event, eventCode, reason, level, previo
 	local strI = GetString(SI_ECHOEXP_XP_GAIN)
 	local strL = zo_strformat(strI, XPgain )
 	EchoExperience.outputToChanel(strL,msgTypeEXP)
+	EchoExperience.outputToChanel(strL,msgTypeEXP2)
 	--EchoExperience.outputToChanel("You gained " .. XPgain .. " experience.",msgTypeEXP)
 	if(championPoints) then
 		local strI = GetString(SI_ECHOEXP_CP_EARNED)
 		local strL = zo_strformat(strI, championPoints)
 		EchoExperience.outputToChanel(strL,msgTypeEXP)
+		EchoExperience.outputToChanel(strL,msgTypeEXP2)
 		--EchoExperience.outputToChanel("You gained " .. tostring(championPoints) .. " CP(3).",msgTypeEXP)
 	end
 	--EchoExperience.debugMsg("OnExperienceGain Done")
@@ -397,6 +429,9 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 		--local strL = string.format(verb,tostring(itemName),tostring(quantity))
 		local strL = zo_strformat(sentence, tostring(itemName), tostring(quantity), tostring(traitName) )
 		EchoExperience.outputToChanel(strL,msgTypeLOOT)
+		if( EchoExperience.savedVariables.tabloot2 >0 and EchoExperience.savedVariables.windowloot2 >0 ) then
+			EchoExperience.outputToChanel(strL,msgTypeLOOT2)
+		end
 	elseif (EchoExperience.savedVariables.groupLoot and receivedBy~=nil) then
 		--<<1>> is who looted
 		--<<2>> is itemname
@@ -412,6 +447,9 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 		--local strL = string.format(sentence,receivedBy,tostring(itemName))
 		local strL = zo_strformat(sentence, receivedBy, tostring(itemName), tostring(quantity), tostring(traitName) )
 		EchoExperience.outputToChanel(strL,msgTypeLOOT)
+		if( EchoExperience.savedVariables.tabloot2 >0 and EchoExperience.savedVariables.windowloot2 >0 ) then
+			EchoExperience.outputToChanel(strL,msgTypeLOOT2)
+		end
 	end
 end
 

@@ -386,18 +386,24 @@ end
 --LOOTTPE=LOOT_TYPE_ANY,LOOT_TYPE_CHAOTIC_CREATIA, LOOT_TYPE_COLLECTIBLE, LOOT_TYPE_ITEM, LOOT_TYPE_MONEY,
 --				LOOT_TYPE_QUEST_ITEM, LOOT_TYPE_STYLE_STONES, LOOT_TYPE_TELVAR_STONES,LOOT_TYPE_WRIT_VOUCHERS
 function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,isPickpocketLoot,questItemIcon,itemId,isStolen)
-	--Search on ESOUI Source Code GetItemLinkQuality(string itemLink)
-	--Returns: number ItemQuality quality
-
-	local traitName = nil
+	local extraInfo = nill
 	if lootType ~= nil and lootType ~= LOOT_TYPE_MONEY and lootType ~= LOOT_TYPE_QUEST_ITEM then
-		--if itemType ~= ITEMTYPE_ARMOR_TRAIT and itemType ~= ITEMTYPE_WEAPON_TRAIT then
-		--lootType ~= LOOT_TYPE_COLLECTIBLE
-		traitName = EchoExperience:GetTraitInfo(itemName)
+		--if itemType ~= ITEMTYPE_ARMOR_TRAIT and itemType ~= ITEMTYPE_WEAPON_TRAIT -- lootType ~= LOOT_TYPE_COLLECTIBLE
+		local traitName, setName = EchoExperience:GetExtraInfo(itemName)
 		--end
-		EchoExperience.debugMsg(EchoExperience.name
-			.." lootType=" .. tostring(lootType)
-			.." traitName="  .. tostring(traitName)
+		--
+		if( traitName ~=nil and setName ~= nil) then
+			extraInfo = string.format("%s, %s set",traitName, setName)
+		elseif( traitName ~= nil) then
+			extraInfo = string.format("%s",traitName)
+		elseif( setName ~= nil) then
+			extraInfo = string.format("%s set",setName)
+		end
+		EchoExperience.debugMsg("OnLootReceived: "
+			.." lootType="  .. tostring(lootType)
+			.." traitName=" .. tostring(traitName)
+			.." setName="   .. tostring(setName)
+			.." extraInfo=" .. tostring(extraInfo)
 		)
 	end
 
@@ -406,16 +412,16 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 		--<<2>> is quantity
 		local qualifier = 1
 		if(quantity==1) then
-			if(traitName ~= nil) then
+			if(extraInfo ~= nil) then
 				qualifier = 3
 			else
-				qualifier = 1
+				qualifier = 1 --**1 item, no extra info
 			end
 		else
-			if(traitName ~=nil) then
+			if(extraInfo ~=nil) then
 				qualifier = 4
 			else
-				qualifier = 2
+				qualifier = 2 --**2+ item, no extra info
 			end
 		end
 		EchoExperience.debugMsg("qualifier=" ..tostring(qualifier) )
@@ -427,7 +433,7 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 			sentence = GetString("SI_ECHOLOOT_YOU_QUEST_",qualifier)
 		end
 		--local strL = string.format(verb,tostring(itemName),tostring(quantity))
-		local strL = zo_strformat(sentence, tostring(itemName), tostring(quantity), tostring(traitName) )
+		local strL = zo_strformat(sentence, tostring(itemName), tostring(quantity), tostring(extraInfo) )
 		EchoExperience.outputToChanel(strL,msgTypeLOOT)
 		if( EchoExperience.savedVariables.tabloot2 >0 and EchoExperience.savedVariables.windowloot2 >0 ) then
 			EchoExperience.outputToChanel(strL,msgTypeLOOT2)
@@ -445,7 +451,7 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 			sentence = GetString("SI_ECHOLOOT_OTHER_QUEST_",qualifier)
 		end
 		--local strL = string.format(sentence,receivedBy,tostring(itemName))
-		local strL = zo_strformat(sentence, receivedBy, tostring(itemName), tostring(quantity), tostring(traitName) )
+		local strL = zo_strformat(sentence, receivedBy, tostring(itemName), tostring(quantity), tostring(extraInfo) )
 		EchoExperience.outputToChanel(strL,msgTypeLOOT)
 		if( EchoExperience.savedVariables.tabloot2 >0 and EchoExperience.savedVariables.windowloot2 >0 ) then
 			EchoExperience.outputToChanel(strL,msgTypeLOOT2)
@@ -453,7 +459,7 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 	end
 end
 
-function EchoExperience:GetTraitInfo(itemName)
+function EchoExperience:GetExtraInfo(itemName)
 	local traitName = nil
 	local traitType, traitDescription = GetItemLinkTraitInfo(itemName)
 	--
@@ -463,7 +469,17 @@ function EchoExperience:GetTraitInfo(itemName)
 	if (traitType ~= ITEM_TRAIT_TYPE_NONE) then
 		traitName = GetString("SI_ITEMTRAITTYPE", traitType)
 	end
-	return traitName
+	--bool hasSet, str setName, num numBonuses, num numEquipped, num maxEquipped, num setId
+	local hasSet, setName, numBonuses, numEquipped, maxEquipped, setId = GetItemLinkSetInfo(itemName)
+	EchoExperience.debugMsg("GetExtraInfo:"
+			.." hasSet="  ..tostring(hasSet)
+			.." setName=" ..tostring(setName)
+			.." setId="   ..tostring(setId)
+		)
+	if( hasSet and setId > 0 ) then
+		return traitName, setName
+	end
+	return trainName, nil
 end
 
 -----------------------------

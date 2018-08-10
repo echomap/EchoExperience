@@ -35,30 +35,30 @@ local localization_strings = {
 	SI_ECHOLOOT_YOU_PICK_1  = "You acquired: <<1>>.",
 	SI_ECHOLOOT_YOU_QUEST_1 = "You looted: <<1>> (quest item).",
 
-    SI_ECHOLOOT_YOU_GAIN_3  = "You looted: <<1>> (<<3>>).",
-	SI_ECHOLOOT_YOU_PICK_3  = "You acquired: <<1>> (<<3>>).",
-	SI_ECHOLOOT_YOU_QUEST_3 = "You looted: <<1>> (<<3>>) (quest item).",
+    SI_ECHOLOOT_YOU_GAIN_3  = "You looted: <<1>> (*<<3>>*).",
+	SI_ECHOLOOT_YOU_PICK_3  = "You acquired: <<1>> (*<<3>>*).",
+	SI_ECHOLOOT_YOU_QUEST_3 = "You looted: <<1>> (*<<3>>*) (quest item).",
 
     SI_ECHOLOOT_YOU_GAIN_2  = "You looted: <<2>>x <<1>>.",
 	SI_ECHOLOOT_YOU_PICK_2  = "You acquired: <<2>>x <<1>>.",
-	SI_ECHOLOOT_YOU_QUEST_2 = "You looted(quest): <<1>>.",
+	SI_ECHOLOOT_YOU_QUEST_2 = "You looted: <<1>> (quest item).",
 
-    SI_ECHOLOOT_YOU_GAIN_4  = "You looted: <<2>>x <<1>> (<<3>>).",
-	SI_ECHOLOOT_YOU_PICK_4  = "You acquired: <<2>>x <<1>> (<<3>>).",
-	SI_ECHOLOOT_YOU_QUEST_5 = "You looted(quest): <<1>> (<<3>>).",
+    SI_ECHOLOOT_YOU_GAIN_4  = "You looted: <<2>>x <<1>> (*<<3>>*).",
+	SI_ECHOLOOT_YOU_PICK_4  = "You acquired: <<2>>x <<1>> (*<<3>>*).",
+	SI_ECHOLOOT_YOU_QUEST_4 = "You looted: <<1>> (*<<3>>*) (quest item).",
 
 	--<<1>> is who looted
 	--<<2>> is itemname
     SI_ECHOLOOT_OTHER_GAIN_1  = "<<1>> looted: <<2>>.",
 	SI_ECHOLOOT_OTHER_PICK_1  = "<<1>> acquired: <<2>>.",
-	SI_ECHOLOOT_OTHER_QUEST_1 = "<<1>> looted(quest): <<2>>.",
+	SI_ECHOLOOT_OTHER_QUEST_1 = "<<1>> looted: <<2>> (quest item).",
 
 	--<<1>> is who looted
 	--<<2>> is itemname
 	--<<3>> is quantity
     SI_ECHOLOOT_OTHER_GAIN_2  = "<<1>> looted: <<3>>x <<2>>.",
 	SI_ECHOLOOT_OTHER_PICK_2  = "<<1>> acquired: <<3>>x <<2>>.",
-	SI_ECHOLOOT_OTHER_QUEST_2 = "<<1>> looted(quest): <<2>>.",
+	SI_ECHOLOOT_OTHER_QUEST_2 = "<<1>> looted: <<2>> (quest item).",
 
     -- Keybindings.
     SI_BINDING_NAME_NEWADDON_DISPLAY = "Display EchoExperience",

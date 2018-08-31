@@ -1,5 +1,6 @@
 # EchoExperience
 Addon/mod for Elder Scrolls Online - to output Experience gains to chat
+http://www.esoui.com/downloads/info2071-EchoExperience.html#info
 
 ## Slash commmands:
 * /echoexp debug

@@ -1,28 +1,41 @@
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.9",                    -- A nuisance to match to the Manifest.
+    version         = "0.0.10",                    -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
     -- Saved settings.
     savedVariables = {},
 }
-local 	msgTypeSYS     = 1
-local	msgTypeEXP     = 2
-local	msgTypeEXP2    = 3
-local   msgTypeLOOT    = 4
-local   msgTypeLOOT2   = 5
+local msgTypeSYS     = 1
+local msgTypeEXP     = 2
+local msgTypeEXP2    = 3
+local msgTypeLOOT    = 4
+local msgTypeLOOT2   = 5
 
 local defaultSettings = {
-	sversion   = EchoExperience.version,
-    debug      = false,
-	showExp    = true,
-	verboseExp = true,
-    tab        = 1,
-    window     = 1,
-    tabexp2    = 0,
-    windowexp2 = 0,
-	rgba    = {
+  sversion   = EchoExperience.version,
+  debug      = false,
+  showExp    = true,
+  verboseExp = true,
+  messageFmt = 1,
+  tab        = 1,
+  window     = 1,
+  tabexp2    = 0,
+  windowexp2 = 0,
+  --[[TODO
+  expoutput = { -- new method?
+    [1] = { 
+      ["window"] = 2,
+      ["tab"]    = 2,
+    },
+    [2] = { 
+      ["window"] = 0,
+      ["tab"]    = 0, 
+    },
+  },
+  ]]
+  rgba    = {
       ["r"] = 1,
       ["g"] = 1,
       ["b"] = 1,
@@ -31,10 +44,22 @@ local defaultSettings = {
 	showLoot    = false,
 	groupLoot   = false,
 	tabloot     = 1,
-    windowloot  = 1,
-	tabloot2    = 0,
-    windowloot2 = 0,
-	rgba2   = {
+  windowloot  = 1,
+  tabloot2    = 0,
+  windowloot2 = 0,
+  --[[TODO
+  lootoutput = { -- new method?
+    [1] = { 
+      ["window"] = 2,
+      ["tab"]    = 2,
+    },
+    [2] = { 
+      ["window"] = 0,
+      ["tab"]    = 0, 
+    },
+  },
+  ]]
+  rgba2   = {
       ["r"] = 1,
       ["g"] = 1,
       ["b"] = 1,
@@ -407,56 +432,68 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 		)
 	end
 
-	if(isSelf) then
-		--<<1>> is itemname
-		--<<2>> is quantity
-		local qualifier = 1
-		if(quantity==1) then
-			if(extraInfo ~= nil) then
-				qualifier = 3
-			else
-				qualifier = 1 --**1 item, no extra info
-			end
-		else
-			if(extraInfo ~=nil) then
-				qualifier = 4
-			else
-				qualifier = 2 --**2+ item, no extra info
-			end
-		end
-		EchoExperience.debugMsg("qualifier=" ..tostring(qualifier) )
+   if(isSelf) then
+    --<<1>> is itemname
+    --<<2>> is quantity
+    local qualifier = 1
+    if(quantity==1) then
+      if(extraInfo ~= nil) then
+        qualifier = 3
+      else
+        qualifier = 1 --**1 item, no extra info
+      end
+    else
+      if(extraInfo ~=nil) then
+        qualifier = 4
+      else
+        qualifier = 2 --**2+ item, no extra info
+      end
+    end
+    EchoExperience.debugMsg("qualifier=" ..tostring(qualifier) )
 
-		local sentence = GetString("SI_ECHOLOOT_YOU_GAIN_",qualifier)
-		if(isPickpocketLoot) then
-			sentence = GetString("SI_ECHOLOOT_YOU_PICK_",qualifier)
-		elseif(lootType==LOOT_TYPE_QUEST_ITEM)then
-			sentence = GetString("SI_ECHOLOOT_YOU_QUEST_",qualifier)
-		end
-		--local strL = string.format(verb,tostring(itemName),tostring(quantity))
-		local strL = zo_strformat(sentence, tostring(itemName), tostring(quantity), tostring(extraInfo) )
-		EchoExperience.outputToChanel(strL,msgTypeLOOT)
-		if( EchoExperience.savedVariables.tabloot2 >0 and EchoExperience.savedVariables.windowloot2 >0 ) then
-			EchoExperience.outputToChanel(strL,msgTypeLOOT2)
-		end
-	elseif (EchoExperience.savedVariables.groupLoot and receivedBy~=nil) then
-		--<<1>> is who looted
-		--<<2>> is itemname
-		--<<3>> is quantity
-		local qualifier = 1
-		if(quantity>1) then qualifier = 2 end
-		local sentence = GetString("SI_ECHOLOOT_OTHER_GAIN_",qualifier)
-		if(isPickpocketLoot) then
-			sentence = GetString("SI_ECHOLOOT_OTHER_PICK_",qualifier)
-		elseif(lootType==LOOT_TYPE_QUEST_ITEM) then
-			sentence = GetString("SI_ECHOLOOT_OTHER_QUEST_",qualifier)
-		end
-		--local strL = string.format(sentence,receivedBy,tostring(itemName))
-		local strL = zo_strformat(sentence, receivedBy, tostring(itemName), tostring(quantity), tostring(extraInfo) )
-		EchoExperience.outputToChanel(strL,msgTypeLOOT)
-		if( EchoExperience.savedVariables.tabloot2 >0 and EchoExperience.savedVariables.windowloot2 >0 ) then
-			EchoExperience.outputToChanel(strL,msgTypeLOOT2)
-		end
-	end
+    if(messageFmt==2) then
+      local sentence = GetString("SI_ECHOLOOT2_YOU_GAIN_",qualifier)
+      if(lootType==LOOT_TYPE_QUEST_ITEM)then
+        sentence = GetString("SI_ECHOLOOT2_YOU_QUEST_",qualifier)
+      end
+      local strL = zo_strformat(sentence, tostring(itemName), tostring(quantity), tostring(extraInfo) )
+      EchoExperience.outputToChanel(strL,msgTypeLOOT)
+      if( EchoExperience.savedVariables.tabloot2 >0 and EchoExperience.savedVariables.windowloot2 >0 ) then
+        EchoExperience.outputToChanel(strL,msgTypeLOOT2)
+      end
+    else  
+      local sentence = GetString("SI_ECHOLOOT_YOU_GAIN_",qualifier)
+      if(isPickpocketLoot) then
+        sentence = GetString("SI_ECHOLOOT_YOU_PICK_",qualifier)
+      elseif(lootType==LOOT_TYPE_QUEST_ITEM)then
+        sentence = GetString("SI_ECHOLOOT_YOU_QUEST_",qualifier)
+      end
+      --local strL = string.format(verb,tostring(itemName),tostring(quantity))
+      local strL = zo_strformat(sentence, tostring(itemName), tostring(quantity), tostring(extraInfo) )
+      EchoExperience.outputToChanel(strL,msgTypeLOOT)
+      if( EchoExperience.savedVariables.tabloot2 >0 and EchoExperience.savedVariables.windowloot2 >0 ) then
+        EchoExperience.outputToChanel(strL,msgTypeLOOT2)
+      end
+    end
+  elseif (EchoExperience.savedVariables.groupLoot and receivedBy~=nil) then
+    --<<1>> is who looted
+    --<<2>> is itemname
+    --<<3>> is quantity
+    local qualifier = 1
+    if(quantity>1) then qualifier = 2 end
+    local sentence = GetString("SI_ECHOLOOT_OTHER_GAIN_",qualifier)
+    if(isPickpocketLoot) then
+      sentence = GetString("SI_ECHOLOOT_OTHER_PICK_",qualifier)
+    elseif(lootType==LOOT_TYPE_QUEST_ITEM) then
+      sentence = GetString("SI_ECHOLOOT_OTHER_QUEST_",qualifier)
+    end
+    --local strL = string.format(sentence,receivedBy,tostring(itemName))
+    local strL = zo_strformat(sentence, receivedBy, tostring(itemName), tostring(quantity), tostring(extraInfo) )
+    EchoExperience.outputToChanel(strL,msgTypeLOOT)
+    if( EchoExperience.savedVariables.tabloot2 >0 and EchoExperience.savedVariables.windowloot2 >0 ) then
+      EchoExperience.outputToChanel(strL,msgTypeLOOT2)
+    end
+  end
 end
 
 function EchoExperience:GetExtraInfo(itemName)
@@ -525,6 +562,7 @@ function EchoExperience.SetupExpGainsEvents(reportMe)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."AbilityProgression",EVENT_ABILITY_PROGRESSION_XP_UPDATE)
 	end
 end
+
 -- SETUP
 function EchoExperience.SetupLootGainsEvents(reportMe)
 	if (EchoExperience.savedVariables.showLoot) then
@@ -540,7 +578,33 @@ function EchoExperience.SetupLootGainsEvents(reportMe)
 			--EchoExperience.outputToChanel("EchoExp is no longer showing Loot Gains",msgTypeSYS)
 		end
 	end
+end
 
+function EchoExperience:UpgradeSettings()
+  EchoExperience.savedVariables.expoutput[1] = { 
+    ["window"] = EchoExperience.savedVariables.window,
+    ["tab"]    = EchoExperience.savedVariables.tab,
+  }
+  EchoExperience.savedVariables.expoutput[2] = { 
+    ["window"] = EchoExperience.savedVariables.windowexp2,
+    ["tab"]    = EchoExperience.savedVariables.tabexp2,
+  }
+  EchoExperience.savedVariables.lootoutput[1] = { 
+    ["window"] = EchoExperience.savedVariables.windowloot,
+    ["tab"]    = EchoExperience.savedVariables.tabloot,
+  }
+  EchoExperience.savedVariables.lootoutput[2] = { 
+    ["window"] = EchoExperience.savedVariables.windowloot2,
+    ["tab"]    = EchoExperience.savedVariables.tabloot2,
+  }
+  EchoExperience.savedVariables.tab        = nil      
+  EchoExperience.savedVariables.window     = nil
+  EchoExperience.savedVariables.tabexp2    = nil
+  EchoExperience.savedVariables.windowexp2 = nil     
+  EchoExperience.savedVariables.tabloot     = nil
+  EchoExperience.savedVariables.windowloot  = nil
+  EchoExperience.savedVariables.tabloot2    = nil
+  EchoExperience.savedVariables.windowloot2 = nil  
 end
 
 -- SETUP  setup event handling
@@ -551,7 +615,7 @@ function EchoExperience.DelayedStart()
 	EchoExperience.SetupLootGainsEvents()
 end
 
--- SETUP
+-- SETUP-- and is only called on reloadui, not quit?
 function EchoExperience.OnAddOnUnloaded(event)
   --EchoExperience.debugMsg("OnAddOnUnloaded called") -- Prints to chat.
   --EchoExperience:Savesettings()
@@ -577,6 +641,13 @@ function EchoExperience.OnAddOnLoaded(event, addonName)
     -- Settings menu in Settings.lua.
     --EchoExperience:RestoreSettings()
     EchoExperience.LoadSettings() --Setup Addon Settings MENU
+    
+    --[[
+    if( EchoExperience.savedVariables.sversion == "0.0.6" ) then
+      --EchoExperience:UpgradeSettings()
+    end
+    --sversion = EchoExperience.version
+    ]]
 
     -- Slash commands must be lowercase. Set to nil to disable.
     SLASH_COMMANDS["/echoexp"] = EchoExperience.SlashCommandHandler

@@ -1,6 +1,7 @@
 EchoExperience
 0.0.X
-	Set info
+	trying new way to store tab/windows, for multiple
+0.0.10 set info, updated game version
 0.0.9 allow 2 possible outputs for loot reporting
 0.0.8 starting localization, cp reporting stared, and loot's traits
 		Skyshard notification, discovery notification, loot details/messages

@@ -64,7 +64,12 @@ function EchoExperience.LoadSettings()
             tooltip = "Tab for Experience output.",
             choices = {"0","1", "2", "3", "4", "5", "6"},
             getFunc = function() return tostring(EchoExperience.savedVariables.tab)   end,
-            setFunc = function(var) EchoExperience.savedVariables.tab = tonumber(var) end,
+            setFunc = function(var)
+                        EchoExperience.savedVariables.tab = tonumber(var)
+                        --[[local eo = expoutput[1]
+                        eo["tab"] = var]]
+                        --expoutput[1] = eo
+                      end,
             width = "half",	--or "half" (optional)
         },
         [7] = {

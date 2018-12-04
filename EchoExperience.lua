@@ -4,6 +4,7 @@ EchoExperience = {
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
+    view            = {},
     -- Saved settings.
     savedVariables = {},
 }
@@ -12,6 +13,7 @@ local msgTypeEXP     = 2
 local msgTypeEXP2    = 3
 local msgTypeLOOT    = 4
 local msgTypeLOOT2   = 5
+local msgTypeGUILD   = 6
 
 local defaultSettings = {
   sversion   = EchoExperience.version,
@@ -42,7 +44,7 @@ local defaultSettings = {
       ["a"] = 0.9,
 	},
 	showLoot    = false,
-	groupLoot   = false,
+	groupLoot   = false,  
 	tabloot     = 1,
   windowloot  = 1,
   tabloot2    = 0,
@@ -65,6 +67,17 @@ local defaultSettings = {
       ["b"] = 1,
       ["a"] = 0.9,
 	},
+  showGuildLogin = false,
+  showGuildLogout= false,
+  windowGuild  = 1,
+	tabGuild     = 1,  
+  rgbaGuild   = {
+      ["r"] = 1,
+      ["g"] = 1,
+      ["b"] = 1,
+      ["a"] = 0.9,
+	},
+
 }
 
 function EchoExperience.debugMsg(text)
@@ -83,16 +96,19 @@ function EchoExperience.outputToChanel(text,msgType)
 		--
 	elseif msgType == msgTypeEXP then
 		lTab = EchoExperience.savedVariables.tab
-		lWin  = EchoExperience.savedVariables.window
+		lWin = EchoExperience.savedVariables.window
 	elseif msgType == msgTypeEXP2 then
 		lTab = EchoExperience.savedVariables.tabexp2
-		lWin  = EchoExperience.savedVariables.windowexp2
+		lWin = EchoExperience.savedVariables.windowexp2
 	elseif msgType == msgTypeLOOT then
 		lTab = EchoExperience.savedVariables.tabloot
-		lWin  = EchoExperience.savedVariables.windowloot
+		lWin = EchoExperience.savedVariables.windowloot
 	elseif msgType == msgTypeLOOT2 then
 		lTab = EchoExperience.savedVariables.tabloot2
-		lWin  = EchoExperience.savedVariables.windowloot2
+		lWin = EchoExperience.savedVariables.windowloot2
+	elseif msgType == msgTypeGUILD then
+		lTab = EchoExperience.savedVariables.tabGuild
+		lWin = EchoExperience.savedVariables.windowGuild   
 	else
 		--
 	end
@@ -135,6 +151,8 @@ function EchoExperience:ColorizeText(text,msgType)
 		rgba = EchoExperience.savedVariables.rgba2
 	elseif msgType == msgTypeLOOT2 then
 		rgba = EchoExperience.savedVariables.rgba --TODO rgbaL2
+	elseif msgType == msgTypeGUILD then
+		rgba = EchoExperience.savedVariables.rgbaGuild --TODO rgbaL2
 	else
 		return text
 	end
@@ -194,9 +212,7 @@ end
 --RETURNS:(num eventCode, SkillType skillType, num skillIndex, num reason, num rank, num previousXP, num currentXP)
 --NOTES:  XX
 function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex, reason, rank, previousXP, currentXP)
-
 	local skillLineName, currentSkillRank, available = GetSkillLineInfo(skillType, skillIndex)
-
 	local lastRankXP, nextRankXP, currentXP = GetSkillLineXPInfo(skillType, skillIndex)
 	--if available then
 		--EchoExperience.debugMsg(" name="..skillLineName .." lastRankXP="..lastRankXP .." nextRankXP=".. nextRankXP .." currentXP=".. currentXP)
@@ -519,6 +535,31 @@ function EchoExperience:GetExtraInfo(itemName)
 	return trainName, nil
 end
 
+--
+function EchoExperience.OnGuildMemberStatusChanged(eventCode,guildID,playerName,prevStatus,curStatus)
+  EchoExperience.debugMsg("OnGuildMemberStatusChanged called") -- Prints to chat.    
+  local sentence = "[EchoExp] eventCode: <<1>>, guildID: <<2>>, playerName: <<3>>, prevStatus: <<4>>, curStatus: <<5>> ."  
+  local strL = zo_strformat(sentence, eventCode, tostring(guildID), tostring(playerName), tostring(prevStatus), tostring(curStatus) )
+  EchoExperience.debugMsg(strL)
+  if(curStatus == 1) then
+    --online
+    if (EchoExperience.savedVariables.showGuildLogin) then
+      -- TODO localize
+      local sentence2 = "[EchoExp] <<3>> Logged IN at <<6>>"  
+      local strL2 = zo_strformat(sentence2, eventCode, tostring(guildID), tostring(playerName), tostring(prevStatus), tostring(curStatus), ZO_FormatClockTime() )
+      EchoExperience.outputToChanel(strL2,msgTypeGUILD)  
+    end
+  elseif(curStatus == 4) then
+    --offline
+    if (EchoExperience.savedVariables.showGuildLogoff) then
+      -- TODO localize
+      local sentence2 = "[EchoExp] <<3>> Logged OUT at <<6>>"  
+      local strL2 = zo_strformat(sentence2, eventCode, tostring(guildID), tostring(playerName), tostring(prevStatus), tostring(curStatus), ZO_FormatClockTime() )
+      EchoExperience.outputToChanel(strL2,msgTypeGUILD)  
+    end
+  end
+end
+
 -----------------------------
 -- SETUP Functions here --
 -----------------------------
@@ -580,6 +621,21 @@ function EchoExperience.SetupLootGainsEvents(reportMe)
 	end
 end
 
+--
+function EchoExperience.SetupMiscEvents()
+  if( EchoExperience.view.GuildEventsReg == true) then
+    if ( not EchoExperience.savedVariables.showGuildLogin and not EchoExperience.savedVariables.showGuildLogoff ) then
+    	EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."LootReceived",	EVENT_LOOT_RECEIVED, EchoExperience.OnLootReceived)
+      EchoExperience.view.GuildEventsReg = false
+    end
+  else
+    if (EchoExperience.savedVariables.showGuildLogin or EchoExperience.savedVariables.showGuildLogoff ) then
+      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_GUILD_MEMBER_PLAYER_STATUS_CHANGED",	EVENT_GUILD_MEMBER_PLAYER_STATUS_CHANGED, EchoExperience.OnGuildMemberStatusChanged)
+      EchoExperience.view.GuildEventsReg = true
+    end
+  end
+end
+
 function EchoExperience:UpgradeSettings()
   EchoExperience.savedVariables.expoutput[1] = { 
     ["window"] = EchoExperience.savedVariables.window,
@@ -609,10 +665,16 @@ end
 
 -- SETUP  setup event handling
 function EchoExperience.DelayedStart()
+  
+  EchoExperience.view = {}
+  EchoExperience.view.GuildEventsReg = false
+  
 	-- Experience Related
 	EchoExperience.SetupExpGainsEvents()
 	-- Loot Related
 	EchoExperience.SetupLootGainsEvents()
+  --
+  EchoExperience.SetupMiscEvents()  
 end
 
 -- SETUP-- and is only called on reloadui, not quit?

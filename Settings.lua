@@ -24,21 +24,21 @@ function EchoExperience.LoadSettings()
             type = "header",
             title = nil,	--(optional)
             text = "Experience Options",
-			name = "Experience Options",
+            name = "Experience Options",
             width = "full",	--or "half" (optional)
         },
-		[3] = {
-            type = "checkbox",
-            name = "Experience",
-            tooltip = "Report? on or off.",
-            getFunc = function() return EchoExperience.savedVariables.showExp end,
-            setFunc = function(value)
-						EchoExperience.savedVariables.showExp = value
-						EchoExperience.SetupExpGainsEvents(false)
-					end,
-            width = "half",	--or "half" (optional)
-        },
-		[4] = {
+        [3] = {
+                type = "checkbox",
+                name = "Experience",
+                tooltip = "Report? on or off.",
+                getFunc = function() return EchoExperience.savedVariables.showExp end,
+                setFunc = function(value)
+                EchoExperience.savedVariables.showExp = value
+                EchoExperience.SetupExpGainsEvents(false)
+              end,
+                width = "half",	--or "half" (optional)
+            },
+        [4] = {
             type = "checkbox",
             name = "Verbose Experience",
             tooltip = "Verbose reporting if experience is on?",
@@ -189,13 +189,90 @@ function EchoExperience.LoadSettings()
             setFunc = function(var) EchoExperience.savedVariables.tabloot2 = tonumber(var) end,
             width = "half",	--or "half" (optional)
         },
-		[17] = {
+
+      [17] = {
+            type = "header",
+            name = "",
+            width = "full",	--or "half" (optional)
+        },
+        [18] = {
+            type = "header",
+            --title = "My Title",	--(optional)
+            text = "Guild Options",
+            name = "Guild Options",
+            width = "full",	--or "half" (optional)
+        },
+        [19] = {
+            type = "checkbox",
+            name = "Show Guild LogOns?",
+            tooltip = "Report? on or off.",
+            getFunc = function() return EchoExperience.savedVariables.showGuildLogin end,
+            setFunc = function(value)
+              EchoExperience.savedVariables.showGuildLogin = value
+              EchoExperience.SetupMiscEvents()
+            end,
+            width = "half",	--or "half" (optional)
+        },
+        [20] = {
+            type = "checkbox",
+            name = "Show Guild LogOffs?",
+            tooltip = "Report? on or off.",
+            getFunc = function() return EchoExperience.savedVariables.showGuildLogout end,
+            setFunc = function(value)
+              EchoExperience.savedVariables.showGuildLogoff = value
+              EchoExperience.SetupMiscEvents()
+            end,
+            width = "half",	--or "half" (optional)
+        },
+      [21] = {
+            type = "dropdown",
+            name = "Guild Output Window #1",
+            tooltip = "Window for Guild output. (Zero will disable)",
+            choices = {"0","1", "2", "3","4"},
+            getFunc = function() return tostring(EchoExperience.savedVariables.windowGuild) end,
+            setFunc = function(var) EchoExperience.savedVariables.windowGuild = tonumber(var) end,
+            width = "half",	--or "half" (optional)
+        },
+      [22] = {
+            type = "dropdown",
+            name = "Guild Output Tab #1",
+            tooltip = "Tab for Guild output.",
+            choices = {"0","1", "2", "3", "4", "5", "6"},
+            getFunc = function() return tostring(EchoExperience.savedVariables.tabGuild)   end,
+            setFunc = function(var) EchoExperience.savedVariables.tabGuild = tonumber(var) end,
+            width = "half",	--or "half" (optional)
+        },
+      [23] = {
+            type = "colorpicker",
+            name = "GUILD Chat Color",
+            tooltip = "What Color to use for GUILD text.",
+            getFunc = function() return
+							EchoExperience.savedVariables.rgbaGuild.r,
+							EchoExperience.savedVariables.rgbaGuild.g,
+							EchoExperience.savedVariables.rgbaGuild.b,
+							EchoExperience.savedVariables.rgbaGuild.a
+						end,	--(alpha is optional)
+            setFunc = 	function(r,g,b,a)
+							--(alpha is optional)
+							--d(r, g, b, a)
+							local c = ZO_ColorDef:New(r,g,b,a)
+							--c:Colorize(text)
+							EchoExperience.savedVariables.rgbaGuild = {}
+							EchoExperience.savedVariables.rgbaGuild.r = r
+							EchoExperience.savedVariables.rgbaGuild.g = g
+							EchoExperience.savedVariables.rgbaGuild.b = b
+							EchoExperience.savedVariables.rgbaGuild.a = a
+						end,
+            width = "full",	--or "half" (optional)
+        },
+    
+		[24] = {
             type = "header",
             --title = "My Title",	--(optional)
             text = "Dev. Options",
             width = "full",	--or "half" (optional)
         },
-		[18] = {
+		[25] = {
             type = "checkbox",
             name = "Debug",
             tooltip = "Debug on or off.",

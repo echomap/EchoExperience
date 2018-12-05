@@ -1,12 +1,16 @@
 EchoExperience
-TODO
+-=TODO=-
 Guild logon localization
 Guild logon format 
 Guild logon guild they belong to?
 GUILD Logon, select guilds to care about? or block?
 
-0.0.X
+-=Versions=-
+*Testing branch:
 	trying new way to store tab/windows, for multiple
+*Development:
+  -
+0.0.13
   removed embedded libraries
   added option to report guildies logging in and out
 0.0.12 murk

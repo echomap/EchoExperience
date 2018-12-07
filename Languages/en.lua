@@ -7,6 +7,9 @@ local localization_strings = {
 	SI_ECHOEXP_LOOTGAINS_SHOW = "EchoExp is showing Loot Gains",
 	SI_ECHOEXP_LOOTGAINS_HIDE = "EchoExp is no longer showing Loot Gains",
 
+  SI_ECHOEXP_GUILD_EVENT_REG   = "Registered for Guild events",
+  SI_ECHOEXP_GUILD_EVENT_UNREG = "Unregistered for Guild events",
+
 	--SKILL
 	--SI_ECHOEXP_SKILL_SKY  = "You absorbed a skyshard <<1>> of <<2>>."
 	--SI_ECHOEXP_SKILL_GAIN = "You gained a skill point!"
@@ -27,6 +30,10 @@ local localization_strings = {
 	SI_ECHOEXP_SKY_1         = "You absorbed a skyshard! (<<1>> of <<2>>).",
 	SI_ECHOEXP_SKY_2         = "You gained a skill point! (<<1>>).",
 
+  SI_ECHOEXP_GUILD_1       = "eventCode: <<1>>, guildID: <<2>>, playerName: <<3>>, prevStatus: <<4>>, curStatus: <<5>> .",
+  SI_ECHOEXP_GUILD_2       = "<<3>> Logged IN at <<6>>",
+  SI_ECHOEXP_GUILD_3       = "<<3>> Logged OUT at <<6>>",
+  
 	--LOOT
 	--<<1>> is itemname
 	--<<2>> is quantity

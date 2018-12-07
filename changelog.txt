@@ -1,5 +1,6 @@
 EchoExperience
 -=TODO=-
+settings use player as default
 Guild logon localization
 Guild logon format 
 Guild logon guild they belong to?
@@ -7,9 +8,10 @@ GUILD Logon, select guilds to care about? or block?
 
 -=Versions=-
 *Testing branch:
-	trying new way to store tab/windows, for multiple
+	
 *Development:
-  -
+  -trying new way to store tab/windows, for multiple (more than 2 outputs)
+0.0.14
 0.0.13
   removed embedded libraries
   added option to report guildies logging in and out

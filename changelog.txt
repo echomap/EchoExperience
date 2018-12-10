@@ -5,13 +5,17 @@ Guild logon localization
 Guild logon format 
 Guild logon guild they belong to?
 GUILD Logon, select guilds to care about? or block?
+Edit Guilds or existing entries
 
 -=Versions=-
 *Testing branch:
 	
 *Development:
-  -trying new way to store tab/windows, for multiple (more than 2 outputs)
+  -bug fix settings panel name and guild names
 0.0.14
+  -Using new way to store mutliple tab/windows for multiple
+    (more than 2 outputs - not that this is necessary it was just bugging me)
+  -new slash commands for 'defaults' and 'outputs'
 0.0.13
   removed embedded libraries
   added option to report guildies logging in and out

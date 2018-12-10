@@ -31,8 +31,8 @@ local localization_strings = {
 	SI_ECHOEXP_SKY_2         = "You gained a skill point! (<<1>>).",
 
   SI_ECHOEXP_GUILD_1       = "eventCode: <<1>>, guildID: <<2>>, playerName: <<3>>, prevStatus: <<4>>, curStatus: <<5>> .",
-  SI_ECHOEXP_GUILD_2       = "<<3>> Logged IN at <<6>>",
-  SI_ECHOEXP_GUILD_3       = "<<3>> Logged OUT at <<6>>",
+  SI_ECHOEXP_GUILD_2       = "<<2>> Logged IN at <<5>> (<<6>>)",
+  SI_ECHOEXP_GUILD_3       = "<<2>> Logged OUT at <<5>> (<<6>>)",
   
 	--LOOT
 	--<<1>> is itemname

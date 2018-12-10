@@ -1,9 +1,9 @@
 ## Title: EchoExperience
-## Version: 0.0.14
+## Version: 0.0.15
 ## APIVersion: 100024 100025
 ## Author: Echomap
 ## Description: EchoExperience will show experience gains in chat.
-## SavedVariables: EchoExperienceSavedVariables
+## SavedVariables: EchoExperienceSavedVariables EchoExperienceAccountSavedVariables
 ## DependsOn: LibStub LibAddonMenu-2.0
 
 Languages\en.lua

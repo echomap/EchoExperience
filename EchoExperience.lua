@@ -1,12 +1,13 @@
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.14",                    -- A nuisance to match to the Manifest.
+    version         = "0.0.15",                    -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
     view            = {},
     -- Saved settings.
     savedVariables = {},
+    accountVariables = {},
     rgbaBase   = {
       ["r"] = 1,
       ["g"] = 1,
@@ -57,78 +58,104 @@ function EchoExperience.outputMsg(text)
 end
 
 function EchoExperience:ShowOutputs()
-  --Exp
-  if EchoExperience.savedVariables. expsettings ~= nil then
-    EchoExperience.outputMsg("EXP outputs")
-    for k, v in pairs(EchoExperience.savedVariables.expsettings) do
-      local c = ZO_ColorDef:New(v.color.r, v.color.g, v.color.b, v.color.a)
-      local ctext = c:Colorize("COLOR")
-      local val = zo_strformat( "window=<<1>>, tab=<<2>>, color=<<3>>", v.window,v.tab,ctext )
-      EchoExperience.outputMsg(val)
-    end
-  else
-    EchoExperience.outputMsg("No EXP outputs configured")
-  end 
-  --Loot
-  if EchoExperience.savedVariables.lootsettings ~= nil then
-    d("[EchoExp] LOOT outputs:")
-    for k, v in pairs(EchoExperience.savedVariables.lootsettings) do
-      local c = ZO_ColorDef:New(v.color.r, v.color.g, v.color.b, v.color.a)
-      local ctext = c:Colorize("COLOR")
-      local val = zo_strformat( "window=<<1>>, tab=<<2>>, color=<<3>>", v.window,v.tab,ctext )
-      EchoExperience.outputMsg(val)
-    end
-  else
-    EchoExperience.outputMsg("No LOOT outputs configured")
-  end   
-  --Guild
-  if EchoExperience.savedVariables.guildsettings ~= nil then
-    EchoExperience.outputMsg("GUILD outputs:")
-    for k, v in pairs(EchoExperience.savedVariables.guildsettings) do
-      local c = ZO_ColorDef:New(v.color.r, v.color.g, v.color.b, v.color.a)
-      local ctext = c:Colorize("COLOR")
-      local val = zo_strformat( "window=<<1>>, tab=<<2>>, color=<<3>>", v.window,v.tab,ctext )
-      EchoExperience.outputMsg(val)
-    end
-  else
-    EchoExperience.outputMsg("No GUILD outputs configured")
-  end 
+  EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.expsettings,   "EXP outputs")
+  EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.lootsettings,  "LOOT outputs")
+  EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.guildsettings, "GUILD outputs")
 end
 
+function EchoExperience:ShowDefaults()
+  EchoExperience:ShowOutputsSub(EchoExperience.accountVariables.defaults.expsettings,   "EXP defaults")
+  EchoExperience:ShowOutputsSub(EchoExperience.accountVariables.defaults.lootsettings,  "LOOT defaults")
+  EchoExperience:ShowOutputsSub(EchoExperience.accountVariables.defaults.guildsettings, "GUILD defaults")
+end
+
+function EchoExperience:GetGuildName(gnum)
+  EchoExperience.debugMsg("GetGuildName:=".. gnum.. " name='"..GetGuildName(gnum).."'")  
+  return GetGuildName(gnum)
+end
+
+
 -- Main Output Function used by addon to control output and style
-function EchoExperience.outputToChanel(text,msgType)
+function EchoExperience.outputToChanel(text,msgType,filter)
 	--EchoExperience.debugMsg("EEOTC: text='"..text.."' msgType='"..msgType.."'")
 	--Output to where
-	local lTab = 0
-	local lWin = 0
 	if msgType == msgTypeSYS then
 		--
 	elseif msgType == msgTypeEXP then
-    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.expsettings )
+    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.expsettings,filter )
     return
 	elseif msgType == msgTypeLOOT then
-    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.lootsettings)
+    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.lootsettings,filter)
     return
 	elseif msgType == msgTypeGUILD then
-    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.guildsettings)
+    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.guildsettings,filter)
+    if(EchoExperience.error)then
+      EchoExperience.error = false
+      EchoExperience.savedVariables.showGuildLogin  = false
+      EchoExperience.savedVariables.showGuildLogout = false
+      EchoExperience.outputMsg("Guild notifications are turned off")
+    end
     return
 	else
 		--
   end
 end
 
-function EchoExperience:outputToChanelSub(text,outputSettings)  
+function EchoExperience:ShowOutputsSub(dataSettings, headerText)
+  if dataSettings ~= nil then
+    EchoExperience.outputMsg(headerText)
+    for k, v in pairs(dataSettings) do
+      local c = ZO_ColorDef:New(v.color.r, v.color.g, v.color.b, v.color.a)
+      local ctext = c:Colorize("COLOR")
+      local cVals = zo_strformat( "r=<<1>>/g=<<2>>/b=<<3>>/a=<<4>>", string.format("%.3f",255*v.color.r),string.format("%.3f",255*v.color.g),string.format("%.3f",255*v.color.b),string.format("%.3f",255*v.color.a) )
+      local gval = "[Show all]"
+      if(v.guilds~=nil) then
+        gval = zo_strformat( "[g1=<<1>>/g2=<<2>>/g3=<<3>>/g4=<<4>>/g5=<<5>>]", tostring(v.guilds.guild1),tostring(v.guilds.guild2),tostring(v.guilds.guild3),tostring(v.guilds.guild4),tostring(v.guilds.guild5) )
+      end            
+      local val = zo_strformat( "window=<<1>>, tab=<<2>>, color=<<3>> (<<4>>) <<5>>", v.window,v.tab,ctext,cVals,gval )
+      EchoExperience.outputMsg(val)
+    end
+  else
+    EchoExperience.outputMsg("No "..headerText.." configured")
+  end 
+end
+
+function EchoExperience:outputToChanelSub(text,outputSettings,filter)
   if(text==nil) then return end
   if outputSettings == nil then return end
   for k, v in pairs(outputSettings) do
-    if(v.window~=nil and v.tab~=nil and v.window>0 and v.tab>0 ) then
-      local cCD = ZO_ColorDef:New(v.color.r,v.color.g,v.color.b,v.color.a)
-      local text2 = cCD:Colorize(text)
-      if(text2~=nil) then 
-        CHAT_SYSTEM.containers[v.window].windows[v.tab].buffer:AddMessage(text2)
+    if(v.window~=nil and v.tab~=nil and v.window>0 and v.tab>0 and v.color~=nil and v.color.r~=nil) then
+      local skip = false
+      --filter
+      if(filter~=nil and filter.type == msgTypeGUILD and v.guilds~=nil) then
+        EchoExperience.debugMsg("filter.guildID="..filter.guildID)
+        skip = true
+        local gkey = "guild"..filter.guildID
+        if(v.guilds[gkey]==nil) then skip = false
+        elseif(v.guilds[gkey]==true)then
+          skip = false
+          EchoExperience.debugMsg("Found guildid in show list")
+        end
+      end
+      if(not skip) then
+        --colorized text and write it out
+        local cCD = ZO_ColorDef:New(v.color.r,v.color.g,v.color.b,v.color.a)
+        local text2 = cCD:Colorize(text)
+        if(text2~=nil) then 
+          CHAT_SYSTEM.containers[v.window].windows[v.tab].buffer:AddMessage(text2)
+        end
       end
     else
-      EchoExperience.outputMsg("error in tab="..tostring(v.tab).."/window="..tostring(v.window).."/color of setting");
+      --ERROR
+      EchoExperience.error = true
+      if( v.color~=nil) then
+        local cVals = zo_strformat( "r=<<1>>/g=<<2>>/b=<<3>>/a=<<4>>", tostring(v.color.r),tostring(v.color.g),tostring(v.color.b),tostring(v.color.a) )
+         local cText = zo_strformat( "Error in config: tab=<<1>>/window=<<2>>/color=<<3>>",tostring(v.tab),tostring(v.window),cVals )
+        EchoExperience.outputMsg(cText);
+      else
+         local cText = zo_strformat( "Error in config: tab=<<1>>/window=<<2>>/color of setting",tostring(v.tab),tostring(v.window) )
+        EchoExperience.outputMsg(cText);
+      end
     end
   end
 end
@@ -138,6 +165,21 @@ function EchoExperience.Colorize(text, color)
     if  color == nil then return text end
     text = "|c" .. color .. text .. "|r"
     return text
+end
+
+function EchoExperience:deepcopy(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, orig, nil do
+            copy[EchoExperience:deepcopy(orig_key)] = EchoExperience:deepcopy(orig_value)
+        end
+        setmetatable(copy, EchoExperience:deepcopy(getmetatable(orig)))
+    else -- number, string, boolean, etc
+        copy = orig
+    end
+    return copy
 end
 
 -- SLASH
@@ -155,6 +197,8 @@ function EchoExperience.SlashCommandHandler(text)
 		EchoExperience.outputMsg("commands include: 'outputs', 'textexp', 'testloot', 'testfull', 'debug' ")
 	elseif #options == 0 or options[1] == "outputs" then
 		EchoExperience.ShowOutputs()
+	elseif #options == 0 or options[1] == "defaults" then
+		EchoExperience.ShowDefaults()
 	elseif #options == 0 or options[1] == "testexp" then
 		EchoExperience.outputToChanel("Gained 0 xp in [Test] (1000/10000) need 9000xp",msgTypeEXP)
 	elseif #options == 0 or options[1] == "testloot" then
@@ -182,7 +226,7 @@ function EchoExperience:UpdateUIExpTabs()
     local vals = EchoExperience:ListOfExpTabs()
     myFpsLabelControl:UpdateChoices(vals )
   else
-    EchoExperience.outputMsg("Exp dropdown not found, changes will not be reflected until /reloadui")
+    EchoExperience.outputMsg("WARN: Dropdown not found, changes will not be reflected until /reloadui")
   end
 end
 
@@ -204,11 +248,12 @@ function EchoExperience:UpdateUIGuildTabs()
   end
 end
 
-function EchoExperience:ListOfExpTabs()
+--Todo generalized and use this
+function EchoExperience:ListOfTabs(valSettings)
   local validChoices =  {}  
 	table.insert(validChoices, "Select")
-  if EchoExperience.savedVariables.expsettings ~= nil then
-    for k, v in pairs(EchoExperience.savedVariables.expsettings) do
+  if valSettings ~= nil then
+    for k, v in pairs(valSettings) do
       if( v.color==nil) then
         v.color = EchoExperience.rgbaBase
       end      
@@ -219,6 +264,11 @@ function EchoExperience:ListOfExpTabs()
       table.insert(validChoices, val )
     end
   end
+  return validChoices 
+end
+
+function EchoExperience:ListOfExpTabs()
+  local validChoices = EchoExperience:ListOfTabs(EchoExperience.savedVariables.expsettings)
   return validChoices 
 end
 
@@ -259,24 +309,15 @@ function EchoExperience:DoSaveExpTab()
   elem["color"] =color
   table.insert(EchoExperience.savedVariables.expsettings, elem)
  
+  --reset
+  EchoExperience.view.settingstemp.windowExp = 0
+  EchoExperience.view.settingstemp.tabExp    = 0
+  
   EchoExperience:UpdateUIExpTabs()
 end
 
 function EchoExperience:ListOfLootTabs()
-  local validChoices =  {}  
-	table.insert(validChoices, "Select")
-  if EchoExperience.savedVariables.lootsettings ~= nil then
-    for k, v in pairs(EchoExperience.savedVariables.lootsettings) do
-      if( v.color==nil) then
-        v.color = EchoExperience.rgbaBase
-      end
-      local c = ZO_ColorDef:New(v.color.r, v.color.g, v.color.b, v.color.a)
-      local ctext = c:Colorize("COLOR")
-      local val = zo_strformat( "<<1>>/<<2>>/<<3>>", v.window,v.tab,ctext )
-      --d(EchoExperience.name .. " val " .. val)      
-      table.insert(validChoices, val )
-    end
-  end
+  local validChoices = EchoExperience:ListOfTabs(EchoExperience.savedVariables.lootsettings)
   return validChoices 
 end
 
@@ -317,21 +358,15 @@ function EchoExperience:DoSaveLootTab()
   elem["color"]=color
   table.insert(EchoExperience.savedVariables.lootsettings, elem)
  
+  --reset
+  EchoExperience.view.settingstemp.windowLoot = 0
+  EchoExperience.view.settingstemp.tabLoot    = 0
+  
   EchoExperience:UpdateUILootTabs()
 end
 
 function EchoExperience:ListOfGuildTabs()
-  local validChoices =  {}  
-	table.insert(validChoices, "Select")
-  if EchoExperience.savedVariables.guildsettings ~= nil then
-    for k, v in pairs(EchoExperience.savedVariables.guildsettings) do
-      local c = ZO_ColorDef:New(v.color.r, v.color.g, v.color.b, v.color.a)
-      local ctext = c:Colorize("COLOR")
-      local val = zo_strformat( "<<1>>/<<2>>/<<3>>", v.window,v.tab,ctext )
-      --d(EchoExperience.name .. " val " .. val)      
-      table.insert(validChoices, val )
-    end
-  end
+  local validChoices = EchoExperience:ListOfTabs(EchoExperience.savedVariables.guildsettings)
   return validChoices 
 end
 
@@ -370,11 +405,63 @@ function EchoExperience:DoSaveGuildTab()
   elem["window"]=window
   elem["tab"]=tab
   elem["color"]=color
+  local gs = {}
+  gs["guild1"]=EchoExperience.view.settingstemp.guild1
+  gs["guild2"]=EchoExperience.view.settingstemp.guild2
+  gs["guild3"]=EchoExperience.view.settingstemp.guild3
+  gs["guild4"]=EchoExperience.view.settingstemp.guild4
+  gs["guild5"]=EchoExperience.view.settingstemp.guild5
+  elem["guilds"] = gs
   table.insert(EchoExperience.savedVariables.guildsettings, elem)
  
+ --Reset values
+  EchoExperience.view.settingstemp.guild1 = true
+  EchoExperience.view.settingstemp.guild2 = true
+  EchoExperience.view.settingstemp.guild3 = true
+  EchoExperience.view.settingstemp.guild4 = true
+  EchoExperience.view.settingstemp.guild5 = true
+  
   EchoExperience:UpdateUIGuildTabs()
 end
 
+	--Setup Events Related
+function EchoExperience:DoRefreshDropdowns()
+	EchoExperience.SetupExpGainsEvents()
+	EchoExperience.SetupLootGainsEvents()
+  EchoExperience.SetupMiscEvents()  
+end
+
+function EchoExperience:DoSetDefaults()
+  local pName = GetUnitName("player")
+  EchoExperience.accountVariables.useAsDefault = 	pName
+  EchoExperience.accountVariables.defaults = {}
+  EchoExperience.accountVariables.defaults.verboseExp      = EchoExperience.savedVariables.verboseExp
+  EchoExperience.accountVariables.defaults.groupLoot       = EchoExperience.savedVariables.groupLoot
+  EchoExperience.accountVariables.defaults.showGuildLogin  = EchoExperience.savedVariables.showGuildLogin
+  EchoExperience.accountVariables.defaults.showGuildLogout = EchoExperience.savedVariables.showGuildLogout
+  EchoExperience.accountVariables.defaults.showExp         = EchoExperience.savedVariables.showExp
+  EchoExperience.accountVariables.defaults.showLoot        = EchoExperience.savedVariables.showLoot
+  EchoExperience.accountVariables.defaults.guildsettings   = EchoExperience:deepcopy(EchoExperience.savedVariables.guildsettings)
+  EchoExperience.accountVariables.defaults.lootsettings    = EchoExperience:deepcopy(EchoExperience.savedVariables.lootsettings)
+  EchoExperience.accountVariables.defaults.expsettings     = EchoExperience:deepcopy(EchoExperience.savedVariables.expsettings)
+end
+
+function EchoExperience:DoLoadSetDefaults()
+  if(EchoExperience.accountVariables.useAsDefault~=nil and EchoExperience.accountVariables.defaults~=nil )then
+    EchoExperience.savedVariables.verboseExp      = EchoExperience.accountVariables.defaults.verboseExp
+    EchoExperience.savedVariables.groupLoot       = EchoExperience.accountVariables.defaults.groupLoot       
+    EchoExperience.savedVariables.showGuildLogin  = EchoExperience.accountVariables.defaults.showGuildLogin
+    EchoExperience.savedVariables.showGuildLogout = EchoExperience.accountVariables.defaults.showGuildLogout
+    EchoExperience.savedVariables.showExp         = EchoExperience.accountVariables.defaults.showExp
+    EchoExperience.savedVariables.showLoot        = EchoExperience.accountVariables.defaults.showLoot
+    
+    EchoExperience.savedVariables.guildsettings   = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.guildsettings)
+    EchoExperience.savedVariables.lootsettings    = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.lootsettings)
+    EchoExperience.savedVariables.expsettings     = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.expsettings)
+    
+    EchoExperience:RefreshTabs()
+  end
+end
 -----------------------------
 -- ON EVENT Functions here --
 -----------------------------
@@ -695,21 +782,29 @@ function EchoExperience.OnGuildMemberStatusChanged(eventCode,guildID,playerName,
   --"eventCode: <<1>>, guildID: <<2>>, playerName: <<3>>, prevStatus: <<4>>, curStatus: <<5>> ."  
   local strL = zo_strformat(sentence, eventCode, tostring(guildID), tostring(playerName), tostring(prevStatus), tostring(curStatus) )
   EchoExperience.debugMsg(strL)
+  local gName = EchoExperience:GetGuildName(guildID)
+  EchoExperience.debugMsg("gName='"..gName.."'")
   if(curStatus == 1) then
     --online
     if (EchoExperience.savedVariables.showGuildLogin) then
       --local sentence2 = "[EchoExp] <<3>> Logged IN at <<6>>"  
       local sentence2 = GetString("SI_ECHOEXP_GUILD_",2)
-      local strL2 = zo_strformat(sentence2, eventCode, tostring(guildID), tostring(playerName), tostring(prevStatus), tostring(curStatus), ZO_FormatClockTime() )
-      EchoExperience.outputToChanel(strL2,msgTypeGUILD)  
+      local strL2 = zo_strformat(sentence2, tostring(guildID), tostring(playerName), tostring(prevStatus), tostring(curStatus), ZO_FormatClockTime(), gName )
+      local filter = {}
+      filter.type = msgTypeGUILD
+      filter.guildID = guildID
+      EchoExperience.outputToChanel(strL2,msgTypeGUILD,filter)  
     end
   elseif(curStatus == 4) then
     --offline
     if (EchoExperience.savedVariables.showGuildLogout) then
       local sentence2 = GetString("SI_ECHOEXP_GUILD_",3)
       --local sentence2 = "[EchoExp] <<3>> Logged OUT at <<6>>"  
-      local strL2 = zo_strformat(sentence2, eventCode, tostring(guildID), tostring(playerName), tostring(prevStatus), tostring(curStatus), ZO_FormatClockTime() )
-      EchoExperience.outputToChanel(strL2,msgTypeGUILD)  
+      local strL2 = zo_strformat(sentence2, tostring(guildID), tostring(playerName), tostring(prevStatus), tostring(curStatus), ZO_FormatClockTime(), gName )
+      local filter = {}
+      filter.type = msgTypeGUILD
+      filter.guildID = guildID
+      EchoExperience.outputToChanel(strL2,msgTypeGUILD,filter)  
     end
   end
 end
@@ -814,7 +909,6 @@ function EchoExperience:UpgradeSettings()
   if(EchoExperience.savedVariables.tabGuild~=nil)then
     EchoExperience.savedVariables.tabGuild = nil
   end
-  
   --
   if(EchoExperience.savedVariables.window~=nil and EchoExperience.savedVariables.tab~=nil )then
     local elem = {}
@@ -836,7 +930,6 @@ function EchoExperience:UpgradeSettings()
     end
     upgraded=true
   end
-  
   --
   if(EchoExperience.savedVariables.windowloot~=nil and EchoExperience.savedVariables.tabloot~=nil )then
     local elem = {}
@@ -888,20 +981,31 @@ function EchoExperience:UpgradeSettings()
   if(EchoExperience.savedVariables.tabloot2~=nil)then
     EchoExperience.savedVariables.tabloot2 = nil
   end
-  
   EchoExperience.savedVariables.lootoutput = nil
   EchoExperience.savedVariables.expoutput = nil
-  
+  EchoExperience.savedVariables.guildignore = nil
   if(upgraded) then
+    EchoExperience.savedVariables.oldversion = EchoExperience.savedVariables.sversion
+    EchoExperience.savedVariables.sversion   = EchoExperience.version
     EchoExperience:UpdateUIExpTabs()
     EchoExperience:UpdateUILootTabs()
     EchoExperience:UpdateUIGuildTabs()
-    zo_callLater(EchoExperience.UpdateUIExpTabs, 12000)
-    zo_callLater(EchoExperience.UpdateUILootTabs, 12000)
-    zo_callLater(EchoExperience.UpdateUIGuildTabs, 12000)
+    zo_callLater(EchoExperience.RefreshTabs, 12000)
   end
 end
 
+function EchoExperience:RefreshTabs()
+  local myFpsLabelControl = WINDOW_MANAGER:GetControlByName("EchoExpDDExpOutput", "")
+  if(myFpsLabelControl~=nil) then
+    EchoExperience.UpdateUIExpTabs()
+    EchoExperience.UpdateUILootTabs()
+    EchoExperience.UpdateUIGuildTabs()
+  else
+    zo_callLater(EchoExperience.RefreshTabs,   12000)
+  end  
+end
+
+  --
 -- SETUP  setup event handling
 function EchoExperience.DelayedStart()
   --Setup VIEW
@@ -917,6 +1021,13 @@ function EchoExperience.DelayedStart()
   EchoExperience.view.settingstemp.windowExp = nil
   EchoExperience.view.settingstemp.tabExp = nil
   EchoExperience.view.settingstemp.colorExp = rgbaBase
+  
+  EchoExperience.view.settingstemp.guild1 = true
+  EchoExperience.view.settingstemp.guild2 = true
+  EchoExperience.view.settingstemp.guild3 = true
+  EchoExperience.view.settingstemp.guild4 = true
+  EchoExperience.view.settingstemp.guild5 = true
+  
   ElderScrollsOfAlts.view.selected = {}
   ElderScrollsOfAlts.view.selected.guildtab = nil
   ElderScrollsOfAlts.view.selected.loottab = nil
@@ -933,6 +1044,10 @@ function EchoExperience.DelayedStart()
     EchoExperience.savedVariables.expsettings = {}
   end
   
+  if(EchoExperience.accountVariables.defaults==nil)then
+    EchoExperience.accountVariables.defaults = {}
+  end
+
   EchoExperience:UpgradeSettings()
   
 	--Setup Events Related
@@ -963,7 +1078,8 @@ function EchoExperience.OnAddOnLoaded(event, addonName)
     if addonName ~= EchoExperience.name then return end
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name, EVENT_ADD_ON_LOADED)
 
-    EchoExperience.savedVariables = ZO_SavedVars:New("EchoExperienceSavedVariables", 1, nil, defaultSettings)
+    EchoExperience.savedVariables   = ZO_SavedVars:New("EchoExperienceSavedVariables", 1, nil, defaultSettings)
+    EchoExperience.accountVariables = ZO_SavedVars:NewAccountWide("EchoExperienceAccountSavedVariables", 1, nil, nil)
 
     -- Settings menu in Settings.lua.
     --EchoExperience:RestoreSettings()

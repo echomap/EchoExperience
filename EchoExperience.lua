@@ -28,6 +28,7 @@ local defaultSettings = {
   messageFmt = 1,
 	showLoot    = false,
 	groupLoot   = false,  
+  extendedLoot = false,
   showGuildLogin = false,
   showGuildLogout= false,
     rgba    = {
@@ -59,14 +60,14 @@ end
 
 function EchoExperience:ShowOutputs()
   EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.expsettings,   "EXP outputs")
-  EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.lootsettings,  "LOOT outputs")
-  EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.guildsettings, "GUILD outputs")
+  EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.lootsettings,  "LOOT outputs",msgTypeLOOT)
+  EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.guildsettings, "GUILD outputs",msgTypeGUILD)
 end
 
 function EchoExperience:ShowDefaults()
   EchoExperience:ShowOutputsSub(EchoExperience.accountVariables.defaults.expsettings,   "EXP defaults")
-  EchoExperience:ShowOutputsSub(EchoExperience.accountVariables.defaults.lootsettings,  "LOOT defaults")
-  EchoExperience:ShowOutputsSub(EchoExperience.accountVariables.defaults.guildsettings, "GUILD defaults")
+  EchoExperience:ShowOutputsSub(EchoExperience.accountVariables.defaults.lootsettings,  "LOOT defaults",msgTypeLOOT)
+  EchoExperience:ShowOutputsSub(EchoExperience.accountVariables.defaults.guildsettings, "GUILD defaults",msgTypeGUILD)
 end
 
 function EchoExperience:GetGuildName(gnum)
@@ -74,10 +75,8 @@ function EchoExperience:GetGuildName(gnum)
   return GetGuildName(gnum)
 end
 
-
 -- Main Output Function used by addon to control output and style
 function EchoExperience.outputToChanel(text,msgType,filter)
-	--EchoExperience.debugMsg("EEOTC: text='"..text.."' msgType='"..msgType.."'")
 	--Output to where
 	if msgType == msgTypeSYS then
 		--
@@ -101,17 +100,28 @@ function EchoExperience.outputToChanel(text,msgType,filter)
   end
 end
 
-function EchoExperience:ShowOutputsSub(dataSettings, headerText)
+function EchoExperience:ShowOutputsSub(dataSettings, headerText, msgType)
   if dataSettings ~= nil then
     EchoExperience.outputMsg(headerText)
     for k, v in pairs(dataSettings) do
       local c = ZO_ColorDef:New(v.color.r, v.color.g, v.color.b, v.color.a)
       local ctext = c:Colorize("COLOR")
-      local cVals = zo_strformat( "r=<<1>>/g=<<2>>/b=<<3>>/a=<<4>>", string.format("%.3f",255*v.color.r),string.format("%.3f",255*v.color.g),string.format("%.3f",255*v.color.b),string.format("%.3f",255*v.color.a) )
-      local gval = "[Show all]"
-      if(v.guilds~=nil) then
-        gval = zo_strformat( "[g1=<<1>>/g2=<<2>>/g3=<<3>>/g4=<<4>>/g5=<<5>>]", tostring(v.guilds.guild1),tostring(v.guilds.guild2),tostring(v.guilds.guild3),tostring(v.guilds.guild4),tostring(v.guilds.guild5) )
-      end            
+      local cVals = zo_strformat( "r=<<1>>/g=<<2>>/b=<<3>>/a=<<4>>",
+          string.format("%.3f",math.floor(255*v.color.r) ),
+          string.format("%.3f",math.floor(255*v.color.g) ),
+          string.format("%.3f",math.floor(255*v.color.b) ),
+          string.format("%.3f",math.floor(255*v.color.a) )  )
+      local gval = ""
+      if(msgType==msgTypeLOOT)then
+        gval=""
+        --"itemLoot" "groupLoot"
+      end      
+      if(msgType==msgTypeGUILD) then
+        gval = "[Show all]"
+        if(v.guilds~=nil) then
+          gval = zo_strformat( "[g1=<<1>>/g2=<<2>>/g3=<<3>>/g4=<<4>>/g5=<<5>>]", tostring(v.guilds.guild1),tostring(v.guilds.guild2),tostring(v.guilds.guild3),tostring(v.guilds.guild4),tostring(v.guilds.guild5) )
+        end            
+      end
       local val = zo_strformat( "window=<<1>>, tab=<<2>>, color=<<3>> (<<4>>) <<5>>", v.window,v.tab,ctext,cVals,gval )
       EchoExperience.outputMsg(val)
     end
@@ -344,24 +354,23 @@ function EchoExperience:DoDeleteLootTab()
 end
 
 function EchoExperience:DoSaveLootTab()
-  local window = EchoExperience.view.settingstemp.windowLoot
-  local tab    = EchoExperience.view.settingstemp.tabLoot
-  local color  = EchoExperience.view.settingstemp.colorLoot
- 
   if EchoExperience.savedVariables.lootsettings == nil then
     EchoExperience.savedVariables.lootsettings = {}
   end
   
   local elem = {}
-  elem["window"]=window
-  elem["tab"]=tab
-  elem["color"]=color
+  elem["window"]    = EchoExperience.view.settingstemp.windowLoot
+  elem["tab"]       = EchoExperience.view.settingstemp.tabLoot
+  elem["color"]     = EchoExperience.view.settingstemp.colorLoot
+  elem["itemLoot"]  = EchoExperience.view.settingstemp.showItemLoot
+  elem["groupLoot"] = EchoExperience.view.settingstemp.showGroupLoot
+  
   table.insert(EchoExperience.savedVariables.lootsettings, elem)
  
   --reset
   EchoExperience.view.settingstemp.windowLoot = 0
   EchoExperience.view.settingstemp.tabLoot    = 0
-  
+  EchoExperience:SetupDefaultColors()
   EchoExperience:UpdateUILootTabs()
 end
 
@@ -441,6 +450,8 @@ function EchoExperience:DoSetDefaults()
   EchoExperience.accountVariables.defaults.showGuildLogout = EchoExperience.savedVariables.showGuildLogout
   EchoExperience.accountVariables.defaults.showExp         = EchoExperience.savedVariables.showExp
   EchoExperience.accountVariables.defaults.showLoot        = EchoExperience.savedVariables.showLoot
+  EchoExperience.accountVariables.defaults.extendedLoot        = EchoExperience.savedVariables.extendedLoot
+  
   EchoExperience.accountVariables.defaults.guildsettings   = EchoExperience:deepcopy(EchoExperience.savedVariables.guildsettings)
   EchoExperience.accountVariables.defaults.lootsettings    = EchoExperience:deepcopy(EchoExperience.savedVariables.lootsettings)
   EchoExperience.accountVariables.defaults.expsettings     = EchoExperience:deepcopy(EchoExperience.savedVariables.expsettings)
@@ -454,6 +465,7 @@ function EchoExperience:DoLoadSetDefaults()
     EchoExperience.savedVariables.showGuildLogout = EchoExperience.accountVariables.defaults.showGuildLogout
     EchoExperience.savedVariables.showExp         = EchoExperience.accountVariables.defaults.showExp
     EchoExperience.savedVariables.showLoot        = EchoExperience.accountVariables.defaults.showLoot
+    EchoExperience.savedVariables.extendedLoot        = EchoExperience.accountVariables.defaults.extendedLoot
     
     EchoExperience.savedVariables.guildsettings   = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.guildsettings)
     EchoExperience.savedVariables.lootsettings    = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.lootsettings)
@@ -667,6 +679,142 @@ function EchoExperience.OnExperienceGain(event, eventCode, reason, level, previo
 	--EchoExperience.debugMsg("OnExperienceGain Done")
 end
 
+--EVENT_LOOT_ITEM_FAILED (number eventCode, LootItemResult reason, string itemName) 
+function EchoExperience.OnLootFailed(eventCode, reason, itemName)
+		EchoExperience.debugMsg("OnLootFailed: "
+			.." eventCode="  .. tostring(eventCode)
+			.." reason="     .. tostring(reason)
+			.." itemName="   .. tostring(itemName)
+		)
+end
+
+--EVENT_BANKED_CURRENCY_UPDATE (number eventCode, CurrencyType currency, number newValue, number oldValue) 
+function EchoExperience.OnBankedCurrency(eventCode, currency, newValue, oldValue) 
+		EchoExperience.debugMsg("OnBankedCurrency: "
+			.." eventCode="  .. tostring(eventCode)
+			.." currency="     .. tostring(currency)
+			.." newValue="   .. tostring(newValue)
+			.." oldValue="   .. tostring(oldValue)      
+		)
+end
+--EVENT_CURRENCY_UPDATE (number eventCode, CurrencyType currencyType, CurrencyLocation currencyLocation, number newAmount, number oldAmount, CurrencyChangeReason reason) 
+function EchoExperience.OnCurrencyUpdate(eventCode, currencyType, currencyLocation, newAmount, oldAmount, reason) 
+  EchoExperience.debugMsg("OnCurrencyUpdate: "
+    .." eventCode="  .. tostring(eventCode)
+    .." currencyType="     .. tostring(currencyType)
+    .." currencyLocation="   .. tostring(currencyLocation)
+    .." newAmount="     .. tostring(newAmount)
+    .." oldAmount="   .. tostring(oldAmount)
+    .." reason="   .. tostring(reason)      
+  )
+  local qualifier = 1
+  local entryQuantity = oldAmount - newAmount
+  local isSingular = true
+  if(entryQuantity>1) then isSingular = false end
+  if(newAmount>oldAmount) then 
+    qualifier = 2
+    entryQuantity = newAmount - oldAmount
+  end
+  local icon = GetCurrencyKeyboardIcon(currencyType) 
+  --local icon = GetCurrencyLootKeyboardIcon(currencyType) 
+  local entryName = GetCurrencyName(currencyType, isSingular, false )
+  local sentence = GetString("SI_ECHOLOOT_CURRENCY_",qualifier)
+  local strL = zo_strformat(sentence, icon, entryName, entryQuantity )
+	EchoExperience.outputToChanel(strL,msgTypeLOOT)
+end
+
+
+--EVENT_SELL_RECEIPT (eventCode, itemName, itemQuantity, money)
+function EchoExperience.OnSellReceipt(eventCode, itemName, itemQuantity, money) 
+  EchoExperience.debugMsg("OnSellReceipt: "
+    .." eventCode="  .. tostring(eventCode)
+    .." itemName="     .. tostring(itemName)
+    .." itemQuantity=" .. tostring(itemQuantity)
+    .." money="   .. tostring(money)      
+  )
+  local qualifier = 1
+  if(itemQuantity>1) then qualifier = 2 end
+  local icon, sellPrice, meetsUsageRequirement, equipType, itemStyleId = GetItemLinkInfo(itemName)
+  --local curricon = GetCurrencyKeyboardIcon(currencyType) 
+  local sentence = GetString("SI_ECHOLOOT_SELL_",qualifier)
+  local strL = zo_strformat(sentence, icon, itemName, itemQuantity, money )
+	EchoExperience.outputToChanel(strL,msgTypeLOOT)
+end
+
+--EVENT_BUYBACK_RECEIPT (number eventCode, string itemLink, number itemQuantity, number money, ItemUISoundCategory itemSoundCategory)
+function EchoExperience.OnBuybackReceipt(eventCode, itemLink, itemQuantity, money, itemSoundCategory) 
+  EchoExperience.debugMsg("OnBuybackReceipt: "
+    .." eventCode="  .. tostring(eventCode)
+    .." itemLink="     .. tostring(itemLink)
+    .." itemQuantity="   .. tostring(itemQuantity)
+    .." money="   .. tostring(money)      
+    .." itemSoundCategory="   .. tostring(itemSoundCategory)          
+  )
+  local qualifier = 1
+  if(itemQuantity>1) then qualifier = 2 end
+  --local icon, sellPrice, meetsUsageRequirement, equipType, itemStyleId = GetItemLinkInfo(itemLink)
+  local icon = GetItemLinkIcon(itemLink) 
+  --local curricon = GetCurrencyKeyboardIcon(currencyType) 
+  local sentence = GetString("SI_ECHOLOOT_BUYBACK_",qualifier)
+  local strL = zo_strformat(sentence, icon, itemLink, itemQuantity, money )
+	EchoExperience.outputToChanel(strL,msgTypeLOOT)
+end
+
+
+--EVENT_BUY_RECEIPT (number eventCode, string entryName, StoreEntryType entryType, number entryQuantity, number money, CurrencyType specialCurrencyType1, string specialCurrencyInfo1, number specialCurrencyQuantity1, CurrencyType specialCurrencyType2, string specialCurrencyInfo2, number specialCurrencyQuantity2, ItemUISoundCategory itemSoundCategory) 
+function EchoExperience.OnBuyReceipt(eventCode, entryName, entryType, entryQuantity, money, specialCurrencyType1, specialCurrencyInfo1, specialCurrencyQuantity1, specialCurrencyType2, specialCurrencyInfo2, specialCurrencyQuantity2, itemSoundCategory) 
+		EchoExperience.debugMsg("OnBuyReceipt: "
+			.." eventCode="  .. tostring(eventCode)
+			.." entryName="  .. tostring(entryName)
+			.." entryType="  .. tostring(entryType)
+      .." entryQuantity="  .. tostring(entryQuantity)
+      .." money="  .. tostring(money)
+      .." specialCurrencyType1="  .. tostring(specialCurrencyType1)
+      .." specialCurrencyInfo1="  .. tostring(specialCurrencyInfo1)
+      .." specialCurrencyQuantity1="  .. tostring(specialCurrencyQuantity1)
+      .." specialCurrencyType2="  .. tostring(specialCurrencyType2)
+      .." specialCurrencyInfo2="  .. tostring(specialCurrencyInfo2)
+      .." specialCurrencyQuantity2="  .. tostring(specialCurrencyQuantity2)
+      .." itemSoundCategory="  .. tostring(itemSoundCategory)      
+		)
+  local qualifier = 1
+  if(entryQuantity>1) then qualifier = 2 end
+  local icon, sellPrice, meetsUsageRequirement, EquipType equipType, itemStyleId = GetItemLinkInfo(entryName)
+  local sentence = GetString("SI_ECHOLOOT_BUY_",qualifier)
+  local strL = zo_strformat(sentence, icon, entryName, entryQuantity, money )
+	EchoExperience.outputToChanel(strL,msgTypeLOOT)
+end
+
+-- EVENT_ALLIANCE_POINT_UPDATE (number eventCode, number alliancePoints, boolean playSound, number difference, CurrencyChangeReason reason) 
+function EchoExperience.OnAlliancePointUpdate(eventCode, alliancePoints, playSound, difference, reason) 
+		EchoExperience.debugMsg("OnAlliancePointUpdate: "
+			.." eventCode="  .. tostring(eventCode)
+			.." alliancePoints="     .. tostring(alliancePoints)
+      .." playSound="   .. tostring(playSound)            
+			.." difference=" .. tostring(difference)
+			.." reason="   .. tostring(reason)      
+		)
+end
+
+--EVENT_INVENTORY_ITEM_DESTROYED (number eventCode, ItemUISoundCategory itemSoundCategory) 
+function EchoExperience.OnInventoryItemDestroyed(eventCode, ItemUISoundCategory, itemSoundCategory) 
+		EchoExperience.debugMsg("OnInventoryItemDestroyed: "
+			.." eventCode="  .. tostring(eventCode)
+			.." ItemUISoundCategory="     .. tostring(ItemUISoundCategory)
+      .." itemSoundCategory="   .. tostring(itemSoundCategory)            
+		)
+end
+
+--EVENT_INVENTORY_ITEM_USED (number eventCode, ItemUISoundCategory itemSoundCategory) 
+function EchoExperience.OnInventoryItemUsed(eventCode, ItemUISoundCategory, itemSoundCategory) 
+		EchoExperience.debugMsg("OnInventoryItemUsed: "
+			.." eventCode="  .. tostring(eventCode)
+			.." ItemUISoundCategory="     .. tostring(ItemUISoundCategory)
+      .." itemSoundCategory="   .. tostring(itemSoundCategory)            
+		)
+end
+
+
 --ONEvent  shows loot gains
 --EVENT:   EVENT_LOOT_RECEIVED
 --RETURNS:(num eventCode, str receivedBy, str itemName, num quantity,
@@ -676,12 +824,11 @@ end
 --LOOTTPE=LOOT_TYPE_ANY,LOOT_TYPE_CHAOTIC_CREATIA, LOOT_TYPE_COLLECTIBLE, LOOT_TYPE_ITEM, LOOT_TYPE_MONEY,
 --				LOOT_TYPE_QUEST_ITEM, LOOT_TYPE_STYLE_STONES, LOOT_TYPE_TELVAR_STONES,LOOT_TYPE_WRIT_VOUCHERS
 function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,isPickpocketLoot,questItemIcon,itemId,isStolen)
-	local extraInfo = nill
+  -- Get Extra Info for types that have it
+	local extraInfo = nill  
 	if lootType ~= nil and lootType ~= LOOT_TYPE_MONEY and lootType ~= LOOT_TYPE_QUEST_ITEM then
 		--if itemType ~= ITEMTYPE_ARMOR_TRAIT and itemType ~= ITEMTYPE_WEAPON_TRAIT -- lootType ~= LOOT_TYPE_COLLECTIBLE
 		local traitName, setName = EchoExperience:GetExtraInfo(itemName)
-		--end
-		--
 		if( traitName ~=nil and setName ~= nil) then
 			extraInfo = string.format("%s, %s set",traitName, setName)
 		elseif( traitName ~= nil) then
@@ -697,7 +844,7 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 		)
 	end
 
-   if(isSelf) then
+  if(isSelf) then
     --<<1>> is itemname
     --<<2>> is quantity
     local qualifier = 1
@@ -861,11 +1008,42 @@ function EchoExperience.SetupLootGainsEvents(reportMe)
 			EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINS_SHOW),msgTypeSYS)
 			--EchoExperience.outputToChanel("EchoExp is showing Loot Gains",msgTypeSYS)
 		end
+    --extendedLoot xxxxx    
+    if (EchoExperience.savedVariables.extendedLoot) then
+      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnLootFailed",	EVENT_LOOT_ITEM_FAILED, EchoExperience.OnLootFailed)
+      
+      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnBankedCurrency",	EVENT_BANKED_CURRENCY_UPDATE, EchoExperience.OnBankedCurrency)
+      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnCurrencyUpdate",	EVENT_CURRENCY_UPDATE, EchoExperience.OnCurrencyUpdate)
+      
+      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnSellReceipt",	EVENT_SELL_RECEIPT, EchoExperience.OnSellReceipt)
+      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnBuybackReceipt",	EVENT_BUYBACK_RECEIPT, EchoExperience.OnBuybackReceipt)
+      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnBuyReceipt",	EVENT_BUY_RECEIPT, EchoExperience.OnBuyReceipt)
+
+      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnAlliancePointUpdate",	EVENT_ALLIANCE_POINT_UPDATE, EchoExperience.OnAlliancePointUpdate)
+      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnInventoryItemDestroyed",	EVENT_INVENTORY_ITEM_DESTROYED, EchoExperience.OnInventoryItemDestroyed)
+      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnInventoryItemUsed",	EVENT_INVENTORY_ITEM_USED, EchoExperience.OnInventoryItemUsed)
+
+    end
 	else
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."LootReceived",	EVENT_LOOT_RECEIVED, EchoExperience.OnLootReceived)
+    
+    
+      EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnLootFailed",	EVENT_LOOT_ITEM_FAILED, EchoExperience.OnLootFailed)
+      EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnBankedCurrency",	EVENT_BANKED_CURRENCY_UPDATE, EchoExperience.OnBankedCurrency)
+      EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnCurrencyUpdate",	EVENT_CURRENCY_UPDATE, EchoExperience.OnCurrencyUpdate)
+
+     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnSellReceipt",	EVENT_SELL_RECEIPT, EchoExperience.OnBankedCurrency)
+      EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnBuybackReceipt",	EVENT_BUYBACK_RECEIPT, EchoExperience.OnCurrencyUpdate)
+      EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnBuyReceipt",	EVENT_BUY_RECEIPT, EchoExperience.OnCurrencyUpdate)
+    
+      EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnAlliancePointUpdate",	EVENT_ALLIANCE_POINT_UPDATE, EchoExperience.OnBankedCurrency)
+      EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventoryItemDestroyed",	EVENT_INVENTORY_ITEM_DESTROYED, EchoExperience.OnCurrencyUpdate)
+      EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventoryItemUsed",	EVENT_INVENTORY_ITEM_USED, EchoExperience.OnCurrencyUpdate)
+      
 		if(reportMe) then
 			EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINS_HIDE),msgTypeSYS)
 			--EchoExperience.outputToChanel("EchoExp is no longer showing Loot Gains",msgTypeSYS)
+      
 		end
 	end
 end
@@ -1005,7 +1183,25 @@ function EchoExperience:RefreshTabs()
   end  
 end
 
-  --
+function EchoExperience.SetupDefaultColors()
+  EchoExperience.view.settingstemp = {}
+  EchoExperience.view.settingstemp.colorExp = {}
+  EchoExperience.view.settingstemp.colorExp.r = EchoExperience.rgbaBase.r
+  EchoExperience.view.settingstemp.colorExp.g = EchoExperience.rgbaBase.g
+  EchoExperience.view.settingstemp.colorExp.b = EchoExperience.rgbaBase.b
+  EchoExperience.view.settingstemp.colorExp.a = EchoExperience.rgbaBase.a  
+  EchoExperience.view.settingstemp.colorLoot = {}
+  EchoExperience.view.settingstemp.colorLoot.r = EchoExperience.rgbaBase.r
+  EchoExperience.view.settingstemp.colorLoot.g = EchoExperience.rgbaBase.g
+  EchoExperience.view.settingstemp.colorLoot.b = EchoExperience.rgbaBase.b
+  EchoExperience.view.settingstemp.colorLoot.a = EchoExperience.rgbaBase.a
+  EchoExperience.view.settingstemp.colorGuild = {}
+  EchoExperience.view.settingstemp.colorGuild.r = EchoExperience.rgbaBase.r
+  EchoExperience.view.settingstemp.colorGuild.g = EchoExperience.rgbaBase.g
+  EchoExperience.view.settingstemp.colorGuild.b = EchoExperience.rgbaBase.b
+  EchoExperience.view.settingstemp.colorGuild.a = EchoExperience.rgbaBase.a
+end
+
 -- SETUP  setup event handling
 function EchoExperience.DelayedStart()
   --Setup VIEW
@@ -1070,6 +1266,7 @@ function EchoExperience.Activated(e)
     --d(EchoExperience.name .. GetString(SI_ECHOEXP_MESSAGE)) -- Prints to chat.
     --ZO_AlertNoSuppression(UI_ALERT_CATEGORY_ALERT, nil,
     --    EchoExperience.name .. GetString(SI_NEW_ADDON_MESSAGE)) -- Top-right alert.
+    EchoExperience.SetupDefaultColors()
     zo_callLater(EchoExperience.DelayedStart, 3000)
 end
 

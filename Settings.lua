@@ -127,12 +127,16 @@ function EchoExperience.LoadSettings()
     type = "colorpicker",
     name = "EXP Output Color",
     tooltip = "What Color to use for Exp text.",
-    getFunc = function() return              
-      EchoExperience.rgbaBase.r,
-      EchoExperience.rgbaBase.g,
-      EchoExperience.rgbaBase.b,
-      EchoExperience.rgbaBase.a
-    end,	--(alpha is optional)
+    getFunc = function() 
+        if(EchoExperience.view.settingstemp==nil or EchoExperience.view.settingstemp.colorExp==nil) then
+          EchoExperience.SetupDefaultColors()
+      end
+      return              
+      EchoExperience.view.settingstemp.colorExp.r,
+      EchoExperience.view.settingstemp.colorExp.g,
+      EchoExperience.view.settingstemp.colorExp.b,
+      EchoExperience.view.settingstemp.colorExp.a
+    end,	--(alpha is optional)    
     setFunc = 	function(r,g,b,a)
       --(alpha is optional)
       --d(r, g, b, a)
@@ -181,15 +185,26 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {		
     type = "checkbox",
-    name = "Show other group member's Looted items?",
-    tooltip = "Verbose reporting if experience is on?",
-    getFunc = function() return EchoExperience.savedVariables.groupLoot end,
+    name = "Show other types of item events? (researched/trashed/etc)",
+    tooltip = "Verbose reporting of Looted items?",
+    getFunc = function() return EchoExperience.savedVariables.extendedLoot end,
     setFunc = function(value)
-      EchoExperience.savedVariables.groupLoot = value
+      EchoExperience.savedVariables.extendedLoot = value
+      EchoExperience.SetupLootGainsEvents(false)
     end,
     width = "half",	--or "half" (optional)
   }
-  
+  optionsTable[#optionsTable+1] = {		
+    type = "checkbox",
+    name = "Show other group member's Looted items?",
+    tooltip = "Verbose reporting if Looted is on?",
+    getFunc = function() return EchoExperience.savedVariables.groupLoot end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.groupLoot = value
+      EchoExperience.SetupLootGainsEvents(false)
+    end,
+    width = "half",	--or "half" (optional)
+  }
   
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
@@ -238,12 +253,16 @@ function EchoExperience.LoadSettings()
     type = "colorpicker",
     name = "Loot Output Color",
     tooltip = "What Color to use for Loot text.",
-    getFunc = function() return              
-      EchoExperience.rgbaBase.r,
-      EchoExperience.rgbaBase.g,
-      EchoExperience.rgbaBase.b,
-      EchoExperience.rgbaBase.a
-    end,	--(alpha is optional)
+    getFunc = function()               
+        if(EchoExperience.view.settingstemp==nil or EchoExperience.view.settingstemp.colorLoot==nil) then
+          EchoExperience.SetupDefaultColors()
+      end
+      return              
+      EchoExperience.view.settingstemp.colorLoot.r,
+      EchoExperience.view.settingstemp.colorLoot.g,
+      EchoExperience.view.settingstemp.colorLoot.b,
+      EchoExperience.view.settingstemp.colorLoot.a      
+    end,
     setFunc = 	function(r,g,b,a)
       --(alpha is optional)
       --d(r, g, b, a)
@@ -257,6 +276,29 @@ function EchoExperience.LoadSettings()
     end,
     width = "full",	--or "half" (optional)
   }
+  
+
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name = "Looted Items",
+    tooltip = "Report? on or off.",
+    getFunc = function() return EchoExperience.view.settingstemp.showItemLoot end,
+    setFunc = function(value)
+      EchoExperience.view.settingstemp.showItemLoot = value
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  optionsTable[#optionsTable+1] = {		
+    type = "checkbox",
+    name = "Show other group member's Looted items?",
+    tooltip = "Verbose reporting if Looted is on?",
+    getFunc = function() return EchoExperience.view.settingstemp.showGroupLoot end,
+    setFunc = function(value)
+      EchoExperience.view.settingstemp.showGroupLoot = value
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  
   optionsTable[#optionsTable+1] = {
     type = "button",
     name = "Save",
@@ -346,27 +388,31 @@ function EchoExperience.LoadSettings()
     width = "half",	--or "half" (optional)
   }
   optionsTable[#optionsTable+1] = {
-            type = "colorpicker",
-            name = "GUILD Output Color",
-            tooltip = "What Color to use for GUILD text.",
-            getFunc = function() return              
-							EchoExperience.rgbaBase.r,
-							EchoExperience.rgbaBase.g,
-							EchoExperience.rgbaBase.b,
-							EchoExperience.rgbaBase.a
-						end,	--(alpha is optional)
-            setFunc = 	function(r,g,b,a)
-							--(alpha is optional)
-							--d(r, g, b, a)
-							local c = ZO_ColorDef:New(r,g,b,a)
-							--c:Colorize(text)
-              EchoExperience.view.settingstemp.colorGuild = {}
-              EchoExperience.view.settingstemp.colorGuild.r = r
-              EchoExperience.view.settingstemp.colorGuild.g = g
-              EchoExperience.view.settingstemp.colorGuild.b = b
-              EchoExperience.view.settingstemp.colorGuild.a = a
-						end,
-            width = "full",	--or "half" (optional)
+    type = "colorpicker",
+    name = "GUILD Output Color",
+    tooltip = "What Color to use for GUILD text.",
+    getFunc = function()               
+        if(EchoExperience.view.settingstemp==nil or EchoExperience.view.settingstemp.colorGuild==nil) then
+          EchoExperience.SetupDefaultColors()
+      end
+      return              
+      EchoExperience.view.settingstemp.colorGuild.r,
+      EchoExperience.view.settingstemp.colorGuild.g,
+      EchoExperience.view.settingstemp.colorGuild.b,
+      EchoExperience.view.settingstemp.colorGuild.a      
+    end,
+    setFunc = 	function(r,g,b,a)
+      --(alpha is optional)
+      --d(r, g, b, a)
+      local c = ZO_ColorDef:New(r,g,b,a)
+      --c:Colorize(text)
+      EchoExperience.view.settingstemp.colorGuild = {}
+      EchoExperience.view.settingstemp.colorGuild.r = r
+      EchoExperience.view.settingstemp.colorGuild.g = g
+      EchoExperience.view.settingstemp.colorGuild.b = b
+      EchoExperience.view.settingstemp.colorGuild.a = a
+    end,
+    width = "full",	--or "half" (optional)
   }
   optionsTable[#optionsTable+1] = {
     type = "checkbox",

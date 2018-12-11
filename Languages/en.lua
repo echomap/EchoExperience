@@ -49,11 +49,10 @@ local localization_strings = {
   SI_ECHOLOOT_YOU_GAIN_2  = "You looted: <<2>>x <<1>>.",
 	SI_ECHOLOOT_YOU_PICK_2  = "You acquired: <<2>>x <<1>>.",
 	SI_ECHOLOOT_YOU_QUEST_2 = "You looted: <<1>> (quest item).",
-
+  
   SI_ECHOLOOT_YOU_GAIN_4  = "You looted: <<2>>x <<1>> (*<<3>>*).",
 	SI_ECHOLOOT_YOU_PICK_4  = "You acquired: <<2>>x <<1>> (*<<3>>*).",
 	SI_ECHOLOOT_YOU_QUEST_4 = "You looted: <<2>>x <<1>> (*<<3>>*) (quest item).",
-
   --TEST2
   SI_ECHOLOOT2_YOU_GAIN_1   = "[Recieved] <<1>>.",
   SI_ECHOLOOT2_YOU_QUEST_1  = "[Recieved] quest-item: <<1>>.",
@@ -64,13 +63,11 @@ local localization_strings = {
   SI_ECHOLOOT2_YOU_GAIN_4   = "[Recieved] <<2>>x <<1>> (*<<3>>*).",
   SI_ECHOLOOT2_YOU_QUEST_4  = "[Recieved] quest-item: <<2>>x <<1>> (*<<3>>*).",    
   --TEST2
-
 	--<<1>> is who looted
 	--<<2>> is itemname
   SI_ECHOLOOT_OTHER_GAIN_1  = "<<1>> looted: <<2>>.",
 	SI_ECHOLOOT_OTHER_PICK_1  = "<<1>> acquired: <<2>>.",
 	SI_ECHOLOOT_OTHER_QUEST_1 = "<<1>> looted: <<2>> (quest item).",
-
 	--<<1>> is who looted
 	--<<2>> is itemname
 	--<<3>> is quantity
@@ -78,6 +75,16 @@ local localization_strings = {
 	SI_ECHOLOOT_OTHER_PICK_2  = "<<1>> acquired: <<3>>x <<2>>.",
 	SI_ECHOLOOT_OTHER_QUEST_2 = "<<1>> looted: <<2>> (quest item).",
 
+  --Extended Loot info
+  --TODO use GetChatFontSize()  to get size
+  SI_ECHOLOOT_BUYBACK_1 = "You buyback |t12:12:<<1>>|t <<2>>",
+  SI_ECHOLOOT_BUYBACK_2 = "You buyback |t12:12:<<1>>|t <<2>> x<<3>>",
+  SI_ECHOLOOT_SELL_1 = "You sell |t12:12:<<1>>|t <<2>>",
+  SI_ECHOLOOT_SELL_2 = "You sell |t12:12:<<1>>|t <<2>> x<<3>>",
+  SI_ECHOLOOT_BUY_1 = "You buy |t12:12:<<1>>|t <<2>>",
+  SI_ECHOLOOT_BUY_2 = "You buy |t12:12:<<1>>|t <<2>> x<<3>>",
+  SI_ECHOLOOT_CURRENCY_1 = "You spend <<3>> |t12:12:<<1>>|t <<2>>", 
+  SI_ECHOLOOT_CURRENCY_2 = "You gain <<3>> |t12:12:<<1>>|t <<2>>", 
 }
 
 for stringId, stringValue in pairs(localization_strings) do

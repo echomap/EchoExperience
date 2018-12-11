@@ -6,6 +6,10 @@ Guild logon format
 Guild logon guild they belong to?
 GUILD Logon, select guilds to care about? or block?
 Edit Guilds or existing entries
+You recieve mail with 
+brackets around names and links?
+deconstruct/ you receive
+You craft
 
 -=Versions=-
 *Testing branch:

@@ -77,14 +77,19 @@ local localization_strings = {
 
   --Extended Loot info
   --TODO use GetChatFontSize()  to get size
-  SI_ECHOLOOT_BUYBACK_1 = "You buyback |t12:12:<<1>>|t <<2>>",
-  SI_ECHOLOOT_BUYBACK_2 = "You buyback |t12:12:<<1>>|t <<2>> x<<3>>",
-  SI_ECHOLOOT_SELL_1 = "You sell |t12:12:<<1>>|t <<2>>",
-  SI_ECHOLOOT_SELL_2 = "You sell |t12:12:<<1>>|t <<2>> x<<3>>",
+  SI_ECHOLOOT_BUYBACK_1 = "You buyback |t14:14:<<1>>|t <<2>>",
+  SI_ECHOLOOT_BUYBACK_2 = "You buyback |t14:14:<<1>>|t <<2>> x<<3>>",
+  SI_ECHOLOOT_SELL_1 = "You sell |t14:14:<<1>>|t <<2>>",
+  SI_ECHOLOOT_SELL_2 = "You sell |t14:14:<<1>>|t <<2>> x<<3>>",
   SI_ECHOLOOT_BUY_1 = "You buy |t12:12:<<1>>|t <<2>>",
   SI_ECHOLOOT_BUY_2 = "You buy |t12:12:<<1>>|t <<2>> x<<3>>",
   SI_ECHOLOOT_CURRENCY_1 = "You spend <<3>> |t12:12:<<1>>|t <<2>>", 
   SI_ECHOLOOT_CURRENCY_2 = "You gain <<3>> |t12:12:<<1>>|t <<2>>", 
+  
+  SI_ECHOLOOT_RECEIVE_1 = "You receive |t12:12:<<1>>|t <<2>>",
+  SI_ECHOLOOT_RECEIVE_2 = "You receive |t12:12:<<1>>|t <<2>> x<<3>>",
+  SI_ECHOLOOT_LOSE_1 = "You lose |t12:12:<<1>>|t <<2>>",
+  SI_ECHOLOOT_LOSE_2 = "You lose|t12:12:<<1>>|t <<2>> x<<3>>",
 }
 
 for stringId, stringValue in pairs(localization_strings) do

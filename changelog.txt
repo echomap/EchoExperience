@@ -15,7 +15,7 @@ You craft
 *Testing branch:
 	
 *Development:
--
+  -OnInventorySingleSlotUpdate
 0.0.15
   -bug fix settings panel name and guild names
 0.0.14

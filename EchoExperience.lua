@@ -20,6 +20,8 @@ local msgTypeEXP     = 2
 local msgTypeLOOT    = 4
 local msgTypeGUILD   = 6
 
+--local PCHAT = LibStub("PCHAT")
+
 local defaultSettings = {
   sversion   = EchoExperience.version,
   debug      = false,
@@ -60,7 +62,7 @@ end
 
 function EchoExperience:ShowOutputs()
   EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.expsettings,   "EXP outputs")
-  EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.lootsettings,  "LOOT outputs",msgTypeLOOT)
+  EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.lootsettings,  "LOOT outputs", msgTypeLOOT)
   EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.guildsettings, "GUILD outputs",msgTypeGUILD)
 end
 
@@ -107,10 +109,10 @@ function EchoExperience:ShowOutputsSub(dataSettings, headerText, msgType)
       local c = ZO_ColorDef:New(v.color.r, v.color.g, v.color.b, v.color.a)
       local ctext = c:Colorize("COLOR")
       local cVals = zo_strformat( "r=<<1>>/g=<<2>>/b=<<3>>/a=<<4>>",
-          string.format("%.3f",math.floor(255*v.color.r) ),
-          string.format("%.3f",math.floor(255*v.color.g) ),
-          string.format("%.3f",math.floor(255*v.color.b) ),
-          string.format("%.3f",math.floor(255*v.color.a) )  )
+          string.format("%.3d",( (255*v.color.r) ) ),
+          string.format("%.3d",( (255*v.color.g) ) ),
+          string.format("%.3d",( (255*v.color.b) ) ),
+          string.format("%.3d",( (255*v.color.a) ) )  )
       local gval = ""
       if(msgType==msgTypeLOOT)then
         gval=""
@@ -122,7 +124,7 @@ function EchoExperience:ShowOutputsSub(dataSettings, headerText, msgType)
           gval = zo_strformat( "[g1=<<1>>/g2=<<2>>/g3=<<3>>/g4=<<4>>/g5=<<5>>]", tostring(v.guilds.guild1),tostring(v.guilds.guild2),tostring(v.guilds.guild3),tostring(v.guilds.guild4),tostring(v.guilds.guild5) )
         end            
       end
-      local val = zo_strformat( "window=<<1>>, tab=<<2>>, color=<<3>> (<<4>>) <<5>>", v.window,v.tab,ctext,cVals,gval )
+      local val = zo_strformat( "win=<<1>>, tab=<<2>>, color=<<3>> (<<4>>) <<5>>", v.window,v.tab,ctext,cVals,gval )
       EchoExperience.outputMsg(val)
     end
   else
@@ -152,6 +154,7 @@ function EchoExperience:outputToChanelSub(text,outputSettings,filter)
         local cCD = ZO_ColorDef:New(v.color.r,v.color.g,v.color.b,v.color.a)
         local text2 = cCD:Colorize(text)
         if(text2~=nil) then 
+          --TODO timestamp
           CHAT_SYSTEM.containers[v.window].windows[v.tab].buffer:AddMessage(text2)
         end
       end
@@ -160,10 +163,10 @@ function EchoExperience:outputToChanelSub(text,outputSettings,filter)
       EchoExperience.error = true
       if( v.color~=nil) then
         local cVals = zo_strformat( "r=<<1>>/g=<<2>>/b=<<3>>/a=<<4>>", tostring(v.color.r),tostring(v.color.g),tostring(v.color.b),tostring(v.color.a) )
-         local cText = zo_strformat( "Error in config: tab=<<1>>/window=<<2>>/color=<<3>>",tostring(v.tab),tostring(v.window),cVals )
+         local cText = zo_strformat( "Error in config: tab=<<1>>/win=<<2>>/color=<<3>>",tostring(v.tab),tostring(v.window),cVals )
         EchoExperience.outputMsg(cText);
       else
-         local cText = zo_strformat( "Error in config: tab=<<1>>/window=<<2>>/color of setting",tostring(v.tab),tostring(v.window) )
+         local cText = zo_strformat( "Error in config: tab=<<1>>/win=<<2>>/color of setting",tostring(v.tab),tostring(v.window) )
         EchoExperience.outputMsg(cText);
       end
     end
@@ -779,7 +782,8 @@ function EchoExperience.OnBuyReceipt(eventCode, entryName, entryType, entryQuant
 		)
   local qualifier = 1
   if(entryQuantity>1) then qualifier = 2 end
-  local icon, sellPrice, meetsUsageRequirement, EquipType equipType, itemStyleId = GetItemLinkInfo(entryName)
+  local icon, sellPrice, meetsUsageRequirement, equipType, itemStyleId = GetItemLinkInfo(entryName)  
+  --local icon = GetItemLinkIcon(itemLink) 
   local sentence = GetString("SI_ECHOLOOT_BUY_",qualifier)
   local strL = zo_strformat(sentence, icon, entryName, entryQuantity, money )
 	EchoExperience.outputToChanel(strL,msgTypeLOOT)
@@ -813,6 +817,68 @@ function EchoExperience.OnInventoryItemUsed(eventCode, ItemUISoundCategory, item
       .." itemSoundCategory="   .. tostring(itemSoundCategory)            
 		)
 end
+
+--EVENT_MAIL_TAKE_ATTACHED_ITEM_SUCCESS (number eventCode, id64 mailId)
+function EchoExperience.OnMailItemRecieved(eventCode,mailId)
+--        ZO_MailInboxShared_PopulateMailData(self:GetMailData(self.mailId), mailId)
+--GetAttachedItemLink(id64 mailId, number attachIndex, number LinkStyle linkStyle)
+  --  Returns: string link 
+end
+
+--EVENT_MAIL_TAKE_ATTACHED_MONEY_SUCCESS (number eventCode, id64 mailId) 
+function EchoExperience.OnMailMoneyRecieved(eventCode,mailId)
+  --
+end
+
+--EVENT_INVENTORY_SINGLE_SLOT_UPDATE (number eventCode, Bag bagId, number slotId, boolean isNewItem, ItemUISoundCategory itemSoundCategory, number inventoryUpdateReason, number stackCountChange) 
+function EchoExperience.OnInventorySingleSlotUpdate(eventCode, bagId, slotId, isNewItem, itemSoundCategory, inventoryUpdateReason, stackCountChange)
+		EchoExperience.debugMsg("OnInventorySingleSlotUpdate: "
+			.." eventCode="  .. tostring(eventCode)
+      .." bagId="   .. tostring(bagId)
+      .." slotId="   .. tostring(slotId)
+      .." isNewItem="   .. tostring(isNewItem)
+			.." ItemUISoundCategory="     .. tostring(ItemUISoundCategory)
+      .." inventoryUpdateReason="   .. tostring(inventoryUpdateReason)            
+      .." stackCountChange="   .. tostring(stackCountChange)
+		)    
+    --local icon, stack, sellPrice, meetsUsageRequirement, locked, equipType, itemStyleId, quality = GetItemInfo(bagId, slotId)
+    --local itemName = GetItemName(bagId, slotId)
+    local itemLink = GetItemLink(bagId, slotId, LINK_STYLE_BRACKETS)	
+		EchoExperience.debugMsg("GetItemInfo: "
+      .." itemLink="  .. tostring(itemLink)      
+		)
+    --[[
+		EchoExperience.debugMsg("GetItemInfo: "
+      .." itemName="  .. tostring(itemName)      
+			.." stack="     .. tostring(stack)
+      .." equipType=" .. tostring(equipType)
+      .." quality="   .. tostring(quality)
+		)
+    131219 mail? from?
+    queue up messages?
+    -]]
+    
+    local qualifier = 1
+    if(stackCountChange>1) then qualifier = 2 end
+    local icon = GetItemLinkIcon(itemLink) 
+    
+    if(isNewItem and itemLink~=nil) then
+      --local curricon = GetCurrencyKeyboardIcon(currencyType) 
+      local sentence = GetString("SI_ECHOLOOT_RECEIVE_",qualifier)
+      local strL = zo_strformat(sentence, icon, itemLink, stackCountChange )
+      EchoExperience.outputToChanel(strL,msgTypeLOOT)
+    --elseif( itemLink~=nil and icon~=nil ) then
+    --  local sentence = GetString("SI_ECHOLOOT_LOSE_",qualifier)
+    --  local strL = zo_strformat(sentence, icon, itemLink, stackCountChange )
+    --  EchoExperience.outputToChanel(strL,msgTypeLOOT)      
+    else
+      --
+    end
+    
+end
+
+--EVENT_ITEM_SLOT_CHANGED (number eventCode, ItemUISoundCategory itemSoundCategory)
+--EVENT_MONEY_UPDATE (number eventCode, number newMoney, number oldMoney, CurrencyChangeReason reason) 
 
 
 --ONEvent  shows loot gains
@@ -956,6 +1022,7 @@ function EchoExperience.OnGuildMemberStatusChanged(eventCode,guildID,playerName,
   end
 end
 
+
 -----------------------------
 -- SETUP Functions here --
 -----------------------------
@@ -1022,6 +1089,7 @@ function EchoExperience.SetupLootGainsEvents(reportMe)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnAlliancePointUpdate",	EVENT_ALLIANCE_POINT_UPDATE, EchoExperience.OnAlliancePointUpdate)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnInventoryItemDestroyed",	EVENT_INVENTORY_ITEM_DESTROYED, EchoExperience.OnInventoryItemDestroyed)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnInventoryItemUsed",	EVENT_INVENTORY_ITEM_USED, EchoExperience.OnInventoryItemUsed)
+      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnInventorySingleSlotUpdate",	EVENT_INVENTORY_SINGLE_SLOT_UPDATE, EchoExperience.OnInventorySingleSlotUpdate)
 
     end
 	else
@@ -1039,6 +1107,8 @@ function EchoExperience.SetupLootGainsEvents(reportMe)
       EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnAlliancePointUpdate",	EVENT_ALLIANCE_POINT_UPDATE, EchoExperience.OnBankedCurrency)
       EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventoryItemDestroyed",	EVENT_INVENTORY_ITEM_DESTROYED, EchoExperience.OnCurrencyUpdate)
       EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventoryItemUsed",	EVENT_INVENTORY_ITEM_USED, EchoExperience.OnCurrencyUpdate)
+      EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventorySingleSlotUpdate",	EVENT_INVENTORY_SINGLE_SLOT_UPDATE, EchoExperience.OnInventorySingleSlotUpdate)
+      
       
 		if(reportMe) then
 			EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINS_HIDE),msgTypeSYS)

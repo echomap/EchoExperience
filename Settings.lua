@@ -65,7 +65,7 @@ function EchoExperience.LoadSettings()
     getFunc = function() return EchoExperience.savedVariables.showExp end,
     setFunc = function(value)
       EchoExperience.savedVariables.showExp = value
-      EchoExperience.SetupExpGainsEvents(false)
+      EchoExperience.SetupExpGainsEvents(true)
     end,
     width = "half",	--or "half" (optional)
   }

@@ -13,4 +13,5 @@ Bindings.xml
 EchoExperience.xml
 
 EchoExperience.lua
+##EchoExp_Events.lua
 Settings.lua

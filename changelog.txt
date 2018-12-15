@@ -7,9 +7,11 @@ Guild logon guild they belong to?
 GUILD Logon, select guilds to care about? or block?
 Edit Guilds or existing entries
 You recieve mail with 
-brackets around names and links?
+brackets around names and links? Option?
+Option for timestamp and format
 deconstruct/ you receive
 You craft
+Add filters wiki.esoui.com/AddFilterEvent
 
 -=Versions=-
 *Testing branch:

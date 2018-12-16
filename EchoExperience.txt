@@ -11,6 +11,7 @@ Languages\$(language).lua
 
 Bindings.xml
 EchoExperience.xml
+EchoExperience2.xml
 
 EchoExperience.lua
 ##EchoExp_Events.lua

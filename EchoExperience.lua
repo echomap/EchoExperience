@@ -276,6 +276,8 @@ function EchoExperience.SlashCommandHandler(text)
 
 	if #options == 0 or options[1] == "help" then
 		EchoExperience.outputMsg("commands include: 'outputs', 'textexp', 'testloot', 'testfull', 'debug', 'toggletracking', 'showtracking', 'showlifetime'")
+  elseif #options == 0 or options[1] == "testgui" then
+    EOL_GUI:SetHidden( not EOL_GUI:IsHidden() )
 	elseif #options == 0 or options[1] == "outputs" then
 		EchoExperience.ShowOutputs()
 	elseif #options == 0 or options[1] == "defaults" then
@@ -297,8 +299,7 @@ function EchoExperience.SlashCommandHandler(text)
 		EchoExperience.outputToChanel("Gained 0 xp in [Test] (1000/10000) need 9000xp",msgTypeEXP)
 	elseif #options == 0 or options[1] == "testloot" then
 		EchoExperience.outputToChanel("You looted TESTITEM.",msgTypeLOOT)
-	elseif #options == 0 or options[1] == "testfull" then
-		--eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,isPickpocketLoot,questItemIcon,itemId,isStolen)
+	elseif #options == 0 or options[1] == "testfull" then		--eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,isPickpocketLoot,questItemIcon,itemId,isStolen)
 		EchoExperience.OnLootReceived(0,"testuser","testitem",1,nil,nil,true,false,false,0,false)
 		EchoExperience.OnLootReceived(0,"testuser","testitem",2,nil,nil,true,false,false,0,false)
 		EchoExperience.OnLootReceived(0,"testuser","testitem",2,nil,nil,false,false,false,0,false)

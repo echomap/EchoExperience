@@ -1024,11 +1024,11 @@ function EchoExperience:ListOfExpTabs()
 end
 
 function EchoExperience:SelectExpTab(choiceText)
-  ElderScrollsOfAlts.view.selected.exptab = choiceText
+  EchoExperience.view.selected.exptab = choiceText
 end
 
 function EchoExperience:DoDeleteExpTab()
-  local exptab = ElderScrollsOfAlts.view.selected.exptab 
+  local exptab = EchoExperience.view.selected.exptab 
   if(exptab~=nil)then
     --d(EchoExperience.name .. " exptab=" .. exptab) 
     for k,v in pairs(EchoExperience.savedVariables.expsettings) do
@@ -1073,11 +1073,11 @@ function EchoExperience:ListOfLootTabs()
 end
 
 function EchoExperience:SelectLootTab(choiceText)
-  ElderScrollsOfAlts.view.selected.loottab = choiceText
+  EchoExperience.view.selected.loottab = choiceText
 end
 
 function EchoExperience:DoDeleteLootTab()
-  local loottab = ElderScrollsOfAlts.view.selected.loottab 
+  local loottab = EchoExperience.view.selected.loottab 
   if(loottab~=nil)then
     --d(EchoExperience.name .. " loottab=" .. loottab) 
     for k,v in pairs(EchoExperience.savedVariables.lootsettings) do
@@ -1121,11 +1121,11 @@ function EchoExperience:ListOfGuildTabs()
 end
 
 function EchoExperience:SelectGuildTab(choiceText)
-  ElderScrollsOfAlts.view.selected.guildtab = choiceText
+  EchoExperience.view.selected.guildtab = choiceText
 end
 
 function EchoExperience:DoDeleteGuildTab()
-  local guildtab = ElderScrollsOfAlts.view.selected.guildtab 
+  local guildtab = EchoExperience.view.selected.guildtab 
   if(guildtab~=nil)then
     --d(EchoExperience.name .. " guildtab=" .. guildtab) 
     for k,v in pairs(EchoExperience.savedVariables.guildsettings) do
@@ -1571,10 +1571,10 @@ function EchoExperience.DelayedStart()
   EchoExperience.view.settingstemp.guild4 = true
   EchoExperience.view.settingstemp.guild5 = true
   
-  ElderScrollsOfAlts.view.selected = {}
-  ElderScrollsOfAlts.view.selected.guildtab = nil
-  ElderScrollsOfAlts.view.selected.loottab = nil
-  ElderScrollsOfAlts.view.selected.exptab = nil
+  EchoExperience.view.selected = {}
+  EchoExperience.view.selected.guildtab = nil
+  EchoExperience.view.selected.loottab = nil
+  EchoExperience.view.selected.exptab = nil
   
   --Setup Basic Options
   if(EchoExperience.savedVariables.guildsettings==nil)then

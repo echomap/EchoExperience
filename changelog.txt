@@ -3,8 +3,6 @@ EchoExperience
 settings use player as default
 Guild logon localization
 Guild logon format 
-Guild logon guild they belong to?
-GUILD Logon, select guilds to care about? or block?
 Edit Guilds or existing entries
 You recieve mail with 
 brackets around names and links? Option?
@@ -12,12 +10,15 @@ Option for timestamp and format
 deconstruct/ you receive
 You craft
 Add filters wiki.esoui.com/AddFilterEvent
+update lifetime on close?
 
 -=Versions=-
 *Testing branch:
 	
 *Development:
-  -OnInventorySingleSlotUpdate
+  -Tracking, items/mobs/money in/out
+  -Guild logon, can unselect guilds per entry
+  -Guild logon, show guild they belong to
 0.0.15
   -bug fix settings panel name and guild names
 0.0.14

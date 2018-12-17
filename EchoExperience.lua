@@ -946,6 +946,15 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
     .." result="     .. tostring(result) 
     )
   end
+  -- Check if just got this target death notification
+  if(EchoExperience.view.lastKilledTargetId ~= nil and 
+        EchoExperience.view.lastKilledTargetId == targetUnitId) then
+    EchoExperience.view.lastKilledTargetId = nil
+    return
+  end
+  
+  EchoExperience.view.lastKilledTargetId = targetUnitId
+  
  --Tracking
   if(EchoExperience.savedVariables.showtracking) then
     if(EchoExperience.savedVariables.tracking.mobs[targetName]==nil)then
@@ -962,10 +971,10 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
   --d("You killed a "..targetName)
 end
 
+--Sample Events
 --[20:44] OnCombatSomethingDied:  eventCode=131102 sourceName=Hannaya^Fx targetName=Wolf targetType=0 result=2260 isError=false abilityName=Mages' Wrath
 --[21:27] OnCombatSomethingDied:  eventCode=131102 sourceName= targetName= targetType=0 result=2260 isError=false abilityName=
 
- 
  
 -----------------------------
 -- SELECT/TABS/WINDOWS/COLORS Functions here --
@@ -1474,9 +1483,150 @@ function EchoExperience:RefreshTabs()
     EchoExperience.UpdateUILootTabs()
     EchoExperience.UpdateUIGuildTabs()
   else
-    zo_callLater(EchoExperience.RefreshTabs,   12000)
+    zo_callLater(EchoExperience.RefreshTabs, 12000)
   end  
 end
+
+------
+---GUI
+function EchoExperience:CloseUI()
+  EOL_GUI:SetHidden( not EOL_GUI:IsHidden() )
+end
+
+function EchoExperience:SaveFramePosition(calledFrom)
+  if(EchoExperience.savedVariables.frame2==null)then
+    EchoExperience.savedVariables.frame2 = {}
+  end
+  EchoExperience.savedVariables.frame2.lastX	= EOL_GUI:GetLeft()
+  EchoExperience.savedVariables.frame2.lastY	= EOL_GUI:GetTop()
+end
+
+function EchoExperience:onResizeStart()
+	EVENT_MANAGER:RegisterForUpdate(EchoExperience.name.."OnWindowResize", 50, 
+    function()
+      EchoExperience:GuiResizeScroll()
+      EchoExperience:UpdateInventoryScroll()
+    end)
+end
+
+function EchoExperience:onResizeStop()
+	EVENT_MANAGER:UnregisterForUpdate(EchoExperience.name.."OnWindowResize")
+	EchoExperience:SaveFrameInfo("onResizeStop")
+	EchoExperience:GuiResizeScroll()	
+  EchoExperience:UpdateInventoryScroll()
+end
+
+function EchoExperience:UpdateInventoryScroll()
+	local index = 0
+	if EOL_GUI_ListHolder.dataOffset < 0 then EOL_GUI_ListHolder.dataOffset = 0 end
+	if EOL_GUI_ListHolder.maxLines == nil then
+		EOL_GUI_ListHolder.maxLines = 35
+	end
+	EchoExperience:SetDataLinesData()
+
+	local total = #EOL_GUI_ListHolder.dataLines - EOL_GUI_ListHolder.maxLines
+	EOL_GUI_ListHolder_Slider:SetMinMax(0, total)
+end
+
+-- returns true if it had to be resized, otherwise false
+function EchoExperience:GuiResizeScroll()
+	local regionHeight = EOL_GUI_ListHolder:GetHeight()
+	local newLines = math.floor(regionHeight / EOL_GUI_ListHolder.rowHeight)
+	if EOL_GUI_ListHolder.maxLines == nil or EOL_GUI_ListHolder.maxLines ~= newLines then
+		EOL_GUI_ListHolder.maxLines = newLines
+		EchoExperience:GuiResizeLines()
+	end
+end
+
+function EchoExperience:GuiResizeLines()
+	local lines
+
+	if not EOL_GUI_ListHolder.lines then
+		lines = EchoExperience:CreateInventoryScroll()
+	end
+	if EOL_GUI_ListHolder.lines ~= {} then
+		lines = EOL_GUI_ListHolder.lines
+	end
+
+	for index, line in ipairs(lines) do
+--		line.text:SetWidth(textwidth)
+--		line:SetWidth(linewidth)
+		line:SetHidden(index > EOL_GUI_ListHolder.maxLines)
+	end
+end
+
+function EchoExperience:CreateInventoryScroll()
+	EOL_GUI_ListHolder.dataOffset = 0
+
+	EOL_GUI_ListHolder.dataLines = {}
+	EOL_GUI_ListHolder.lines = {}
+	EOL_GUI_Header_SortBar.Icon = EOL_GUI_Header_SortBar:GetNamedChild("_Sort"):GetNamedChild("_Icon")
+
+	local text = "       No Collected Data"
+	-- we set those to 35 because that's the amount of lines we can show within the dimension constraints
+	EOL_GUI_ListHolder.maxLines = 35
+	local predecessor = nil
+	for i=1, EOL_GUI_ListHolder.maxLines do
+		EOL_GUI_ListHolder.lines[i] = EchoExperience:CreateLine(i, predecessor, EOL_GUI_ListHolder)
+		predecessor = EOL_GUI_ListHolder.lines[i]
+	end
+
+  --
+	EchoExperience:SetItemCountPosition()
+	-- setup slider
+	EOL_GUI_ListHolder_Slider:SetMinMax(0, #EOL_GUI_ListHolder.dataLines - EOL_GUI_ListHolder.maxLines)
+  --
+	return EOL_GUI_ListHolder.lines
+end
+
+function EchoExperience:CreateLine(i, predecessor, parent)
+	local line = WINDOW_MANAGER:CreateControlFromVirtual("EOL_ListItem_".. i, parent, "EOL_SlotTemplate")
+
+	line.icon = line:GetNamedChild("Button"):GetNamedChild("Icon")
+	line.text = line:GetNamedChild("Name")
+	line.qty = line:GetNamedChild("Qty")
+	--line.worn = line:GetNamedChild("IconWorn")
+	--line.stolen = line:GetNamedChild("IconStolen")
+
+	line:SetHidden(false)
+	line:SetMouseEnabled(true)
+	line:SetHeight(EOL_GUI_ListHolder.rowHeight)
+
+	if i == 1 then
+		line:SetAnchor(TOPLEFT, EOL_GUI_ListHolder, TOPLEFT, 0, 0)
+		line:SetAnchor(TOPRIGHT, EOL_GUI_ListHolder, TOPRIGHT, 0, 0)
+	else
+		line:SetAnchor(TOPLEFT, predecessor, BOTTOMLEFT, 0, 0)
+		line:SetAnchor(TOPRIGHT, predecessor, BOTTOMRIGHT, 0, 0)
+	end
+
+	--line:SetHandler("OnMouseEnter", function(self) IIfA:GuiLineOnMouseEnter(self) end )
+	--line:SetHandler("OnMouseExit", function(self) IIfA:GuiLineOnMouseExit(self) end )
+	--line:SetHandler("OnMouseDoubleClick", function(...) IIfA:GUIDoubleClick(...) end )
+
+	return line
+end
+
+function EchoExperience:SetItemCountPosition()
+	for i=1, EOL_GUI_ListHolder.maxLines do
+		local line = EOL_GUI_ListHolder.lines[i]
+		line.text:ClearAnchors()
+		line.qty:ClearAnchors()
+		--if EchoExperience:GetSettings().showItemCountOnRight then
+			line.qty:SetAnchor(TOPRIGHT, line, TOPRIGHT, 0, 0)
+			line.text:SetAnchor(TOPLEFT, line:GetNamedChild("Button"), TOPRIGHT, 18, 0)
+			line.text:SetAnchor(TOPRIGHT, line.qty, TOPLEFT, -10, 0)
+		--[[else
+			line.qty:SetAnchor(TOPLEFT, line:GetNamedChild("Button"), TOPRIGHT, 8, -3)
+			line.text:SetAnchor(TOPLEFT, line.qty, TOPRIGHT, 18, 0)
+			line.text:SetAnchor(TOPRIGHT, line, TOPLEFT, 0, 0)
+		end--]]
+	end
+end
+
+---GUI
+------
+
 
 --EchoExperience.savedVariables.lifetime.currency,EchoExperience.savedVariables.tracking.currency)
 function EchoExperience:MoveToLifetime(mode)

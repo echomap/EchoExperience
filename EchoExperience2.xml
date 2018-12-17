@@ -1,12 +1,12 @@
 <GuiXml>
 	<Controls>
-		<TopLevelControl name="EOL_GUI" clampedToScreen="true" mouseEnabled="true" moveable="true" hidden="true" resizeHandleSize="10">
+		<TopLevelControl name="EOL_GUI" clampedToScreen="true" mouseEnabled="true" movable="true" moveable="true" hidden="true" resizeHandleSize="10">
 			<DimensionConstraints minX="410" minY="300" maxY="1400"/>
 			<Anchor point="TOPRIGHT" relativeTo="GUI_ROOT" relativePoint="TOPRIGHT" offsetX="-250" offsetY="400" />
 <!--
-			<OnMoveStop>IIfA:SaveFrameInfo("onMoveStop")</OnMoveStop>
-			<OnResizeStart> IIfA:onResizeStart() </OnResizeStart>
-			<OnResizeStop>IIfA:onResizeStop()</OnResizeStop>
+			<OnMoveStop>EchoExperience:SaveFramePosition("onMoveStop")</OnMoveStop>
+			<OnResizeStart> EchoExperience:onResizeStart() </OnResizeStart>
+			<OnResizeStop>EchoExperience:onResizeStop()</OnResizeStop>
 -->
 			<Controls>
 				<Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" > <AnchorFill/> </Backdrop>
@@ -31,10 +31,26 @@
 							<Dimensions y="30" minX="100"/>
               <Anchor point="TOP" relativeTo="$(parent)_Label" relativePoint="BOTTOM" offsetX="0" offsetY="0"/>
 <!-- 	
-							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Select inventory to view")</OnMouseEnter>
-							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
+							<OnMouseEnter>EchoExperience:GuiShowTooltip(self, "Select inventory to view")</OnMouseEnter>
+							<OnMouseExit>EchoExperience:GuiHideTooltip(self)</OnMouseExit>
  -->
 						</Control>
+            
+            <Button name="$(parent)_BtnClose" verticalAlignment="CENTER" horizontalAlignment="CENTER" mouseEnabled="true">
+              <Anchor point="TOPLEFT" relativeTo="$(parent)_Dropdown_Main" relativePoint="TOPRIGHT" offsetX="20" offsetY="0" />
+              <Dimensions x="40" y="40" />
+              <Textures normal="EsoUI/art/buttons/decline_up.dds"
+                    pressed="EsoUI/art/buttons/decline_down.dds"
+                    mouseOver="EsoUI/art/buttons/decline_over.dds"
+              />
+              <!--
+              <OnMouseEnter> EchoesOfLore:Misc2HeaderTipEnter(self,"Close") </OnMouseEnter>
+              <OnMouseExit>  EchoesOfLore:Misc2HeaderTipExit(self)  </OnMouseExit>
+              -->
+              <OnMouseUp>EchoExperience:CloseUI(self)</OnMouseUp>
+            </Button>
+            
+            
 <!--_Dropdown_Quality-->
 <!-- Filter Group -->
 <!-- SubFilter Groups -->
@@ -69,18 +85,18 @@
 											<Dimensions x="100" y="30"/>
 											<Anchor point="TOPLEFT" relativeTo="$(parent)_Icon" relativePoint="TOPRIGHT" offsetX="20"/>
                       <!--
-											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Sort By Name")</OnMouseEnter>
-											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
-											<OnMouseUp>IIfA:GuiOnSort(false)</OnMouseUp>
+											<OnMouseEnter>EchoExperience:GuiShowFilterTooltip(self, "Sort By Name")</OnMouseEnter>
+											<OnMouseExit>EchoExperience:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>EchoExperience:GuiOnSort(false)</OnMouseUp>
                       -->
 										</Button>
 										<Button name="$(parent)_SortQuality" text="Quality" font="ZoFontGameLargeBold" verticalAlignment="CENTER" horizontalAlignment="CENTER" mouseEnabled="true">
 											<Dimensions x="100" y="30"/>
 											<Anchor point="TOPLEFT" relativeTo="$(parent)_SortName" relativePoint="TOPRIGHT"/>
                       <!--
-											<OnMouseEnter>IIfA:GuiShowFilterTooltip(self, "Sort by Quality")</OnMouseEnter>
-											<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
-											<OnMouseUp>IIfA:GuiOnSort(true)</OnMouseUp>
+											<OnMouseEnter>EchoExperience:GuiShowFilterTooltip(self, "Sort by Quality")</OnMouseEnter>
+											<OnMouseExit>EchoExperience:GuiHideTooltip(self)</OnMouseExit>
+											<OnMouseUp>EchoExperience:GuiOnSort(true)</OnMouseUp>
                       -->
 										</Button>
 									</Controls>
@@ -96,7 +112,7 @@
 					<Anchor point="TOPLEFT" relativeTo="$(parent)_Header_SortBar" relativePoint="BOTTOMLEFT" offsetX="10"/>
 					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-35" offsetY="-60"/>
           <!--
-					<OnMouseWheel>IIfA:GuiOnScroll(self, delta)</OnMouseWheel>
+					<OnMouseWheel>EchoExperience:GuiOnScroll(self, delta)</OnMouseWheel>
           -->
 
 					<Controls>
@@ -107,7 +123,7 @@
 							<OnMouseDown>self.locked=false</OnMouseDown>
 							<OnMouseUp>self.locked=true</OnMouseUp>
               <!--
-							<OnValueChanged>IIfA:GuiOnSliderUpdate(self, value)</OnValueChanged>
+							<OnValueChanged>EchoExperience:GuiOnSliderUpdate(self, value)</OnValueChanged>
               -->
 						</Slider>
 <!--
@@ -142,7 +158,7 @@
 							<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="5"/>
 							<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="0" offsetY="5"/>
 
-							<OnTextChanged>IIfA:GuiOnSearchboxText(self)</OnTextChanged>
+							<OnTextChanged>EchoExperience:GuiOnSearchboxText(self)</OnTextChanged>
 							<Controls>
 								<Backdrop name="$(parent)_bg" inherits="ZO_ThinBackdrop" centerColor="591141" >
 								</Backdrop>
@@ -151,9 +167,9 @@
 
 						<Button name="$(parent)_Clear">
 							<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-1" offsetY="7"/>
-							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Clear Search Text")</OnMouseEnter>
-							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
-							<OnMouseUp>IIfA:GuiOnSearchBoxClear()</OnMouseUp>
+							<OnMouseEnter>EchoExperience:GuiShowTooltip(self, "Clear Search Text")</OnMouseEnter>
+							<OnMouseExit>EchoExperience:GuiHideTooltip(self)</OnMouseExit>
+							<OnMouseUp>EchoExperience:GuiOnSearchBoxClear()</OnMouseUp>
 							<Dimensions x="23" y="23" />
 							<Textures normal="EsoUI/art/buttons/decline_up.dds"
 										pressed="EsoUI/art/buttons/decline_down.dds"
@@ -164,9 +180,9 @@
 						<Button name="$(parent)_SetNameOnly">
 							<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="5" offsetY="-5"/>
 							<Dimensions x="40" y="48" />
-							<OnMouseEnter>IIfA:GuiShowTooltip(self, "Filter on set name only")</OnMouseEnter>
-							<OnMouseExit>IIfA:GuiHideTooltip(self)</OnMouseExit>
-							<OnMouseUp>IIfA:SetNameFilterToggle()</OnMouseUp>
+							<OnMouseEnter>EchoExperience:GuiShowTooltip(self, "Filter on set name only")</OnMouseEnter>
+							<OnMouseExit>EchoExperience:GuiHideTooltip(self)</OnMouseExit>
+							<OnMouseUp>EchoExperience:SetNameFilterToggle()</OnMouseUp>
 							<Textures
 								normal="esoui/art/dye/dyes_tabicon_costumedye_up.dds"
 								pressed="esoui/art/dye/dyes_tabicon_costumedye_down.dds"
@@ -235,134 +251,6 @@
 				</Controls>
 			</Tooltip>
 
-			<Tooltip name="EOL_ITEM_TOOLTIP" hidden="true" mouseEnabled="false" movable="false" clampedToScreen="true" virtual="true" inherits="ItemTooltipBase">
-				<Dimensions  x="200" y="200" />
-				<Anchor point="TOP" relativeTo="ItemTooltip" relativePoint="BOTTOM" offsetX="0" offsetY="0" />
-				<Controls>
-					<Label name="$(parent)_StyleLabel" font="ZoFontWinH4" text="" hidden="true">
-						<Anchor point="BOTTOM" relativeTo="$(parent)" relativePoint="TOP" offsetX="0" offsetY="40" />
-					</Label>
-					<Texture name="$(parent)_StyleIcon" textureFile="IIfA/assets/icons/imperial.dds">
-						<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-2" offsetY="2" />
-						<Dimensions x="50" y="50" />
-					</Texture>
-				</Controls>
-			</Tooltip>
-
-			<Control name="EOL_TT_Template" hidden="true" virtual="true">
-				<Controls>
-					<Label name="$(parent)_StyleLabel" font="ZoFontWinH4" text="">
-						<Anchor point="BOTTOM" relativeTo="$(parent)" relativePoint="TOP" offsetX="0" offsetY="40" />
-					</Label>
-					<Texture name="$(parent)_StyleIcon" textureFile="IIfA/assets/icons/imperial.dds">
-						<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-2" offsetY="2" />
-						<Dimensions x="64" y="64" />
-					</Texture>
-				</Controls>
-			</Control>
-
-
-			<TopLevelControl name="EOL_CharCurrencyFrame" clampedToScreen="true" hidden="true">
-				<Dimensions x="467" />
-				<Controls>
-					<Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" ></Backdrop>
-					<Label name="$(parent)_Title" font="ZoFontGameShadow" text="" horizontalAlignment="CENTER">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0" />
-						<Dimensions x="467" y="26" />
-					</Label>
-					<Label name="$(parent)_TitleCharName" font="ZoFontGameShadow" text="">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)_Title" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0" />
-						<Dimensions x="165" y="24" />
-					</Label>
-					<Texture name="$(parent)CURT_MONEY">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleCharName" relativePoint="TOPRIGHT" offsetX="54" offsetY="4" />
-					</Texture>
-					<Texture name="$(parent)CURT_TELVAR_STONES">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)CURT_MONEY" relativePoint="TOPRIGHT" offsetX="59" offsetY="0" />
-					</Texture>
-					<Texture name="$(parent)CURT_ALLIANCE_POINTS">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)CURT_TELVAR_STONES" relativePoint="TOPRIGHT" offsetX="59" offsetY="0" />
-					</Texture>
-					<Texture name="$(parent)CURT_WRIT_VOUCHERS">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)CURT_ALLIANCE_POINTS" relativePoint="TOPRIGHT" offsetX="59" offsetY="0" />
-					</Texture>
-					<Texture name="$(parent)_Divider" inherits="ZO_Options_Divider">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleCharName" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0" />
-						<Dimensions x="490" y="3" />
-					</Texture>
-				</Controls>
-			</TopLevelControl>
-
-			<Control name="EOL_CharCurrencyRow" virtual="true">
-				<Dimensions x="463" y="24" />
-				<Controls>
-					<Label name="$(parent)charName" font="ZoFontGameShadow" text="">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0" />
-						<Dimensions x="165" y="24" />
-					</Label>
-					<Label name="$(parent)qtyGold" font="ZoFontGameShadow" text="" horizontalAlignment="RIGHT">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)charName" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
-						<Dimensions x="72" y="24" />
-					</Label>
-					<Label name="$(parent)qtyTV" font="ZoFontGameShadow" text="" horizontalAlignment="RIGHT">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)qtyGold" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
-						<Dimensions x="72" y="24" />
-					</Label>
-					<Label name="$(parent)qtyAP" font="ZoFontGameShadow" text="" horizontalAlignment="RIGHT">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)qtyTV" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
-						<Dimensions x="72" y="24" />
-					</Label>
-					<Label name="$(parent)qtyWV" font="ZoFontGameShadow" text="" horizontalAlignment="RIGHT">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)qtyAP" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
-						<Dimensions x="68" y="24" />
-					</Label>
-				</Controls>
-			</Control>
-
-			<TopLevelControl name="EOL_CharBagFrame" clampedToScreen="true" hidden="true">
-				<Dimensions x="274" />
-				<Controls>
-					<Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" ></Backdrop>
-					<Label name="$(parent)_Title" font="ZoFontGameShadow" text="" horizontalAlignment="CENTER">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0" />
-						<Dimensions x="274" y="26" />
-					</Label>
-					<Label name="$(parent)_TitleCharName" font="ZoFontGameShadow" text="">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)_Title" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0" />
-						<Dimensions x="165" y="24" />
-					</Label>
-					<Label name="$(parent)_TitleUsed" font="ZoFontGameShadow" text="Used" horizontalAlignment="RIGHT">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleCharName" relativePoint="TOPRIGHT" offsetX="0" offsetY="0" />
-						<Dimensions x="50" y="24" />
-					</Label>
-					<Label name="$(parent)_TitleMax" font="ZoFontGameShadow" text="Size" horizontalAlignment="RIGHT">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleUsed" relativePoint="TOPRIGHT" offsetX="5" offsetY="0" />
-						<Dimensions x="55" y="24" />
-					</Label>
-					<Texture name="$(parent)_Divider" inherits="ZO_Options_Divider">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)_TitleCharName" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0" />
-						<Dimensions x="288" y="3" />
-					</Texture>
-				</Controls>
-			</TopLevelControl>
-
-			<Control name="EOL_CharBagRow" virtual="true">
-				<Dimensions x="262" y="24" />
-				<Controls>
-					<Label name="$(parent)charName" font="ZoFontGameShadow" text="">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0" />
-						<Dimensions x="165" y="24" />
-					</Label>
-					<Label name="$(parent)spaceUsed" font="ZoFontGameShadow" text="" horizontalAlignment="RIGHT">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)charName" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
-						<Dimensions x="42" y="24" />
-					</Label>
-					<Label name="$(parent)spaceMax" font="ZoFontGameShadow" text="" horizontalAlignment="RIGHT">
-						<Anchor point="TOPLEFT" relativeTo="$(parent)spaceUsed" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
-						<Dimensions x="55" y="24" />
-					</Label>
-				</Controls>
-			</Control>
 
 		</Controls>
 </GuiXml>

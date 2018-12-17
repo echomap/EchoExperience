@@ -11,6 +11,7 @@ deconstruct/ you receive
 You craft
 Add filters wiki.esoui.com/AddFilterEvent
 update lifetime on close?
+Add, 'last killed ID" so that wont double report kill
 
 -=Versions=-
 *Testing branch:

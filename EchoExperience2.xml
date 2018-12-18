@@ -3,11 +3,10 @@
 		<TopLevelControl name="EOL_GUI" clampedToScreen="true" mouseEnabled="true" movable="true" moveable="true" hidden="true" resizeHandleSize="10">
 			<DimensionConstraints minX="410" minY="300" maxY="1400"/>
 			<Anchor point="TOPRIGHT" relativeTo="GUI_ROOT" relativePoint="TOPRIGHT" offsetX="-250" offsetY="400" />
-<!--
-			<OnMoveStop>EchoExperience:SaveFramePosition("onMoveStop")</OnMoveStop>
+      <OnMoveStop>EchoExperience:SaveFramePosition("onMoveStop")</OnMoveStop>
 			<OnResizeStart> EchoExperience:onResizeStart() </OnResizeStart>
 			<OnResizeStop>EchoExperience:onResizeStop()</OnResizeStop>
--->
+
 			<Controls>
 				<Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" > <AnchorFill/> </Backdrop>
 
@@ -90,11 +89,11 @@
 											<OnMouseUp>EchoExperience:GuiOnSort(false)</OnMouseUp>
                       -->
 										</Button>
-										<Button name="$(parent)_SortQuality" text="Quality" font="ZoFontGameLargeBold" verticalAlignment="CENTER" horizontalAlignment="CENTER" mouseEnabled="true">
+										<Button name="$(parent)_SortQuantity" text="Quantity" font="ZoFontGameLargeBold" verticalAlignment="CENTER" horizontalAlignment="CENTER" mouseEnabled="true">
 											<Dimensions x="100" y="30"/>
 											<Anchor point="TOPLEFT" relativeTo="$(parent)_SortName" relativePoint="TOPRIGHT"/>
                       <!--
-											<OnMouseEnter>EchoExperience:GuiShowFilterTooltip(self, "Sort by Quality")</OnMouseEnter>
+											<OnMouseEnter>EchoExperience:GuiShowFilterTooltip(self, "Sort by Quantity")</OnMouseEnter>
 											<OnMouseExit>EchoExperience:GuiHideTooltip(self)</OnMouseExit>
 											<OnMouseUp>EchoExperience:GuiOnSort(true)</OnMouseUp>
                       -->
@@ -223,6 +222,7 @@
 					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
 				</Label>
 
+<!--
 				<Texture name="$(parent)IconWorn" textureFile="esoui/art/campaign/overview_indexicon_bonus_disabled.dds" alpha="0.8" hidden="true">
 					<Dimensions x="20" y="20"/>
 					<Anchor point="TOPRIGHT" relativeTo="$(parent)Button" relativePoint="TOPLEFT" />
@@ -232,6 +232,7 @@
 					<Dimensions x="20" y="20"/>
 					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)Button" relativePoint="BOTTOMLEFT" />
 				</Texture>
+-->
 			</Controls>
 		</Control>
 

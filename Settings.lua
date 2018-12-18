@@ -328,7 +328,8 @@ function EchoExperience.LoadSettings()
     getFunc = function() return EchoExperience.savedVariables.showGuildLogin end,
     setFunc = function(value)
       EchoExperience.savedVariables.showGuildLogin = value
-      EchoExperience.SetupMiscEvents()
+      EchoExperience.SetupGuildEvents()
+      --EchoExperience.SetupMiscEvents()
     end,
     width = "half",	--or "half" (optional)
   }
@@ -339,7 +340,8 @@ function EchoExperience.LoadSettings()
     getFunc = function() return EchoExperience.savedVariables.showGuildLogout end,
     setFunc = function(value)
       EchoExperience.savedVariables.showGuildLogout = value
-      EchoExperience.SetupMiscEvents()
+      --EchoExperience.SetupMiscEvents()
+      EchoExperience.SetupGuildEvents()
     end,
     width = "half",	--or "half" (optional)
   }

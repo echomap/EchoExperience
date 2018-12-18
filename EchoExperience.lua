@@ -4,6 +4,7 @@ EchoExperience = {
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
+    defaultMaxLines = 10,
     view            = {},
     -- Saved settings.
     savedVariables = {},
@@ -223,6 +224,8 @@ function EchoExperience:outputToChanelSub(text,outputSettings,filter)
         local text2 = cCD:Colorize(text)
         if(text2~=nil) then 
           --TODO timestamp
+          --EchoExperience.savedVariables.showTimeStamp
+          --EchoExperience.savedVariables.timeStampFormat
           CHAT_SYSTEM.containers[v.window].windows[v.tab].buffer:AddMessage(text2)
         end
       end
@@ -277,7 +280,11 @@ function EchoExperience.SlashCommandHandler(text)
 	if #options == 0 or options[1] == "help" then
 		EchoExperience.outputMsg("commands include: 'outputs', 'textexp', 'testloot', 'testfull', 'debug', 'toggletracking', 'showtracking', 'showlifetime'")
   elseif #options == 0 or options[1] == "testgui" then
-    EOL_GUI:SetHidden( not EOL_GUI:IsHidden() )
+    EchoExperience:ToggleTrackingFrame()
+  elseif #options == 0 or options[1] == "testevents" then
+    EchoExperience.savedVariables.showGuildMisc  = not EchoExperience.savedVariables.showGuildMisc
+    EchoExperience.outputMsg("ShowGuildMisc = " .. tostring(EchoExperience.savedVariables.showGuildMisc) )
+    EchoExperience.SetupGuildEvents()
 	elseif #options == 0 or options[1] == "outputs" then
 		EchoExperience.ShowOutputs()
 	elseif #options == 0 or options[1] == "defaults" then
@@ -292,9 +299,11 @@ function EchoExperience.SlashCommandHandler(text)
     EchoExperience.savedVariables.tracking.currency = {}
     EchoExperience.savedVariables.tracking.mobs = {}
     EchoExperience.savedVariables.tracking.bg = {}
+    EchoExperience.outputMsg("Tracking data reset")
 	elseif #options == 0 or options[1] == "toggletracking" then
 		EchoExperience.savedVariables.showtracking = not EchoExperience.savedVariables.showtracking
     EchoExperience.outputMsg("Showtracking = " .. tostring(EchoExperience.savedVariables.showtracking) )
+    EchoExperience:SetupLootGainsEvents(true)
 	elseif #options == 0 or options[1] == "testexp" then
 		EchoExperience.outputToChanel("Gained 0 xp in [Test] (1000/10000) need 9000xp",msgTypeEXP)
 	elseif #options == 0 or options[1] == "testloot" then
@@ -310,6 +319,48 @@ function EchoExperience.SlashCommandHandler(text)
 	end
 
 end
+
+
+function EchoExperience:ToggleTrackingFrame()
+	EOL_GUI:SetHidden(not EOL_GUI:IsControlHidden())
+  --EOL_GUI:SetHidden( not EOL_GUI:IsHidden() )
+  --
+  EOL_GUI_Header_Dropdown_Main.comboBox = EOL_GUI_Header_Dropdown_Main.comboBox or ZO_ComboBox_ObjectFromContainer(EOL_GUI_Header_Dropdown_Main)
+  local comboBox = EOL_GUI_Header_Dropdown_Main.comboBox
+  comboBox:ClearItems()  
+  comboBox:SetSortsItems(false)
+  local function OnItemSelect1(_, choiceText, choice)
+    --TODO
+    --EchoesOfLore:debugMsg(" choiceText=" .. choiceText .. " choice=" .. tostring(choice) )  
+    --EchoesOfLore:clearView()
+    EchoExperience.view.trackingSelection = choiceText
+    --EchoesOfLore:showViewTips2(choiceText)
+    EchoExperience:UpdateScrollDataLinesData()
+		EchoExperience:GuiResizeScroll()
+		EchoExperience:RefreshInventoryScroll()
+    PlaySound(SOUNDS.POSITIVE_CLICK)    
+  end
+  local validChoices = {}  
+  table.insert(validChoices, "Session")
+  table.insert(validChoices, "Lifetime")
+  for i = 1, #validChoices do
+      local entry = comboBox:CreateItemEntry(validChoices[i], OnItemSelect1)
+      comboBox:AddItem(entry)
+    end
+  comboBox:SelectFirstItem()
+   
+	if not EOL_GUI:IsControlHidden() then
+		--SetGameCameraUIMode(true)
+		EchoExperience:GuiResizeScroll()
+		EchoExperience:RefreshInventoryScroll()
+	end
+	--if not EchoExperience.data.dontFocusSearch then
+		--EOL_GUI_SearchBox:TakeFocus()
+	--end
+  --EOL_GUI_Header_Dropdown_Main:TakeFocus()
+	EchoExperience:SaveFrameInfo("ToggleInventoryFrame")
+end
+
 
 -----------------------------
 -- ON EVENT Functions here --
@@ -342,7 +393,7 @@ function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex
 	end
 end
 
---ONEvent  TODO
+--ONEvent  EVENT_SKILL_LINE_ADDED
 --EVENT:   xx
 --RETURNS: (number eventCode, SkillType skillType, number skillIndex, boolean advised)
 --NOTES:  XX
@@ -850,8 +901,40 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
   end
 end
 
+--EVENT_GUILD_MEMBER_ADDED (number eventCode, number guildId, string displayName) 
+function EchoExperience.OnGuildMemberAdded(eventCode,guildID,playerName)
+  --EchoExperience.debugMsg
+  d("OnGuildMemberAdded: "
+    .." eventCode="   .. tostring(eventCode)
+    .." guildID="     .. tostring(guildID)      
+    .." guild="       .. tostring(EchoExperience:GetGuildName(guildID))      
+    .." playerName="     .. tostring(playerName)
+  )
+end
 
---
+--EVENT_GUILD_MEMBER_REMOVED (number eventCode, number guildId, string displayName, string characterName) 
+function EchoExperience.OnGuildMemberRemoved(eventCode,guildID,displayName,characterName)
+  --EchoExperience.debugMsg
+  d("OnGuildMemberRemoved: "
+    .." eventCode="      .. tostring(eventCode)
+    .." guildID="     .. tostring(guildID)      
+    .." guild="       .. tostring(EchoExperience:GetGuildName(guildID))      
+    .." displayName="     .. tostring(displayName)
+    .." characterName="     .. tostring(characterName)
+  )
+end
+--[20:01] OnGuildMemberRemoved:  eventCode=327707 guildID=4 displayName=@luda9400 characterName=I Heal Tanks^Fx
+--TODO
+--EVENT_GUILD_MEMBER_RANK_CHANGED (number eventCode, number guildId, string displayName, number rankIndex) 
+--EVENT_GUILD_MEMBER_NOTE_CHANGED (number eventCode, number guildId, string displayName, string note) 
+--EVENT_GUILD_MEMBER_RANK_CHANGED (number eventCode, number guildId, string displayName, number rankIndex) 
+--EVENT_GUILD_SELF_JOINED_GUILD (number eventCode, number guildServerId, string characterName, number guildId)
+--EVENT_GUILD_SELF_LEFT_GUILD (number eventCode, number guildServerId, string characterName, number guildId) 
+
+
+--EVENT_GUILD_MEMBER_PLAYER_STATUS_CHANGED (integer GuildID,string PlayerName,luaindex prevStatus,luaindex curStatus)
+--["PLAYER_STATUS_AWAY"] = 2 ["PLAYER_STATUS_DO_NOT_DISTURB"] = 3
+--["PLAYER_STATUS_OFFLINE"] = 4 ["PLAYER_STATUS_ONLINE"] = 1 
 function EchoExperience.OnGuildMemberStatusChanged(eventCode,guildID,playerName,prevStatus,curStatus)
   EchoExperience.debugMsg("OnGuildMemberStatusChanged called") -- Prints to chat.    
   local sentence = GetString("SI_ECHOEXP_GUILD_",1)
@@ -1187,6 +1270,7 @@ end
 function EchoExperience:DoRefreshDropdowns()
 	EchoExperience.SetupExpGainsEvents()
 	EchoExperience.SetupLootGainsEvents()
+  EchoExperience.SetupGuildEvents()
   EchoExperience.SetupMiscEvents()  
 end
 
@@ -1310,6 +1394,8 @@ function EchoExperience.SetupLootGainsEvents(reportMe)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnInventoryItemUsed",	EVENT_INVENTORY_ITEM_USED, EchoExperience.OnInventoryItemUsed)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnInventorySingleSlotUpdate",	EVENT_INVENTORY_SINGLE_SLOT_UPDATE, EchoExperience.OnInventorySingleSlotUpdate)
       --Extended loot
+    else
+      if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINSE_HIDE),msgTypeSYS) end
     end
 	else
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."LootReceived",	EVENT_LOOT_RECEIVED, EchoExperience.OnLootReceived)
@@ -1335,7 +1421,7 @@ function EchoExperience.SetupLootGainsEvents(reportMe)
 end
 
 --
-function EchoExperience.SetupMiscEvents()
+function EchoExperience.SetupGuildEvents()
   if( EchoExperience.view.GuildEventsReg == true) then
     if ( not EchoExperience.savedVariables.showGuildLogin and not EchoExperience.savedVariables.showGuildLogout ) then
     	EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_GUILD_MEMBER_PLAYER_STATUS_CHANGED",	EVENT_GUILD_MEMBER_PLAYER_STATUS_CHANGED, EchoExperience.OnLootReceived)
@@ -1349,9 +1435,18 @@ function EchoExperience.SetupMiscEvents()
       EchoExperience.debugMsg(GetString(SI_ECHOEXP_GUILD_EVENT_REG))--"Registered for Guild events")
     end
   end
+  if (EchoExperience.savedVariables.showGuildMisc ) then
+      EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_GUILD_MEMBER_ADDED",	EVENT_GUILD_MEMBER_ADDED, EchoExperience.OnGuildMemberAdded)
+      EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_GUILD_MEMBER_REMOVED",	EVENT_GUILD_MEMBER_REMOVED, EchoExperience.OnGuildMemberRemoved)
+  else
+    EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_GUILD_MEMBER_ADDED",	EVENT_GUILD_MEMBER_ADDED, EchoExperience.OnGuildMemberAdded)
+      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_GUILD_MEMBER_REMOVED",	EVENT_GUILD_MEMBER_REMOVED, EchoExperience.OnGuildMemberRemoved)    
+  end
+end
+
+function EchoExperience.SetupMiscEvents(reportMe)
   if( EchoExperience.savedVariables.showtracking ) then
     --if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_XXX_HIDE),msgTypeSYS) end
-     
     local eventNamespace = EchoExperience.name.."EVENT_COMBAT_EVENT"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMBAT_EVENT, EchoExperience.OnCombatSomethingDied)
     --EVENT_MANAGER:AddFilterForEvent(eventNamespace, eventId, filterType, varying filterParameter)
@@ -1493,20 +1588,44 @@ function EchoExperience:CloseUI()
   EOL_GUI:SetHidden( not EOL_GUI:IsHidden() )
 end
 
+function EchoExperience:onResizeStart()
+	EVENT_MANAGER:RegisterForUpdate(EchoExperience.name.."OnWindowResize", 50, 
+    function()
+      EchoExperience:UpdateScrollDataLinesData()
+      EchoExperience:GuiResizeScroll()
+      EchoExperience:UpdateInventoryScroll()
+    end)
+end
+
+function EchoExperience:SaveFrameInfo(calledFrom)
+	if (calledFrom == "onHide") then return end
+  if(EchoExperience.savedVariables.frame2==null)then
+    EchoExperience.savedVariables.frame2 = {}
+  end
+	--local sceneName = EchoExperience:GetCurrentSceneName()
+	--if not QUICKSLOT_FRAGMENT:IsHidden() then
+	--	sceneName = sceneName .. "_quickslots"
+	--end
+
+	--local settings = IIfA:GetSceneSettings(sceneName)
+	--settings.hidden = IIFA_GUI:IsControlHidden()
+
+	--if (not settings.docked and (calledFrom == "onMoveStop" or calledFrom == "onResizeStop")) then
+		EchoExperience.savedVariables.frame2.lastX	= EOL_GUI:GetLeft()
+		EchoExperience.savedVariables.frame2.lastY	= EOL_GUI:GetTop()
+		--if not settings.minimized then
+			EchoExperience.savedVariables.frame2.width	= EOL_GUI:GetWidth()
+			EchoExperience.savedVariables.frame2.height	= EOL_GUI:GetHeight()
+		--end
+	--end
+end
+
 function EchoExperience:SaveFramePosition(calledFrom)
   if(EchoExperience.savedVariables.frame2==null)then
     EchoExperience.savedVariables.frame2 = {}
   end
   EchoExperience.savedVariables.frame2.lastX	= EOL_GUI:GetLeft()
   EchoExperience.savedVariables.frame2.lastY	= EOL_GUI:GetTop()
-end
-
-function EchoExperience:onResizeStart()
-	EVENT_MANAGER:RegisterForUpdate(EchoExperience.name.."OnWindowResize", 50, 
-    function()
-      EchoExperience:GuiResizeScroll()
-      EchoExperience:UpdateInventoryScroll()
-    end)
 end
 
 function EchoExperience:onResizeStop()
@@ -1520,18 +1639,132 @@ function EchoExperience:UpdateInventoryScroll()
 	local index = 0
 	if EOL_GUI_ListHolder.dataOffset < 0 then EOL_GUI_ListHolder.dataOffset = 0 end
 	if EOL_GUI_ListHolder.maxLines == nil then
-		EOL_GUI_ListHolder.maxLines = 35
+		EOL_GUI_ListHolder.maxLines = EchoExperience.defaultMaxLines
 	end
+  --d("UpdateInventoryScroll: offset="..EOL_GUI_ListHolder.dataOffset.." maxLines="..EOL_GUI_ListHolder.maxLines )  
 	EchoExperience:SetDataLinesData()
 
 	local total = #EOL_GUI_ListHolder.dataLines - EOL_GUI_ListHolder.maxLines
 	EOL_GUI_ListHolder_Slider:SetMinMax(0, total)
 end
 
+--??
+function EchoExperience:SetDataLinesData()
+	local curLine, curData
+	for i = 1, EOL_GUI_ListHolder.maxLines do
+		curLine = EOL_GUI_ListHolder.lines[i]
+		curData = EOL_GUI_ListHolder.dataLines[EOL_GUI_ListHolder.dataOffset + i]
+		EOL_GUI_ListHolder.lines[i] = curLine
+
+		if( curData ~= nil) then
+			EchoExperience:fillLine(curLine, curData)
+		else
+			EchoExperience:fillLine(curLine, nil)
+		end
+	end
+end
+
+function EchoExperience:fillLine(curLine, curItem)
+  if(curLine==nil) then return end--??????? TODO
+	local color
+	if curItem == nil then
+		curLine.itemLink = ""
+		curLine.icon:SetTexture(nil)
+		curLine.icon:SetAlpha(0)
+		curLine.text:SetText("")
+		curLine.qty:SetText("")
+		--curLine.worn:SetHidden(true)
+		--curLine.stolen:SetHidden(true)
+		--Hide the FCOIS marker icons at the line (do not create them if not needed) -> File plugins/FCOIS/IIfA_FCOIS.lua
+	--	if IIfA.UpdateFCOISMarkerIcons ~= nil then
+	--		IIfA:UpdateFCOISMarkerIcons(curLine, false, false, -1)
+	--	end
+	else
+		local r, g, b, a = 255, 255, 255, 1
+		--if (curItem.quality) then
+		--	color = GetItemQualityColor(curItem.quality)
+		--	r, g, b, a = color:UnpackRGBA()
+		--end
+		curLine.itemLink = curItem.link
+		curLine.icon:SetTexture(curItem.icon)
+    curLine.icon = curItem.icon
+    if(curLine.icon~=nil)then
+      --curLine.icon:SetAlpha(1)
+    end
+		local text = zo_strformat(SI_TOOLTIP_ITEM_NAME, curItem.name)
+		curLine.text:SetText(text)
+		curLine.text:SetColor(r, g, b, a)
+		curLine.qty:SetText(curItem.qty)
+		--curLine.worn:SetHidden(not curItem.worn)
+		--curLine.stolen:SetHidden(not IsItemLinkStolen(curItem.link))
+		--Show the FCOIS marker icons at the line, if enabled in the settings (create them if needed)  -> File plugins/FCOIS/IIfA_FCOIS.lua
+		--if IIfA.UpdateFCOISMarkerIcons ~= nil then
+		--	local showFCOISMarkerIcons = IIfA:GetSettings().FCOISshowMarkerIcons
+		--	IIfA:UpdateFCOISMarkerIcons(curLine, showFCOISMarkerIcons, false, -1)
+		--end
+	end
+end
+
+
+function EchoExperience:RefreshInventoryScroll()
+	EchoExperience:UpdateScrollDataLinesData()
+	EchoExperience:UpdateInventoryScroll()
+end
+
+function EchoExperience:UpdateScrollDataLinesData()
+  --
+  --TODO mode, tracking vs lifetime
+  local tempDataLine = nil
+	local dataLines = {}
+  local itemCount = 0
+	local totItems = 0
+  
+  if(EchoExperience.view.trackingSelection=="Lifetime") then
+    for itemKey, dbItem in pairs(EchoExperience.savedVariables.lifetime.items) do
+      --k, v.quantity, v.itemlink
+      tempDataLine = {
+        link = dbItem.itemLink,
+        qty  = dbItem.quantity,
+        icon = GetItemLinkIcon(dbItem.itemLink) ,
+        name = itemKey,
+        --quality = dbItem.itemQuality,
+        --filter = itemTypeFilter,
+        --worn = bWorn
+      }
+      table.insert(dataLines, tempDataLine)
+      totItems = totItems + (itemCount or 0)
+    end
+  else
+
+    for itemKey, dbItem in pairs(EchoExperience.savedVariables.tracking.items) do
+      --k, v.quantity, v.itemlink
+      tempDataLine = {
+        link = dbItem.itemLink,
+        qty  = dbItem.quantity,
+        icon = GetItemLinkIcon(dbItem.itemLink) ,
+        name = itemKey,
+        --quality = dbItem.itemQuality,
+        --filter = itemTypeFilter,
+        --worn = bWorn
+      }
+      table.insert(dataLines, tempDataLine)
+      totItems = totItems + (itemCount or 0)
+    end 
+  end
+  
+	EOL_GUI_ListHolder.dataLines = dataLines
+	--sort(EOL_GUI_ListHolder.dataLines)
+	EOL_GUI_ListHolder.dataOffset = 0
+
+	--EOL_GUI_ListHolder_Counts_Items:SetText("Item Count: " .. totItems)
+	--EOL_GUI_ListHolder_Counts_Slots:SetText("Appx. Slots Used: " .. #dataLines)
+end
+
 -- returns true if it had to be resized, otherwise false
 function EchoExperience:GuiResizeScroll()
 	local regionHeight = EOL_GUI_ListHolder:GetHeight()
-	local newLines = math.floor(regionHeight / EOL_GUI_ListHolder.rowHeight)
+  local rowHeight    = EOL_GUI_ListHolder.rowHeight
+	local newLines = math.floor(regionHeight / rowHeight)
 	if EOL_GUI_ListHolder.maxLines == nil or EOL_GUI_ListHolder.maxLines ~= newLines then
 		EOL_GUI_ListHolder.maxLines = newLines
 		EchoExperience:GuiResizeLines()
@@ -1564,7 +1797,7 @@ function EchoExperience:CreateInventoryScroll()
 
 	local text = "       No Collected Data"
 	-- we set those to 35 because that's the amount of lines we can show within the dimension constraints
-	EOL_GUI_ListHolder.maxLines = 35
+	EOL_GUI_ListHolder.maxLines = EchoExperience.defaultMaxLines
 	local predecessor = nil
 	for i=1, EOL_GUI_ListHolder.maxLines do
 		EOL_GUI_ListHolder.lines[i] = EchoExperience:CreateLine(i, predecessor, EOL_GUI_ListHolder)
@@ -1584,7 +1817,7 @@ function EchoExperience:CreateLine(i, predecessor, parent)
 
 	line.icon = line:GetNamedChild("Button"):GetNamedChild("Icon")
 	line.text = line:GetNamedChild("Name")
-	line.qty = line:GetNamedChild("Qty")
+	line.qty  = line:GetNamedChild("Qty")
 	--line.worn = line:GetNamedChild("IconWorn")
 	--line.stolen = line:GetNamedChild("IconStolen")
 
@@ -1677,6 +1910,10 @@ function EchoExperience:MoveToLifetime(mode)
   end
 end
 
+function EchoExperience.InitializeGui()
+  EOL_GUI_ListHolder.rowHeight = 24
+	EOL_GUI_ListHolder:SetDrawLayer(0)
+end
 
 function EchoExperience.SetupDefaultColors()
   EchoExperience.view.settingstemp = {}
@@ -1699,7 +1936,7 @@ end
 
 -- SETUP  setup event handling
 function EchoExperience.DelayedStart()
-  d("EchoExp DelayedStart Called")
+  --d("EchoExp DelayedStart Called")
   
   --Setup VIEW
   EchoExperience.view = {}
@@ -1791,6 +2028,7 @@ else
 	--Setup Events Related
 	EchoExperience.SetupExpGainsEvents()
 	EchoExperience.SetupLootGainsEvents()
+  EchoExperience.SetupGuildEvents()
   EchoExperience.SetupMiscEvents()  
   
 end
@@ -1809,6 +2047,7 @@ function EchoExperience.Activated(e)
     --ZO_AlertNoSuppression(UI_ALERT_CATEGORY_ALERT, nil,
     --    EchoExperience.name .. GetString(SI_NEW_ADDON_MESSAGE)) -- Top-right alert.
     EchoExperience.SetupDefaultColors()
+    EchoExperience.InitializeGui()
     zo_callLater(EchoExperience.DelayedStart, 3000)
 end
 

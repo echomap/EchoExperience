@@ -1,6 +1,6 @@
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.15",                    -- A nuisance to match to the Manifest.
+    version         = "0.0.16",                    -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -291,6 +291,8 @@ function EchoExperience.SlashCommandHandler(text)
 		EchoExperience.ShowDefaults()
 	elseif #options == 0 or options[1] == "showtracking" then
 		EchoExperience.ShowTracking()
+	elseif #options == 0 or options[1] == "showtrackinggui" then
+		EchoExperience:ToggleTrackingFrame()
   elseif #options == 0 or options[1] == "showlifetime" then
     EchoExperience.ShowLifetimeTracking()
 	elseif #options == 0 or options[1] == "cleartracking" then
@@ -325,6 +327,7 @@ function EchoExperience:ToggleTrackingFrame()
 	EOL_GUI:SetHidden(not EOL_GUI:IsControlHidden())
   --EOL_GUI:SetHidden( not EOL_GUI:IsHidden() )
   --
+  EEXPTooltip:SetParent(PopupTooltipTopLevel)
   EOL_GUI_Header_Dropdown_Main.comboBox = EOL_GUI_Header_Dropdown_Main.comboBox or ZO_ComboBox_ObjectFromContainer(EOL_GUI_Header_Dropdown_Main)
   local comboBox = EOL_GUI_Header_Dropdown_Main.comboBox
   comboBox:ClearItems()  
@@ -344,10 +347,10 @@ function EchoExperience:ToggleTrackingFrame()
   table.insert(validChoices, "Session")
   table.insert(validChoices, "Lifetime")
   for i = 1, #validChoices do
-      local entry = comboBox:CreateItemEntry(validChoices[i], OnItemSelect1)
-      comboBox:AddItem(entry)
-    end
-  comboBox:SelectFirstItem()
+    local entry = comboBox:CreateItemEntry(validChoices[i], OnItemSelect1)
+    comboBox:AddItem(entry)
+  end
+  
    
 	if not EOL_GUI:IsControlHidden() then
 		--SetGameCameraUIMode(true)
@@ -358,6 +361,7 @@ function EchoExperience:ToggleTrackingFrame()
 		--EOL_GUI_SearchBox:TakeFocus()
 	--end
   --EOL_GUI_Header_Dropdown_Main:TakeFocus()
+  comboBox:SelectFirstItem()
 	EchoExperience:SaveFrameInfo("ToggleInventoryFrame")
 end
 
@@ -1584,6 +1588,26 @@ end
 
 ------
 ---GUI
+
+--TOOLTIP
+function EchoExperience:Misc2HeaderTipEnter(sender,key)
+  InitializeTooltip(EEXPTooltip, sender, TOPLEFT, 5, -56, TOPRIGHT)
+  EOLTooltip:AddLine(key, "ZoFontHeader3")
+end
+function EchoExperience:Misc2HeaderTipExit(sender)
+  --ClearTooltip(InformationTooltip)
+  ClearTooltip(EEXPTooltip)
+end
+
+function EchoExperience:SetGuiFilter(self, button, filterType, subFilter)
+  EchoExperience.view.filterType = filterType
+  --if(filterType=="All")then
+  --end
+  EchoExperience:UpdateScrollDataLinesData()
+  EchoExperience:GuiResizeScroll()
+  EchoExperience:RefreshInventoryScroll()
+end
+
 function EchoExperience:CloseUI()
   EOL_GUI:SetHidden( not EOL_GUI:IsHidden() )
 end
@@ -1686,11 +1710,11 @@ function EchoExperience:fillLine(curLine, curItem)
 		--	r, g, b, a = color:UnpackRGBA()
 		--end
 		curLine.itemLink = curItem.link
+    --d("curLine.icon = " ..tostring(curLine.icon))
+    --if(curLine.icon:SetTexture(_
 		curLine.icon:SetTexture(curItem.icon)
-    curLine.icon = curItem.icon
-    if(curLine.icon~=nil)then
-      --curLine.icon:SetAlpha(1)
-    end
+    --curLine.icon = curItem.icon
+    curLine.icon:SetAlpha(1)
 		local text = zo_strformat(SI_TOOLTIP_ITEM_NAME, curItem.name)
 		curLine.text:SetText(text)
 		curLine.text:SetColor(r, g, b, a)
@@ -1719,13 +1743,97 @@ function EchoExperience:UpdateScrollDataLinesData()
   local itemCount = 0
 	local totItems = 0
   
+  local elemListP = nil
+  local elemListS = nil
   if(EchoExperience.view.trackingSelection=="Lifetime") then
+    elemListP = EchoExperience.savedVariables.lifetime
+  else
+    elemListP = EchoExperience.savedVariables.tracking
+  end
+  if(EchoExperience.view.filterType=="Items")then
+    elemListS = elemListP.items
+  elseif(EchoExperience.view.filterType=="Mobs")then
+    elemListS = elemListP.mobs
+  elseif(EchoExperience.view.filterType=="Currency")then
+    elemListS = elemListP.currency
+  elseif(EchoExperience.view.filterType=="BG")then
+    elemListS = elemListP.bg
+  else
+    elemListS = nil
+  end
+  
+  if(elemListS~=nil) then
+    for itemKey, dbItem in pairs(elemListS) do
+      --k, v.quantity, v.itemlink
+      local iName = itemKey
+      if(EchoExperience.view.filterType=="Currency") then
+        iName = GetCurrencyName(itemKey, true, false)
+      end
+      tempDataLine = {
+        link = dbItem.itemLink,
+        qty  = dbItem.quantity,
+        icon = GetItemLinkIcon(dbItem.itemLink),
+        name = iName,
+        --quality = dbItem.itemQuality,
+        --filter = itemTypeFilter,
+        --worn = bWorn
+      }
+      table.insert(dataLines, tempDataLine)
+      totItems = totItems + (itemCount or 0)
+    end 
+  elseif(elemListP~=nil) then
+    for itemKey, dbItem in pairs(elemListP.currency) do
+      --k, v.quantity, v.itemlink
+      tempDataLine = {
+        link = dbItem.itemLink,
+        qty  = dbItem.quantity,
+        icon = GetItemLinkIcon(dbItem.itemLink),
+        name = GetCurrencyName(itemKey, true, false),
+        --quality = dbItem.itemQuality,
+        --filter = itemTypeFilter,
+        --worn = bWorn
+      }
+      table.insert(dataLines, tempDataLine)
+      totItems = totItems + (itemCount or 0)
+    end 
+    for itemKey, dbItem in pairs(elemListP.items) do
+      --k, v.quantity, v.itemlink
+      tempDataLine = {
+        link = dbItem.itemLink,
+        qty  = dbItem.quantity,
+        icon = GetItemLinkIcon(dbItem.itemLink),
+        name = itemKey,
+        --quality = dbItem.itemQuality,
+        --filter = itemTypeFilter,
+        --worn = bWorn
+      }
+      table.insert(dataLines, tempDataLine)
+      totItems = totItems + (itemCount or 0)
+    end 
+    for itemKey, dbItem in pairs(elemListP.mobs) do
+      --k, v.quantity, v.itemlink
+      tempDataLine = {
+        link = dbItem.itemLink,
+        qty  = dbItem.quantity,
+        icon = GetItemLinkIcon(dbItem.itemLink),
+        name = itemKey,
+        --quality = dbItem.itemQuality,
+        --filter = itemTypeFilter,
+        --worn = bWorn
+      }
+      table.insert(dataLines, tempDataLine)
+      totItems = totItems + (itemCount or 0)
+    end 
+  end
+  
+  
+  if(EchoExperience.view.trackingSelection=="Lifetime2") then
     for itemKey, dbItem in pairs(EchoExperience.savedVariables.lifetime.items) do
       --k, v.quantity, v.itemlink
       tempDataLine = {
         link = dbItem.itemLink,
         qty  = dbItem.quantity,
-        icon = GetItemLinkIcon(dbItem.itemLink) ,
+        icon = GetItemLinkIcon(dbItem.itemLink),
         name = itemKey,
         --quality = dbItem.itemQuality,
         --filter = itemTypeFilter,
@@ -1734,14 +1842,13 @@ function EchoExperience:UpdateScrollDataLinesData()
       table.insert(dataLines, tempDataLine)
       totItems = totItems + (itemCount or 0)
     end
-  else
-
+  elseif(EchoExperience.view.trackingSelection=="Session2") then
     for itemKey, dbItem in pairs(EchoExperience.savedVariables.tracking.items) do
       --k, v.quantity, v.itemlink
       tempDataLine = {
         link = dbItem.itemLink,
         qty  = dbItem.quantity,
-        icon = GetItemLinkIcon(dbItem.itemLink) ,
+        icon = GetItemLinkIcon(dbItem.itemLink),
         name = itemKey,
         --quality = dbItem.itemQuality,
         --filter = itemTypeFilter,
@@ -1753,11 +1860,20 @@ function EchoExperience:UpdateScrollDataLinesData()
   end
   
 	EOL_GUI_ListHolder.dataLines = dataLines
-	--sort(EOL_GUI_ListHolder.dataLines)
+	EchoExperience:sort(EOL_GUI_ListHolder.dataLines)
 	EOL_GUI_ListHolder.dataOffset = 0
 
 	--EOL_GUI_ListHolder_Counts_Items:SetText("Item Count: " .. totItems)
 	--EOL_GUI_ListHolder_Counts_Slots:SetText("Appx. Slots Used: " .. #dataLines)
+end
+
+function EchoExperience:sort(dataLines)
+	if dataLines == nil then dataLines = EOL_GUI_ListHolder.dataLines end
+
+	--if (ScrollSortUp) then
+  --TODO dataLines = table.sort(dataLines, IIfA_FilterCompareUp)
+  --dataLines = table.sort(dataLines, IIfA_FilterCompareDown)
+	--end
 end
 
 -- returns true if it had to be resized, otherwise false

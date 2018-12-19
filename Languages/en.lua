@@ -2,10 +2,10 @@
 local localization_strings = {
     SI_ECHOEXP_MESSAGE = " is active!",
 
-	SI_ECHOEXP_EXPGAINS_SHOW  = "EchoExp is showing Experience Gains",
-	SI_ECHOEXP_EXPGAINS_HIDE  = "EchoExp is no longer showing Experience Gains",
-	SI_ECHOEXP_LOOTGAINS_SHOW = "EchoExp is showing Loot Gains",
-	SI_ECHOEXP_LOOTGAINS_HIDE = "EchoExp is not showing Loot Gains",
+	SI_ECHOEXP_EXPGAINS_SHOW   = "EchoExp is showing Experience Gains",
+	SI_ECHOEXP_EXPGAINS_HIDE   = "EchoExp is no longer showing Experience Gains",
+	SI_ECHOEXP_LOOTGAINS_SHOW  = "EchoExp is showing Loot Gains",
+	SI_ECHOEXP_LOOTGAINS_HIDE  = "EchoExp is not showing Loot Gains",
   SI_ECHOEXP_LOOTGAINSE_SHOW = "EchoExp is showing Extended Loot Gains",
   SI_ECHOEXP_LOOTGAINSE_HIDE = "EchoExp is not showing Extended Loot Gains",
 

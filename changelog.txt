@@ -1,25 +1,31 @@
 EchoExperience
 -=TODO=-
-settings use player as default
-Guild logon localization
+Localization
 Guild logon format 
-Edit Guilds or existing entries
-You recieve mail with 
+Edit existing entries?
 brackets around names and links? Option?
 Option for timestamp and format
 deconstruct/ you receive
-You craft
+more events:
+  You recieve mail with 
+  You craft
 Add filters wiki.esoui.com/AddFilterEvent
 update lifetime on close?
-Add, 'last killed ID" so that wont double report kill
+Add check for recieved and looted item, to not double report
+Add filters for lifetime view
+Add search for lifetime view
+Add filter item/mob/currency for GUI view
 
 -=Versions=-
 *Testing branch:
 	
 *Development:
-  -Tracking, items/mobs/money in/out
+  -Tracking, items/mobs/money in/out - requires loot and extended loot to be on
   -Guild logon, can unselect guilds per entry
   -Guild logon, show guild they belong to
+  -Add, 'last killed ID" so that wont double report kill
+  -update lifetime on player activated
+  -settings save/load player as default
 0.0.15
   -bug fix settings panel name and guild names
 0.0.14

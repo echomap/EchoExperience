@@ -26,31 +26,104 @@
 
 <!-- hide buttons _Minimize _Maximize _GoldButton _BagButton-->
 
-						<Control name="$(parent)_Dropdown_Main" inherits="ZO_ScrollableComboBox" mouseEnabled="true" tier="HIGH">
+						<Control name="$(parent)_Dropdown_Main" inherits="ZO_ScrollableComboBox" mouseEnabled="true" tier="HIGH" verticalAlignment="CENTER" horizontalAlignment="LEFT" >
 							<Dimensions y="30" minX="100"/>
-              <Anchor point="TOP" relativeTo="$(parent)_Label" relativePoint="BOTTOM" offsetX="0" offsetY="0"/>
+              <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="20" offsetY="30" />
 <!-- 	
 							<OnMouseEnter>EchoExperience:GuiShowTooltip(self, "Select inventory to view")</OnMouseEnter>
 							<OnMouseExit>EchoExperience:GuiHideTooltip(self)</OnMouseExit>
  -->
 						</Control>
             
+						<Control name="$(parent)_Filter" mouseEnabled="true" resizeToFitDescendents="true" verticalAlignment="TOP" horizontalAlignment="CENTER" >
+							<Dimensions y="30" />
+              <Anchor point="TOPLEFT" relativeTo="$(parent)_Dropdown_Main" relativePoint="TOPRIGHT" offsetX="10" offsetY="0" />
+							<Controls>
+								<Button name="$(parent)_Button0">
+									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+									<Dimensions x="40" y="40" />
+                  <OnMouseEnter> EchoesOfLore:Misc2HeaderTipEnter(self,"All") </OnMouseEnter>
+                  <OnMouseExit>  EchoesOfLore:Misc2HeaderTipExit(self)  </OnMouseExit>
+                  <OnMouseUp>EchoExperience:SetGuiFilter(self, button, "All", nil)</OnMouseUp>
+                  <!--
+									<OnMouseEnter>EchoExperience:GuiShowFilterTooltip(self, "All Items")</OnMouseEnter>
+									<OnMouseExit>EchoExperience:GuiHideTooltip(self)</OnMouseExit>
+									<OnMouseUp>EchoExperience:GuiOnFilterButton(self, button, "All", nil)</OnMouseUp>
+                  -->
+									<Textures	normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
+													pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
+													mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds"
+									/>
+								</Button>
+
+								<Button name="$(parent)_Button1">
+									<Anchor point="TOPLEFT" relativeTo="$(parent)_Button0" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
+									<Dimensions x="40" y="40" />
+                  <OnMouseEnter> EchoesOfLore:Misc2HeaderTipEnter(self,"Items") </OnMouseEnter>
+                  <OnMouseExit>  EchoesOfLore:Misc2HeaderTipExit(self)  </OnMouseExit>
+                  <OnMouseUp>EchoExperience:SetGuiFilter(self, button, "Items", nil)</OnMouseUp>
+                  <!--
+									<OnMouseEnter>EchoExperience:GuiShowFilterTooltip(self, "Weapons")</OnMouseEnter>
+									<OnMouseExit>EchoExperience:GuiHideTooltip(self)</OnMouseExit>
+									<OnMouseUp>EchoExperience:GuiOnFilterButton(self, button, "Items", nil)</OnMouseUp>
+                  -->
+									<Textures	normal="esoui\art\inventory\inventory_tabicon_items_up.dds"
+													pressed="esoui\art\inventory\inventory_tabicon_items_down.dds"
+													mouseOver="esoui\art\inventory\inventory_tabicon_items_over.dds"
+									/>
+								</Button>
+                
+                <Button name="$(parent)_Button2">
+									<Anchor point="TOPLEFT" relativeTo="$(parent)_Button1" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
+									<Dimensions x="40" y="40" />
+                  <OnMouseEnter> EchoesOfLore:Misc2HeaderTipEnter(self,"Mobs") </OnMouseEnter>
+                  <OnMouseExit>  EchoesOfLore:Misc2HeaderTipExit(self)  </OnMouseExit>
+                  <OnMouseUp>EchoExperience:SetGuiFilter(self, button, "Mobs", nil)</OnMouseUp>
+									 <!--
+                   <OnMouseEnter>EchoExperience:GuiShowFilterTooltip(self, "Mobs")</OnMouseEnter>
+									<OnMouseExit>EchoExperience:GuiHideTooltip(self)</OnMouseExit>
+									<OnMouseUp>EchoExperience:GuiOnFilterButton(self, button, "Items", nil)</OnMouseUp>
+                  -->
+									<Textures	normal="esoui\art\treeicons\tutorial_idexicon_combat_up.dds"
+													pressed="esoui\art\treeicons\tutorial_idexicon_combat_down.dds"
+													mouseOver="esoui\art\treeicons\tutorial_idexicon_combat_over.dds"
+									/>
+								</Button>
+								<Button name="$(parent)_Button3">
+									<Anchor point="TOPLEFT" relativeTo="$(parent)_Button2" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
+									<Dimensions x="40" y="40" />
+                  <OnMouseEnter> EchoesOfLore:Misc2HeaderTipEnter(self,"Currency") </OnMouseEnter>
+                  <OnMouseExit>  EchoesOfLore:Misc2HeaderTipExit(self)  </OnMouseExit>
+                  <OnMouseUp>EchoExperience:SetGuiFilter(self, button, "Currency", nil)</OnMouseUp>
+                   <!--
+									<OnMouseEnter>EchoExperience:GuiShowFilterTooltip(self, "Currency")</OnMouseEnter>
+									<OnMouseExit>EchoExperience:GuiHideTooltip(self)</OnMouseExit>
+									<OnMouseUp>EchoExperience:GuiOnFilterButton(self, button, "Items", nil)</OnMouseUp>
+                  -->
+									<Textures	normal="esoui\art\inventory\inventory_currencytab_accountwide_up.dds"
+													pressed="esoui\art\inventory\inventory_currencytab_accountwide_down.dds"
+													mouseOver="esoui\art\inventory\inventory_currencytab_accountwide_over.dds"
+									/>
+								</Button>
+                
+              </Controls>
+            </Control>
+            
             <Button name="$(parent)_BtnClose" verticalAlignment="CENTER" horizontalAlignment="CENTER" mouseEnabled="true">
-              <Anchor point="TOPLEFT" relativeTo="$(parent)_Dropdown_Main" relativePoint="TOPRIGHT" offsetX="20" offsetY="0" />
+              <Anchor point="TOPLEFT" relativeTo="$(parent)_Filter" relativePoint="TOPRIGHT" offsetX="10" offsetY="0" />
               <Dimensions x="40" y="40" />
               <Textures normal="EsoUI/art/buttons/decline_up.dds"
                     pressed="EsoUI/art/buttons/decline_down.dds"
                     mouseOver="EsoUI/art/buttons/decline_over.dds"
               />
-              <!--
               <OnMouseEnter> EchoesOfLore:Misc2HeaderTipEnter(self,"Close") </OnMouseEnter>
               <OnMouseExit>  EchoesOfLore:Misc2HeaderTipExit(self)  </OnMouseExit>
-              -->
               <OnMouseUp>EchoExperience:CloseUI(self)</OnMouseUp>
             </Button>
             
             
 <!--_Dropdown_Quality-->
+<!-- Filter Group -->
 <!-- Filter Group -->
 <!-- SubFilter Groups -->
 <!-- End SubFilter Group 1 - Weapons -->
@@ -70,7 +143,8 @@
 
 						<Control name="$(parent)_SortBar" mouseEnabled="true">
 							<Dimensions y="30"/>
-              <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="50"/>
+							<Anchor point="TOPLEFT"  relativeTo="$(parent)_Dropdown_Main" relativePoint="BOTTOMLEFT" offsetX="-20"  offsetY="2" />
+							<Anchor point="TOPRIGHT" relativeTo="$(parent)_Dropdown_Main" relativePoint="BOTTOMRIGHT" offsetX="0"  offsetY="2" />
 							<Controls>
 								<Control name="$(parent)_Sort" verticalAlignment="LEFT">
 									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" />
@@ -108,7 +182,7 @@
 
 				<Control name="$(parent)_ListHolder" mouseEnabled="true" resizeToFitDescendents="false">
 					<DimensionConstraints  minY="52"/>
-					<Anchor point="TOPLEFT" relativeTo="$(parent)_Header_SortBar" relativePoint="BOTTOMLEFT" offsetX="10"/>
+					<Anchor point="TOPLEFT" relativeTo="$(parent)_Header_SortBar" relativePoint="BOTTOMLEFT" offsetX="10" offsetY="0"/>
 					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-35" offsetY="-60"/>
           <!--
 					<OnMouseWheel>EchoExperience:GuiOnScroll(self, delta)</OnMouseWheel>
@@ -199,7 +273,7 @@
 
 
 		<Control name="EOL_SlotTemplate" inherits="ZO_ListInventorySlotBehavior" virtual="true" mouseEnabled="true">
-			<Dimensions x="300" y="52" />
+			<Dimensions x="300" y="30" />
 			<Controls>
 				<Texture name="$(parent)Bg" textureFile="EsoUI/Art/Miscellaneous/listItem_backdrop.dds" alpha="0.4">
 					<AnchorFill />
@@ -207,17 +281,17 @@
 				</Texture>
 
 				<Button name="$(parent)Button" inherits="ZO_InventorySlotNoMouseover">
-					<Dimensions x="40" y="40" />
+					<Dimensions x="20" y="20" />
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" offsetX="0" offsetY="3" />
 				</Button>
 
 				<Label name="$(parent)Qty" font="ZoFontGameShadow" horizontalAlignment="RIGHT" verticalAlignment="CENTER">
-					<Dimensions x="44" y="50"/>
+					<Dimensions x="44" y="30"/>
 					<Anchor point="TOPLEFT" relativeTo="$(parent)Button" relativePoint="TOPRIGHT" offsetX="8" offsetY="-3" />
 				</Label>
 
 				<Label name="$(parent)Name" font="ZoFontGameShadow" wrapMode="ELLIPSIS" verticalAlignment="CENTER">
-					<Dimensions y="50" />
+					<Dimensions y="30" />
 					<Anchor point="TOPLEFT" relativeTo="$(parent)Qty" relativePoint="TOPRIGHT" offsetX="18" offsetY="0"/>
 					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
 				</Label>
@@ -237,20 +311,24 @@
 		</Control>
 
 
-			<!-- tooltips -->
-			<Tooltip name="EOL_POPUP_TOOLTIP" hidden="true" mouseEnabled="false" movable="false" clampedToScreen="true" virtual="true" inherits="ItemTooltipBase">
-				<Dimensions  x="416" y="200" />
-				<Anchor point="TOP" relativeTo="PopupTooltip" relativePoint="BOTTOM" offsetX="0" offsetY="0" />
-				<Controls>
-					<Label name="$(parent)_StyleLabel" font="ZoFontWinH4" text="" hidden="true">
-						<Anchor point="BOTTOM" relativeTo="$(parent)" relativePoint="TOP" offsetX="0" offsetY="40" />
-					</Label>
-					<Texture name="$(parent)_StyleIcon" textureFile="IIfA/assets/icons/imperial.dds">
-						<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-2" offsetY="2" />
-						<Dimensions x="50" y="50" />
-					</Texture>
-				</Controls>
-			</Tooltip>
+      <!-- tooltips -->
+      <Tooltip name="EEXPTooltip" inherits="ZO_ItemIconTooltip" mouseEnabled="true" movable="true" hidden="true">
+        <ResizeToFitPadding   width="40" height="30"/>
+        <DimensionConstraints minX="30" maxX="200" />
+      </Tooltip>
+      <Tooltip name="EEXP_POPUP_TOOLTIP" hidden="true" mouseEnabled="false" movable="false" clampedToScreen="true" virtual="true" inherits="ItemTooltipBase">
+        <Dimensions  x="416" y="200" />
+        <Anchor point="TOP" relativeTo="PopupTooltip" relativePoint="BOTTOM" offsetX="0" offsetY="0" />
+        <Controls>
+          <Label name="$(parent)_StyleLabel" font="ZoFontWinH4" text="" hidden="true">
+            <Anchor point="BOTTOM" relativeTo="$(parent)" relativePoint="TOP" offsetX="0" offsetY="40" />
+          </Label>
+          <Texture name="$(parent)_StyleIcon" textureFile="esoui\art\charactercreate\charactercreate_imperialicon_down.dds">
+            <Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-2" offsetY="2" />
+            <Dimensions x="50" y="50" />
+          </Texture>
+        </Controls>
+      </Tooltip>
 
 
 		</Controls>

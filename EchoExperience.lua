@@ -914,6 +914,15 @@ function EchoExperience.OnGuildMemberAdded(eventCode,guildID,playerName)
     .." guild="       .. tostring(EchoExperience:GetGuildName(guildID))      
     .." playerName="     .. tostring(playerName)
   )
+  local sentence = GetString("SI_ECHOEXP_GUILDADD_",1)
+  local strL = zo_strformat(sentence, eventCode, tostring(guildID), EchoExperience:GetGuildName(guildID), tostring(playerName), ZO_FormatClockTime() )
+  --TODO guild icon? color? player LINK?
+  --TODO if check?
+      local filter = {}
+      filter.type = msgTypeGUILD
+      filter.guildID = guildID
+      EchoExperience.outputToChanel(strL,msgTypeGUILD,filter) 
+
 end
 
 --EVENT_GUILD_MEMBER_REMOVED (number eventCode, number guildId, string displayName, string characterName) 
@@ -926,6 +935,14 @@ function EchoExperience.OnGuildMemberRemoved(eventCode,guildID,displayName,chara
     .." displayName="     .. tostring(displayName)
     .." characterName="     .. tostring(characterName)
   )
+  local sentence = GetString("SI_ECHOEXP_GUILDREM_",1)
+  local strL = zo_strformat(sentence, eventCode, tostring(guildID), EchoExperience:GetGuildName(guildID), tostring(playerName), ZO_FormatClockTime() )
+  --TODO if check?
+      local filter = {}
+      filter.type = msgTypeGUILD
+      filter.guildID = guildID
+      EchoExperience.outputToChanel(strL,msgTypeGUILD,filter) 
+
 end
 --[20:01] OnGuildMemberRemoved:  eventCode=327707 guildID=4 displayName=@luda9400 characterName=I Heal Tanks^Fx
 --TODO
@@ -952,7 +969,7 @@ function EchoExperience.OnGuildMemberStatusChanged(eventCode,guildID,playerName,
     if (EchoExperience.savedVariables.showGuildLogin) then
       --local sentence2 = "[EchoExp] <<3>> Logged IN at <<6>>"  
       local sentence2 = GetString("SI_ECHOEXP_GUILD_",2)
-      local strL2 = zo_strformat(sentence2, tostring(guildID), tostring(playerName), tostring(prevStatus), tostring(curStatus), ZO_FormatClockTime(), gName )
+      local strL2 = zo_strformat(sentence2, tostring(guildID), (playerName), tostring(prevStatus), tostring(curStatus), ZO_FormatClockTime(), gName )
       local filter = {}
       filter.type = msgTypeGUILD
       filter.guildID = guildID
@@ -963,7 +980,7 @@ function EchoExperience.OnGuildMemberStatusChanged(eventCode,guildID,playerName,
     if (EchoExperience.savedVariables.showGuildLogout) then
       local sentence2 = GetString("SI_ECHOEXP_GUILD_",3)
       --local sentence2 = "[EchoExp] <<3>> Logged OUT at <<6>>"  
-      local strL2 = zo_strformat(sentence2, tostring(guildID), tostring(playerName), tostring(prevStatus), tostring(curStatus), ZO_FormatClockTime(), gName )
+      local strL2 = zo_strformat(sentence2, tostring(guildID), (playerName), tostring(prevStatus), tostring(curStatus), ZO_FormatClockTime(), gName )
       local filter = {}
       filter.type = msgTypeGUILD
       filter.guildID = guildID
@@ -1778,6 +1795,7 @@ function EchoExperience:UpdateScrollDataLinesData()
         --filter = itemTypeFilter,
         --worn = bWorn
       }
+      d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
       table.insert(dataLines, tempDataLine)
       totItems = totItems + (itemCount or 0)
     end 
@@ -1793,6 +1811,9 @@ function EchoExperience:UpdateScrollDataLinesData()
         --filter = itemTypeFilter,
         --worn = bWorn
       }
+      if(dbItem.itemLink~=nil)then
+        d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
+      end
       table.insert(dataLines, tempDataLine)
       totItems = totItems + (itemCount or 0)
     end 
@@ -1807,6 +1828,9 @@ function EchoExperience:UpdateScrollDataLinesData()
         --filter = itemTypeFilter,
         --worn = bWorn
       }
+      if(dbItem.itemLink~=nil)then
+        d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
+      end
       table.insert(dataLines, tempDataLine)
       totItems = totItems + (itemCount or 0)
     end 
@@ -1821,6 +1845,9 @@ function EchoExperience:UpdateScrollDataLinesData()
         --filter = itemTypeFilter,
         --worn = bWorn
       }
+      if(dbItem.itemLink~=nil)then
+        d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
+      end
       table.insert(dataLines, tempDataLine)
       totItems = totItems + (itemCount or 0)
     end 
@@ -1839,6 +1866,7 @@ function EchoExperience:UpdateScrollDataLinesData()
         --filter = itemTypeFilter,
         --worn = bWorn
       }
+      d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
       table.insert(dataLines, tempDataLine)
       totItems = totItems + (itemCount or 0)
     end
@@ -1854,6 +1882,7 @@ function EchoExperience:UpdateScrollDataLinesData()
         --filter = itemTypeFilter,
         --worn = bWorn
       }
+      d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
       table.insert(dataLines, tempDataLine)
       totItems = totItems + (itemCount or 0)
     end 

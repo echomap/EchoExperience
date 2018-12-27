@@ -16,6 +16,8 @@ Add filters for lifetime view
 Add search for lifetime view
 Add filter item/mob/currency for GUI view
 
+get SCROLL working
+
 -=Versions=-
 *Testing branch:
 	

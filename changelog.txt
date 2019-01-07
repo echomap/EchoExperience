@@ -15,8 +15,11 @@ Add check for recieved and looted item, to not double report
 Add filters for lifetime view
 Add search for lifetime view
 Add filter item/mob/currency for GUI view
+login in /out add/remove, linkable names, color changes
 
 get SCROLL working
+
+Join/Remove to seperate messaging?
 
 -=Versions=-
 *Testing branch:

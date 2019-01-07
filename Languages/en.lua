@@ -39,7 +39,7 @@ local localization_strings = {
   SI_ECHOEXP_GUILD_3       = "[<<2>>[ Logged OUT at <<5>> (<<6>>)",
     
   SI_ECHOEXP_GUILDADD_1    = "[<<4>>] Joined <<3>> at <<5>>",
-  SI_ECHOEXP_GUILDREM_1    = "[<<4>>[ Left <<3>> at <<5>>)",  
+  SI_ECHOEXP_GUILDREM_1    = "[<<4>>] Left <<3>> at <<5>>)",  
   
 	--LOOT
 	--<<1>> is itemname
@@ -84,6 +84,7 @@ local localization_strings = {
 
   --Extended Loot info
   --TODO use GetChatFontSize()  to get size
+  --https://wiki.esoui.com/Text_Formatting
   SI_ECHOLOOT_BUYBACK_1 = "You buyback |t14:14:<<1>>|t <<2>>",
   SI_ECHOLOOT_BUYBACK_2 = "You buyback |t14:14:<<1>>|t <<2>> x<<3>>",
   SI_ECHOLOOT_SELL_1 = "You sell |t14:14:<<1>>|t <<2>>",
@@ -93,10 +94,10 @@ local localization_strings = {
   SI_ECHOLOOT_CURRENCY_1 = "You spend <<3>> |t12:12:<<1>>|t <<2>>", 
   SI_ECHOLOOT_CURRENCY_2 = "You gain <<3>> |t12:12:<<1>>|t <<2>>", 
   
-  SI_ECHOLOOT_RECEIVE_1 = "You receive |t12:12:<<1>>|t <<2>>",
-  SI_ECHOLOOT_RECEIVE_2 = "You receive |t12:12:<<1>>|t <<2>> x<<3>>",
-  SI_ECHOLOOT_LOSE_1 = "You lose |t12:12:<<1>>|t <<2>>",
-  SI_ECHOLOOT_LOSE_2 = "You lose|t12:12:<<1>>|t <<2>> x<<3>>",
+  SI_ECHOLOOT_RECEIVE_1 = "You receive |t14:14:<<1>>|t <<2>>",
+  SI_ECHOLOOT_RECEIVE_2 = "You receive |t14:14:<<1>>|t <<2>> x<<3>>",
+  SI_ECHOLOOT_LOSE_1 = "You lose |t14:14:<<1>>|t <<2>>",
+  SI_ECHOLOOT_LOSE_2 = "You lose|t14:14:<<1>>|t <<2>> x<<3>>",
 }
 
 for stringId, stringValue in pairs(localization_strings) do

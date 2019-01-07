@@ -907,8 +907,7 @@ end
 
 --EVENT_GUILD_MEMBER_ADDED (number eventCode, number guildId, string displayName) 
 function EchoExperience.OnGuildMemberAdded(eventCode,guildID,playerName)
-  --EchoExperience.debugMsg
-  d("OnGuildMemberAdded: "
+  EchoExperience.debugMsg("OnGuildMemberAdded: "
     .." eventCode="   .. tostring(eventCode)
     .." guildID="     .. tostring(guildID)      
     .." guild="       .. tostring(EchoExperience:GetGuildName(guildID))      
@@ -928,7 +927,7 @@ end
 --EVENT_GUILD_MEMBER_REMOVED (number eventCode, number guildId, string displayName, string characterName) 
 function EchoExperience.OnGuildMemberRemoved(eventCode,guildID,displayName,characterName)
   --EchoExperience.debugMsg
-  d("OnGuildMemberRemoved: "
+  EchoExperience.debugMsg("OnGuildMemberRemoved: "
     .." eventCode="      .. tostring(eventCode)
     .." guildID="     .. tostring(guildID)      
     .." guild="       .. tostring(EchoExperience:GetGuildName(guildID))      
@@ -1939,9 +1938,7 @@ function EchoExperience:CreateInventoryScroll()
 	EOL_GUI_ListHolder.dataLines = {}
 	EOL_GUI_ListHolder.lines = {}
 	EOL_GUI_Header_SortBar.Icon = EOL_GUI_Header_SortBar:GetNamedChild("_Sort"):GetNamedChild("_Icon")
-
-	local text = "       No Collected Data"
-	-- we set those to 35 because that's the amount of lines we can show within the dimension constraints
+	
 	EOL_GUI_ListHolder.maxLines = EchoExperience.defaultMaxLines
 	local predecessor = nil
 	for i=1, EOL_GUI_ListHolder.maxLines do

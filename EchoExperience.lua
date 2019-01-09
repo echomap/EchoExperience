@@ -1068,10 +1068,15 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
     EchoExperience.savedVariables.tracking.mobs[targetName].targetType=targetType
   end--Tracking
   --TODO localize etc  
-  local sentence = GetString(SI_ECHOEXP_KILL_MOB)
-  local strL = zo_strformat(sentence, targetName )
-  EchoExperience.outputToChanel(strL,msgTypeSYS)
-  --d("You killed a "..targetName)
+  
+  if(sourceUnitId==targetUnitId) then
+      d("You died.")--TODO
+  else
+    local sentence = GetString(SI_ECHOEXP_KILL_MOB)
+    local strL = zo_strformat(sentence, targetName )
+    EchoExperience.outputToChanel(strL,msgTypeSYS)
+    --d("You killed a "..targetName)
+  end
 end
 
 --Sample Events

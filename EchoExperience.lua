@@ -20,6 +20,7 @@ local msgTypeSYS     = 1
 local msgTypeEXP     = 2
 local msgTypeLOOT    = 4
 local msgTypeGUILD   = 6
+local msgTypeGUILD2   = 7
 
 --local PCHAT = LibStub("PCHAT")
 
@@ -159,15 +160,16 @@ function EchoExperience.outputToChanel(text,msgType,filter)
     return
 	elseif msgType == msgTypeGUILD then
     EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.guildsettings,filter)
-    if(EchoExperience.error)then
+  elseif msgType == msgTypeGUILD2 then
+    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.guildsettings,filter)
+    --for later, when i seperate the LOGXX with the join/leave
+  end
+  
+  if(EchoExperience.error)then
       EchoExperience.error = false
       EchoExperience.savedVariables.showGuildLogin  = false
       EchoExperience.savedVariables.showGuildLogout = false
       EchoExperience.outputMsg("Guild notifications are turned off")
-    end
-    return
-	else
-		--
   end
 end
 
@@ -223,6 +225,7 @@ function EchoExperience:outputToChanelSub(text,outputSettings,filter)
         local cCD = ZO_ColorDef:New(v.color.r,v.color.g,v.color.b,v.color.a)
         local text2 = cCD:Colorize(text)
         if(text2~=nil) then 
+          text2 = zo_strformat( "[EchoExp] <<1>>", text2)
           --TODO timestamp
           --EchoExperience.savedVariables.showTimeStamp
           --EchoExperience.savedVariables.timeStampFormat
@@ -321,7 +324,6 @@ function EchoExperience.SlashCommandHandler(text)
 	end
 
 end
-
 
 function EchoExperience:ToggleTrackingFrame()
 	EOL_GUI:SetHidden(not EOL_GUI:IsControlHidden())
@@ -548,14 +550,14 @@ function EchoExperience.OnExperienceGain(event, eventCode, reason, level, previo
 	--EchoExperience.debugMsg("OnExperienceGain Called")
 	--if ( unitTag ~= 'player' ) then return end
 	--local xpPrev = previousExperience;
-	--[[
+	
 	EchoExperience.debugMsg(EchoExperience.name .. " previousExperience=" .. previousExperience
 		.. " currentExperience="  .. currentExperience
 		.. " eventCode=" .. eventCode
 		.. " reason=" .. reason
 		.. " level="  .. level
 		.. " champ="  .. tostring(championPoints)) --allways nil?
-	]]
+	
 	local XPgain = previousExperience - level
 	--FORMAT
 	local strI = GetString(SI_ECHOEXP_XP_GAIN)
@@ -906,26 +908,27 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 end
 
 --EVENT_GUILD_MEMBER_ADDED (number eventCode, number guildId, string displayName) 
-function EchoExperience.OnGuildMemberAdded(eventCode,guildID,playerName)
+function EchoExperience.OnGuildMemberAdded(eventCode, guildID, playerName)
   EchoExperience.debugMsg("OnGuildMemberAdded: "
     .." eventCode="   .. tostring(eventCode)
     .." guildID="     .. tostring(guildID)      
     .." guild="       .. tostring(EchoExperience:GetGuildName(guildID))      
     .." playerName="     .. tostring(playerName)
   )
+  local pLink = ZO_LinkHandler_CreatePlayerLink(playerName)
   local sentence = GetString("SI_ECHOEXP_GUILDADD_",1)
-  local strL = zo_strformat(sentence, eventCode, tostring(guildID), EchoExperience:GetGuildName(guildID), tostring(playerName), ZO_FormatClockTime() )
+  local strL = zo_strformat(sentence, tostring(guildID), EchoExperience:GetGuildName(guildID), (playerName), ZO_FormatClockTime(), pLink )
   --TODO guild icon? color? player LINK?
   --TODO if check?
       local filter = {}
-      filter.type = msgTypeGUILD
+      filter.type = msgTypeGUILD2
       filter.guildID = guildID
       EchoExperience.outputToChanel(strL,msgTypeGUILD,filter) 
 
 end
 
 --EVENT_GUILD_MEMBER_REMOVED (number eventCode, number guildId, string displayName, string characterName) 
-function EchoExperience.OnGuildMemberRemoved(eventCode,guildID,displayName,characterName)
+function EchoExperience.OnGuildMemberRemoved(eventCode,guildID, displayName, characterName)
   --EchoExperience.debugMsg
   EchoExperience.debugMsg("OnGuildMemberRemoved: "
     .." eventCode="      .. tostring(eventCode)
@@ -938,7 +941,7 @@ function EchoExperience.OnGuildMemberRemoved(eventCode,guildID,displayName,chara
   local strL = zo_strformat(sentence, eventCode, tostring(guildID), EchoExperience:GetGuildName(guildID), tostring(playerName), ZO_FormatClockTime() )
   --TODO if check?
       local filter = {}
-      filter.type = msgTypeGUILD
+      filter.type = msgTypeGUILD2
       filter.guildID = guildID
       EchoExperience.outputToChanel(strL,msgTypeGUILD,filter) 
 
@@ -958,17 +961,18 @@ end
 function EchoExperience.OnGuildMemberStatusChanged(eventCode,guildID,playerName,prevStatus,curStatus)
   EchoExperience.debugMsg("OnGuildMemberStatusChanged called") -- Prints to chat.    
   local sentence = GetString("SI_ECHOEXP_GUILD_",1)
-  --"eventCode: <<1>>, guildID: <<2>>, playerName: <<3>>, prevStatus: <<4>>, curStatus: <<5>> ."  
+  --"eventCode: <<1>>, guildID: <<2>>, playerName: <<3>>, prevStatus: <<4>>, curStatus: <<5>> ."    
   local strL = zo_strformat(sentence, eventCode, tostring(guildID), tostring(playerName), tostring(prevStatus), tostring(curStatus) )
   EchoExperience.debugMsg(strL)
   local gName = EchoExperience:GetGuildName(guildID)
   EchoExperience.debugMsg("gName='"..gName.."'")
+  local pLink = ZO_LinkHandler_CreatePlayerLink(playerName)
   if(curStatus == 1) then
     --online
     if (EchoExperience.savedVariables.showGuildLogin) then
       --local sentence2 = "[EchoExp] <<3>> Logged IN at <<6>>"  
       local sentence2 = GetString("SI_ECHOEXP_GUILD_",2)
-      local strL2 = zo_strformat(sentence2, tostring(guildID), (playerName), tostring(prevStatus), tostring(curStatus), ZO_FormatClockTime(), gName )
+      local strL2 = zo_strformat(sentence2, (playerName), ZO_FormatClockTime(), gName, pLink )
       local filter = {}
       filter.type = msgTypeGUILD
       filter.guildID = guildID
@@ -979,7 +983,7 @@ function EchoExperience.OnGuildMemberStatusChanged(eventCode,guildID,playerName,
     if (EchoExperience.savedVariables.showGuildLogout) then
       local sentence2 = GetString("SI_ECHOEXP_GUILD_",3)
       --local sentence2 = "[EchoExp] <<3>> Logged OUT at <<6>>"  
-      local strL2 = zo_strformat(sentence2, tostring(guildID), (playerName), tostring(prevStatus), tostring(curStatus), ZO_FormatClockTime(), gName )
+      local strL2 = zo_strformat(sentence2, (playerName), ZO_FormatClockTime(), gName, pLink )
       local filter = {}
       filter.type = msgTypeGUILD
       filter.guildID = guildID
@@ -1638,7 +1642,7 @@ function EchoExperience:onResizeStart()
     function()
       EchoExperience:UpdateScrollDataLinesData()
       EchoExperience:GuiResizeScroll()
-      EchoExperience:UpdateInventoryScroll()
+      EchoExperience:UpdateDataScroll()
     end)
 end
 
@@ -1677,16 +1681,52 @@ function EchoExperience:onResizeStop()
 	EVENT_MANAGER:UnregisterForUpdate(EchoExperience.name.."OnWindowResize")
 	EchoExperience:SaveFrameInfo("onResizeStop")
 	EchoExperience:GuiResizeScroll()	
-  EchoExperience:UpdateInventoryScroll()
+  EchoExperience:UpdateDataScroll()
 end
 
-function EchoExperience:UpdateInventoryScroll()
+--
+function EchoExperience:GuiOnSliderUpdate(slider, value)
+  EchoExperience.debugMsg("GuiOnSliderUpdate: Called, w/value="..tostring(value)  )
+	--if not value or slider.locked then return end
+	local relativeValue = math.floor(EOL_GUI_ListHolder.dataOffset - value)
+  EchoExperience.debugMsg("GuiOnSliderUpdate: relativeValue=" ..tostring(relativeValue) .. " value="..tostring(value) .. " offset="..tostring(EOL_GUI_ListHolder.dataOffset)  )
+	EchoExperience:GuiOnScroll(slider, relativeValue)
+end
+
+--
+function EchoExperience:GuiOnScroll(control, delta)  
+	if not delta then return end
+  EchoExperience.debugMsg("GuiOnScroll: delta="..tostring(delta) )
+	if delta == 0 then return end
+  if EOL_GUI_ListHolder.dataOffset < 0 then EOL_GUI_ListHolder.dataOffset = 0 end
+  
+	local slider = EOL_GUI_ListHolder_Slider
+	local value  = (EOL_GUI_ListHolder.dataOffset - delta)
+	local total  = #EOL_GUI_ListHolder.dataLines - EOL_GUI_ListHolder.maxLines
+
+	if value < 0 then value = 0 end
+	if value > total then value = total end
+	EOL_GUI_ListHolder.dataOffset  = value
+  EchoExperience.debugMsg("GuiOnScroll: set dataOffset="..tostring(value) )
+
+  ----Setup max lines, and slider (calls RefreshViewableTable: create show lines based on offset)
+	EchoExperience:UpdateDataScroll()
+  
+  --Set max, and Hide lines out of the max display
+  EchoExperience:GuiResizeScroll()
+
+	slider:SetValue(EOL_GUI_ListHolder.dataOffset)
+
+	--EchoExperience:GuiLineOnMouseEnter(moc())
+end
+
+function EchoExperience:UpdateDataScroll()
 	local index = 0
 	if EOL_GUI_ListHolder.dataOffset < 0 then EOL_GUI_ListHolder.dataOffset = 0 end
 	if EOL_GUI_ListHolder.maxLines == nil then
 		EOL_GUI_ListHolder.maxLines = EchoExperience.defaultMaxLines
 	end
-  --d("UpdateInventoryScroll: offset="..EOL_GUI_ListHolder.dataOffset.." maxLines="..EOL_GUI_ListHolder.maxLines )  
+  --d("UpdateDataScroll: offset="..EOL_GUI_ListHolder.dataOffset.." maxLines="..EOL_GUI_ListHolder.maxLines )  
 	EchoExperience:SetDataLinesData()
 
 	local total = #EOL_GUI_ListHolder.dataLines - EOL_GUI_ListHolder.maxLines
@@ -1753,7 +1793,7 @@ end
 
 function EchoExperience:RefreshInventoryScroll()
 	EchoExperience:UpdateScrollDataLinesData()
-	EchoExperience:UpdateInventoryScroll()
+	EchoExperience:UpdateDataScroll()
 end
 
 function EchoExperience:UpdateScrollDataLinesData()

@@ -1,39 +1,41 @@
 EchoExperience
--=TODO=-
-Localization
-Guild logon format 
-Edit existing entries?
-brackets around names and links? Option?
-Option for timestamp and format
-deconstruct/ you receive
-more events:
+
+## TODO
+overall: Localization
+feature: Guild logon format 
+feature: Edit existing entries?
+feature: brackets around names and links? Option?
+feature: Option for timestamp and format
+feature: more events:
   You recieve mail with 
   You craft
-Add filters wiki.esoui.com/AddFilterEvent
-update lifetime on close?
+  deconstruct/ you receive
+clean: Add filters wiki.esoui.com/AddFilterEvent
+bug: update lifetime on close?
 Add check for recieved and looted item, to not double report
-Add filters for lifetime view
-Add search for lifetime view
-Add filter item/mob/currency for GUI view
-login in /out add/remove, linkable names, color changes
+feature: Add filters for lifetime view
+feature: Add search for lifetime view
+feature: Add filter item/mob/currency for GUI view
+feature: login in /out add/remove, linkable names, color changes
+feature: get SCROLL working
+feature: Join/Remove to seperate messaging?
+feature: track mail?
 
-get SCROLL working
+## [Testing branch]
+testing: 
 
-Join/Remove to seperate messaging?
-
--=Versions=-
-*Testing branch:
-	
-*Development:
+## [Unreleased]
+### Changed
   -Tracking, items/mobs/money in/out - requires loot and extended loot to be on
   -Guild logon, can unselect guilds per entry
   -Guild logon, show guild they belong to
   -Add, 'last killed ID" so that wont double report kill
   -update lifetime on player activated
   -settings save/load player as default
-0.0.15
+  
+## 0.0.15
   -bug fix settings panel name and guild names
-0.0.14
+## 0.0.14
   -Using new way to store mutliple tab/windows for multiple
     (more than 2 outputs - not that this is necessary it was just bugging me)
   -new slash commands for 'defaults' and 'outputs'

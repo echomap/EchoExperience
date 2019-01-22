@@ -184,9 +184,7 @@
 					<DimensionConstraints  minY="52"/>
 					<Anchor point="TOPLEFT" relativeTo="$(parent)_Header_SortBar" relativePoint="BOTTOMLEFT" offsetX="10" offsetY="0"/>
 					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-35" offsetY="-60"/>
-          <!--
 					<OnMouseWheel>EchoExperience:GuiOnScroll(self, delta)</OnMouseWheel>
-          -->
 
 					<Controls>
 						<Slider name="$(parent)_Slider" mouseEnabled="true" step="1" inherits="ZO_VerticalScrollbarBase">
@@ -195,9 +193,7 @@
 
 							<OnMouseDown>self.locked=false</OnMouseDown>
 							<OnMouseUp>self.locked=true</OnMouseUp>
-              <!--
 							<OnValueChanged>EchoExperience:GuiOnSliderUpdate(self, value)</OnValueChanged>
-              -->
 						</Slider>
 <!--
 						<Control name="$(parent)_Counts" verticalAlignment="LEFT">

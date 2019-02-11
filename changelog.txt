@@ -26,13 +26,15 @@ testing:
 
 ## [Unreleased]
 ### Changed
+  -GetGuildId function, to be used by the guild filter, rather than Guild#1-#5, so changes in a players guild list wont affect which guilds are outputted
+## 0.0.16
+  -api bump
   -Tracking, items/mobs/money in/out - requires loot and extended loot to be on
   -Guild logon, can unselect guilds per entry
   -Guild logon, show guild they belong to
   -Add, 'last killed ID" so that wont double report kill
   -update lifetime on player activated
   -settings save/load player as default
-  
 ## 0.0.15
   -bug fix settings panel name and guild names
 ## 0.0.14

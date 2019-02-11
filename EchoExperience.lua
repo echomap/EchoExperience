@@ -145,6 +145,11 @@ end
 function EchoExperience:GetGuildName(gnum)
   EchoExperience.debugMsg("GetGuildName:=".. gnum.. " name='"..GetGuildName(gnum).."'")  
   return GetGuildName(gnum)
+end    
+
+function EchoExperience:GetGuildId(gnum)
+  EchoExperience.debugMsg("GetGuildId:=".. gnum.. " name='"..GetGuildId(gnum).."'")  
+  return GetGuildId(gnum)
 end
 
 -- Main Output Function used by addon to control output and style
@@ -192,7 +197,11 @@ function EchoExperience:ShowOutputsSub(dataSettings, headerText, msgType)
       if(msgType==msgTypeGUILD) then
         gval = "[Show all]"
         if(v.guilds~=nil) then
-          gval = zo_strformat( "[g1=<<1>>/g2=<<2>>/g3=<<3>>/g4=<<4>>/g5=<<5>>]", tostring(v.guilds.guild1),tostring(v.guilds.guild2),tostring(v.guilds.guild3),tostring(v.guilds.guild4),tostring(v.guilds.guild5) )
+          gval = "==["
+          for i,v in pairs(v.guilds) do
+            gval = zo_strformat( "<<1>>,<<2>>", gval, tostring(i) )
+          end
+          --gval = zo_strformat( "[g1=<<1>>/g2=<<2>>/g3=<<3>>/g4=<<4>>/g5=<<5>>]", tostring(v.guilds.guild1),tostring(v.guilds.guild2),tostring(v.guilds.guild3),tostring(v.guilds.guild4),tostring(v.guilds.guild5) )
         end            
       end
       local val = zo_strformat( "win=<<1>>, tab=<<2>>, color=<<3>> (<<4>>) <<5>>", v.window,v.tab,ctext,cVals,gval )
@@ -211,9 +220,10 @@ function EchoExperience:outputToChanelSub(text,outputSettings,filter)
       local skip = false
       --filter
       if(filter~=nil and filter.type == msgTypeGUILD and v.guilds~=nil) then
-        EchoExperience.debugMsg("filter.guildID="..filter.guildID)
+        EchoExperience.debugMsg("filter.guildID="..filter.guildID.. " filter.guildId="..filter.guildId)
         skip = true
-        local gkey = "guild"..filter.guildID
+        --local gkey = "guild"..filter.guildID
+        local gkey = filter.guildId
         if(v.guilds[gkey]==nil) then skip = false
         elseif(v.guilds[gkey]==true)then
           skip = false
@@ -281,7 +291,7 @@ function EchoExperience.SlashCommandHandler(text)
 	end
 
 	if #options == 0 or options[1] == "help" then
-		EchoExperience.outputMsg("commands include: 'outputs', 'textexp', 'testloot', 'testfull', 'debug', 'toggletracking', 'showtracking', 'showlifetime'")
+		EchoExperience.outputMsg("commands include: 'outputs', 'textexp', 'testloot', 'testfull', 'debug', 'toggletracking', 'showtracking', 'showlifetime', 'clearlifetimedata','mute','unmute'")
   elseif #options == 0 or options[1] == "testgui" then
     EchoExperience:ToggleTrackingFrame()
   elseif #options == 0 or options[1] == "testevents" then
@@ -298,6 +308,44 @@ function EchoExperience.SlashCommandHandler(text)
 		EchoExperience:ToggleTrackingFrame()
   elseif #options == 0 or options[1] == "showlifetime" then
     EchoExperience.ShowLifetimeTracking()
+    EchoExperience.CheckVerifyDefaults()
+  elseif #options == 0 or options[1] == "mute" then
+    EchoExperience.savedVariables.mutedprevious = {}
+    EchoExperience.savedVariables.mutedprevious.verboseExp   = EchoExperience.savedVariables.verboseExp
+    EchoExperience.savedVariables.mutedprevious.showLoot     = EchoExperience.savedVariables.showLoot
+    EchoExperience.savedVariables.mutedprevious.extendedLoot = EchoExperience.savedVariables.extendedLoot 
+    EchoExperience.savedVariables.mutedprevious.groupLoot    = EchoExperience.savedVariables.groupLoot
+    EchoExperience.savedVariables.mutedprevious.showItemLoot = EchoExperience.view.settingstemp.showItemLoot
+    EchoExperience.savedVariables.mutedprevious.showGroupLoot   = EchoExperience.view.settingstemp.showGroupLoot
+    EchoExperience.savedVariables.mutedprevious.showGuildLogin  = EchoExperience.savedVariables.showGuildLogin
+    EchoExperience.savedVariables.mutedprevious.showGuildLogout = EchoExperience.savedVariables.showGuildLogout
+    --
+    EchoExperience.savedVariables.verboseExp    = false
+    EchoExperience.savedVariables.showLoot      = false
+    EchoExperience.savedVariables.extendedLoot  = false
+    EchoExperience.savedVariables.groupLoot     = false
+    EchoExperience.view.settingstemp.showItemLoot  = false
+    EchoExperience.view.settingstemp.showGroupLoot = false
+    EchoExperience.savedVariables.showGuildLogin   = false
+    EchoExperience.savedVariables.showGuildLogout  = false
+    --
+    EchoExperience.SetupLootGainsEvents(false)
+    EchoExperience.outputMsg("Muted")
+  elseif #options == 0 or options[1] == "unmute" then
+    if(EchoExperience.savedVariables.mutedprevious == nil)then
+    else      
+      EchoExperience.savedVariables.verboseExp   = EchoExperience.savedVariables.mutedprevious.verboseExp   
+      EchoExperience.savedVariables.showLoot     = EchoExperience.savedVariables.mutedprevious.showLoot     
+      EchoExperience.savedVariables.extendedLoot = EchoExperience.savedVariables.mutedprevious.extendedLoot 
+      EchoExperience.savedVariables.groupLoot    = EchoExperience.savedVariables.mutedprevious.groupLoot    
+      EchoExperience.view.settingstemp.showItemLoot  = EchoExperience.savedVariables.mutedprevious.showItemLoot 
+      EchoExperience.view.settingstemp.showGroupLoot = EchoExperience.savedVariables.mutedprevious.showGroupLoot   
+      EchoExperience.savedVariables.showGuildLogin   = EchoExperience.savedVariables.mutedprevious.showGuildLogin  
+      EchoExperience.savedVariables.showGuildLogout  = EchoExperience.savedVariables.mutedprevious.showGuildLogout 
+    end
+    EchoExperience.outputMsg("unMuted")
+  elseif #options == 0 or options[1] == "clearlifetimedata" then
+    EchoExperience.savedVariables.lifetime = {}
 	elseif #options == 0 or options[1] == "cleartracking" then
 		EchoExperience.savedVariables.tracking = {}
     EchoExperience.savedVariables.tracking.items = {}
@@ -913,7 +961,7 @@ function EchoExperience.OnGuildMemberAdded(eventCode, guildID, playerName)
     .." eventCode="   .. tostring(eventCode)
     .." guildID="     .. tostring(guildID)      
     .." guild="       .. tostring(EchoExperience:GetGuildName(guildID))      
-    .." playerName="     .. tostring(playerName)
+    .." playerName="  .. tostring(playerName)
   )
   local pLink = ZO_LinkHandler_CreatePlayerLink(playerName)
   local sentence = GetString("SI_ECHOEXP_GUILDADD_",1)
@@ -923,6 +971,7 @@ function EchoExperience.OnGuildMemberAdded(eventCode, guildID, playerName)
       local filter = {}
       filter.type = msgTypeGUILD2
       filter.guildID = guildID
+      filter.guildId = EchoExperience:GetGuildId(guildID)
       EchoExperience.outputToChanel(strL,msgTypeGUILD,filter) 
 
 end
@@ -943,6 +992,7 @@ function EchoExperience.OnGuildMemberRemoved(eventCode,guildID, displayName, cha
       local filter = {}
       filter.type = msgTypeGUILD2
       filter.guildID = guildID
+      filter.guildId = EchoExperience:GetGuildId(guildID)
       EchoExperience.outputToChanel(strL,msgTypeGUILD,filter) 
 
 end
@@ -976,6 +1026,7 @@ function EchoExperience.OnGuildMemberStatusChanged(eventCode,guildID,playerName,
       local filter = {}
       filter.type = msgTypeGUILD
       filter.guildID = guildID
+      filter.guildId = EchoExperience:GetGuildId(guildID)
       EchoExperience.outputToChanel(strL2,msgTypeGUILD,filter)  
     end
   elseif(curStatus == 4) then
@@ -987,6 +1038,7 @@ function EchoExperience.OnGuildMemberStatusChanged(eventCode,guildID,playerName,
       local filter = {}
       filter.type = msgTypeGUILD
       filter.guildID = guildID
+      filter.guildId = EchoExperience:GetGuildId(guildID)
       EchoExperience.outputToChanel(strL2,msgTypeGUILD,filter)  
     end
   end
@@ -1277,11 +1329,28 @@ function EchoExperience:DoSaveGuildTab()
   elem["tab"]=tab
   elem["color"]=color
   local gs = {}
+  if(EchoExperience.view.settingstemp.guild1) then
+    gs[EchoExperience:GetGuildId(1)] = true
+  end
+  if(EchoExperience.view.settingstemp.guild2) then
+    gs[EchoExperience:GetGuildId(2)] = true
+  end
+  if(EchoExperience.view.settingstemp.guild3) then
+    gs[EchoExperience:GetGuildId(3)] = true
+  end
+  if(EchoExperience.view.settingstemp.guild4) then
+    gs[EchoExperience:GetGuildId(4)] = true
+  end
+  if(EchoExperience.view.settingstemp.guild5) then
+    gs[EchoExperience:GetGuildId(5)] = true
+  end
+  --[[
   gs["guild1"]=EchoExperience.view.settingstemp.guild1
   gs["guild2"]=EchoExperience.view.settingstemp.guild2
   gs["guild3"]=EchoExperience.view.settingstemp.guild3
   gs["guild4"]=EchoExperience.view.settingstemp.guild4
   gs["guild5"]=EchoExperience.view.settingstemp.guild5
+  --]]
   elem["guilds"] = gs
   table.insert(EchoExperience.savedVariables.guildsettings, elem)
  
@@ -2121,6 +2190,44 @@ function EchoExperience.SetupDefaultColors()
   EchoExperience.view.settingstemp.colorGuild.a = EchoExperience.rgbaBase.a
 end
 
+
+function EchoExperience.CheckVerifyDefaults()
+  --Setup Basic Options
+  if(EchoExperience.savedVariables.guildsettings==nil)then
+    EchoExperience.savedVariables.guildsettings = {}
+  end
+  if(EchoExperience.savedVariables.lootsettings==nil)then
+    EchoExperience.savedVariables.lootsettings = {}
+  end
+  if(EchoExperience.savedVariables.expsettings==nil)then
+    EchoExperience.savedVariables.expsettings = {}
+  end
+  
+  if(EchoExperience.accountVariables.defaults==nil)then
+    EchoExperience.accountVariables.defaults = {}
+  end
+  --
+  if(EchoExperience.savedVariables.lifetime==nil)then
+    EchoExperience.savedVariables.lifetime = {}
+    if(EchoExperience.savedVariables.lifetime.items==nil)then
+      EchoExperience.savedVariables.lifetime.items = {}
+    end
+    if(EchoExperience.savedVariables.lifetime.currency==nil)then
+      EchoExperience.savedVariables.lifetime.currency = {}
+    end
+    if(EchoExperience.savedVariables.lifetime.mobs==nil)then
+      EchoExperience.savedVariables.lifetime.mobs = {}
+    end
+    if(EchoExperience.savedVariables.lifetime.bg==nil)then
+      EchoExperience.savedVariables.lifetime.bg = {}
+    end
+  end
+  --
+  if(EchoExperience.savedVariables.tracking==nil)then
+    EchoExperience.savedVariables.tracking = {}
+  end  
+end
+
 -- SETUP  setup event handling
 function EchoExperience.DelayedStart()
   --d("EchoExp DelayedStart Called")
@@ -2150,39 +2257,12 @@ function EchoExperience.DelayedStart()
   EchoExperience.view.selected.loottab = nil
   EchoExperience.view.selected.exptab = nil
   
-  --Setup Basic Options
-  if(EchoExperience.savedVariables.guildsettings==nil)then
-    EchoExperience.savedVariables.guildsettings = {}
-  end
-  if(EchoExperience.savedVariables.lootsettings==nil)then
-    EchoExperience.savedVariables.lootsettings = {}
-  end
-  if(EchoExperience.savedVariables.expsettings==nil)then
-    EchoExperience.savedVariables.expsettings = {}
-  end
-  
-  if(EchoExperience.accountVariables.defaults==nil)then
-    EchoExperience.accountVariables.defaults = {}
-  end
+  EchoExperience.CheckVerifyDefaults()
+
   -- Clear for session?
   -- Save Tracking data to Lifetime 
   --if(EchoExperience.savedVariables.showtracking session vs all?
-  if(EchoExperience.savedVariables.lifetime==nil)then
-    EchoExperience.savedVariables.lifetime = {}
-    if(EchoExperience.savedVariables.lifetime.items==nil)then
-      EchoExperience.savedVariables.lifetime.items = {}
-    end
-    if(EchoExperience.savedVariables.lifetime.currency==nil)then
-      EchoExperience.savedVariables.lifetime.currency = {}
-    end
-    if(EchoExperience.savedVariables.lifetime.mobs==nil)then
-      EchoExperience.savedVariables.lifetime.mobs = {}
-    end
-    if(EchoExperience.savedVariables.lifetime.bg==nil)then
-      EchoExperience.savedVariables.lifetime.bg = {}
-    end
-  end
-  
+
   if(EchoExperience.savedVariables.tracking==nil)then
     EchoExperience.savedVariables.tracking = {}
   end    

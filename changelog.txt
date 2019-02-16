@@ -25,7 +25,9 @@ feature: track mail?
 testing: 
 
 ## [Unreleased]
-### Changed
+
+## 0.0.17
+  -CommaDelimitNumbers
   -GetGuildId function, to be used by the guild filter, rather than Guild#1-#5, so changes in a players guild list wont affect which guilds are outputted
 ## 0.0.16
   -api bump

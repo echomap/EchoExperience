@@ -1,6 +1,6 @@
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.16",                    -- A nuisance to match to the Manifest.
+    version         = "0.0.17",                    -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -434,14 +434,14 @@ function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex
 	-- Output
 	local diff = nextRankXP - currentXP
 	if skillLineName ~= nil and available and EchoExperience.savedVariables.verboseExp then
-		local XPgain  = currentXP - previousXP
-		local curCur  = currentXP - lastRankXP
+		local XPgain  = currentXP  - previousXP
+		local curCur  = currentXP  - lastRankXP
 		local curNext = nextRankXP - lastRankXP
 		--EchoExperience.outputToChanel("You gained [" .. XPgain .. "] experience in [" .. skillLineName .."]")
 		--EchoExperience.outputToChanel("    at "..curCur.."/"..curNext..", need [" .. diff .. "] more, experience")
 		--FORMAT
 		local strI = GetString(SI_ECHOEXP_XP_SKILL_GAIN)
-		local strL = zo_strformat(strI, XPgain, skillLineName, curCur, curNext, diff )
+		local strL = zo_strformat(strI, XPgain, skillLineName, ZO_CommaDelimitNumber(curCur), ZO_CommaDelimitNumber(curNext), ZO_CommaDelimitNumber(diff) )
 		EchoExperience.outputToChanel(strL,msgTypeEXP)
 		--EchoExperience.outputToChanel("Gained "..XPgain.."xp in [" ..skillLineName.."] ("..curCur.."/"..curNext..") need " .. diff .. "xp",msgTypeEXP)
 	end
@@ -577,13 +577,13 @@ function EchoExperience.OnAlliancePtGain(eventCode,  alliancePoints,  playSound,
 		local Ldifference = difference*-1.0
 		--FORMAT
 		local strI = GetString(SI_ECHOEXP_AP_LOSS)
-		local strL = zo_strformat(strI, Ldifference )
-		EchoExperience.outputToChanel(strL,msgTypeEXP)
+		local strL = zo_strformat(strI, ZO_CommaDelimitNumber(Ldifference) )
+		EchoExperience.outputToChanel(strL, msgTypeEXP)
 		--EchoExperience.outputToChanel("You subtracted " .. Ldifference .. " AP.",msgTypeEXP)
 	else
 		--FORMAT
 		local strI = GetString(SI_ECHOEXP_AP_GAIN)
-		local strL = zo_strformat(strI, difference )
+		local strL = zo_strformat(strI, ZO_CommaDelimitNumber(difference) )
 		EchoExperience.outputToChanel(strL,msgTypeEXP)
 		--EchoExperience.outputToChanel("You gained " .. difference .. " AP.",msgTypeEXP)
 	end
@@ -689,7 +689,7 @@ function EchoExperience.OnCurrencyUpdate(eventCode, currencyType, currencyLocati
   --local icon = GetCurrencyLootKeyboardIcon(currencyType) 
   local entryName = GetCurrencyName(currencyType, isSingular, false )
   local sentence = GetString("SI_ECHOLOOT_CURRENCY_",qualifier)
-  local strL = zo_strformat(sentence, icon, entryName, entryQuantity )
+  local strL = zo_strformat(sentence, icon, entryName, ZO_CommaDelimitNumber(entryQuantity) )
 	EchoExperience.outputToChanel(strL,msgTypeLOOT)
 end
 
@@ -706,7 +706,7 @@ function EchoExperience.OnSellReceipt(eventCode, itemName, itemQuantity, money)
   if(itemQuantity>1) then qualifier = 2 end
   local icon, sellPrice, meetsUsageRequirement, equipType, itemStyleId = GetItemLinkInfo(itemName)
   --local curricon = GetCurrencyKeyboardIcon(currencyType) 
-  local sentence = GetString("SI_ECHOLOOT_SELL_",qualifier)
+  local sentence = GetString("SI_ECHOLOOT_SELL_", qualifier)
   local strL = zo_strformat(sentence, icon, itemName, itemQuantity, money )
 	EchoExperience.outputToChanel(strL,msgTypeLOOT)
 end

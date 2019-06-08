@@ -1,6 +1,6 @@
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.17",                    -- A nuisance to match to the Manifest.
+    version         = "0.0.19",                    -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -427,6 +427,8 @@ end
 function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex, reason, rank, previousXP, currentXP)
 	local skillLineName, currentSkillRank, available = GetSkillLineInfo(skillType, skillIndex)
 	local lastRankXP, nextRankXP, currentXP = GetSkillLineXPInfo(skillType, skillIndex)
+	
+	local pressed, normal, mouseOver, announce = ZO_Skills_GetIconsForSkillType(skillType)
 	--if available then
 		--EchoExperience.debugMsg(" name="..skillLineName .." lastRankXP="..lastRankXP .." nextRankXP=".. nextRankXP .." currentXP=".. currentXP)
 	--end
@@ -441,7 +443,9 @@ function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex
 		--EchoExperience.outputToChanel("    at "..curCur.."/"..curNext..", need [" .. diff .. "] more, experience")
 		--FORMAT
 		local strI = GetString(SI_ECHOEXP_XP_SKILL_GAIN)
-		local strL = zo_strformat(strI, XPgain, skillLineName, ZO_CommaDelimitNumber(curCur), ZO_CommaDelimitNumber(curNext), ZO_CommaDelimitNumber(diff) )
+		--local skillLineNameI = "|t14:14:"..normal.."|t" .. skillLineName
+		EchoExperience.outputToChanel("skillLineNameI '"..skillLineNameI.."'",msgTypeEXP)
+		local strL = zo_strformat(strI, XPgain, skillLineNameI, ZO_CommaDelimitNumber(curCur), ZO_CommaDelimitNumber(curNext), ZO_CommaDelimitNumber(diff) )
 		EchoExperience.outputToChanel(strL,msgTypeEXP)
 		--EchoExperience.outputToChanel("Gained "..XPgain.."xp in [" ..skillLineName.."] ("..curCur.."/"..curNext..") need " .. diff .. "xp",msgTypeEXP)
 	end
@@ -571,7 +575,7 @@ end
 --EVENT:   EVENT_ALLIANCE_POINT_UPDATE
 --RETURNS:(num eventCode, num alliancePoints, bool playSound, num difference, CurrencyChangeReason reason)
 --NOTES:  XX
-function EchoExperience.OnAlliancePtGain(eventCode,  alliancePoints,  playSound,  difference,  reason)
+function EchoExperience.OnAlliancePtGain(eventCode, alliancePoints,  playSound,  difference,  reason)
 	EchoExperience.debugMsg("OnAlliancePtGain Called. eventCode=".. eventCode..", reason="..reason..".")
 	if difference < 0 then
 		local Ldifference = difference*-1.0
@@ -669,6 +673,7 @@ function EchoExperience.OnCurrencyUpdate(eventCode, currencyType, currencyLocati
     qualifier = 2
     entryQuantity = newAmount - oldAmount
   end
+  if(entryQuantity>1) then isSingular = false end
   --Tracking
   if(EchoExperience.savedVariables.showtracking) then
     if(EchoExperience.savedVariables.tracking.currency[currencyType]==nil)then
@@ -690,7 +695,10 @@ function EchoExperience.OnCurrencyUpdate(eventCode, currencyType, currencyLocati
   local entryName = GetCurrencyName(currencyType, isSingular, false )
   local sentence = GetString("SI_ECHOLOOT_CURRENCY_",qualifier)
   local strL = zo_strformat(sentence, icon, entryName, ZO_CommaDelimitNumber(entryQuantity) )
-	EchoExperience.outputToChanel(strL,msgTypeLOOT)
+  EchoExperience.outputToChanel(strL,msgTypeLOOT)
+	--EchoExperience.debugMsg("OnCurrencyUpdate: "
+	--	.." isSingular="  .. tostring(isSingular)
+	--)
 end
 
 
@@ -901,42 +909,47 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
   --]]
   
   if(isSelf) then
-    --<<1>> is itemname
-    --<<2>> is quantity
-    local qualifier = 1
-    if(quantity==1) then
-      if(extraInfo ~= nil) then
-        qualifier = 3
-      else
-        qualifier = 1 --**1 item, no extra info
-      end
-    else
-      if(extraInfo ~=nil) then
-        qualifier = 4
-      else
-        qualifier = 2 --**2+ item, no extra info
-      end
-    end
-    EchoExperience.debugMsg("qualifier=" ..tostring(qualifier) )
+	if( not EchoExperience.savedVariables.extendedLoot) then
+		--<<1>> is itemname
+		--<<2>> is quantity
+		local qualifier = 1
+		if(quantity==1) then
+		  if(extraInfo ~= nil) then
+			qualifier = 3
+		  else
+			qualifier = 1 --**1 item, no extra info
+		  end
+		else
+		  if(extraInfo ~=nil) then
+			qualifier = 4
+		  else
+			qualifier = 2 --**2+ item, no extra info
+		  end
+		end
+		EchoExperience.debugMsg("qualifier=" ..tostring(qualifier) )
 
-    if(messageFmt==2) then
-      local sentence = GetString("SI_ECHOLOOT2_YOU_GAIN_",qualifier)
-      if(lootType==LOOT_TYPE_QUEST_ITEM)then
-        sentence = GetString("SI_ECHOLOOT2_YOU_QUEST_",qualifier)
-      end
-      local strL = zo_strformat(sentence, tostring(itemName), tostring(quantity), tostring(extraInfo) )
-      EchoExperience.outputToChanel(strL,msgTypeLOOT)
-    else  
-      local sentence = GetString("SI_ECHOLOOT_YOU_GAIN_",qualifier)
-      if(isPickpocketLoot) then
-        sentence = GetString("SI_ECHOLOOT_YOU_PICK_",qualifier)
-      elseif(lootType==LOOT_TYPE_QUEST_ITEM)then
-        sentence = GetString("SI_ECHOLOOT_YOU_QUEST_",qualifier)
-      end
-      --local strL = string.format(verb,tostring(itemName),tostring(quantity))
-      local strL = zo_strformat(sentence, tostring(itemName), tostring(quantity), tostring(extraInfo) )
-      EchoExperience.outputToChanel(strL,msgTypeLOOT)
-    end
+		if(messageFmt==2) then
+		  local sentence = GetString("SI_ECHOLOOT2_YOU_GAIN_",qualifier)
+		  if(lootType==LOOT_TYPE_QUEST_ITEM)then
+			sentence = GetString("SI_ECHOLOOT2_YOU_QUEST_",qualifier)
+		  end
+		  local strL = zo_strformat(sentence, tostring(itemName), tostring(quantity), tostring(extraInfo) )
+		  EchoExperience.outputToChanel(strL,msgTypeLOOT)
+		else  
+		  local sentence = GetString("SI_ECHOLOOT_YOU_GAIN_",qualifier)
+		  if(isPickpocketLoot) then
+			sentence = GetString("SI_ECHOLOOT_YOU_PICK_",qualifier)
+		  elseif(lootType==LOOT_TYPE_QUEST_ITEM)then
+			sentence = GetString("SI_ECHOLOOT_YOU_QUEST_",qualifier)
+		  end
+		  --local strL = string.format(verb,tostring(itemName),tostring(quantity))
+		  --local strL = zo_strformat(sentence, tostring(itemName), tostring(quantity), tostring(extraInfo) )
+		  local icon = GetItemLinkIcon(itemName) 
+		  local itemName2 = GetItemLinkName(itemName) 
+		  local strL = zo_strformat(sentence, icon, itemName, quantity, tostring(extraInfo) )	  
+		  EchoExperience.outputToChanel(strL,msgTypeLOOT)
+		end
+	end
   elseif (EchoExperience.savedVariables.groupLoot and receivedBy~=nil) then
     --<<1>> is who looted
     --<<2>> is itemname
@@ -951,6 +964,7 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
     end
     --local strL = string.format(sentence,receivedBy,tostring(itemName))
     local strL = zo_strformat(sentence, receivedBy, tostring(itemName), tostring(quantity), tostring(extraInfo) )
+	local strL = zo_strformat(sentence, receivedBy, icon, itemName, quantity, tostring(extraInfo) )	  
     EchoExperience.outputToChanel(strL,msgTypeLOOT)
   end
 end

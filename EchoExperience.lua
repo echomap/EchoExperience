@@ -443,8 +443,11 @@ function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex
 		--EchoExperience.outputToChanel("    at "..curCur.."/"..curNext..", need [" .. diff .. "] more, experience")
 		--FORMAT
 		local strI = GetString(SI_ECHOEXP_XP_SKILL_GAIN)
-		--local skillLineNameI = "|t14:14:"..normal.."|t" .. skillLineName
-		EchoExperience.outputToChanel("skillLineNameI '"..skillLineNameI.."'",msgTypeEXP)
+		local skillLineNameI = skillLineName
+		if normal ~= nil and skillLineName~=nil then
+			skillLineNameI = "|t14:14:"..normal.."|t" .. skillLineName
+		end
+		--EchoExperience.outputToChanel("skillLineNameI '"..skillLineNameI.."'", msgTypeEXP)
 		local strL = zo_strformat(strI, XPgain, skillLineNameI, ZO_CommaDelimitNumber(curCur), ZO_CommaDelimitNumber(curNext), ZO_CommaDelimitNumber(diff) )
 		EchoExperience.outputToChanel(strL,msgTypeEXP)
 		--EchoExperience.outputToChanel("Gained "..XPgain.."xp in [" ..skillLineName.."] ("..curCur.."/"..curNext..") need " .. diff .. "xp",msgTypeEXP)

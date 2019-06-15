@@ -1,6 +1,6 @@
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.19",                    -- A nuisance to match to the Manifest.
+    version         = "0.0.21",                    -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -25,29 +25,53 @@ local msgTypeGUILD2   = 7
 --local PCHAT = LibStub("PCHAT")
 
 local defaultSettings = {
-  sversion   = EchoExperience.version,
-  debug      = false,
-  showExp    = true,
-  verboseExp = true,
-  messageFmt = 1,
+	sversion   = EchoExperience.version,
+	debug      = false,
+	showExp    = true,
+	verboseExp = true,
+	verboseSkillExp   = true,
+	messageFmt = 1,
 	showLoot    = false,
 	groupLoot   = false,  
-  extendedLoot = false,
-  showGuildLogin = false,
-  showGuildLogout= false,
-  showtracking = false,
+	extendedLoot = false,
+	showGuildLogin = false,
+	showGuildLogout= false,
+	showtracking = false,
     rgba    = {
       ["r"] = 1,
       ["g"] = 1,
       ["b"] = 1,
       ["a"] = 0.9,
 	},
-  rgba2   = {
+	rgba2   = {
       ["r"] = 1,
       ["g"] = 1,
       ["b"] = 1,
       ["a"] = 0.9,
 	},
+	LitanyOfBlood = {
+
+    ["Nixad^n"]       = { done=false, ZoneName="Northern Elsweyr",  },
+    ["Nixad"]         = { done=false, ZoneName="Northern Elsweyr",  },
+    ["Terror Bird^n"] = { done=false, ZoneName="Northern Elsweyr", SubzoneName=nil, },
+    ["Terror Bird"]   = { done=false, ZoneName="Northern Elsweyr", SubzoneName=nil, },
+    
+		["Cimalire"] = { done=false, location="Skywatch",  },
+		["Dirdelas"] = { done=false, location="Elden Root",  },
+		["Calareth"] = { done=false, location="Marbruk",  },
+		["Sihada"]   = { done=false, location="Vulkwasten",  },
+		["Dablir"]   = { done=false, location="Rawl'Kha",  },
+		["Dinor Girano"]  = { done=false, location="Davon's Watch",  },
+		["Cindiri Malas"] = { done=false, location="Mournhold",  },
+		["Gideelar"] = { done=false, location="Stormhold",  },
+		["Hakida"] = { done=false, location="Windhelm",  },
+		["Eldfyr"] = { done=false, location="Riften",  },
+		["Cesarel Hedier"] = { done=false, location="Dagerfall",  },
+		["Alix Edette"] = { done=false, location="Wayrest",  },
+		["Bulag"] = { done=false, location="Shornhelm",  },
+		["Ebrayd"] = { done=false, location="Sentinel",  },
+		["Berea"] = { done=false, location="Evermore",  },
+   }
 }
 
 function EchoExperience.debugMsg(text)
@@ -291,9 +315,11 @@ function EchoExperience.SlashCommandHandler(text)
 	end
 
 	if #options == 0 or options[1] == "help" then
-		EchoExperience.outputMsg("commands include: 'outputs', 'textexp', 'testloot', 'testfull', 'debug', 'toggletracking', 'showtracking', 'showlifetime', 'clearlifetimedata','mute','unmute'")
-  elseif #options == 0 or options[1] == "testgui" then
+		EchoExperience.outputMsg("commands include: 'outputs', 'textexp', 'testloot', 'testfull', 'debug', 'toggletracking', 'showtracking', 'showlifetime', 'clearlifetimedata','mute','unmute', 'trackinggui', 'litanygui'")
+  elseif #options == 0 or options[1] == "trackinggui" then
     EchoExperience:ToggleTrackingFrame()
+  elseif #options == 0 or options[1] == "litanygui" then
+    EchoExperience:ToggleLitanyFrame()
   elseif #options == 0 or options[1] == "testevents" then
     EchoExperience.savedVariables.showGuildMisc  = not EchoExperience.savedVariables.showGuildMisc
     EchoExperience.outputMsg("ShowGuildMisc = " .. tostring(EchoExperience.savedVariables.showGuildMisc) )
@@ -361,6 +387,14 @@ function EchoExperience.SlashCommandHandler(text)
 		EchoExperience.outputToChanel("Gained 0 xp in [Test] (1000/10000) need 9000xp",msgTypeEXP)
 	elseif #options == 0 or options[1] == "testloot" then
 		EchoExperience.outputToChanel("You looted TESTITEM.",msgTypeLOOT)
+    
+    --eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,
+    --isPickpocketLoot,questItemIcon,itemId,isStolen)
+    local pName = GetUnitName("player")
+    EchoExperience.OnLootReceived(1, pName,   "Rough Maple",1,nil,1,true,false,false,802,false)
+    EchoExperience.OnLootReceived(1,"Player1","Deni",1,nil,1,false,false,false,45833,false)
+    EchoExperience.OnLootReceived(1,"Player2","Rough Maple",1,nil,1,false,false,false,802,false)
+    
 	elseif #options == 0 or options[1] == "testfull" then		--eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,isPickpocketLoot,questItemIcon,itemId,isStolen)
 		EchoExperience.OnLootReceived(0,"testuser","testitem",1,nil,nil,true,false,false,0,false)
 		EchoExperience.OnLootReceived(0,"testuser","testitem",2,nil,nil,true,false,false,0,false)
@@ -371,6 +405,19 @@ function EchoExperience.SlashCommandHandler(text)
 		EchoExperience.outputMsg("Debug = " .. tostring(EchoExperience.savedVariables.debug) )
 	end
 
+end
+
+function EchoExperience:ToggleLitanyFrame()
+  EOL_GUI_Litany:SetHidden(not EOL_GUI_Litany:IsControlHidden())
+  EEXPLitanyTooltip:SetParent(PopupTooltipTopLevel)
+  --
+  --
+ 	if not EOL_GUI_Litany:IsControlHidden() then
+		--SetGameCameraUIMode(true)
+		EchoExperience:Litany_GuiResizeScroll()
+		EchoExperience:Litany_RefreshInventoryScroll()
+	end
+	EchoExperience:SaveFrameInfo("ToggleLitanyFrame")
 end
 
 function EchoExperience:ToggleTrackingFrame()
@@ -442,7 +489,11 @@ function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex
 		--EchoExperience.outputToChanel("You gained [" .. XPgain .. "] experience in [" .. skillLineName .."]")
 		--EchoExperience.outputToChanel("    at "..curCur.."/"..curNext..", need [" .. diff .. "] more, experience")
 		--FORMAT
-		local strI = GetString(SI_ECHOEXP_XP_SKILL_GAIN)
+		local qualifier = 2
+		if( EchoExperience.savedVariables.verboseSkillExp ) then
+			qualifier = 1
+		end
+		local strI = GetString("SI_ECHOEXP_XP_SKILL_GAIN_",qualifier)
 		local skillLineNameI = skillLineName
 		if normal ~= nil and skillLineName~=nil then
 			skillLineNameI = "|t14:14:"..normal.."|t" .. skillLineName
@@ -886,7 +937,7 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 	if lootType ~= nil and lootType ~= LOOT_TYPE_MONEY and lootType ~= LOOT_TYPE_QUEST_ITEM then
 		--if itemType ~= ITEMTYPE_ARMOR_TRAIT and itemType ~= ITEMTYPE_WEAPON_TRAIT -- lootType ~= LOOT_TYPE_COLLECTIBLE
 		local traitName, setName = EchoExperience:GetExtraInfo(itemName)
-		if( traitName ~=nil and setName ~= nil) then
+		if( traitName ~= nil and setName ~= nil) then
 			extraInfo = string.format("%s, %s set",traitName, setName)
 		elseif( traitName ~= nil) then
 			extraInfo = string.format("%s",traitName)
@@ -894,10 +945,12 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 			extraInfo = string.format("%s set",setName)
 		end
 		EchoExperience.debugMsg("OnLootReceived: "
+      .." itemName="  .. (itemName)
 			.." lootType="  .. tostring(lootType)
 			.." traitName=" .. tostring(traitName)
 			.." setName="   .. tostring(setName)
-			.." extraInfo=" .. tostring(extraInfo)
+			.." itemId="    .. tostring(itemId)
+      .." extraInfo=" .. tostring(extraInfo)
 		)
 	end
   --[[Tracking
@@ -911,52 +964,43 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
   end--Tracking
   --]]
   
+  --
+  --local itemName2 = GetItemLinkName(itemName) 
+  local icon      = GetItemLinkIcon(itemName)
+	--EchoExperience.debugMsg("OnLootReceived: "
+  --   .." itemName2="  .. tostring(itemName2)
+	--	)
+    
+  --
   if(isSelf) then
 	if( not EchoExperience.savedVariables.extendedLoot) then
-		--<<1>> is itemname
-		--<<2>> is quantity
 		local qualifier = 1
 		if(quantity==1) then
 		  if(extraInfo ~= nil) then
-			qualifier = 3
+        qualifier = 3
 		  else
-			qualifier = 1 --**1 item, no extra info
+        qualifier = 1 --**1 item, no extra info
 		  end
 		else
 		  if(extraInfo ~=nil) then
-			qualifier = 4
+        qualifier = 4
 		  else
-			qualifier = 2 --**2+ item, no extra info
+        qualifier = 2 --**2+ item, no extra info
 		  end
 		end
 		EchoExperience.debugMsg("qualifier=" ..tostring(qualifier) )
 
-		if(messageFmt==2) then
-		  local sentence = GetString("SI_ECHOLOOT2_YOU_GAIN_",qualifier)
-		  if(lootType==LOOT_TYPE_QUEST_ITEM)then
-			sentence = GetString("SI_ECHOLOOT2_YOU_QUEST_",qualifier)
-		  end
-		  local strL = zo_strformat(sentence, tostring(itemName), tostring(quantity), tostring(extraInfo) )
-		  EchoExperience.outputToChanel(strL,msgTypeLOOT)
-		else  
-		  local sentence = GetString("SI_ECHOLOOT_YOU_GAIN_",qualifier)
-		  if(isPickpocketLoot) then
-			sentence = GetString("SI_ECHOLOOT_YOU_PICK_",qualifier)
-		  elseif(lootType==LOOT_TYPE_QUEST_ITEM)then
-			sentence = GetString("SI_ECHOLOOT_YOU_QUEST_",qualifier)
-		  end
-		  --local strL = string.format(verb,tostring(itemName),tostring(quantity))
-		  --local strL = zo_strformat(sentence, tostring(itemName), tostring(quantity), tostring(extraInfo) )
-		  local icon = GetItemLinkIcon(itemName) 
-		  local itemName2 = GetItemLinkName(itemName) 
-		  local strL = zo_strformat(sentence, icon, itemName, quantity, tostring(extraInfo) )	  
-		  EchoExperience.outputToChanel(strL,msgTypeLOOT)
-		end
+    --
+    local sentence = GetString("SI_ECHOLOOT_YOU_GAIN_",qualifier)
+    if(isPickpocketLoot) then
+      sentence = GetString("SI_ECHOLOOT_YOU_PICK_",qualifier)
+    elseif(lootType==LOOT_TYPE_QUEST_ITEM)then
+      sentence = GetString("SI_ECHOLOOT_YOU_QUEST_",qualifier)
+    end
+    local strL = zo_strformat(sentence, icon, itemName, quantity, tostring(extraInfo) )	  
+    EchoExperience.outputToChanel(strL,msgTypeLOOT)
 	end
   elseif (EchoExperience.savedVariables.groupLoot and receivedBy~=nil) then
-    --<<1>> is who looted
-    --<<2>> is itemname
-    --<<3>> is quantity
     local qualifier = 1
     if(quantity>1) then qualifier = 2 end
     local sentence = GetString("SI_ECHOLOOT_OTHER_GAIN_",qualifier)
@@ -965,9 +1009,7 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
     elseif(lootType==LOOT_TYPE_QUEST_ITEM) then
       sentence = GetString("SI_ECHOLOOT_OTHER_QUEST_",qualifier)
     end
-    --local strL = string.format(sentence,receivedBy,tostring(itemName))
-    local strL = zo_strformat(sentence, receivedBy, tostring(itemName), tostring(quantity), tostring(extraInfo) )
-	local strL = zo_strformat(sentence, receivedBy, icon, itemName, quantity, tostring(extraInfo) )	  
+    local strL = zo_strformat(sentence, receivedBy, icon, itemName, quantity)
     EchoExperience.outputToChanel(strL,msgTypeLOOT)
   end
 end
@@ -1145,259 +1187,82 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
   if(sourceUnitId==targetUnitId) then
       d("You died.")--TODO
   else
+    --TEST REMOVE TODO
+    EchoExperience.outputMsg("SomethingDied: "
+    .." sourceUnitId="      .. tostring(sourceUnitId)
+    .." targetUnitId="     .. tostring(targetUnitId) 
+    .." result="     .. tostring(result) 
+    )
     local sentence = GetString(SI_ECHOEXP_KILL_MOB)
     local strL = zo_strformat(sentence, targetName )
     EchoExperience.outputToChanel(strL,msgTypeSYS)
-    --d("You killed a "..targetName)
-  end
+	  
+    --Check LitanyOfBlood
+    if( EchoExperience.savedVariables.LitanyOfBlood ~= nil) then
+      EchoExperience.OnLitanyOfBlood(targetName,targetUnitId)
+    end--LitanyOfBlood
+  end --you vs other
+end
+
+function EchoExperience.OnLitanyOfBlood(targetName)
+  
+      local elemLB = EchoExperience.savedVariables.LitanyOfBlood[targetName]
+      if( elemLB == nil) then
+        elemLB = EchoExperience.savedVariables.LitanyOfBlood[tostring(targetName)]
+      end
+      if( elemLB ~= nil) then
+        EchoExperience.outputMsg("LitanyOfBlood1: "
+          .." elemLB='"      .. tostring(elemLB) .."'"
+        )
+        --EchoExperience.outputMsg("LitanyOfBlood2: "
+        --.." elemLB="      .. (elemLB)
+        --)
+        local elemLBZoneName = elemLB["ZoneName"]
+        EchoExperience.outputMsg("LitanyOfBlood1: "
+          .." elemLBZoneName='"      .. tostring(elemLBZoneName) .."'"
+        )        
+        local elemLBSubzoneName = elemLB["SubzoneName"]
+        EchoExperience.outputMsg("LitanyOfBlood1: "
+          .." elemLBSubzoneName='"      .. tostring(elemLBSubzoneName).."'"
+        )        
+        --["Cimalire"] = { done=false, location="Skywatch",  },
+
+        local subzoneNamePL = GetPlayerActiveSubzoneName()
+        local zoneNamePL    = GetPlayerActiveZoneName()
+        EchoExperience.outputMsg("LitanyOfBlood1: "
+          .." subzoneNamePL='"      .. tostring(subzoneNamePL) .."'"
+        )        
+        EchoExperience.outputMsg("LitanyOfBlood1: "
+          .." zoneNamePL='"      .. tostring(zoneNamePL) .."'"
+        )
+        if( elemLBSubzoneName ~= nil and elemLBSubzoneName ~= "" and subzoneNamePL ~= nil and subzoneNamePL ~= "") then
+          EchoExperience.outputMsg("LitanyOfBlood1: check subzone")
+          if( elemLBZoneName == zoneNamePL and elemLBSubzoneName == subzoneNamePL ) then
+            EchoExperience.outputMsg("LitanyOfBlood1: MATCH")
+          end
+        elseif( elemLBZoneName == zoneNamePL ) then
+          EchoExperience.outputMsg("LitanyOfBlood1: just check zone")
+          EchoExperience.outputMsg("LitanyOfBlood1: MATCH")
+        end
+    
+      end--found person on list
 end
 
 --Sample Events
 --[20:44] OnCombatSomethingDied:  eventCode=131102 sourceName=Hannaya^Fx targetName=Wolf targetType=0 result=2260 isError=false abilityName=Mages' Wrath
 --[21:27] OnCombatSomethingDied:  eventCode=131102 sourceName= targetName= targetType=0 result=2260 isError=false abilityName=
-
- 
------------------------------
--- SELECT/TABS/WINDOWS/COLORS Functions here --
------------------------------
-function EchoExperience:UpdateUIExpTabs()
-  --need to update dropdown I guess?
-  local myFpsLabelControl = WINDOW_MANAGER:GetControlByName("EchoExpDDExpOutput", "")
-  if(myFpsLabelControl~=nil) then
-    local vals = EchoExperience:ListOfExpTabs()
-    myFpsLabelControl:UpdateChoices(vals )
-  else
-    EchoExperience.outputMsg("WARN: Dropdown not found, changes will not be reflected until /reloadui")
-  end
-end
-
-function EchoExperience:UpdateUILootTabs()
-  --need to update dropdown I guess?
-  local myFpsLabelControl = WINDOW_MANAGER:GetControlByName("EchoExpDDLootOutput", "")
-  if(myFpsLabelControl~=nil) then
-    local vals = EchoExperience:ListOfLootTabs()
-    myFpsLabelControl:UpdateChoices(vals )
-  end
-end
-
-function EchoExperience:UpdateUIGuildTabs()
-  --need to update dropdown I guess?
-  local myFpsLabelControl = WINDOW_MANAGER:GetControlByName("EchoExpDDGuildOutput", "")
-  if(myFpsLabelControl~=nil) then
-    local vals = EchoExperience:ListOfGuildTabs()
-    myFpsLabelControl:UpdateChoices(vals )
-  end
-end
-
---Todo generalized and use this
-function EchoExperience:ListOfTabs(valSettings)
-  local validChoices =  {}  
-	table.insert(validChoices, "Select")
-  if valSettings ~= nil then
-    for k, v in pairs(valSettings) do
-      if( v.color==nil) then
-        v.color = EchoExperience.rgbaBase
-      end      
-      local c = ZO_ColorDef:New(v.color.r, v.color.g, v.color.b, v.color.a)
-      local ctext = c:Colorize("COLOR")
-      local val = zo_strformat( "<<1>>/<<2>>/<<3>>", v.window,v.tab,ctext )
-      --d(EchoExperience.name .. " val " .. val)      
-      table.insert(validChoices, val )
-    end
-  end
-  return validChoices 
-end
-
-function EchoExperience:ListOfExpTabs()
-  local validChoices = EchoExperience:ListOfTabs(EchoExperience.savedVariables.expsettings)
-  return validChoices 
-end
-
-function EchoExperience:SelectExpTab(choiceText)
-  EchoExperience.view.selected.exptab = choiceText
-end
-
-function EchoExperience:DoDeleteExpTab()
-  local exptab = EchoExperience.view.selected.exptab 
-  if(exptab~=nil)then
-    --d(EchoExperience.name .. " exptab=" .. exptab) 
-    for k,v in pairs(EchoExperience.savedVariables.expsettings) do
-      local vCD = ZO_ColorDef:New(v.color.r, v.color.g, v.color.b, v.color.a)
-      local vtext = vCD:Colorize("COLOR")      
-      local valV = zo_strformat( "<<1>>/<<2>>/<<3>>", v.window,v.tab, vtext )
-      --d(EchoExperience.name .. " valV=" .. valV) 
-      if( exptab==valV ) then
-        EchoExperience.savedVariables.expsettings[k] = nil
-        break
-      end
-    end
-  end
-  EchoExperience:UpdateUIExpTabs()
-end
-
-function EchoExperience:DoSaveExpTab()
-  local window = EchoExperience.view.settingstemp.windowExp
-  local tab    = EchoExperience.view.settingstemp.tabExp
-  local color  = EchoExperience.view.settingstemp.colorExp
- 
-  if EchoExperience.savedVariables.expsettings == nil then
-    EchoExperience.savedVariables.expsettings = {}
-  end
-  
-  local elem = {}
-  elem["window"]=window
-  elem["tab"]   =tab
-  elem["color"] =color
-  table.insert(EchoExperience.savedVariables.expsettings, elem)
- 
-  --reset
-  EchoExperience.view.settingstemp.windowExp = 0
-  EchoExperience.view.settingstemp.tabExp    = 0
-  
-  EchoExperience:UpdateUIExpTabs()
-end
-
-function EchoExperience:ListOfLootTabs()
-  local validChoices = EchoExperience:ListOfTabs(EchoExperience.savedVariables.lootsettings)
-  return validChoices 
-end
-
-function EchoExperience:SelectLootTab(choiceText)
-  EchoExperience.view.selected.loottab = choiceText
-end
-
-function EchoExperience:DoDeleteLootTab()
-  local loottab = EchoExperience.view.selected.loottab 
-  if(loottab~=nil)then
-    --d(EchoExperience.name .. " loottab=" .. loottab) 
-    for k,v in pairs(EchoExperience.savedVariables.lootsettings) do
-      local vCD = ZO_ColorDef:New(v.color.r, v.color.g, v.color.b, v.color.a)
-      local vtext = vCD:Colorize("COLOR")      
-      local valV = zo_strformat( "<<1>>/<<2>>/<<3>>", v.window,v.tab, vtext )
-      --d(EchoExperience.name .. " valV=" .. valV) 
-      if( loottab==valV ) then
-        EchoExperience.savedVariables.lootsettings[k] = nil
-        break
-      end
-    end
-  end
-  EchoExperience:UpdateUILootTabs()
-end
-
-function EchoExperience:DoSaveLootTab()
-  if EchoExperience.savedVariables.lootsettings == nil then
-    EchoExperience.savedVariables.lootsettings = {}
-  end
-  
-  local elem = {}
-  elem["window"]    = EchoExperience.view.settingstemp.windowLoot
-  elem["tab"]       = EchoExperience.view.settingstemp.tabLoot
-  elem["color"]     = EchoExperience.view.settingstemp.colorLoot
-  elem["itemLoot"]  = EchoExperience.view.settingstemp.showItemLoot
-  elem["groupLoot"] = EchoExperience.view.settingstemp.showGroupLoot
-  
-  table.insert(EchoExperience.savedVariables.lootsettings, elem)
- 
-  --reset
-  EchoExperience.view.settingstemp.windowLoot = 0
-  EchoExperience.view.settingstemp.tabLoot    = 0
-  EchoExperience:SetupDefaultColors()
-  EchoExperience:UpdateUILootTabs()
-end
-
-function EchoExperience:ListOfGuildTabs()
-  local validChoices = EchoExperience:ListOfTabs(EchoExperience.savedVariables.guildsettings)
-  return validChoices 
-end
-
-function EchoExperience:SelectGuildTab(choiceText)
-  EchoExperience.view.selected.guildtab = choiceText
-end
-
-function EchoExperience:DoDeleteGuildTab()
-  local guildtab = EchoExperience.view.selected.guildtab 
-  if(guildtab~=nil)then
-    --d(EchoExperience.name .. " guildtab=" .. guildtab) 
-    for k,v in pairs(EchoExperience.savedVariables.guildsettings) do
-      local vCD = ZO_ColorDef:New(v.color.r, v.color.g, v.color.b, v.color.a)
-      local vtext = vCD:Colorize("COLOR")      
-      local valV = zo_strformat( "<<1>>/<<2>>/<<3>>", v.window,v.tab, vtext )
-      --d(EchoExperience.name .. " valV=" .. valV) 
-      if( guildtab==valV ) then
-        EchoExperience.savedVariables.guildsettings[k] = nil
-        break
-      end
-    end
-  end
-  EchoExperience:UpdateUIGuildTabs()
-end
-
-function EchoExperience:DoSaveGuildTab()
-  local window = EchoExperience.view.settingstemp.windowGuild
-  local tab    = EchoExperience.view.settingstemp.tabGuild
-  local color  = EchoExperience.view.settingstemp.colorGuild
- 
-  if EchoExperience.savedVariables.guildsettings == nil then
-    EchoExperience.savedVariables.guildsettings = {}
-  end
-  
-  local elem = {}
-  elem["window"]=window
-  elem["tab"]=tab
-  elem["color"]=color
-  local gs = {}
-  if(EchoExperience.view.settingstemp.guild1) then
-    gs[EchoExperience:GetGuildId(1)] = true
-  end
-  if(EchoExperience.view.settingstemp.guild2) then
-    gs[EchoExperience:GetGuildId(2)] = true
-  end
-  if(EchoExperience.view.settingstemp.guild3) then
-    gs[EchoExperience:GetGuildId(3)] = true
-  end
-  if(EchoExperience.view.settingstemp.guild4) then
-    gs[EchoExperience:GetGuildId(4)] = true
-  end
-  if(EchoExperience.view.settingstemp.guild5) then
-    gs[EchoExperience:GetGuildId(5)] = true
-  end
-  --[[
-  gs["guild1"]=EchoExperience.view.settingstemp.guild1
-  gs["guild2"]=EchoExperience.view.settingstemp.guild2
-  gs["guild3"]=EchoExperience.view.settingstemp.guild3
-  gs["guild4"]=EchoExperience.view.settingstemp.guild4
-  gs["guild5"]=EchoExperience.view.settingstemp.guild5
-  --]]
-  elem["guilds"] = gs
-  table.insert(EchoExperience.savedVariables.guildsettings, elem)
- 
- --Reset values
-  EchoExperience.view.settingstemp.guild1 = true
-  EchoExperience.view.settingstemp.guild2 = true
-  EchoExperience.view.settingstemp.guild3 = true
-  EchoExperience.view.settingstemp.guild4 = true
-  EchoExperience.view.settingstemp.guild5 = true
-  
-  EchoExperience:UpdateUIGuildTabs()
-end
-
-	--Setup Events Related
-function EchoExperience:DoRefreshDropdowns()
-	EchoExperience.SetupExpGainsEvents()
-	EchoExperience.SetupLootGainsEvents()
-  EchoExperience.SetupGuildEvents()
-  EchoExperience.SetupMiscEvents()  
-end
+  --string name = GetZoneNameById(number zoneId)
 
 function EchoExperience:DoSetDefaults()
   local pName = GetUnitName("player")
   EchoExperience.accountVariables.useAsDefault = 	pName
   EchoExperience.accountVariables.defaults = {}
-  EchoExperience.accountVariables.defaults.verboseExp      = EchoExperience.savedVariables.verboseExp
   EchoExperience.accountVariables.defaults.groupLoot       = EchoExperience.savedVariables.groupLoot
   EchoExperience.accountVariables.defaults.showGuildLogin  = EchoExperience.savedVariables.showGuildLogin
   EchoExperience.accountVariables.defaults.showGuildLogout = EchoExperience.savedVariables.showGuildLogout
   EchoExperience.accountVariables.defaults.showExp         = EchoExperience.savedVariables.showExp
+  EchoExperience.accountVariables.defaults.verboseExp      = EchoExperience.savedVariables.verboseExp
+  EchoExperience.accountVariables.defaults.verboseSkillExp = EchoExperience.savedVariables.verboseSkillExp
   EchoExperience.accountVariables.defaults.showLoot        = EchoExperience.savedVariables.showLoot
   EchoExperience.accountVariables.defaults.extendedLoot    = EchoExperience.savedVariables.extendedLoot
   
@@ -1409,6 +1274,7 @@ end
 function EchoExperience:DoLoadSetDefaults()
   if(EchoExperience.accountVariables.useAsDefault~=nil and EchoExperience.accountVariables.defaults~=nil )then
     EchoExperience.savedVariables.verboseExp      = EchoExperience.accountVariables.defaults.verboseExp
+	EchoExperience.savedVariables.verboseSkillExp = EchoExperience.accountVariables.defaults.verboseSkillExp	
     EchoExperience.savedVariables.groupLoot       = EchoExperience.accountVariables.defaults.groupLoot       
     EchoExperience.savedVariables.showGuildLogin  = EchoExperience.accountVariables.defaults.showGuildLogin
     EchoExperience.savedVariables.showGuildLogout = EchoExperience.accountVariables.defaults.showGuildLogout
@@ -1466,7 +1332,7 @@ function EchoExperience.SetupExpGainsEvents(reportMe)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."ChampionUnlocked", EVENT_CHAMPION_SYSTEM_UNLOCKED, EchoExperience.OnChampionUnlocked)
 		--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPUpdate",		EVENT_EXPERIENCE_UPDATE,        EchoExperience.OnExperienceUpdate)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPGain",		    EVENT_EXPERIENCE_GAIN,          EchoExperience.OnExperienceGain)
-		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnAlliancePtGain",	EVENT_ALLIANCE_POINT_UPDATE,    EchoExperience.OnAlliancePtGain)
+		--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnAlliancePtGain",	EVENT_ALLIANCE_POINT_UPDATE,    EchoExperience.OnAlliancePtGain)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnSkillPtChange",	EVENT_SKILL_POINTS_CHANGED,     EchoExperience.OnSkillPtChange)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnDiscoveryExp",	EVENT_DISCOVERY_EXPERIENCE,     EchoExperience.OnDiscoveryExperienceGain)
 		--not really needed
@@ -1539,7 +1405,7 @@ end
 function EchoExperience.SetupGuildEvents()
   if( EchoExperience.view.GuildEventsReg == true) then
     if ( not EchoExperience.savedVariables.showGuildLogin and not EchoExperience.savedVariables.showGuildLogout ) then
-    	EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_GUILD_MEMBER_PLAYER_STATUS_CHANGED",	EVENT_GUILD_MEMBER_PLAYER_STATUS_CHANGED, EchoExperience.OnLootReceived)
+    	EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_GUILD_MEMBER_PLAYER_STATUS_CHANGED",	EVENT_GUILD_MEMBER_PLAYER_STATUS_CHANGED, EchoExperience.OnGuildMemberStatusChanged)
       EchoExperience.view.GuildEventsReg = false
       EchoExperience.debugMsg(GetString(SI_ECHOEXP_GUILD_EVENT_UNREG))--"Unregistered for Guild events")
     end
@@ -1697,441 +1563,41 @@ function EchoExperience:RefreshTabs()
   end  
 end
 
-------
----GUI
 
---TOOLTIP
-function EchoExperience:Misc2HeaderTipEnter(sender,key)
-  InitializeTooltip(EEXPTooltip, sender, TOPLEFT, 5, -56, TOPRIGHT)
-  EOLTooltip:AddLine(key, "ZoFontHeader3")
-end
-function EchoExperience:Misc2HeaderTipExit(sender)
-  --ClearTooltip(InformationTooltip)
-  ClearTooltip(EEXPTooltip)
-end
-
-function EchoExperience:SetGuiFilter(self, button, filterType, subFilter)
-  EchoExperience.view.filterType = filterType
-  --if(filterType=="All")then
-  --end
-  EchoExperience:UpdateScrollDataLinesData()
-  EchoExperience:GuiResizeScroll()
-  EchoExperience:RefreshInventoryScroll()
-end
-
-function EchoExperience:CloseUI()
-  EOL_GUI:SetHidden( not EOL_GUI:IsHidden() )
-end
-
-function EchoExperience:onResizeStart()
-	EVENT_MANAGER:RegisterForUpdate(EchoExperience.name.."OnWindowResize", 50, 
-    function()
-      EchoExperience:UpdateScrollDataLinesData()
-      EchoExperience:GuiResizeScroll()
-      EchoExperience:UpdateDataScroll()
-    end)
-end
-
-function EchoExperience:SaveFrameInfo(calledFrom)
-	if (calledFrom == "onHide") then return end
-  if(EchoExperience.savedVariables.frame2==null)then
-    EchoExperience.savedVariables.frame2 = {}
-  end
-	--local sceneName = EchoExperience:GetCurrentSceneName()
-	--if not QUICKSLOT_FRAGMENT:IsHidden() then
-	--	sceneName = sceneName .. "_quickslots"
-	--end
-
-	--local settings = IIfA:GetSceneSettings(sceneName)
-	--settings.hidden = IIFA_GUI:IsControlHidden()
-
-	--if (not settings.docked and (calledFrom == "onMoveStop" or calledFrom == "onResizeStop")) then
-		EchoExperience.savedVariables.frame2.lastX	= EOL_GUI:GetLeft()
-		EchoExperience.savedVariables.frame2.lastY	= EOL_GUI:GetTop()
-		--if not settings.minimized then
-			EchoExperience.savedVariables.frame2.width	= EOL_GUI:GetWidth()
-			EchoExperience.savedVariables.frame2.height	= EOL_GUI:GetHeight()
-		--end
-	--end
-end
-
-function EchoExperience:SaveFramePosition(calledFrom)
-  if(EchoExperience.savedVariables.frame2==null)then
-    EchoExperience.savedVariables.frame2 = {}
-  end
-  EchoExperience.savedVariables.frame2.lastX	= EOL_GUI:GetLeft()
-  EchoExperience.savedVariables.frame2.lastY	= EOL_GUI:GetTop()
-end
-
-function EchoExperience:onResizeStop()
-	EVENT_MANAGER:UnregisterForUpdate(EchoExperience.name.."OnWindowResize")
-	EchoExperience:SaveFrameInfo("onResizeStop")
-	EchoExperience:GuiResizeScroll()	
-  EchoExperience:UpdateDataScroll()
-end
-
---
-function EchoExperience:GuiOnSliderUpdate(slider, value)
-  EchoExperience.debugMsg("GuiOnSliderUpdate: Called, w/value="..tostring(value)  )
-	--if not value or slider.locked then return end
-	local relativeValue = math.floor(EOL_GUI_ListHolder.dataOffset - value)
-  EchoExperience.debugMsg("GuiOnSliderUpdate: relativeValue=" ..tostring(relativeValue) .. " value="..tostring(value) .. " offset="..tostring(EOL_GUI_ListHolder.dataOffset)  )
-	EchoExperience:GuiOnScroll(slider, relativeValue)
-end
-
---
-function EchoExperience:GuiOnScroll(control, delta)  
-	if not delta then return end
-  EchoExperience.debugMsg("GuiOnScroll: delta="..tostring(delta) )
-	if delta == 0 then return end
-  if EOL_GUI_ListHolder.dataOffset < 0 then EOL_GUI_ListHolder.dataOffset = 0 end
-  
-	local slider = EOL_GUI_ListHolder_Slider
-	local value  = (EOL_GUI_ListHolder.dataOffset - delta)
-	local total  = #EOL_GUI_ListHolder.dataLines - EOL_GUI_ListHolder.maxLines
-
-	if value < 0 then value = 0 end
-	if value > total then value = total end
-	EOL_GUI_ListHolder.dataOffset  = value
-  EchoExperience.debugMsg("GuiOnScroll: set dataOffset="..tostring(value) )
-
-  ----Setup max lines, and slider (calls RefreshViewableTable: create show lines based on offset)
-	EchoExperience:UpdateDataScroll()
-  
-  --Set max, and Hide lines out of the max display
-  EchoExperience:GuiResizeScroll()
-
-	slider:SetValue(EOL_GUI_ListHolder.dataOffset)
-
-	--EchoExperience:GuiLineOnMouseEnter(moc())
-end
-
-function EchoExperience:UpdateDataScroll()
-	local index = 0
-	if EOL_GUI_ListHolder.dataOffset < 0 then EOL_GUI_ListHolder.dataOffset = 0 end
-	if EOL_GUI_ListHolder.maxLines == nil then
-		EOL_GUI_ListHolder.maxLines = EchoExperience.defaultMaxLines
-	end
-  --d("UpdateDataScroll: offset="..EOL_GUI_ListHolder.dataOffset.." maxLines="..EOL_GUI_ListHolder.maxLines )  
-	EchoExperience:SetDataLinesData()
-
-	local total = #EOL_GUI_ListHolder.dataLines - EOL_GUI_ListHolder.maxLines
-	EOL_GUI_ListHolder_Slider:SetMinMax(0, total)
-end
-
---??
-function EchoExperience:SetDataLinesData()
-	local curLine, curData
-	for i = 1, EOL_GUI_ListHolder.maxLines do
-		curLine = EOL_GUI_ListHolder.lines[i]
-		curData = EOL_GUI_ListHolder.dataLines[EOL_GUI_ListHolder.dataOffset + i]
-		EOL_GUI_ListHolder.lines[i] = curLine
-
-		if( curData ~= nil) then
-			EchoExperience:fillLine(curLine, curData)
-		else
-			EchoExperience:fillLine(curLine, nil)
-		end
-	end
-end
-
-function EchoExperience:fillLine(curLine, curItem)
-  if(curLine==nil) then return end--??????? TODO
-	local color
-	if curItem == nil then
-		curLine.itemLink = ""
-		curLine.icon:SetTexture(nil)
-		curLine.icon:SetAlpha(0)
-		curLine.text:SetText("")
-		curLine.qty:SetText("")
-		--curLine.worn:SetHidden(true)
-		--curLine.stolen:SetHidden(true)
-		--Hide the FCOIS marker icons at the line (do not create them if not needed) -> File plugins/FCOIS/IIfA_FCOIS.lua
-	--	if IIfA.UpdateFCOISMarkerIcons ~= nil then
-	--		IIfA:UpdateFCOISMarkerIcons(curLine, false, false, -1)
-	--	end
-	else
-		local r, g, b, a = 255, 255, 255, 1
-		--if (curItem.quality) then
-		--	color = GetItemQualityColor(curItem.quality)
-		--	r, g, b, a = color:UnpackRGBA()
-		--end
-		curLine.itemLink = curItem.link
-    --d("curLine.icon = " ..tostring(curLine.icon))
-    --if(curLine.icon:SetTexture(_
-		curLine.icon:SetTexture(curItem.icon)
-    --curLine.icon = curItem.icon
-    curLine.icon:SetAlpha(1)
-		local text = zo_strformat(SI_TOOLTIP_ITEM_NAME, curItem.name)
-		curLine.text:SetText(text)
-		curLine.text:SetColor(r, g, b, a)
-		curLine.qty:SetText(curItem.qty)
-		--curLine.worn:SetHidden(not curItem.worn)
-		--curLine.stolen:SetHidden(not IsItemLinkStolen(curItem.link))
-		--Show the FCOIS marker icons at the line, if enabled in the settings (create them if needed)  -> File plugins/FCOIS/IIfA_FCOIS.lua
-		--if IIfA.UpdateFCOISMarkerIcons ~= nil then
-		--	local showFCOISMarkerIcons = IIfA:GetSettings().FCOISshowMarkerIcons
-		--	IIfA:UpdateFCOISMarkerIcons(curLine, showFCOISMarkerIcons, false, -1)
-		--end
-	end
-end
-
-
-function EchoExperience:RefreshInventoryScroll()
-	EchoExperience:UpdateScrollDataLinesData()
-	EchoExperience:UpdateDataScroll()
-end
-
-function EchoExperience:UpdateScrollDataLinesData()
-  --
-  --TODO mode, tracking vs lifetime
-  local tempDataLine = nil
-	local dataLines = {}
-  local itemCount = 0
-	local totItems = 0
-  
-  local elemListP = nil
-  local elemListS = nil
-  if(EchoExperience.view.trackingSelection=="Lifetime") then
-    elemListP = EchoExperience.savedVariables.lifetime
+-----------------------------
+-- SELECT/TABS/WINDOWS/COLORS Functions here --
+-----------------------------
+function EchoExperience:UpdateUIExpTabs()
+  --need to update dropdown I guess?
+  local myFpsLabelControl = WINDOW_MANAGER:GetControlByName("EchoExpDDExpOutput", "")
+  if(myFpsLabelControl~=nil) then
+    local vals = EchoExperience:ListOfExpTabs()
+    myFpsLabelControl:UpdateChoices(vals )
   else
-    elemListP = EchoExperience.savedVariables.tracking
+    EchoExperience.outputMsg("WARN: Dropdown not found, changes will not be reflected until /reloadui")
   end
-  if(EchoExperience.view.filterType=="Items")then
-    elemListS = elemListP.items
-  elseif(EchoExperience.view.filterType=="Mobs")then
-    elemListS = elemListP.mobs
-  elseif(EchoExperience.view.filterType=="Currency")then
-    elemListS = elemListP.currency
-  elseif(EchoExperience.view.filterType=="BG")then
-    elemListS = elemListP.bg
-  else
-    elemListS = nil
+end
+
+function EchoExperience:UpdateUILootTabs()
+  --need to update dropdown I guess?
+  local myFpsLabelControl = WINDOW_MANAGER:GetControlByName("EchoExpDDLootOutput", "")
+  if(myFpsLabelControl~=nil) then
+    local vals = EchoExperience:ListOfLootTabs()
+    myFpsLabelControl:UpdateChoices(vals )
   end
-  
-  if(elemListS~=nil) then
-    for itemKey, dbItem in pairs(elemListS) do
-      --k, v.quantity, v.itemlink
-      local iName = itemKey
-      if(EchoExperience.view.filterType=="Currency") then
-        iName = GetCurrencyName(itemKey, true, false)
-      end
-      tempDataLine = {
-        link = dbItem.itemLink,
-        qty  = dbItem.quantity,
-        icon = GetItemLinkIcon(dbItem.itemLink),
-        name = iName,
-        --quality = dbItem.itemQuality,
-        --filter = itemTypeFilter,
-        --worn = bWorn
-      }
-      d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
-      table.insert(dataLines, tempDataLine)
-      totItems = totItems + (itemCount or 0)
-    end 
-  elseif(elemListP~=nil) then
-    for itemKey, dbItem in pairs(elemListP.currency) do
-      --k, v.quantity, v.itemlink
-      tempDataLine = {
-        link = dbItem.itemLink,
-        qty  = dbItem.quantity,
-        icon = GetItemLinkIcon(dbItem.itemLink),
-        name = GetCurrencyName(itemKey, true, false),
-        --quality = dbItem.itemQuality,
-        --filter = itemTypeFilter,
-        --worn = bWorn
-      }
-      if(dbItem.itemLink~=nil)then
-        d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
-      end
-      table.insert(dataLines, tempDataLine)
-      totItems = totItems + (itemCount or 0)
-    end 
-    for itemKey, dbItem in pairs(elemListP.items) do
-      --k, v.quantity, v.itemlink
-      tempDataLine = {
-        link = dbItem.itemLink,
-        qty  = dbItem.quantity,
-        icon = GetItemLinkIcon(dbItem.itemLink),
-        name = itemKey,
-        --quality = dbItem.itemQuality,
-        --filter = itemTypeFilter,
-        --worn = bWorn
-      }
-      if(dbItem.itemLink~=nil)then
-        d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
-      end
-      table.insert(dataLines, tempDataLine)
-      totItems = totItems + (itemCount or 0)
-    end 
-    for itemKey, dbItem in pairs(elemListP.mobs) do
-      --k, v.quantity, v.itemlink
-      tempDataLine = {
-        link = dbItem.itemLink,
-        qty  = dbItem.quantity,
-        icon = GetItemLinkIcon(dbItem.itemLink),
-        name = itemKey,
-        --quality = dbItem.itemQuality,
-        --filter = itemTypeFilter,
-        --worn = bWorn
-      }
-      if(dbItem.itemLink~=nil)then
-        d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
-      end
-      table.insert(dataLines, tempDataLine)
-      totItems = totItems + (itemCount or 0)
-    end 
+end
+
+function EchoExperience:UpdateUIGuildTabs()
+  --need to update dropdown I guess?
+  local myFpsLabelControl = WINDOW_MANAGER:GetControlByName("EchoExpDDGuildOutput", "")
+  if(myFpsLabelControl~=nil) then
+    local vals = EchoExperience:ListOfGuildTabs()
+    myFpsLabelControl:UpdateChoices(vals )
   end
-  
-  
-  if(EchoExperience.view.trackingSelection=="Lifetime2") then
-    for itemKey, dbItem in pairs(EchoExperience.savedVariables.lifetime.items) do
-      --k, v.quantity, v.itemlink
-      tempDataLine = {
-        link = dbItem.itemLink,
-        qty  = dbItem.quantity,
-        icon = GetItemLinkIcon(dbItem.itemLink),
-        name = itemKey,
-        --quality = dbItem.itemQuality,
-        --filter = itemTypeFilter,
-        --worn = bWorn
-      }
-      d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
-      table.insert(dataLines, tempDataLine)
-      totItems = totItems + (itemCount or 0)
-    end
-  elseif(EchoExperience.view.trackingSelection=="Session2") then
-    for itemKey, dbItem in pairs(EchoExperience.savedVariables.tracking.items) do
-      --k, v.quantity, v.itemlink
-      tempDataLine = {
-        link = dbItem.itemLink,
-        qty  = dbItem.quantity,
-        icon = GetItemLinkIcon(dbItem.itemLink),
-        name = itemKey,
-        --quality = dbItem.itemQuality,
-        --filter = itemTypeFilter,
-        --worn = bWorn
-      }
-      d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
-      table.insert(dataLines, tempDataLine)
-      totItems = totItems + (itemCount or 0)
-    end 
-  end
-  
-	EOL_GUI_ListHolder.dataLines = dataLines
-	EchoExperience:sort(EOL_GUI_ListHolder.dataLines)
-	EOL_GUI_ListHolder.dataOffset = 0
-
-	--EOL_GUI_ListHolder_Counts_Items:SetText("Item Count: " .. totItems)
-	--EOL_GUI_ListHolder_Counts_Slots:SetText("Appx. Slots Used: " .. #dataLines)
 end
-
-function EchoExperience:sort(dataLines)
-	if dataLines == nil then dataLines = EOL_GUI_ListHolder.dataLines end
-
-	--if (ScrollSortUp) then
-  --TODO dataLines = table.sort(dataLines, IIfA_FilterCompareUp)
-  --dataLines = table.sort(dataLines, IIfA_FilterCompareDown)
-	--end
-end
-
--- returns true if it had to be resized, otherwise false
-function EchoExperience:GuiResizeScroll()
-	local regionHeight = EOL_GUI_ListHolder:GetHeight()
-  local rowHeight    = EOL_GUI_ListHolder.rowHeight
-	local newLines = math.floor(regionHeight / rowHeight)
-	if EOL_GUI_ListHolder.maxLines == nil or EOL_GUI_ListHolder.maxLines ~= newLines then
-		EOL_GUI_ListHolder.maxLines = newLines
-		EchoExperience:GuiResizeLines()
-	end
-end
-
-function EchoExperience:GuiResizeLines()
-	local lines
-
-	if not EOL_GUI_ListHolder.lines then
-		lines = EchoExperience:CreateInventoryScroll()
-	end
-	if EOL_GUI_ListHolder.lines ~= {} then
-		lines = EOL_GUI_ListHolder.lines
-	end
-
-	for index, line in ipairs(lines) do
---		line.text:SetWidth(textwidth)
---		line:SetWidth(linewidth)
-		line:SetHidden(index > EOL_GUI_ListHolder.maxLines)
-	end
-end
-
-function EchoExperience:CreateInventoryScroll()
-	EOL_GUI_ListHolder.dataOffset = 0
-
-	EOL_GUI_ListHolder.dataLines = {}
-	EOL_GUI_ListHolder.lines = {}
-	EOL_GUI_Header_SortBar.Icon = EOL_GUI_Header_SortBar:GetNamedChild("_Sort"):GetNamedChild("_Icon")
-	
-	EOL_GUI_ListHolder.maxLines = EchoExperience.defaultMaxLines
-	local predecessor = nil
-	for i=1, EOL_GUI_ListHolder.maxLines do
-		EOL_GUI_ListHolder.lines[i] = EchoExperience:CreateLine(i, predecessor, EOL_GUI_ListHolder)
-		predecessor = EOL_GUI_ListHolder.lines[i]
-	end
-
-  --
-	EchoExperience:SetItemCountPosition()
-	-- setup slider
-	EOL_GUI_ListHolder_Slider:SetMinMax(0, #EOL_GUI_ListHolder.dataLines - EOL_GUI_ListHolder.maxLines)
-  --
-	return EOL_GUI_ListHolder.lines
-end
-
-function EchoExperience:CreateLine(i, predecessor, parent)
-	local line = WINDOW_MANAGER:CreateControlFromVirtual("EOL_ListItem_".. i, parent, "EOL_SlotTemplate")
-
-	line.icon = line:GetNamedChild("Button"):GetNamedChild("Icon")
-	line.text = line:GetNamedChild("Name")
-	line.qty  = line:GetNamedChild("Qty")
-	--line.worn = line:GetNamedChild("IconWorn")
-	--line.stolen = line:GetNamedChild("IconStolen")
-
-	line:SetHidden(false)
-	line:SetMouseEnabled(true)
-	line:SetHeight(EOL_GUI_ListHolder.rowHeight)
-
-	if i == 1 then
-		line:SetAnchor(TOPLEFT, EOL_GUI_ListHolder, TOPLEFT, 0, 0)
-		line:SetAnchor(TOPRIGHT, EOL_GUI_ListHolder, TOPRIGHT, 0, 0)
-	else
-		line:SetAnchor(TOPLEFT, predecessor, BOTTOMLEFT, 0, 0)
-		line:SetAnchor(TOPRIGHT, predecessor, BOTTOMRIGHT, 0, 0)
-	end
-
-	--line:SetHandler("OnMouseEnter", function(self) IIfA:GuiLineOnMouseEnter(self) end )
-	--line:SetHandler("OnMouseExit", function(self) IIfA:GuiLineOnMouseExit(self) end )
-	--line:SetHandler("OnMouseDoubleClick", function(...) IIfA:GUIDoubleClick(...) end )
-
-	return line
-end
-
-function EchoExperience:SetItemCountPosition()
-	for i=1, EOL_GUI_ListHolder.maxLines do
-		local line = EOL_GUI_ListHolder.lines[i]
-		line.text:ClearAnchors()
-		line.qty:ClearAnchors()
-		--if EchoExperience:GetSettings().showItemCountOnRight then
-			line.qty:SetAnchor(TOPRIGHT, line, TOPRIGHT, 0, 0)
-			line.text:SetAnchor(TOPLEFT, line:GetNamedChild("Button"), TOPRIGHT, 18, 0)
-			line.text:SetAnchor(TOPRIGHT, line.qty, TOPLEFT, -10, 0)
-		--[[else
-			line.qty:SetAnchor(TOPLEFT, line:GetNamedChild("Button"), TOPRIGHT, 8, -3)
-			line.text:SetAnchor(TOPLEFT, line.qty, TOPRIGHT, 18, 0)
-			line.text:SetAnchor(TOPRIGHT, line, TOPLEFT, 0, 0)
-		end--]]
-	end
-end
-
----GUI
-------
+-----------------------------
+-- SELECT/TABS/WINDOWS/COLORS Functions here --
+-----------------------------
 
 
 --EchoExperience.savedVariables.lifetime.currency,EchoExperience.savedVariables.tracking.currency)
@@ -2184,8 +1650,12 @@ function EchoExperience:MoveToLifetime(mode)
 end
 
 function EchoExperience.InitializeGui()
-  EOL_GUI_ListHolder.rowHeight = 24
+	EOL_GUI_ListHolder.rowHeight = 24
 	EOL_GUI_ListHolder:SetDrawLayer(0)
+  
+  EOL_GUI_Litany_ListHolder.rowHeight = 24
+  EOL_GUI_Litany_ListHolder:SetDrawLayer(0)
+  EchoExperience:SetupLitanyOfBlood()
 end
 
 function EchoExperience.SetupDefaultColors()
@@ -2207,6 +1677,12 @@ function EchoExperience.SetupDefaultColors()
   EchoExperience.view.settingstemp.colorGuild.a = EchoExperience.rgbaBase.a
 end
 
+
+function EchoExperience.SetupLitanyOfBlood()
+	--if( EchoExperience.savedVariables.LitanyOfBlood == nil) then
+		EchoExperience.savedVariables.LitanyOfBlood   = EchoExperience:deepcopy(defaultSettings.LitanyOfBlood)
+	--end
+end
 
 function EchoExperience.CheckVerifyDefaults()
   --Setup Basic Options

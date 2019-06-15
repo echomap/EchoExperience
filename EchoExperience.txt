@@ -1,5 +1,5 @@
 ## Title: EchoExperience
-## Version: 0.0.19
+## Version: 0.0.21
 ## APIVersion: 100025 100027
 ## Author: Echomap
 ## Description: EchoExperience will show experience gains in chat.
@@ -11,8 +11,12 @@ Languages\$(language).lua
 
 Bindings.xml
 EchoExperience.xml
-EchoExperience2.xml
+EchoExp_Tracking.xml
+EchoExp_Litany.xml
 
 EchoExperience.lua
+EchoExp_Settings.lua
+EchoExp_Tracking.lua
+EchoExp_Litany.lua
 ##EchoExp_Events.lua
 Settings.lua

@@ -1,0 +1,111 @@
+<GuiXml>
+	<Controls>
+    
+  	<TopLevelControl name="EOL_GUI_Litany" clampedToScreen="true" mouseEnabled="true" movable="true" moveable="true" hidden="true" resizeHandleSize="10">
+			<DimensionConstraints minX="410" minY="300" maxY="1400"/>
+			<Anchor point="TOPRIGHT" relativeTo="GUI_ROOT" relativePoint="TOPRIGHT" offsetX="-250" offsetY="400" />
+      <OnMoveStop>EchoExperience:Litany_SaveFramePosition("onMoveStop")</OnMoveStop>
+			<OnResizeStart>EchoExperience:Litany_onResizeStart()</OnResizeStart>
+			<OnResizeStop>EchoExperience:Litany_onResizeStop()</OnResizeStop>
+
+      <Controls>
+        <Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" > <AnchorFill/> </Backdrop>
+        
+        <Control name="$(parent)_Header" hidden="false" resizeToFitDescendents="false" >
+					<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="10" offsetX="10"/>
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-10" offsetY="10" />
+
+					<Controls>
+						<Label name="$(parent)_Label" mouseEnabled="false" font="ZoFontBookPaper" text="-EchoExp Litany Of Blood Tracking-" >
+							<Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" offsetX="0" offsetY="0"/>
+						</Label>
+            
+
+            <Button name="$(parent)_BtnClose" verticalAlignment="CENTER" horizontalAlignment="CENTER" mouseEnabled="true">
+              <Anchor point="TOPLEFT" relativeTo="$(parent)_Label" relativePoint="TOPRIGHT" offsetX="10" offsetY="0" />
+              <Dimensions x="40" y="40" />
+              <Textures normal="EsoUI/art/buttons/decline_up.dds"
+                    pressed="EsoUI/art/buttons/decline_down.dds"
+                    mouseOver="EsoUI/art/buttons/decline_over.dds"
+              />
+              <OnMouseEnter> EchoExperience:Litany_Misc2HeaderTipEnter(self,"Close") </OnMouseEnter>
+              <OnMouseExit>  EchoExperience:Litany_Misc2HeaderTipExit(self)  </OnMouseExit>
+              <OnMouseUp>EchoExperience:Litany_CloseUI(self)</OnMouseUp>
+            </Button>
+            
+          </Controls>
+            
+        </Control>
+        
+        <Control name="$(parent)_ListHolder" mouseEnabled="true" resizeToFitDescendents="false">
+					<DimensionConstraints  minY="52"/>
+					<Anchor point="TOPLEFT" relativeTo="$(parent)_Header_Label" relativePoint="BOTTOMLEFT" offsetX="10" offsetY="0"/>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-35" offsetY="-60"/>
+					<OnMouseWheel>EchoExperience:Litany_GuiOnScroll(self, delta)</OnMouseWheel>
+
+					<Controls>
+						<Slider name="$(parent)_Slider" mouseEnabled="true" step="1" inherits="ZO_VerticalScrollbarBase">
+							<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="16" offsetY="14"/>
+							<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="23" offsetY="-14"/>
+
+							<OnMouseDown>self.locked=false</OnMouseDown>
+							<OnMouseUp>self.locked=true</OnMouseUp>
+							<OnValueChanged>EchoExperience:Litany_GuiOnSliderUpdate(self, value)</OnValueChanged>
+						</Slider>
+            
+					</Controls>
+
+				</Control>
+            
+      </Controls>
+    
+    </TopLevelControl>
+
+
+		<Control name="EOL_Litany_SlotTemplate" inherits="ZO_ListInventorySlotBehavior" virtual="true" mouseEnabled="true">
+			<Dimensions x="300" y="30" />
+			<Controls>
+				<Texture name="$(parent)Bg" textureFile="EsoUI/Art/Miscellaneous/listItem_backdrop.dds" alpha="0.4">
+					<AnchorFill />
+					<TextureCoords left="0" right="1" top="0" bottom=".8125" />
+				</Texture>
+
+				<Button name="$(parent)Button" inherits="ZO_InventorySlotNoMouseover">
+					<Dimensions x="20" y="20" />
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" offsetX="0" offsetY="3" />
+				</Button>
+
+				<Label name="$(parent)Qty" font="ZoFontGameShadow" horizontalAlignment="RIGHT" verticalAlignment="CENTER">
+					<Dimensions x="44" y="30"/>
+					<Anchor point="TOPLEFT" relativeTo="$(parent)Button" relativePoint="TOPRIGHT" offsetX="8" offsetY="-3" />
+				</Label>
+
+				<Label name="$(parent)Name" font="ZoFontGameShadow" wrapMode="ELLIPSIS" verticalAlignment="CENTER">
+					<Dimensions y="30" />
+					<Anchor point="TOPLEFT" relativeTo="$(parent)Qty" relativePoint="TOPRIGHT" offsetX="18" offsetY="0"/>
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+				</Label>
+
+<!--
+				<Texture name="$(parent)IconWorn" textureFile="esoui/art/campaign/overview_indexicon_bonus_disabled.dds" alpha="0.8" hidden="true">
+					<Dimensions x="20" y="20"/>
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)Button" relativePoint="TOPLEFT" />
+				</Texture>
+
+				<Texture name="$(parent)IconStolen" textureFile="esoui/art/inventory/inventory_stolenitem_icon.dds" alpha="0.4" >
+					<Dimensions x="20" y="20"/>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)Button" relativePoint="BOTTOMLEFT" />
+				</Texture>
+-->
+			</Controls>
+		</Control>
+
+
+      <!-- tooltips -->
+      <Tooltip name="EEXPLitanyTooltip" inherits="ZO_ItemIconTooltip" mouseEnabled="true" movable="true" hidden="true">
+        <ResizeToFitPadding   width="40" height="30"/>
+        <DimensionConstraints minX="30" maxX="200" />
+      </Tooltip>
+
+		</Controls>
+</GuiXml>

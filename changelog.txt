@@ -26,6 +26,16 @@ testing:
 
 ## [Unreleased]
 
+## 0.0.21
+-fix for group loot icon
+## 0.0.20
+-added verbose checkbox for skill reporting options
+-removed generic AP printout 'you gained XXX AP." hopefully the gain "currency" event captures everything
+## 0.0.19
+- updated some text and icons
+## 0.0.18
+-updated game version
+-changed what displays for looting
 ## 0.0.17
   -CommaDelimitNumbers
   -GetGuildId function, to be used by the guild filter, rather than Guild#1-#5, so changes in a players guild list wont affect which guilds are outputted

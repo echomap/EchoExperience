@@ -81,6 +81,18 @@ function EchoExperience.LoadSettings()
     width = "half",	--or "half" (optional)
   }
   optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name = "Verbose Skill Experience",
+    tooltip = "Verbose reporting if experience is on?",
+    getFunc = function() return EchoExperience.savedVariables.verboseSkillExp end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.verboseSkillExp = value
+      --EchoExperience.SetupExpGainsEvents(false)
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  
+  optionsTable[#optionsTable+1] = {
     type = "dropdown",
     name = "Exp Output Tabs",
     tooltip = "Tab(s) for Exp output.",

@@ -21,7 +21,8 @@ local localization_strings = {
 
 	--EXP
 	SI_ECHOEXP_XP_GAIN       = "You gained <<1>> experience.",
-	SI_ECHOEXP_XP_SKILL_GAIN = "Gained <<1>>xp in [<<2>>] (<<3>>/<<4>>) need <<5>>xp",
+	SI_ECHOEXP_XP_SKILL_GAIN_1 = "Gained <<1>>xp in [<<2>>] (<<3>>/<<4>>) need <<5>>xp",
+	SI_ECHOEXP_XP_SKILL_GAIN_2 = "Gained <<1>>xp in [<<2>>]",
 	SI_ECHOEXP_CP_UNLOCKED   = "You unlocked Champion points!",
 	SI_ECHOEXP_CP_EARNED     = "You gained <<1>>cp.",
 	SI_ECHOEXP_DISCOVERY     = "You discovered: <<1>>.",
@@ -43,7 +44,7 @@ local localization_strings = {
   
 	--LOOT
 	--<<1>>icon, <<2>>itemName, <<3>>quantity, <<4>>extraInfo 
-    SI_ECHOLOOT_YOU_GAIN_1  = "You looted |t14:14:<<1>>|t <<2>>",
+  SI_ECHOLOOT_YOU_GAIN_1  = "You looted |t14:14:<<1>>|t <<2>>",
 	SI_ECHOLOOT_YOU_PICK_1  = "You acquired |t14:14:<<1>>|t <<2>>.",
 	SI_ECHOLOOT_YOU_QUEST_1 = "You looted |t14:14:<<1>>|t <<2>> (QuestItem)",
 	
@@ -88,7 +89,7 @@ local localization_strings = {
 	SI_ECHOLOOT2_YOU_QUEST_4  = "[Recieved] quest-item: <<2>>x <<1>> (*<<3>>*).",    
     --TEST2
 	--<<1>>receivedBy, <<2>>icon, <<3>>itemName, <<4>>quantity, <<5>>extraInfo 
-	SI_ECHOLOOT_OTHER_GAIN_1  = "<<1>> looted |t14:14:<<2>>|t <<3>> ",
+  SI_ECHOLOOT_OTHER_GAIN_1  = "<<1>> looted |t14:14:<<2>>|t <<3>>",
 	SI_ECHOLOOT_OTHER_PICK_1  = "<<1>> acquired |t14:14:<<2>>|t <<3>> ",
 	SI_ECHOLOOT_OTHER_QUEST_1 = "<<1>> acquired |t14:14:<<2>>|t <<3>> (quest item).",
 	--<<1>> is who looted
@@ -98,9 +99,9 @@ local localization_strings = {
 	--SI_ECHOLOOT_OTHER_QUEST_1 = "<<1>> looted: <<2>> (quest item).",
 		
 	--<<1>>receivedBy, <<2>>icon, <<3>>itemName, <<4>>quantity, <<5>>extraInfo 
-	SI_ECHOLOOT_OTHER_GAIN_2  = "<<1>> looted |t14:14:<<3>>|t <<2>> x<<4>>",
-	SI_ECHOLOOT_OTHER_PICK_2  = "<<1>> acquired |t14:14:<<3>>|t <<2>> x<<4>>",
-	SI_ECHOLOOT_OTHER_QUEST_2 = "<<1>> looted |t14:14:<<3>>|t <<2>> (quest item).",
+	SI_ECHOLOOT_OTHER_GAIN_2  = "<<1>> looted |t14:14:<<2>>|t <<3>> x<<4>>",
+	SI_ECHOLOOT_OTHER_PICK_2  = "<<1>> acquired |t14:14:<<2>>|t <<3>> x<<4>>",
+	SI_ECHOLOOT_OTHER_QUEST_2 = "<<1>> looted |t14:14:<<2>>|t <<3>> (quest item).",
 	--<<1>> is who looted
 	--<<2>> is itemname
 	--<<3>> is quantity

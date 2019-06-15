@@ -1,10 +1,11 @@
 <GuiXml>
 	<Controls>
+  
 		<TopLevelControl name="EOL_GUI" clampedToScreen="true" mouseEnabled="true" movable="true" moveable="true" hidden="true" resizeHandleSize="10">
 			<DimensionConstraints minX="410" minY="300" maxY="1400"/>
 			<Anchor point="TOPRIGHT" relativeTo="GUI_ROOT" relativePoint="TOPRIGHT" offsetX="-250" offsetY="400" />
       <OnMoveStop>EchoExperience:SaveFramePosition("onMoveStop")</OnMoveStop>
-			<OnResizeStart> EchoExperience:onResizeStart() </OnResizeStart>
+			<OnResizeStart>EchoExperience:onResizeStart()</OnResizeStart>
 			<OnResizeStop>EchoExperience:onResizeStop()</OnResizeStop>
 
 			<Controls>
@@ -42,8 +43,8 @@
 								<Button name="$(parent)_Button0">
 									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
 									<Dimensions x="40" y="40" />
-                  <OnMouseEnter> EchoesOfLore:Misc2HeaderTipEnter(self,"All") </OnMouseEnter>
-                  <OnMouseExit>  EchoesOfLore:Misc2HeaderTipExit(self)  </OnMouseExit>
+                  <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"All") </OnMouseEnter>
+                  <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
                   <OnMouseUp>EchoExperience:SetGuiFilter(self, button, "All", nil)</OnMouseUp>
                   <!--
 									<OnMouseEnter>EchoExperience:GuiShowFilterTooltip(self, "All Items")</OnMouseEnter>
@@ -59,8 +60,8 @@
 								<Button name="$(parent)_Button1">
 									<Anchor point="TOPLEFT" relativeTo="$(parent)_Button0" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
 									<Dimensions x="40" y="40" />
-                  <OnMouseEnter> EchoesOfLore:Misc2HeaderTipEnter(self,"Items") </OnMouseEnter>
-                  <OnMouseExit>  EchoesOfLore:Misc2HeaderTipExit(self)  </OnMouseExit>
+                  <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"Items") </OnMouseEnter>
+                  <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
                   <OnMouseUp>EchoExperience:SetGuiFilter(self, button, "Items", nil)</OnMouseUp>
                   <!--
 									<OnMouseEnter>EchoExperience:GuiShowFilterTooltip(self, "Weapons")</OnMouseEnter>
@@ -76,8 +77,8 @@
                 <Button name="$(parent)_Button2">
 									<Anchor point="TOPLEFT" relativeTo="$(parent)_Button1" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
 									<Dimensions x="40" y="40" />
-                  <OnMouseEnter> EchoesOfLore:Misc2HeaderTipEnter(self,"Mobs") </OnMouseEnter>
-                  <OnMouseExit>  EchoesOfLore:Misc2HeaderTipExit(self)  </OnMouseExit>
+                  <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"Mobs") </OnMouseEnter>
+                  <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
                   <OnMouseUp>EchoExperience:SetGuiFilter(self, button, "Mobs", nil)</OnMouseUp>
 									 <!--
                    <OnMouseEnter>EchoExperience:GuiShowFilterTooltip(self, "Mobs")</OnMouseEnter>
@@ -92,8 +93,8 @@
 								<Button name="$(parent)_Button3">
 									<Anchor point="TOPLEFT" relativeTo="$(parent)_Button2" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
 									<Dimensions x="40" y="40" />
-                  <OnMouseEnter> EchoesOfLore:Misc2HeaderTipEnter(self,"Currency") </OnMouseEnter>
-                  <OnMouseExit>  EchoesOfLore:Misc2HeaderTipExit(self)  </OnMouseExit>
+                  <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"Currency") </OnMouseEnter>
+                  <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
                   <OnMouseUp>EchoExperience:SetGuiFilter(self, button, "Currency", nil)</OnMouseUp>
                    <!--
 									<OnMouseEnter>EchoExperience:GuiShowFilterTooltip(self, "Currency")</OnMouseEnter>
@@ -116,8 +117,8 @@
                     pressed="EsoUI/art/buttons/decline_down.dds"
                     mouseOver="EsoUI/art/buttons/decline_over.dds"
               />
-              <OnMouseEnter> EchoesOfLore:Misc2HeaderTipEnter(self,"Close") </OnMouseEnter>
-              <OnMouseExit>  EchoesOfLore:Misc2HeaderTipExit(self)  </OnMouseExit>
+              <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"Close") </OnMouseEnter>
+              <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
               <OnMouseUp>EchoExperience:CloseUI(self)</OnMouseUp>
             </Button>
             

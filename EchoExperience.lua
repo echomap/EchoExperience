@@ -4,7 +4,8 @@ EchoExperience = {
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
-    defaultMaxLines = 10,
+    defaultMaxLines  = 10,
+    defaultMaxLines2 = 15,
     view            = {},
     -- Saved settings.
     savedVariables = {},
@@ -50,27 +51,21 @@ local defaultSettings = {
       ["a"] = 0.9,
 	},
 	LitanyOfBlood = {
-
-    ["Nixad^n"]       = { done=false, ZoneName="Northern Elsweyr",  },
-    ["Nixad"]         = { done=false, ZoneName="Northern Elsweyr",  },
-    ["Terror Bird^n"] = { done=false, ZoneName="Northern Elsweyr", SubzoneName=nil, },
-    ["Terror Bird"]   = { done=false, ZoneName="Northern Elsweyr", SubzoneName=nil, },
-    
-		["Cimalire"] = { done=false, location="Skywatch",  },
-		["Dirdelas"] = { done=false, location="Elden Root",  },
-		["Calareth"] = { done=false, location="Marbruk",  },
-		["Sihada"]   = { done=false, location="Vulkwasten",  },
-		["Dablir"]   = { done=false, location="Rawl'Kha",  },
-		["Dinor Girano"]  = { done=false, location="Davon's Watch",  },
-		["Cindiri Malas"] = { done=false, location="Mournhold",  },
-		["Gideelar"] = { done=false, location="Stormhold",  },
-		["Hakida"] = { done=false, location="Windhelm",  },
-		["Eldfyr"] = { done=false, location="Riften",  },
-		["Cesarel Hedier"] = { done=false, location="Dagerfall",  },
-		["Alix Edette"] = { done=false, location="Wayrest",  },
-		["Bulag"] = { done=false, location="Shornhelm",  },
-		["Ebrayd"] = { done=false, location="Sentinel",  },
-		["Berea"] = { done=false, location="Evermore",  },
+		["Cimalire"] = { done=false, ZoneName="Skywatch",  },
+		["Dirdelas"] = { done=false, ZoneName="Elden Root",  },
+		["Calareth"] = { done=false, ZoneName="Marbruk",  },
+		["Sihada"]   = { done=false, ZoneName="Vulkwasten",  },
+		["Dablir"]   = { done=false, ZoneName="Rawl'Kha",  },
+		["Dinor Girano"]  = { done=false, ZoneName="Davon's Watch",  },
+		["Cindiri Malas"] = { done=false, ZoneName="Mournhold",  },
+		["Gideelar"] = { done=false, ZoneName="Stormhold",  },
+		["Hakida"] = { done=false, ZoneName="Windhelm",  },
+		["Eldfyr"] = { done=false, ZoneName="Riften",  },
+		["Cesarel Hedier"] = { done=false, ZoneName="Dagerfall",  },
+		["Alix Edette"] = { done=false, ZoneName="Wayrest",  },
+		["Bulag"] = { done=false, ZoneName="Shornhelm",  },
+		["Ebrayd"] = { done=false, ZoneName="Sentinel",  },
+		["Berea"] = { done=false, ZoneName="Evermore",  },
    }
 }
 
@@ -315,7 +310,7 @@ function EchoExperience.SlashCommandHandler(text)
 	end
 
 	if #options == 0 or options[1] == "help" then
-		EchoExperience.outputMsg("commands include: 'outputs', 'textexp', 'testloot', 'testfull', 'debug', 'toggletracking', 'showtracking', 'showlifetime', 'clearlifetimedata','mute','unmute', 'trackinggui', 'litanygui'")
+		EchoExperience.outputMsg("commands include: 'outputs', 'testexp', 'testloot', 'testfull', 'debug', 'toggletracking', 'showtracking', 'showlifetime', 'clearlifetimedata','mute','unmute', 'trackinggui', 'litanygui'")
   elseif #options == 0 or options[1] == "trackinggui" then
     EchoExperience:ToggleTrackingFrame()
   elseif #options == 0 or options[1] == "litanygui" then
@@ -407,6 +402,7 @@ function EchoExperience.SlashCommandHandler(text)
 
 end
 
+--
 function EchoExperience:ToggleLitanyFrame()
   EOL_GUI_Litany:SetHidden(not EOL_GUI_Litany:IsControlHidden())
   EEXPLitanyTooltip:SetParent(PopupTooltipTopLevel)
@@ -420,6 +416,7 @@ function EchoExperience:ToggleLitanyFrame()
 	EchoExperience:SaveFrameInfo("ToggleLitanyFrame")
 end
 
+--
 function EchoExperience:ToggleTrackingFrame()
 	EOL_GUI:SetHidden(not EOL_GUI:IsControlHidden())
   --EOL_GUI:SetHidden( not EOL_GUI:IsHidden() )
@@ -1188,7 +1185,7 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
       d("You died.")--TODO
   else
     --TEST REMOVE TODO
-    EchoExperience.outputMsg("SomethingDied: "
+    EchoExperience.debugMsg("SomethingDied: "
     .." sourceUnitId="      .. tostring(sourceUnitId)
     .." targetUnitId="     .. tostring(targetUnitId) 
     .." result="     .. tostring(result) 
@@ -1211,38 +1208,38 @@ function EchoExperience.OnLitanyOfBlood(targetName)
         elemLB = EchoExperience.savedVariables.LitanyOfBlood[tostring(targetName)]
       end
       if( elemLB ~= nil) then
-        EchoExperience.outputMsg("LitanyOfBlood1: "
+        EchoExperience.debugMsg("LitanyOfBlood1: "
           .." elemLB='"      .. tostring(elemLB) .."'"
         )
-        --EchoExperience.outputMsg("LitanyOfBlood2: "
+        --EchoExperience.debugMsg("LitanyOfBlood2: "
         --.." elemLB="      .. (elemLB)
         --)
         local elemLBZoneName = elemLB["ZoneName"]
-        EchoExperience.outputMsg("LitanyOfBlood1: "
+        EchoExperience.debugMsg("LitanyOfBlood1: "
           .." elemLBZoneName='"      .. tostring(elemLBZoneName) .."'"
         )        
         local elemLBSubzoneName = elemLB["SubzoneName"]
-        EchoExperience.outputMsg("LitanyOfBlood1: "
+        EchoExperience.debugMsg("LitanyOfBlood1: "
           .." elemLBSubzoneName='"      .. tostring(elemLBSubzoneName).."'"
         )        
         --["Cimalire"] = { done=false, location="Skywatch",  },
 
         local subzoneNamePL = GetPlayerActiveSubzoneName()
         local zoneNamePL    = GetPlayerActiveZoneName()
-        EchoExperience.outputMsg("LitanyOfBlood1: "
+        EchoExperience.debugMsg("LitanyOfBlood1: "
           .." subzoneNamePL='"      .. tostring(subzoneNamePL) .."'"
         )        
-        EchoExperience.outputMsg("LitanyOfBlood1: "
+        EchoExperience.debugMsg("LitanyOfBlood1: "
           .." zoneNamePL='"      .. tostring(zoneNamePL) .."'"
         )
         if( elemLBSubzoneName ~= nil and elemLBSubzoneName ~= "" and subzoneNamePL ~= nil and subzoneNamePL ~= "") then
-          EchoExperience.outputMsg("LitanyOfBlood1: check subzone")
+          EchoExperience.debugMsg("LitanyOfBlood1: check subzone")
           if( elemLBZoneName == zoneNamePL and elemLBSubzoneName == subzoneNamePL ) then
-            EchoExperience.outputMsg("LitanyOfBlood1: MATCH")
+            EchoExperience.debugMsg("LitanyOfBlood1: MATCH")
           end
         elseif( elemLBZoneName == zoneNamePL ) then
-          EchoExperience.outputMsg("LitanyOfBlood1: just check zone")
-          EchoExperience.outputMsg("LitanyOfBlood1: MATCH")
+          EchoExperience.debugMsg("LitanyOfBlood1: just check zone")
+          EchoExperience.debugMsg("LitanyOfBlood1: MATCH")
         end
     
       end--found person on list

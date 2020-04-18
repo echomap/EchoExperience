@@ -431,8 +431,10 @@ function EchoExperience.LoadSettings()
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
     name = "G1", -- or string id or function returning a string
-    getFunc = function() return EchoExperience.view.settingstemp.guild1 end,
-    setFunc = function(var) EchoExperience.view.settingstemp.guild1 = (EchoExperience:GetGuildID(1)) end,
+    getFunc = function() 
+      return EchoExperience.view.settingstemp.guild1 
+    end,
+    setFunc = function(var) EchoExperience.view.settingstemp.guild1 = (var)  end,
     tooltip = EchoExperience:GetGuildName(1),
     width = "half", -- or "half" (optional)
   }

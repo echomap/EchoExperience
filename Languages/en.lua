@@ -36,8 +36,8 @@ local localization_strings = {
 	SI_ECHOEXP_SKY_2         = "You gained a skill point! (<<1>>).",
 
 	SI_ECHOEXP_GUILD_1       = "eventCode: <<1>>, guildID: <<2>>, playerName: <<3>>, prevStatus: <<4>>, curStatus: <<5>> .",
-	SI_ECHOEXP_GUILD_2       = "<<4>> Logged IN at <<2>> (<<3>>)",
-	SI_ECHOEXP_GUILD_3       = "<<4>> Logged OUT at <<2>> (<<3>>)",
+	SI_ECHOEXP_GUILD_2       = "<<4>> Login at <<2>> (<<3>>)",
+	SI_ECHOEXP_GUILD_3       = "<<4>> Logout at <<2>> (<<3>>)",
     
 	SI_ECHOEXP_GUILDADD_1    = "[<<5>>] Joined <<2>> at <<4>>",
 	SI_ECHOEXP_GUILDREM_1    = "[<<5>>] Left <<2> at <<4>>)",  

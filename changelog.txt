@@ -20,6 +20,7 @@ feature: login in /out add/remove, linkable names, color changes
 feature: get SCROLL working
 feature: Join/Remove to seperate messaging?
 feature: track mail?
+immersion
 
 ## [Testing branch]
 testing: 

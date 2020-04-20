@@ -20,13 +20,15 @@ feature: login in /out add/remove, linkable names, color changes
 feature: get SCROLL working
 feature: Join/Remove to seperate messaging?
 feature: track mail?
+loot bags free space
 immersion
 
 ## [Testing branch]
 testing: 
 
 ## [Unreleased]
-
+## 0.0.23 apiversion, fix slashcommand error
+## 0.0.22 apiversion
 ## 0.0.21
 -fix for group loot icon
 ## 0.0.20

@@ -1,6 +1,6 @@
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.21",                    -- A nuisance to match to the Manifest.
+    version         = "0.0.23",                    -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -1830,7 +1830,7 @@ function EchoExperience.OnAddOnLoaded(event, addonName)
     -- Slash commands must be lowercase. Set to nil to disable.
     SLASH_COMMANDS["/echoexp"] = EchoExperience.SlashCommandHandler
     -- Reset autocomplete cache to update it.
-    SLASH_COMMAND_AUTO_COMPLETE:InvalidateSlashCommandCache()
+    --SLASH_COMMAND_AUTO_COMPLETE:InvalidateSlashCommandCache()
 end
 
 -- SETUP When player is ready, after everything has been loaded.

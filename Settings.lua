@@ -26,7 +26,7 @@ function EchoExperience.LoadSettings()
     text = "Options",
     name = "Options",
     width = "full",	--or "half" (optional)
-  }  
+  } 
   optionsTable[#optionsTable+1] = {
     type = "button",
     name = "Refresh dropdowns",
@@ -34,6 +34,18 @@ function EchoExperience.LoadSettings()
     func = function()  EchoExperience:DoRefreshDropdowns() end,
     width = "full",	--or "half" (optional)
   } 
+  
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name = "Immersive",
+    tooltip = "Be immersive? on or off.",
+    getFunc = function() return EchoExperience.savedVariables.immersive end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.immersive = value
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  
   optionsTable[#optionsTable+1] = {
     type = "button",
     name = "Save these as default",

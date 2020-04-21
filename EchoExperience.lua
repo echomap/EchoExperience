@@ -1,6 +1,6 @@
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.23",                    -- A nuisance to match to the Manifest.
+    version         = "0.0.24",                    -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -38,6 +38,7 @@ local defaultSettings = {
 	showGuildLogin = false,
 	showGuildLogout= false,
 	showtracking = false,
+  immersive = false, 
     rgba    = {
       ["r"] = 1,
       ["g"] = 1,
@@ -254,7 +255,11 @@ function EchoExperience:outputToChanelSub(text,outputSettings,filter)
         local cCD = ZO_ColorDef:New(v.color.r,v.color.g,v.color.b,v.color.a)
         local text2 = cCD:Colorize(text)
         if(text2~=nil) then 
-          text2 = zo_strformat( "[EchoExp] <<1>>", text2)
+          local text1 = ""
+          if( not EchoExperience.savedVariables.immersive ) then
+            text1 = "[EchoExp]"
+          end
+          text2 = zo_strformat( "<<1>> <<2>>", text1, text2)
           --TODO timestamp
           --EchoExperience.savedVariables.showTimeStamp
           --EchoExperience.savedVariables.timeStampFormat
@@ -1076,7 +1081,6 @@ function EchoExperience.OnGuildMemberStatusChanged(eventCode,guildID,playerName,
   if(curStatus == 1) then
     --online
     if (EchoExperience.savedVariables.showGuildLogin) then
-      --local sentence2 = "[EchoExp] <<3>> Logged IN at <<6>>"  
       local sentence2 = GetString("SI_ECHOEXP_GUILD_",2)
       local strL2 = zo_strformat(sentence2, (playerName), ZO_FormatClockTime(), gName, pLink )
       local filter = {}
@@ -1089,7 +1093,6 @@ function EchoExperience.OnGuildMemberStatusChanged(eventCode,guildID,playerName,
     --offline
     if (EchoExperience.savedVariables.showGuildLogout) then
       local sentence2 = GetString("SI_ECHOEXP_GUILD_",3)
-      --local sentence2 = "[EchoExp] <<3>> Logged OUT at <<6>>"  
       local strL2 = zo_strformat(sentence2, (playerName), ZO_FormatClockTime(), gName, pLink )
       local filter = {}
       filter.type = msgTypeGUILD
@@ -1779,7 +1782,10 @@ else
   if(EchoExperience.savedVariables.showtracking==nil)then
     EchoExperience.savedVariables.showtracking = false
   end
-  
+  if(EchoExperience.savedVariables.immersive==nil)then
+    EchoExperience.savedVariables.immersive = false
+  end
+
   EchoExperience:UpgradeSettings()
   
 	--Setup Events Related

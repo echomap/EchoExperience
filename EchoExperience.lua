@@ -52,21 +52,27 @@ local defaultSettings = {
       ["a"] = 0.9,
 	},
 	LitanyOfBlood = {
-		["Cimalire"] = { done=false, ZoneName="Skywatch",  },
-		["Dirdelas"] = { done=false, ZoneName="Elden Root",  },
-		["Calareth"] = { done=false, ZoneName="Marbruk",  },
-		["Sihada"]   = { done=false, ZoneName="Vulkwasten",  },
-		["Dablir"]   = { done=false, ZoneName="Rawl'Kha",  },
-		["Dinor Girano"]  = { done=false, ZoneName="Davon's Watch",  },
-		["Cindiri Malas"] = { done=false, ZoneName="Mournhold",  },
-		["Gideelar"] = { done=false, ZoneName="Stormhold",  },
-		["Hakida"] = { done=false, ZoneName="Windhelm",  },
-		["Eldfyr"] = { done=false, ZoneName="Riften",  },
-		["Cesarel Hedier"] = { done=false, ZoneName="Dagerfall",  },
-		["Alix Edette"] = { done=false, ZoneName="Wayrest",  },
-		["Bulag"] = { done=false, ZoneName="Shornhelm",  },
-		["Ebrayd"] = { done=false, ZoneName="Sentinel",  },
-		["Berea"] = { done=false, ZoneName="Evermore",  },
+    version = 1,
+    list = {
+      ["Cimalire"] = { done=false, ZoneName="Skywatch",  },
+      ["Dirdelas"] = { done=false, ZoneName="Elden Root",  },
+      ["Calareth"] = { done=false, ZoneName="Marbruk",  },
+      ["Sihada"]   = { done=false, ZoneName="Vulkwasten",  },
+      ["Dablir"]   = { done=false, ZoneName="Rawl'Kha",  },
+      ["Dinor Girano"]  = { done=false, ZoneName="Davon's Watch",  },
+      ["Cindiri Malas"] = { done=false, ZoneName="Mournhold",  },
+      ["Gideelar"] = { done=false, ZoneName="Stormhold",  },
+      ["Hakida"] = { done=false, ZoneName="Windhelm",  },
+      ["Eldfyr"] = { done=false, ZoneName="Riften",  },
+      ["Cesarel Hedier"] = { done=false, ZoneName="Dagerfall",  },
+      ["Alix Edette"] = { done=false, ZoneName="Wayrest",  },
+      ["Bulag"] = { done=false, ZoneName="Shornhelm",  },
+      ["Ebrayd"] = { done=false, ZoneName="Sentinel",  },
+      ["Berea"] = { done=false, ZoneName="Evermore",  },
+      
+      --["Eilam"] = { done=false, ZoneName="Sentinel",  },
+      --["Juwan"] = { done=false, ZoneName="Sentinel",  },
+      },
    }
 }
 
@@ -149,6 +155,52 @@ function EchoExperience:ShowLifetimeTracking()
   --EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.guildsettings, "GUILD outputs",msgTypeGUILD)
 end
 
+
+function EchoExperience:DoMute()
+
+  -- Save current values
+  EchoExperience.savedVariables.mutedprevious = {}
+  EchoExperience.savedVariables.mutedprevious.verboseExp      = EchoExperience.savedVariables.verboseExp
+  EchoExperience.savedVariables.mutedprevious.showLoot        = EchoExperience.savedVariables.showLoot
+  EchoExperience.savedVariables.mutedprevious.extendedLoot    = EchoExperience.savedVariables.extendedLoot 
+  EchoExperience.savedVariables.mutedprevious.groupLoot       = EchoExperience.savedVariables.groupLoot
+  EchoExperience.savedVariables.mutedprevious.showItemLoot    = EchoExperience.view.settingstemp.showItemLoot
+  EchoExperience.savedVariables.mutedprevious.showGroupLoot   = EchoExperience.view.settingstemp.showGroupLoot
+  EchoExperience.savedVariables.mutedprevious.showGuildLogin  = EchoExperience.savedVariables.showGuildLogin
+  EchoExperience.savedVariables.mutedprevious.showGuildLogout = EchoExperience.savedVariables.showGuildLogout
+  
+  -- Settings
+  EchoExperience.savedVariables.verboseExp    = false
+  EchoExperience.savedVariables.showLoot      = false
+  EchoExperience.savedVariables.extendedLoot  = false
+  EchoExperience.savedVariables.groupLoot     = false
+  EchoExperience.view.settingstemp.showItemLoot  = false
+  EchoExperience.view.settingstemp.showGroupLoot = false
+  EchoExperience.savedVariables.showGuildLogin   = false
+  EchoExperience.savedVariables.showGuildLogout  = false
+  --
+  EchoExperience.SetupLootGainsEvents(false)
+  EchoExperience.outputMsg("Muted")
+
+end
+
+function EchoExperience:DoUnMute()
+  if(EchoExperience.savedVariables.mutedprevious == nil) then
+    EchoExperience.outputMsg("Already UnMuted...?")
+  else      
+    EchoExperience.savedVariables.verboseExp       = EchoExperience.savedVariables.mutedprevious.verboseExp   
+    EchoExperience.savedVariables.showLoot         = EchoExperience.savedVariables.mutedprevious.showLoot     
+    EchoExperience.savedVariables.extendedLoot     = EchoExperience.savedVariables.mutedprevious.extendedLoot 
+    EchoExperience.savedVariables.groupLoot        = EchoExperience.savedVariables.mutedprevious.groupLoot    
+    EchoExperience.view.settingstemp.showItemLoot  = EchoExperience.savedVariables.mutedprevious.showItemLoot 
+    EchoExperience.view.settingstemp.showGroupLoot = EchoExperience.savedVariables.mutedprevious.showGroupLoot   
+    EchoExperience.savedVariables.showGuildLogin   = EchoExperience.savedVariables.mutedprevious.showGuildLogin  
+    EchoExperience.savedVariables.showGuildLogout  = EchoExperience.savedVariables.mutedprevious.showGuildLogout 
+  end
+  EchoExperience.outputMsg("UnMuted")
+end
+ 
+--
 function EchoExperience:GetCombatUnitType(gnum)
   --EchoExperience.debugMsg("GetGuildName:=".. gnum.. " name='"..GetGuildName(gnum).."'")  
   local ret = nil
@@ -315,61 +367,34 @@ function EchoExperience.SlashCommandHandler(text)
 	end
 
 	if #options == 0 or options[1] == "help" then
-		EchoExperience.outputMsg("commands include: 'outputs', 'testexp', 'testloot', 'testfull', 'debug', 'toggletracking', 'showtracking', 'showlifetime', 'clearlifetimedata','mute','unmute', 'trackinggui', 'litanygui'")
-  elseif #options == 0 or options[1] == "trackinggui" then
-    EchoExperience:ToggleTrackingFrame()
-  elseif #options == 0 or options[1] == "litanygui" then
-    EchoExperience:ToggleLitanyFrame()
-  elseif #options == 0 or options[1] == "testevents" then
-    EchoExperience.savedVariables.showGuildMisc  = not EchoExperience.savedVariables.showGuildMisc
-    EchoExperience.outputMsg("ShowGuildMisc = " .. tostring(EchoExperience.savedVariables.showGuildMisc) )
-    EchoExperience.SetupGuildEvents()
+    --
+		EchoExperience.outputMsg("user commands include: 'outputs', 'mute','unmute' ")
+		EchoExperience.outputMsg("debug commands include:'debug', 'testexp', 'testloot', 'testfull' ")
+    EchoExperience.outputMsg("Mute/Unmute: should silence/unsilence EchoExp. The tracking module is in beta, using the commands: 'toggletracking','showlifetime', 'clearlifetimedata', 'litanygui',  'showtracking' ")
+    -- MAIN
 	elseif #options == 0 or options[1] == "outputs" then
 		EchoExperience.ShowOutputs()
 	elseif #options == 0 or options[1] == "defaults" then
 		EchoExperience.ShowDefaults()
-	elseif #options == 0 or options[1] == "showtracking" then
-		EchoExperience.ShowTracking()
+  elseif #options == 0 or options[1] == "mute" then
+    EchoExperience:DoMute()
+  elseif #options == 0 or options[1] == "unmute" then
+    EchoExperience:DoUnMute()
+    
+  -- BETA
+  elseif #options == 0 or options[1] == "litanygui" then
+    EchoExperience:ToggleLitanyFrame()
+    
+  --Tracking
+  elseif #options == 0 or options[1] == "trackinggui" then
+    EchoExperience:ToggleTrackingFrame()
 	elseif #options == 0 or options[1] == "showtrackinggui" then
 		EchoExperience:ToggleTrackingFrame()
+	elseif #options == 0 or options[1] == "showtracking" then
+		EchoExperience.ShowTracking()
   elseif #options == 0 or options[1] == "showlifetime" then
     EchoExperience.ShowLifetimeTracking()
     EchoExperience.CheckVerifyDefaults()
-  elseif #options == 0 or options[1] == "mute" then
-    EchoExperience.savedVariables.mutedprevious = {}
-    EchoExperience.savedVariables.mutedprevious.verboseExp   = EchoExperience.savedVariables.verboseExp
-    EchoExperience.savedVariables.mutedprevious.showLoot     = EchoExperience.savedVariables.showLoot
-    EchoExperience.savedVariables.mutedprevious.extendedLoot = EchoExperience.savedVariables.extendedLoot 
-    EchoExperience.savedVariables.mutedprevious.groupLoot    = EchoExperience.savedVariables.groupLoot
-    EchoExperience.savedVariables.mutedprevious.showItemLoot = EchoExperience.view.settingstemp.showItemLoot
-    EchoExperience.savedVariables.mutedprevious.showGroupLoot   = EchoExperience.view.settingstemp.showGroupLoot
-    EchoExperience.savedVariables.mutedprevious.showGuildLogin  = EchoExperience.savedVariables.showGuildLogin
-    EchoExperience.savedVariables.mutedprevious.showGuildLogout = EchoExperience.savedVariables.showGuildLogout
-    --
-    EchoExperience.savedVariables.verboseExp    = false
-    EchoExperience.savedVariables.showLoot      = false
-    EchoExperience.savedVariables.extendedLoot  = false
-    EchoExperience.savedVariables.groupLoot     = false
-    EchoExperience.view.settingstemp.showItemLoot  = false
-    EchoExperience.view.settingstemp.showGroupLoot = false
-    EchoExperience.savedVariables.showGuildLogin   = false
-    EchoExperience.savedVariables.showGuildLogout  = false
-    --
-    EchoExperience.SetupLootGainsEvents(false)
-    EchoExperience.outputMsg("Muted")
-  elseif #options == 0 or options[1] == "unmute" then
-    if(EchoExperience.savedVariables.mutedprevious == nil)then
-    else      
-      EchoExperience.savedVariables.verboseExp   = EchoExperience.savedVariables.mutedprevious.verboseExp   
-      EchoExperience.savedVariables.showLoot     = EchoExperience.savedVariables.mutedprevious.showLoot     
-      EchoExperience.savedVariables.extendedLoot = EchoExperience.savedVariables.mutedprevious.extendedLoot 
-      EchoExperience.savedVariables.groupLoot    = EchoExperience.savedVariables.mutedprevious.groupLoot    
-      EchoExperience.view.settingstemp.showItemLoot  = EchoExperience.savedVariables.mutedprevious.showItemLoot 
-      EchoExperience.view.settingstemp.showGroupLoot = EchoExperience.savedVariables.mutedprevious.showGroupLoot   
-      EchoExperience.savedVariables.showGuildLogin   = EchoExperience.savedVariables.mutedprevious.showGuildLogin  
-      EchoExperience.savedVariables.showGuildLogout  = EchoExperience.savedVariables.mutedprevious.showGuildLogout 
-    end
-    EchoExperience.outputMsg("unMuted")
   elseif #options == 0 or options[1] == "clearlifetimedata" then
     EchoExperience.savedVariables.lifetime = {}
 	elseif #options == 0 or options[1] == "cleartracking" then
@@ -383,11 +408,16 @@ function EchoExperience.SlashCommandHandler(text)
 		EchoExperience.savedVariables.showtracking = not EchoExperience.savedVariables.showtracking
     EchoExperience.outputMsg("Showtracking = " .. tostring(EchoExperience.savedVariables.showtracking) )
     EchoExperience:SetupLootGainsEvents(true)
+  
+  --Testing
+  elseif #options == 0 or options[1] == "testevents" then
+    EchoExperience.savedVariables.showGuildMisc  = not EchoExperience.savedVariables.showGuildMisc
+    EchoExperience.outputMsg("ShowGuildMisc = " .. tostring(EchoExperience.savedVariables.showGuildMisc) )
+    EchoExperience.SetupGuildEvents()
 	elseif #options == 0 or options[1] == "testexp" then
 		EchoExperience.outputToChanel("Gained 0 xp in [Test] (1000/10000) need 9000xp",msgTypeEXP)
 	elseif #options == 0 or options[1] == "testloot" then
-		EchoExperience.outputToChanel("You looted TESTITEM.",msgTypeLOOT)
-    
+		EchoExperience.outputToChanel("You looted TESTITEM.",msgTypeLOOT)    
     --eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,
     --isPickpocketLoot,questItemIcon,itemId,isStolen)
     local pName = GetUnitName("player")
@@ -1160,7 +1190,7 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
   else
     EchoExperience.debugMsg("OnCombatSomethingDied: "
     .." sourceUnitId="      .. tostring(sourceUnitId)
-    .." targetUnitId="     .. tostring(targetUnitId) 
+    .." targetUnitId="      .. tostring(targetUnitId) 
     .." result="     .. tostring(result) 
     )
   end
@@ -1185,7 +1215,7 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
   --TODO localize etc  
   
   if(sourceUnitId==targetUnitId) then
-      d("You died.")--TODO
+      EchoExperience.outputToChanel("You died!",msgTypeSYS)--TODO
   else
     --TEST REMOVE TODO
     EchoExperience.debugMsg("SomethingDied: "
@@ -1195,57 +1225,109 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
     )
     local sentence = GetString(SI_ECHOEXP_KILL_MOB)
     local strL = zo_strformat(sentence, targetName )
+        
     EchoExperience.outputToChanel(strL,msgTypeSYS)
 	  
     --Check LitanyOfBlood
     if( EchoExperience.savedVariables.LitanyOfBlood ~= nil) then
-      EchoExperience.OnLitanyOfBlood(targetName,targetUnitId)
+      EchoExperience.OnLitanyOfBlood(targetName, targetUnitId)      
+    else
+      EchoExperience.debugMsg("NOT calling lob")
     end--LitanyOfBlood
   end --you vs other
 end
 
-function EchoExperience.OnLitanyOfBlood(targetName)
+--
+function EchoExperience.OnLitanyOfBlood(targetNameL, targetUnitId)
+  --name coming in might not be a string
+  local targetName = zo_strformat("<<1>>", targetNameL )
+  EchoExperience.debugMsg("lob called w/targetName='"..tostring(targetName).."'")
+  local lob = EchoExperience.savedVariables.LitanyOfBlood
+  if( lob == nil) then
+    EchoExperience.debugMsg("lob null")
+    return
+  end
+  local loblist = lob.list
+  if( loblist == nil) then
+    EchoExperience.debugMsg("loblist null")
+    return
+  end
   
-      local elemLB = EchoExperience.savedVariables.LitanyOfBlood[targetName]
-      if( elemLB == nil) then
-        elemLB = EchoExperience.savedVariables.LitanyOfBlood[tostring(targetName)]
-      end
-      if( elemLB ~= nil) then
-        EchoExperience.debugMsg("LitanyOfBlood1: "
-          .." elemLB='"      .. tostring(elemLB) .."'"
-        )
-        --EchoExperience.debugMsg("LitanyOfBlood2: "
-        --.." elemLB="      .. (elemLB)
-        --)
-        local elemLBZoneName = elemLB["ZoneName"]
-        EchoExperience.debugMsg("LitanyOfBlood1: "
-          .." elemLBZoneName='"      .. tostring(elemLBZoneName) .."'"
-        )        
-        local elemLBSubzoneName = elemLB["SubzoneName"]
-        EchoExperience.debugMsg("LitanyOfBlood1: "
-          .." elemLBSubzoneName='"      .. tostring(elemLBSubzoneName).."'"
-        )        
-        --["Cimalire"] = { done=false, location="Skywatch",  },
+  --TEST PRINT
+  local targetData = nil
+  for k, v in pairs(loblist) do
+    EchoExperience.debugMsg( zo_strformat( "<<1>>=<<2>>",tostring(k), tostring(v) ) )
+    if( tostring(k) == tostring(targetName) ) then
+      targetData = v
+    end
+  end
+  
+  local elemLB = targetData -- loblist[targetName]
+  --if( elemLB == nil) then
+    --elemLB = loblist[tostring(targetName)]
+  --end
+  if( elemLB == nil) then
+    EchoExperience.debugMsg("Corpse not on list for Litany")
+    return
+  end
+  
+  -- found person on list 
+   EchoExperience.outputMsg("Corpse may be on list for Litany")
+  
+  local elemLBZoneName = zo_strformat("<<1>>", elemLB["ZoneName"] )
+  EchoExperience.debugMsg("LitanyOfBlood1: "
+    .." elemLBZoneName='"      .. tostring(elemLBZoneName) .."'"
+  )        
+  local elemLBSubzoneName = zo_strformat("<<1>>", elemLB["SubzoneName"] ) 
+  EchoExperience.debugMsg("LitanyOfBlood1: "
+    .." elemLBSubzoneName='"      .. tostring(elemLBSubzoneName).."'"
+  )        
+  --["Cimalire"] = { done=false, location="Skywatch",  },
 
-        local subzoneNamePL = GetPlayerActiveSubzoneName()
-        local zoneNamePL    = GetPlayerActiveZoneName()
-        EchoExperience.debugMsg("LitanyOfBlood1: "
-          .." subzoneNamePL='"      .. tostring(subzoneNamePL) .."'"
-        )        
-        EchoExperience.debugMsg("LitanyOfBlood1: "
-          .." zoneNamePL='"      .. tostring(zoneNamePL) .."'"
-        )
-        if( elemLBSubzoneName ~= nil and elemLBSubzoneName ~= "" and subzoneNamePL ~= nil and subzoneNamePL ~= "") then
-          EchoExperience.debugMsg("LitanyOfBlood1: check subzone")
-          if( elemLBZoneName == zoneNamePL and elemLBSubzoneName == subzoneNamePL ) then
-            EchoExperience.debugMsg("LitanyOfBlood1: MATCH")
-          end
-        elseif( elemLBZoneName == zoneNamePL ) then
-          EchoExperience.debugMsg("LitanyOfBlood1: just check zone")
-          EchoExperience.debugMsg("LitanyOfBlood1: MATCH")
-        end
-    
-      end--found person on list
+  local subzoneNamePL = zo_strformat("<<1>>",  GetPlayerActiveSubzoneName() )
+  local zoneNamePL    =  zo_strformat("<<1>>", GetPlayerActiveZoneName() )
+   EchoExperience.debugMsg("LitanyOfBlood1: "
+    .." zoneNamePL='"      .. tostring(zoneNamePL) .."'"
+  )
+  EchoExperience.debugMsg("LitanyOfBlood1: "
+    .." subzoneNamePL='"      .. tostring(subzoneNamePL) .."'"
+  )        
+
+  local lbDataHasSubzone = true
+  if(elemLBSubzoneName==nil or elemLBSubzoneName=="" ) then
+    lbDataHasSubzone = false
+  end
+  local playerHasSubzone = true
+  if(subzoneNamePL==nil or subzoneNamePL=="" ) then
+    playerHasSubzone = false
+  end
+  EchoExperience.debugMsg("LitanyOfBlood1: "
+    .." lbDataHasSubzone='"      .. tostring(lbDataHasSubzone) .."'"
+  )
+  EchoExperience.debugMsg("LitanyOfBlood1: "
+    .." playerHasSubzone='"      .. tostring(playerHasSubzone) .."'"
+  )
+  
+  --
+  local lbMatch = false
+  if( lbDataHasSubzone and playerHasSubzone ) then
+    EchoExperience.debugMsg("LitanyOfBlood1: check subzone")
+    if( elemLBZoneName == zoneNamePL and elemLBSubzoneName == subzoneNamePL ) then
+      EchoExperience.debugMsg("LitanyOfBlood1: MATCH")
+      lbMatch = true
+    end
+  elseif( elemLBZoneName == zoneNamePL or elemLBZoneName == subzoneNamePL ) then
+    EchoExperience.debugMsg("LitanyOfBlood1: just check zone")
+    EchoExperience.debugMsg("LitanyOfBlood1: MATCH")
+    lbMatch = true
+  end
+  --found person on list 
+  if(lbMatch) then
+    EchoExperience.outputMsg("You have killed someone in the Litany of Blood!")
+  else
+    EchoExperience.debugMsg("You have killed someone.")
+  end
+  
 end
 
 --Sample Events
@@ -1680,8 +1762,8 @@ end
 
 function EchoExperience.SetupLitanyOfBlood()
 	--if( EchoExperience.savedVariables.LitanyOfBlood == nil) then
-		EchoExperience.savedVariables.LitanyOfBlood   = EchoExperience:deepcopy(defaultSettings.LitanyOfBlood)
-	--end
+		EchoExperience.savedVariables.LitanyOfBlood   = EchoExperience:deepcopy(defaultSettings.LitanyOfBlood)    
+	--TESTINGend
 end
 
 function EchoExperience.CheckVerifyDefaults()
@@ -1793,6 +1875,7 @@ else
 	EchoExperience.SetupLootGainsEvents()
   EchoExperience.SetupGuildEvents()
   EchoExperience.SetupMiscEvents()  
+  EchoExperience.SetupLitanyOfBlood()
   
 end
 

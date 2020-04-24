@@ -1,9 +1,8 @@
 ----EchoExperience----
 
-## TODO
+## TODO: Features
 overall: Localization
-feature: Guild logon format 
-feature: Edit existing entries?
+feature: Guild logon format customization
 feature: brackets around names and links? Option?
 feature: Option for timestamp and format
 feature: more events:
@@ -11,8 +10,6 @@ feature: more events:
   You craft
   deconstruct/ you receive
 clean: Add filters wiki.esoui.com/AddFilterEvent
-bug: update lifetime on close?
-Add check for recieved and looted item, to not double report
 feature: Add filters for lifetime view
 feature: Add search for lifetime view
 feature: Add filter item/mob/currency for GUI view
@@ -20,35 +17,44 @@ feature: login in /out add/remove, linkable names, color changes
 feature: get SCROLL working
 feature: Join/Remove to seperate messaging?
 feature: track mail?
-loot bags free space
-immersion
+loot bags free space warn on low bag space?
+immersion more?
 EVENT_RECIPE_LEARNED (number eventCode, number recipeListIndex, number recipeIndex)
 EVENT_STYLE_LEARNED (number eventCode, number itemStyleId, number chapterIndex, boolean isDefaultRacialStyle)
 EVENT_TRAIT_LEARNED (number eventCode, string itemName, string itemTrait)
 craft deconstruct event?
 EVENT_INVENTORY_SINGLE_SLOT_UPDATE (number eventCode, Bag bagId, number slotId, boolean isNewItem, ItemUISoundCategory itemSoundCategory, number inventoryUpdateReason, number stackCountChange)
 
+## TODO: Bugs
+bug: update lifetime on close?
+Add check for recieved and looted item, to not double report
+LitanyOfBlood Gui still a mess
+
 
 ## [Testing branch]
-testing:
+0.0.23 immersion flag. fix some litany stuff (if target was on list) / not GUI fixes
+-
 
 ## [Unreleased]
-## 0.0.23 apiversion, fix slashcommand error
-## 0.0.22 apiversion
-## 0.0.21
+-
+
+## [Released]
+0.0.23 apiversion, fix slashcommand error
+0.0.22 apiversion
+0.0.21
 -fix for group loot icon
-## 0.0.20
+0.0.20
 -added verbose checkbox for skill reporting options
 -removed generic AP printout 'you gained XXX AP." hopefully the gain "currency" event captures everything
-## 0.0.19
+0.0.19
 - updated some text and icons
-## 0.0.18
+0.0.18
 -updated game version
 -changed what displays for looting
-## 0.0.17
+0.0.17
   -CommaDelimitNumbers
   -GetGuildId function, to be used by the guild filter, rather than Guild#1-#5, so changes in a players guild list wont affect which guilds are outputted
-## 0.0.16
+0.0.16
   -api bump
   -Tracking, items/mobs/money in/out - requires loot and extended loot to be on
   -Guild logon, can unselect guilds per entry
@@ -56,9 +62,9 @@ testing:
   -Add, 'last killed ID" so that wont double report kill
   -update lifetime on player activated
   -settings save/load player as default
-## 0.0.15
+0.0.15
   -bug fix settings panel name and guild names
-## 0.0.14
+0.0.14
   -Using new way to store mutliple tab/windows for multiple
     (more than 2 outputs - not that this is necessary it was just bugging me)
   -new slash commands for 'defaults' and 'outputs'

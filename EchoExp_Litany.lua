@@ -9,7 +9,7 @@ function EchoExperience:Litany_DoSelectedButtonClicked(btn,idx,curline,curItem)
   
   curItem.done = not curItem.done
   EchoExperience.debugMsg("OnClicked: Done? Name: "..tostring(curItem.name) .. " Done: "..tostring(curItem.done) )
-  EchoExperience.savedVariables.LitanyOfBlood[curItem.name].done = curItem.done
+  EchoExperience.savedVariables.LitanyOfBlood.list[curItem.name].done = curItem.done
   
   if(curItem.done) then
       btn:SetNormalTexture("esoui\art\buttons\checkbox_checked.dds")
@@ -244,7 +244,7 @@ function EchoExperience:Litany_UpdateScrollDataLinesData()
   local itemCount = 0
   
   local elemListS = nil
-  elemListS = EchoExperience.savedVariables.LitanyOfBlood
+  elemListS = EchoExperience.savedVariables.LitanyOfBlood.list
   if(elemListS~=nil) then
     for iName, dbItem in pairs(elemListS) do
       --k, v.done, v.ZoneName, v.SubzoneName

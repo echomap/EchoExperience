@@ -32,7 +32,7 @@ function EchoExperience.LoadSettings()
     name = "Refresh dropdowns",
     tooltip = "Refresh dropdown Data!",
     func = function()  EchoExperience:DoRefreshDropdowns() end,
-    width = "full",	--or "half" (optional)
+    width = "half",	--or "half" (optional)
   } 
   
   optionsTable[#optionsTable+1] = {
@@ -62,6 +62,106 @@ function EchoExperience.LoadSettings()
     width = "full",	--or "half" (optional)
     warning = "No confirmation if you do this!",	--(optional)
   }
+  
+  --QUEST
+  optionsTable[#optionsTable+1] = {
+    type = "header",
+    title = nil,	--(optional)
+    text = "Quest Options",
+    name = "Quest Options",
+    width = "full",	--or "half" (optional)
+  }
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name = "Quest",
+    tooltip = "Show Quests accept/complete? on or off.",
+    getFunc = function() return EchoExperience.savedVariables.showquests end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.showquests = value
+      EchoExperience.SetupEventsQuest(true)
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  optionsTable[#optionsTable+1] = {
+    type = "dropdown",
+    name = "Quest Output Tabs",
+    tooltip = "Tab(s) for Quest output.",
+    choices = EchoExperience:ListOfQuestTabs(),
+    getFunc = function() return "Select" end,
+    setFunc = function(var) EchoExperience:SelectQuestTab(var) end,
+    width = "half",	--or "half" (optional)
+    reference = "EchoExpDDQuestOutput", -- unique global reference to control (optional)
+  }
+  optionsTable[#optionsTable+1] = {
+    type = "button",
+    name = "Delete",
+    tooltip = "Delete selected Quest's Data!",
+    func = function()  EchoExperience:DoDeleteQuestTab() end,
+    width = "full",	--or "half" (optional)
+    warning = "No confirmation if you do this!",	--(optional)
+  } 
+  optionsTable[#optionsTable+1] = {
+    type = "header",
+    title = nil,	--(optional)
+    text = "Add new Quest output:",
+    name = "Add Quest Output",
+    width = "full",	--or "half" (optional)
+  }
+  optionsTable[#optionsTable+1] = {
+    type = "dropdown",
+    name = "Quest Output to Window",
+    tooltip = "Window for Quest output.",
+    choices = {"1","2","3","4","5"},
+    getFunc = function() return tostring(EchoExperience.view.settingstemp.windowQuest) end,
+    setFunc = function(var) EchoExperience.view.settingstemp.windowQuest = tonumber(var) end,
+    width = "half",	--or "half" (optional)
+  }
+  optionsTable[#optionsTable+1] = {
+    type = "dropdown",
+    name = "Quest Output Tab",
+    tooltip = "Tab for Quest output.",
+    choices = {"1", "2", "3", "4", "5", "6"},
+    getFunc = function() return tostring(EchoExperience.view.settingstemp.tabQuest) end,
+    setFunc = function(var) EchoExperience.view.settingstemp.tabQuest = tonumber(var) end,
+    width = "half",	--or "half" (optional)
+  }
+  optionsTable[#optionsTable+1] = {
+    type = "colorpicker",
+    name = "Quest Output Color",
+    tooltip = "What Color to use for Quest text.",
+    getFunc = function() 
+        if(EchoExperience.view.settingstemp==nil or EchoExperience.view.settingstemp.colorQuest==nil) then
+          EchoExperience.SetupDefaultColors()
+      end
+      return              
+      EchoExperience.view.settingstemp.colorQuest.r,
+      EchoExperience.view.settingstemp.colorQuest.g,
+      EchoExperience.view.settingstemp.colorQuest.b,
+      EchoExperience.view.settingstemp.colorQuest.a
+    end,	--(alpha is optional)    
+    setFunc = 	function(r,g,b,a)
+      --(alpha is optional)
+      --d(r, g, b, a)
+      --local c = ZO_ColorDef:New(r,g,b,a)
+      --c:Colorize(text)
+      EchoExperience.view.settingstemp.colorQuest = {}
+      EchoExperience.view.settingstemp.colorQuest.r = r
+      EchoExperience.view.settingstemp.colorQuest.g = g
+      EchoExperience.view.settingstemp.colorQuest.b = b
+      EchoExperience.view.settingstemp.colorQuest.a = a
+    end,
+    width = "full",	--or "half" (optional)
+  }
+  optionsTable[#optionsTable+1] = {
+    type = "button",
+    name = "Save",
+    tooltip = "Save selected Quest chat Data!",
+    func = function()  EchoExperience:DoSaveQuestTab() end,
+    width = "full",	--or "half" (optional)
+    warning = "No confirmation if you do this!",	--(optional)
+  }
+  --QUEST
+  
   ---EXP
   optionsTable[#optionsTable+1] = {
     type = "header",

@@ -1,6 +1,6 @@
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.24",                    -- A nuisance to match to the Manifest.
+    version         = "0.0.26",                    -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -20,8 +20,9 @@ EchoExperience = {
 local msgTypeSYS     = 1
 local msgTypeEXP     = 2
 local msgTypeLOOT    = 4
-local msgTypeGUILD   = 6
-local msgTypeGUILD2   = 7
+local msgTypeGUILD   = 6 -- 
+local msgTypeGUILD2  = 7 -- Guild Admin Messages
+local msgTypeQuest   = 8
 
 --local PCHAT = LibStub("PCHAT")
 
@@ -230,16 +231,18 @@ function EchoExperience.outputToChanel(text,msgType,filter)
 	if msgType == msgTypeSYS then
 		d(text)
 	elseif msgType == msgTypeEXP then
-    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.expsettings,filter )
+    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.expsettings, filter )
     return
 	elseif msgType == msgTypeLOOT then
-    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.lootsettings,filter)
+    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.lootsettings, filter)
     return
 	elseif msgType == msgTypeGUILD then
-    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.guildsettings,filter)
+    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.guildsettings, filter)
   elseif msgType == msgTypeGUILD2 then
-    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.guildsettings,filter)
+    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.guildsettings, filter)
     --for later, when i seperate the LOGXX with the join/leave
+  elseif msgType == msgTypeQuest then
+    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.questsettings, filter)
   end
   
   if(EchoExperience.error)then
@@ -370,7 +373,9 @@ function EchoExperience.SlashCommandHandler(text)
     --
 		EchoExperience.outputMsg("user commands include: 'outputs', 'mute','unmute' ")
 		EchoExperience.outputMsg("debug commands include:'debug', 'testexp', 'testloot', 'testfull' ")
-    EchoExperience.outputMsg("Mute/Unmute: should silence/unsilence EchoExp. The tracking module is in beta, using the commands: 'toggletracking','showlifetime', 'clearlifetimedata', 'litanygui',  'showtracking' ")
+    EchoExperience.outputMsg("Mute/Unmute: should silence/unsilence EchoExp.")
+    EchoExperience.outputMsg("The tracking module is in beta, start by using the command: 'toggletracking'")
+    EchoExperience.outputMsg("   Gui/Console commands: 'showlifetime', 'clearlifetimedata', 'litanygui',  'showtracking' ")
     -- MAIN
 	elseif #options == 0 or options[1] == "outputs" then
 		EchoExperience.ShowOutputs()
@@ -779,7 +784,11 @@ function EchoExperience.OnCurrencyUpdate(eventCode, currencyType, currencyLocati
   local icon = GetCurrencyKeyboardIcon(currencyType) 
   --local icon = GetCurrencyLootKeyboardIcon(currencyType) 
   local entryName = GetCurrencyName(currencyType, isSingular, false )
+  
   local sentence = GetString("SI_ECHOLOOT_CURRENCY_",qualifier)
+  if(currencyLocation~=nil and currencyLocation==1 )then --is bank    
+    sentence = GetString("SI_ECHOLOOT_CURRENCY_BANK_",qualifier)
+  end
   local strL = zo_strformat(sentence, icon, entryName, ZO_CommaDelimitNumber(entryQuantity) )
   EchoExperience.outputToChanel(strL,msgTypeLOOT)
 	--EchoExperience.debugMsg("OnCurrencyUpdate: "
@@ -928,8 +937,15 @@ function EchoExperience.OnInventorySingleSlotUpdate(eventCode, bagId, slotId, is
     local itemName = GetItemLinkName(itemLink) 
     if(isNewItem and itemLink~=nil) then
       --local curricon = GetCurrencyKeyboardIcon(currencyType) 
-      local sentence = GetString("SI_ECHOLOOT_RECEIVE_",qualifier)
-      local strL = zo_strformat(sentence, icon, itemLink, stackCountChange )
+      local traitName, setName = EchoExperience:GetExtraInfo(itemLink)
+      if( traitName == nil) then
+        traitName = ""
+      else
+        qualifier = qualifier + 2
+      end
+    
+      local sentence = GetString("SI_ECHOLOOT_RECEIVE_", qualifier)
+      local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName )
       EchoExperience.outputToChanel(strL,msgTypeLOOT)
     --elseif( itemLink~=nil and icon~=nil ) then
     --  local sentence = GetString("SI_ECHOLOOT_LOSE_",qualifier)
@@ -1005,45 +1021,47 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
     
   --
   if(isSelf) then
-	if( not EchoExperience.savedVariables.extendedLoot) then
-		local qualifier = 1
-		if(quantity==1) then
-		  if(extraInfo ~= nil) then
-        qualifier = 3
-		  else
-        qualifier = 1 --**1 item, no extra info
-		  end
-		else
-		  if(extraInfo ~=nil) then
-        qualifier = 4
-		  else
-        qualifier = 2 --**2+ item, no extra info
-		  end
-		end
-		EchoExperience.debugMsg("qualifier=" ..tostring(qualifier) )
+    --I can't remember why this...
+    if( not EchoExperience.savedVariables.extendedLoot) then
+      local qualifier = 1
+      if(quantity==1) then
+        if(extraInfo ~= nil) then
+          qualifier = 3
+        else
+          qualifier = 1 --**1 item, no extra info
+        end
+      else
+        if(extraInfo ~= nil) then
+          qualifier = 4
+        else
+          qualifier = 2 --**2+ item, no extra info
+        end
+      end
+      EchoExperience.debugMsg("qualifier=" ..tostring(qualifier) )
 
-    --
-    local sentence = GetString("SI_ECHOLOOT_YOU_GAIN_",qualifier)
-    if(isPickpocketLoot) then
-      sentence = GetString("SI_ECHOLOOT_YOU_PICK_",qualifier)
-    elseif(lootType==LOOT_TYPE_QUEST_ITEM)then
-      sentence = GetString("SI_ECHOLOOT_YOU_QUEST_",qualifier)
-    end
-    local strL = zo_strformat(sentence, icon, itemName, quantity, tostring(extraInfo) )	  
-    EchoExperience.outputToChanel(strL,msgTypeLOOT)
-	end
+      -- output: if isSelf and not extendedLoot
+      local sentence = GetString("SI_ECHOLOOT_YOU_GAIN_",qualifier)
+      if(isPickpocketLoot) then
+        sentence = GetString("SI_ECHOLOOT_YOU_PICK_",qualifier)
+      elseif(lootType==LOOT_TYPE_QUEST_ITEM)then
+        sentence = GetString("SI_ECHOLOOT_YOU_QUEST_",qualifier)
+      end
+      local strL = zo_strformat(sentence, icon, itemName, quantity, traitName )	  
+      EchoExperience.outputToChanel(strL,msgTypeLOOT)
+    end --isSelf and not extendedLoot
   elseif (EchoExperience.savedVariables.groupLoot and receivedBy~=nil) then
+    --if NOT self and IS groupLoot and has a receievedby value
     local qualifier = 1
     if(quantity>1) then qualifier = 2 end
-    local sentence = GetString("SI_ECHOLOOT_OTHER_GAIN_",qualifier)
+    local sentence = GetString("SI_ECHOLOOT_OTHER_GAIN_", qualifier)
     if(isPickpocketLoot) then
-      sentence = GetString("SI_ECHOLOOT_OTHER_PICK_",qualifier)
+      sentence = GetString("SI_ECHOLOOT_OTHER_PICK_", qualifier)
     elseif(lootType==LOOT_TYPE_QUEST_ITEM) then
-      sentence = GetString("SI_ECHOLOOT_OTHER_QUEST_",qualifier)
+      sentence = GetString("SI_ECHOLOOT_OTHER_QUEST_", qualifier)
     end
-    local strL = zo_strformat(sentence, receivedBy, icon, itemName, quantity)
+    local strL = zo_strformat(sentence, receivedBy, icon, itemName, quantity, extraInfo)
     EchoExperience.outputToChanel(strL,msgTypeLOOT)
-  end
+  end--self check
 end
 
 --EVENT_GUILD_MEMBER_ADDED (number eventCode, number guildId, string displayName) 
@@ -1063,7 +1081,7 @@ function EchoExperience.OnGuildMemberAdded(eventCode, guildID, playerName)
       filter.type = msgTypeGUILD2
       filter.guildID = guildID
       filter.guildId = EchoExperience:GetGuildId(guildID)
-      EchoExperience.outputToChanel(strL,msgTypeGUILD,filter) 
+      EchoExperience.outputToChanel(strL,msgTypeGUILD2,filter) 
 
 end
 
@@ -1077,14 +1095,15 @@ function EchoExperience.OnGuildMemberRemoved(eventCode,guildID, displayName, cha
     .." displayName="     .. tostring(displayName)
     .." characterName="     .. tostring(characterName)
   )
-  local sentence = GetString("SI_ECHOEXP_GUILDREM_",1)
-  local strL = zo_strformat(sentence, eventCode, tostring(guildID), EchoExperience:GetGuildName(guildID), tostring(playerName), ZO_FormatClockTime() )
+  local pLink = ZO_LinkHandler_CreatePlayerLink(displayName)
+  local sentence = GetString("SI_ECHOEXP_GUILDREM_", 1)
+  local strL = zo_strformat(sentence, tostring(guildID), EchoExperience:GetGuildName(guildID), (characterName), ZO_FormatClockTime(), pLink )
   --TODO if check?
       local filter = {}
       filter.type = msgTypeGUILD2
       filter.guildID = guildID
       filter.guildId = EchoExperience:GetGuildId(guildID)
-      EchoExperience.outputToChanel(strL,msgTypeGUILD,filter) 
+      EchoExperience.outputToChanel(strL,msgTypeGUILD2,filter) 
 
 end
 --[20:01] OnGuildMemberRemoved:  eventCode=327707 guildID=4 displayName=@luda9400 characterName=I Heal Tanks^Fx
@@ -1237,6 +1256,31 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
   end --you vs other
 end
 
+----integer eventCode, string questName, integer playerLevel, integer previousXP, integer currentXP, integer playerVeteranRank, integer previousVeteranPoints, integer currentVeteranPoints)
+function EchoExperience.OnEventQuestAdded(eventCode, level, questName)
+  --EchoExperience.outputMsg("OnEventQuestAdded: Called")
+  EchoExperience.debugMsg("OnEventQuestAdded: "
+    .." eventCode="      .. tostring(eventCode)
+    .." questName="     .. tostring(questName) 
+    .." level="     .. tostring(level) 
+    )
+  local sentence = GetString(SI_ECHOEXP_QUEST_ACCEPT)
+  local strL = zo_strformat(sentence, questName )
+  EchoExperience.outputToChanel(strL, msgTypeQuest)
+end
+
+--
+function EchoExperience.OnEventQuestComplete(eventCode, questName, level, previousExperience)
+  --EchoExperience.outputMsg("OnEventQuestComplete: Called")
+  EchoExperience.outputMsg("OnEventQuestComplete: "
+    .." questName="      .. tostring(questName)
+    .." level="     .. tostring(level) 
+    )
+  local sentence = GetString(SI_ECHOEXP_QUEST_COMPLETE)
+  local strL = zo_strformat(sentence, questName )
+  EchoExperience.outputToChanel(strL, msgTypeQuest)
+end
+
 --
 function EchoExperience.OnLitanyOfBlood(targetNameL, targetUnitId)
   --name coming in might not be a string
@@ -1351,6 +1395,8 @@ function EchoExperience:DoSetDefaults()
   EchoExperience.accountVariables.defaults.guildsettings   = EchoExperience:deepcopy(EchoExperience.savedVariables.guildsettings)
   EchoExperience.accountVariables.defaults.lootsettings    = EchoExperience:deepcopy(EchoExperience.savedVariables.lootsettings)
   EchoExperience.accountVariables.defaults.expsettings     = EchoExperience:deepcopy(EchoExperience.savedVariables.expsettings)
+  EchoExperience.accountVariables.defaults.questsettings     = EchoExperience:deepcopy(EchoExperience.savedVariables.questsettings)
+  
 end
 
 function EchoExperience:DoLoadSetDefaults()
@@ -1367,6 +1413,7 @@ function EchoExperience:DoLoadSetDefaults()
     EchoExperience.savedVariables.guildsettings   = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.guildsettings)
     EchoExperience.savedVariables.lootsettings    = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.lootsettings)
     EchoExperience.savedVariables.expsettings     = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.expsettings)
+    EchoExperience.savedVariables.questsettings     = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.questsettings)
     
     EchoExperience:RefreshTabs()
   end
@@ -1524,8 +1571,24 @@ function EchoExperience.SetupMiscEvents(reportMe)
     --EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_UNIT_DESTROYED",	EVENT_UNIT_DESTROYED, EchoExperience.OnUnitDestroyed)
   end
   --EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_UNIT_DESTROYED",	EVENT_UNIT_DESTROYED, EchoExperience.OnUnitDestroyed)
-
 end
+
+--
+function EchoExperience.SetupEventsQuest(reportMe)
+  if( EchoExperience.savedVariables.showquests ) then
+    --if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_XXX_HIDE),msgTypeSYS) end
+    local eventNamespace = nil
+    eventNamespace = EchoExperience.name.."EVENT_QUEST_ADDED"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_QUEST_ADDED, EchoExperience.OnEventQuestAdded)
+    eventNamespace = EchoExperience.name.."EVENT_QUEST_COMPLETE"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_QUEST_COMPLETE, EchoExperience.OnEventQuestComplete)    
+  else
+    --if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_XXX_HIDE),msgTypeSYS) end
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_ADDED",	EVENT_QUEST_ADDED, EchoExperience.OnEventQuestAdded)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_COMPLETE",	EVENT_QUEST_COMPLETE, EchoExperience.OnEventQuestAdded)
+  end
+end
+
 
 function EchoExperience:UpgradeSettings()
   local upgraded = false
@@ -1549,6 +1612,18 @@ function EchoExperience:UpgradeSettings()
   if(EchoExperience.savedVariables.tabGuild~=nil)then
     EchoExperience.savedVariables.tabGuild = nil
   end
+  if(EchoExperience.savedVariables.questsettings==nil) then
+    EchoExperience.savedVariables.questsettings = {} 
+    local elem = {}
+    elem["window"] = 1
+    elem["tab"]    = 1
+    elem["color"]  = EchoExperience.rgbaBase
+    if(elem.window>0 and elem.tab>0) then
+      table.insert(EchoExperience.savedVariables.questsettings, elem)    
+    end
+    EchoExperience.savedVariables.showquests = true
+  end
+  
   --
   if(EchoExperience.savedVariables.window~=nil and EchoExperience.savedVariables.tab~=nil )then
     local elem = {}
@@ -1677,6 +1752,15 @@ function EchoExperience:UpdateUIGuildTabs()
     myFpsLabelControl:UpdateChoices(vals )
   end
 end
+
+function EchoExperience:UpdateUIQuestTabs()
+  --need to update dropdown I guess?
+  local myFpsLabelControl = WINDOW_MANAGER:GetControlByName("EchoExpDDQuestOutput", "")
+  if(myFpsLabelControl~=nil) then
+    local vals = EchoExperience:ListOfQuestTabs()
+    myFpsLabelControl:UpdateChoices(vals )
+  end
+end
 -----------------------------
 -- SELECT/TABS/WINDOWS/COLORS Functions here --
 -----------------------------
@@ -1757,6 +1841,11 @@ function EchoExperience.SetupDefaultColors()
   EchoExperience.view.settingstemp.colorGuild.g = EchoExperience.rgbaBase.g
   EchoExperience.view.settingstemp.colorGuild.b = EchoExperience.rgbaBase.b
   EchoExperience.view.settingstemp.colorGuild.a = EchoExperience.rgbaBase.a
+  EchoExperience.view.settingstemp.colorQuest = {}
+  EchoExperience.view.settingstemp.colorQuest.r = EchoExperience.rgbaBase.r
+  EchoExperience.view.settingstemp.colorQuest.g = EchoExperience.rgbaBase.g
+  EchoExperience.view.settingstemp.colorQuest.b = EchoExperience.rgbaBase.b
+  EchoExperience.view.settingstemp.colorQuest.a = EchoExperience.rgbaBase.a
 end
 
 
@@ -1875,6 +1964,7 @@ else
 	EchoExperience.SetupLootGainsEvents()
   EchoExperience.SetupGuildEvents()
   EchoExperience.SetupMiscEvents()  
+  EchoExperience.SetupEventsQuest()
   EchoExperience.SetupLitanyOfBlood()
   
 end

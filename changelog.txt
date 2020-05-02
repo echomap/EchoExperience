@@ -24,6 +24,7 @@ EVENT_STYLE_LEARNED (number eventCode, number itemStyleId, number chapterIndex, 
 EVENT_TRAIT_LEARNED (number eventCode, string itemName, string itemTrait)
 craft deconstruct event?
 EVENT_INVENTORY_SINGLE_SLOT_UPDATE (number eventCode, Bag bagId, number slotId, boolean isNewItem, ItemUISoundCategory itemSoundCategory, number inventoryUpdateReason, number stackCountChange)
+can show totals have?
 
 ## TODO: Bugs
 bug: update lifetime on close?
@@ -32,13 +33,20 @@ LitanyOfBlood Gui still a mess
 
 
 ## [Testing branch]
-0.0.23 immersion flag. fix some litany stuff (if target was on list) / not GUI fixes
--
 
 ## [Unreleased]
+-fix bug on player left guild
+-quest events
+-guild message update
 -
 
 ## [Released]
+0.0.26 -Trait info on 'looted'
+0.0.25 -Trait info on 'looted'
+0.0.24
+-immersion flag
+-fixed some litany stuff (if target was on list) / not GUI fixes
+-Banking text update
 0.0.23 apiversion, fix slashcommand error
 0.0.22 apiversion
 0.0.21

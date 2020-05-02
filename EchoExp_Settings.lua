@@ -196,6 +196,61 @@ function EchoExperience:DoSaveGuildTab()
   EchoExperience:UpdateUIGuildTabs()
 end
 
+--QUEST
+function EchoExperience:ListOfQuestTabs()
+  local validChoices = EchoExperience:ListOfTabs(EchoExperience.savedVariables.questsettings)
+  return validChoices 
+end
+
+function EchoExperience:SelectQuestTab(choiceText)
+  EchoExperience.view.selected.questtab = choiceText
+end
+
+function EchoExperience:DoDeleteQuestTab()
+  local exptab = EchoExperience.view.selected.questtab 
+  if(exptab~=nil)then
+    --d(EchoExperience.name .. " exptab=" .. exptab) 
+    for k,v in pairs(EchoExperience.savedVariables.questsettings) do
+      local vCD = ZO_ColorDef:New(v.color.r, v.color.g, v.color.b, v.color.a)
+      local vtext = vCD:Colorize("COLOR")      
+      local valV = zo_strformat( "<<1>>/<<2>>/<<3>>", v.window,v.tab, vtext )
+      --d(EchoExperience.name .. " valV=" .. valV) 
+      if( exptab==valV ) then
+        EchoExperience.savedVariables.questsettings[k] = nil
+        break
+      end
+    end
+  end
+  EchoExperience:UpdateUIQuestTabs()
+end
+
+function EchoExperience:DoSaveQuestTab()
+  local window = EchoExperience.view.settingstemp.windowQuest
+  local tab    = EchoExperience.view.settingstemp.tabQuest
+  local color  = EchoExperience.view.settingstemp.colorQuest
+ 
+  if EchoExperience.savedVariables.questsettings == nil then
+    EchoExperience.savedVariables.questsettings = {}
+  end
+  
+  local elem = {}
+  elem["window"]=window
+  elem["tab"]   =tab
+  elem["color"] =color
+  table.insert(EchoExperience.savedVariables.questsettings, elem)
+ 
+  --reset
+  EchoExperience.view.settingstemp.windowQuest = 0
+  EchoExperience.view.settingstemp.tabQuest    = 0
+  
+  EchoExperience:UpdateUIQuestTabs()
+end
+
+
+
+
+--QUEST
+
 	--Setup Events Related
 function EchoExperience:DoRefreshDropdowns()
 	EchoExperience.SetupExpGainsEvents()

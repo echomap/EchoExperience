@@ -1,6 +1,6 @@
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.26",                    -- A nuisance to match to the Manifest.
+    version         = "0.0.27",                    -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -40,7 +40,7 @@ local defaultSettings = {
 	showGuildLogout= false,
 	showtracking = false,
   immersive = false, 
-    rgba    = {
+  rgba    = {
       ["r"] = 1,
       ["g"] = 1,
       ["b"] = 1,
@@ -52,6 +52,34 @@ local defaultSettings = {
       ["b"] = 1,
       ["a"] = 0.9,
 	},
+  expsettings = {
+    [1] = {
+          ["color"] = EchoExperience.rgbaBase,
+          ["window"] = 1,
+          ["tab"] = 1,
+      },
+  },
+  lootsettings = {
+    [1] = {
+          ["color"] = EchoExperience.rgbaBase,
+          ["window"] = 1,
+          ["tab"] = 1,
+      },
+  },
+  guildsettings= {
+    [1] = {
+          ["color"] = EchoExperience.rgbaBase,
+          ["window"] = 1,
+          ["tab"] = 1,
+      },
+  },
+  questsettings= {
+    [1] = {
+          ["color"] = EchoExperience.rgbaBase,
+          ["window"] = 1,
+          ["tab"] = 1,
+      },
+  },
 	LitanyOfBlood = {
     version = 1,
     list = {
@@ -94,12 +122,14 @@ function EchoExperience:ShowOutputs()
   EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.expsettings,   "EXP outputs")
   EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.lootsettings,  "LOOT outputs", msgTypeLOOT)
   EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.guildsettings, "GUILD outputs",msgTypeGUILD)
+  EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.questsettings, "Quest outputs",msgTypeQuest)
 end
 
 function EchoExperience:ShowDefaults()
   EchoExperience:ShowOutputsSub(EchoExperience.accountVariables.defaults.expsettings,   "EXP defaults")
   EchoExperience:ShowOutputsSub(EchoExperience.accountVariables.defaults.lootsettings,  "LOOT defaults",msgTypeLOOT)
   EchoExperience:ShowOutputsSub(EchoExperience.accountVariables.defaults.guildsettings, "GUILD defaults",msgTypeGUILD)
+  EchoExperience:ShowOutputsSub(EchoExperience.accountVariables.defaults.questsettings, "Quest defaults",msgTypeQuest)
 end
 
 function EchoExperience:ShowTracking()
@@ -684,6 +714,14 @@ function EchoExperience.OnAlliancePtGain(eventCode, alliancePoints,  playSound, 
 	end
 	--EchoExperience.debugMsg("OnAlliancePtGain Done")
 end
+
+--EVENT_CHAMPION_POINT_GAINED
+function EchoExperience.OnChampionPointeGain()
+		local strI = GetString(SI_ECHOEXP_CP_EARNED)
+		local strL = zo_strformat(strI, 1)
+		EchoExperience.outputToChanel(strL,msgTypeEXP)
+end
+
 
 --ONEvent  shows skill exp gains and CP gains
 --EVENT:   EVENT_EXPERIENCE_GAIN
@@ -1272,7 +1310,7 @@ end
 --
 function EchoExperience.OnEventQuestComplete(eventCode, questName, level, previousExperience)
   --EchoExperience.outputMsg("OnEventQuestComplete: Called")
-  EchoExperience.outputMsg("OnEventQuestComplete: "
+  EchoExperience.debugMsg("OnEventQuestComplete: "
     .." questName="      .. tostring(questName)
     .." level="     .. tostring(level) 
     )
@@ -1461,6 +1499,7 @@ function EchoExperience.SetupExpGainsEvents(reportMe)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."ChampionUnlocked", EVENT_CHAMPION_SYSTEM_UNLOCKED, EchoExperience.OnChampionUnlocked)
 		--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPUpdate",		EVENT_EXPERIENCE_UPDATE,        EchoExperience.OnExperienceUpdate)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPGain",		    EVENT_EXPERIENCE_GAIN,          EchoExperience.OnExperienceGain)
+		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_CHAMPION_POINT_GAINED", EVENT_CHAMPION_POINT_GAINED,          EchoExperience.OnChampionPointeGain)
 		--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnAlliancePtGain",	EVENT_ALLIANCE_POINT_UPDATE,    EchoExperience.OnAlliancePtGain)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnSkillPtChange",	EVENT_SKILL_POINTS_CHANGED,     EchoExperience.OnSkillPtChange)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnDiscoveryExp",	EVENT_DISCOVERY_EXPERIENCE,     EchoExperience.OnDiscoveryExperienceGain)
@@ -1473,6 +1512,7 @@ function EchoExperience.SetupExpGainsEvents(reportMe)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."SkillLineAdded",	EVENT_SKILL_LINE_ADDED)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."ChampionUnlocked", EVENT_CHAMPION_SYSTEM_UNLOCKED)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."XPGain",		EVENT_EXPERIENCE_GAIN)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_CHAMPION_POINT_GAINED", EVENT_CHAMPION_POINT_GAINED)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnAlliancePtGain",		EVENT_ALLIANCE_POINT_UPDATE)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnSkillPtChange",		EVENT_SKILL_POINTS_CHANGED)
 
@@ -1611,17 +1651,6 @@ function EchoExperience:UpgradeSettings()
   end
   if(EchoExperience.savedVariables.tabGuild~=nil)then
     EchoExperience.savedVariables.tabGuild = nil
-  end
-  if(EchoExperience.savedVariables.questsettings==nil) then
-    EchoExperience.savedVariables.questsettings = {} 
-    local elem = {}
-    elem["window"] = 1
-    elem["tab"]    = 1
-    elem["color"]  = EchoExperience.rgbaBase
-    if(elem.window>0 and elem.tab>0) then
-      table.insert(EchoExperience.savedVariables.questsettings, elem)    
-    end
-    EchoExperience.savedVariables.showquests = true
   end
   
   --

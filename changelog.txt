@@ -35,12 +35,14 @@ LitanyOfBlood Gui still a mess
 ## [Testing branch]
 
 ## [Unreleased]
--fix bug on player left guild
--quest events
--guild message update
 -
 
 ## [Released]
+0.0.28 -defaults for new installs
+0.0.27
+-fix bug on player left guild
+-quest events
+-guild message update
 0.0.26 -Trait info on 'looted'
 0.0.25 -Trait info on 'looted'
 0.0.24

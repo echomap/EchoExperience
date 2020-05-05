@@ -133,8 +133,19 @@ local localization_strings = {
 	SI_ECHOEXP_XP_GAIN         = "You gained <<1>> experience.",
 	SI_ECHOEXP_XP_SKILL_GAIN_1 = "Gained <<1>>xp in [<<2>>] (<<3>>/<<4>>) need <<5>>xp",
 	SI_ECHOEXP_XP_SKILL_GAIN_2 = "Gained <<1>>xp in [<<2>>]",
+  -- <<1>>name, <<2>> currentXP, <<3>> nextXP <<4>> diff, <<5>> thisGain, <<6>> icon
+  -- Qualifier: (1) non verb, (2) non verb w/currXP, (3) verb, (4) verb w/currXP
+  SI_ECHOEXP_XP_SKILLLINE_1      = "Gained xp in [<<1>>] need <<4>>xp",
+  SI_ECHOEXP_XP_SKILLLINE_2      = "Gained <<5>>xp in [<<1>>] need <<4>>xp",
+  SI_ECHOEXP_XP_SKILLLINE_3      = "Gained xp in [<<1>>] (<<2>>/<<3>>) need <<4>>xp",
+  SI_ECHOEXP_XP_SKILLLINE_4      = "Gained <<5>>xp in [<<1>>] (<<2>>/<<3>>) need <<4>>xp",
+  SI_ECHOEXP_XP_SKILLLINE_ICON_1 = "Gained xp in [|t14:14:<<6>>|t<<1>>] need <<4>>xp",
+  SI_ECHOEXP_XP_SKILLLINE_ICON_2 = "Gained <<5>>xp in [|t14:14:<<6>>|t<<1>>] need <<4>>xp",
+  SI_ECHOEXP_XP_SKILLLINE_ICON_3 = "Gained xp in [|t14:14:<<6>>|t<<1>>]  (<<2>>/<<3>>) need <<4>>xp",
+  SI_ECHOEXP_XP_SKILLLINE_ICON_4 = "Gained <<5>>xp in [|t14:14:<<6>>|t<<1>>] (<<2>>/<<3>>) need <<4>>xp",
+  
 	SI_ECHOEXP_CP_UNLOCKED     = "You unlocked Champion points!",
-	SI_ECHOEXP_CP_EARNED       = "You gained <<1>>cp.",
+	SI_ECHOEXP_CP_EARNED       = "You gained a Champion point!",
 	SI_ECHOEXP_DISCOVERY       = "You discovered: <<1>>.",
 	SI_ECHOEXP_SKILLINE        = "You learned the skillline: <<1>>",
 

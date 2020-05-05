@@ -541,7 +541,7 @@ end
 --NOTES:  XX
 function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex, reason, rank, previousXP, currentXP)
 	local skillLineName, currentSkillRank, available = GetSkillLineInfo(skillType, skillIndex)
-	local lastRankXP, nextRankXP, currentXP = GetSkillLineXPInfo(skillType, skillIndex)
+	local lastRankXP, nextRankXP, currentXP          = GetSkillLineXPInfo(skillType, skillIndex)
 	
 	local pressed, normal, mouseOver, announce = ZO_Skills_GetIconsForSkillType(skillType)
 	--if available then
@@ -550,6 +550,7 @@ function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex
 
 	-- Output
 	local diff = nextRankXP - currentXP
+  --EchoExperience.outputMsg("skillLineName="..tostring(skillLineName) .. " available: " ..tostring(available).. " verboseExp: ".. tostring(EchoExperience.savedVariables.verboseExp)  )
 	if skillLineName ~= nil and available and EchoExperience.savedVariables.verboseExp then
 		local XPgain  = currentXP  - previousXP
 		local curCur  = currentXP  - lastRankXP
@@ -561,13 +562,14 @@ function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex
 		if( EchoExperience.savedVariables.verboseSkillExp ) then
 			qualifier = 1
 		end
+    --EchoExperience.outputMsg("qualifier=" ..tostring(qualifier) )
 		local strI = GetString("SI_ECHOEXP_XP_SKILL_GAIN_",qualifier)
 		local skillLineNameI = skillLineName
 		if normal ~= nil and skillLineName~=nil then
 			skillLineNameI = "|t14:14:"..normal.."|t" .. skillLineName
 		end
 		--EchoExperience.outputToChanel("skillLineNameI '"..skillLineNameI.."'", msgTypeEXP)
-		local strL = zo_strformat(strI, XPgain, skillLineNameI, ZO_CommaDelimitNumber(curCur), ZO_CommaDelimitNumber(curNext), ZO_CommaDelimitNumber(diff) )
+		local strL = zo_strformat(strI, ZO_CommaDelimitNumber(XPgain), skillLineNameI, ZO_CommaDelimitNumber(curCur), ZO_CommaDelimitNumber(curNext), ZO_CommaDelimitNumber(diff) )
 		EchoExperience.outputToChanel(strL,msgTypeEXP)
 		--EchoExperience.outputToChanel("Gained "..XPgain.."xp in [" ..skillLineName.."] ("..curCur.."/"..curNext..") need " .. diff .. "xp",msgTypeEXP)
 	end
@@ -617,17 +619,58 @@ end
 --RETURNS:(number eventCode, number progressionIndex, number lastRankXP, number nextRankXP, number currentXP, boolean atMorph)
 --NOTES:  currentXP is new total xp, last is all the way back.
 function EchoExperience.OnAbilityExperienceUpdate(eventCode, progressionIndex, lastRankXP, nextRankXP, currentXP, atMorph)
-	--EchoExperience.debugMsg("OnAbilityExperienceUpdate Called")
-	--EchoExperience.debugMsg("OnAbilityExperienceUpdate eventCode="..eventCode.." progressionIndex="..progressionIndex .." lastRankXP="..lastRankXP
-	--.." nextRankXP="..nextRankXP
-	--.." currentXP="..currentXP
-	--.." atMorph="..tostring(atMorph)
-	--)
-	--local name, morph, rank = GetAbilityProgressionInfo(progressionIndex)
-	--EchoExperience.outputToChanel("You gained exp in "..name.."." )
-	--EchoExperience.debugMsg("OnAbilityExperienceUpdate Done")
+  if( EchoExperience.savedVariables.verboseExp and nextRankXP>0 ) then
+    local name, morph, rank             = GetAbilityProgressionInfo(progressionIndex)     
+    local name2, texture,  abilityIndex = GetAbilityProgressionAbilityInfo(progressionIndex, morph, rank)
+    local diff =  nextRankXP - currentXP
+    EchoExperience.debugMsg("OnAbilityExperienceUpdate:"
+      .. " name="..tostring(name)
+      .. " name2="..tostring(name2)
+      .. " morph="..tostring(morph)
+      .. " diff="..tostring(diff)
+    )
+    
+    --
+    local nameFmt = name2
+    local qualifier = 1
+    local qualStr = "SI_ECHOEXP_XP_SKILLLINE_"
+    if(EchoExperience.savedVariables.verboseSkillExp) then
+      qualifier = 3
+    end
+		if texture ~= nil then
+      qualStr = "SI_ECHOEXP_XP_SKILLLINE_ICON_"
+		end
+    -- Check last saved value of XP
+    local tableKey = tostring(name)
+    local thisGain = nil
+    if( EchoExperience.savedVariables.skilltracking ~= nil) then
+      local skillElem = EchoExperience.savedVariables.skilltracking[tableKey]
+      if( skillElem ~= nil ) then
+        local lastCurrXp = skillElem.currXP
+        thisGain = currentXP - lastCurrXp
+        if(thisGain>0) then
+           qualifier = qualifier + 1
+        end
+      end
+    end
+    
+    -- NO ICON
+    -- Qualifier: 1 non verb,  2 non verb w/currXP 2; 3 verb,  4 verb w/currXP
+    -- HAS ICON
+    -- Qualifier: 1 non verb,  2 non verb w/currXP 2; 3 verb,  4 verb w/currXP
+    -- <<1>>name, <<2>> currentXP, <<3>> nextXP <<4>> diff, <<5>> thisGain, <<6>> icon
+    local sentence = GetString(qualStr,qualifier)    
+    local strL = zo_strformat(sentence, tostring(name2), ZO_CommaDelimitNumber(currentXP), ZO_CommaDelimitNumber(nextRankXP), ZO_CommaDelimitNumber(diff), thisGain, texture )
+		EchoExperience.outputToChanel(strL,msgTypeEXP)
+    --
+    EchoExperience.savedVariables.skilltracking[tableKey] = {}
+    EchoExperience.savedVariables.skilltracking[tableKey].name2 = name2
+    EchoExperience.savedVariables.skilltracking[tableKey].morph = morph
+    EchoExperience.savedVariables.skilltracking[tableKey].currXP = currentXP
+    EchoExperience.savedVariables.skilltracking[tableKey].nextRankXP = nextRankXP
+  end
 end
-
+  
 ------------------------------
 -- EVENT
 --ONEvent  shows that you discovered something/somewhere
@@ -726,7 +769,7 @@ function EchoExperience.OnAlliancePtGain(eventCode, alliancePoints,  playSound, 
 end
 
 --EVENT_CHAMPION_POINT_GAINED
-function EchoExperience.OnChampionPointeGain()
+function EchoExperience.OnChampionPointGain()
 		local strI = GetString(SI_ECHOEXP_CP_EARNED)
 		local strL = zo_strformat(strI, 1)
 		EchoExperience.outputToChanel(strL,msgTypeEXP)
@@ -1546,12 +1589,12 @@ function EchoExperience.SetupExpGainsEvents(reportMe)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."ChampionUnlocked", EVENT_CHAMPION_SYSTEM_UNLOCKED, EchoExperience.OnChampionUnlocked)
 		--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPUpdate",		EVENT_EXPERIENCE_UPDATE,        EchoExperience.OnExperienceUpdate)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPGain",		    EVENT_EXPERIENCE_GAIN,          EchoExperience.OnExperienceGain)
-		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_CHAMPION_POINT_GAINED", EVENT_CHAMPION_POINT_GAINED,          EchoExperience.OnChampionPointeGain)
+		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_CHAMPION_POINT_GAINED", EVENT_CHAMPION_POINT_GAINED,          EchoExperience.OnChampionPointGain)
 		--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnAlliancePtGain",	EVENT_ALLIANCE_POINT_UPDATE,    EchoExperience.OnAlliancePtGain)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnSkillPtChange",	EVENT_SKILL_POINTS_CHANGED,     EchoExperience.OnSkillPtChange)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnDiscoveryExp",	EVENT_DISCOVERY_EXPERIENCE,     EchoExperience.OnDiscoveryExperienceGain)
 		--not really needed
-	--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."AbilityProgression",EVENT_ABILITY_PROGRESSION_XP_UPDATE, EchoExperience.OnAbilityExperienceUpdate)
+	EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."AbilityProgression",EVENT_ABILITY_PROGRESSION_XP_UPDATE, EchoExperience.OnAbilityExperienceUpdate)
 		--
 	else
 		if(reportMe) then EchoExperience.outputToChanel(SI_ECHOEXP_EXPGAINS_HIDE,msgTypeSYS) end
@@ -1933,6 +1976,12 @@ function EchoExperience.CheckVerifyDefaults()
     EchoExperience.savedVariables.tracking = {}
     madeChange = true
   end  
+  
+  if( EchoExperience.savedVariables.skilltracking == nil ) then
+    EchoExperience.savedVariables.skilltracking = {}
+    madeChange = true
+  end
+    
   
   if(madeChange) then
     zo_callLater(EchoExperience.RefreshTabs, 12000)

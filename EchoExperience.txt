@@ -5,7 +5,9 @@
 ## Author: Echomap
 ## Description: EchoExperience will show experience gains in chat.
 ## SavedVariables: EchoExperienceSavedVariables EchoExperienceAccountSavedVariables
-## DependsOn: LibStub LibAddonMenu-2.0
+## DependsOn: LibAddonMenu-2.0
+## OptionalDependsOn: LibStub
+## IsLibrary: false
 
 Languages\en.lua
 Languages\$(language).lua

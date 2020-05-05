@@ -25,6 +25,7 @@ EVENT_TRAIT_LEARNED (number eventCode, string itemName, string itemTrait)
 craft deconstruct event?
 EVENT_INVENTORY_SINGLE_SLOT_UPDATE (number eventCode, Bag bagId, number slotId, boolean isNewItem, ItemUISoundCategory itemSoundCategory, number inventoryUpdateReason, number stackCountChange)
 can show totals have?
+fanfare?
 
 ## TODO: Bugs
 bug: update lifetime on close?
@@ -35,12 +36,17 @@ LitanyOfBlood Gui still a mess
 ## [Testing branch]
 
 ## [Unreleased]
--reword save defaults, added show quest to saved settings
--localize settings screen
--show quests in log/total
--fixed localization bug
+-Per skillline reporting not working, per either my mistake or api change, updated
+-OnAbilityExperienceUpdate
+-messages used for skilllines
+-
 
 ## [Released]
+0.0.30
+-reworded save defaults, added show quest to saved settings
+-localized settings screen
+-show quests in log/total
+-localization sync
 0.0.29
 - Comments updates
 - derp: Fix bug where defaults constantly show up!

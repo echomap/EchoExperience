@@ -4,6 +4,7 @@
 -- SELECT/TABS/WINDOWS/COLORS Functions here --
 -----------------------------
 
+------------------------------
 --Todo generalized and use this
 function EchoExperience:ListOfTabs(valSettings)
   local validChoices =  {}  
@@ -28,10 +29,14 @@ function EchoExperience:ListOfExpTabs()
   return validChoices 
 end
 
+------------------------------
+--
 function EchoExperience:SelectExpTab(choiceText)
   EchoExperience.view.selected.exptab = choiceText
 end
 
+------------------------------
+--
 function EchoExperience:DoDeleteExpTab()
   local exptab = EchoExperience.view.selected.exptab 
   if(exptab~=nil)then
@@ -50,6 +55,8 @@ function EchoExperience:DoDeleteExpTab()
   EchoExperience:UpdateUIExpTabs()
 end
 
+------------------------------
+--
 function EchoExperience:DoSaveExpTab()
   local window = EchoExperience.view.settingstemp.windowExp
   local tab    = EchoExperience.view.settingstemp.tabExp
@@ -72,15 +79,21 @@ function EchoExperience:DoSaveExpTab()
   EchoExperience:UpdateUIExpTabs()
 end
 
+------------------------------
+--
 function EchoExperience:ListOfLootTabs()
   local validChoices = EchoExperience:ListOfTabs(EchoExperience.savedVariables.lootsettings)
   return validChoices 
 end
 
+------------------------------
+--
 function EchoExperience:SelectLootTab(choiceText)
   EchoExperience.view.selected.loottab = choiceText
 end
 
+------------------------------
+--
 function EchoExperience:DoDeleteLootTab()
   local loottab = EchoExperience.view.selected.loottab 
   if(loottab~=nil)then
@@ -99,6 +112,8 @@ function EchoExperience:DoDeleteLootTab()
   EchoExperience:UpdateUILootTabs()
 end
 
+------------------------------
+--
 function EchoExperience:DoSaveLootTab()
   if EchoExperience.savedVariables.lootsettings == nil then
     EchoExperience.savedVariables.lootsettings = {}
@@ -120,15 +135,21 @@ function EchoExperience:DoSaveLootTab()
   EchoExperience:UpdateUILootTabs()
 end
 
+------------------------------
+--
 function EchoExperience:ListOfGuildTabs()
   local validChoices = EchoExperience:ListOfTabs(EchoExperience.savedVariables.guildsettings)
   return validChoices 
 end
 
+------------------------------
+--
 function EchoExperience:SelectGuildTab(choiceText)
   EchoExperience.view.selected.guildtab = choiceText
 end
 
+------------------------------
+--
 function EchoExperience:DoDeleteGuildTab()
   local guildtab = EchoExperience.view.selected.guildtab 
   if(guildtab~=nil)then
@@ -147,6 +168,8 @@ function EchoExperience:DoDeleteGuildTab()
   EchoExperience:UpdateUIGuildTabs()
 end
 
+------------------------------
+--
 function EchoExperience:DoSaveGuildTab()
   local window = EchoExperience.view.settingstemp.windowGuild
   local tab    = EchoExperience.view.settingstemp.tabGuild
@@ -196,16 +219,21 @@ function EchoExperience:DoSaveGuildTab()
   EchoExperience:UpdateUIGuildTabs()
 end
 
+------------------------------
 --QUEST
 function EchoExperience:ListOfQuestTabs()
   local validChoices = EchoExperience:ListOfTabs(EchoExperience.savedVariables.questsettings)
   return validChoices 
 end
 
+------------------------------
+--
 function EchoExperience:SelectQuestTab(choiceText)
   EchoExperience.view.selected.questtab = choiceText
 end
 
+------------------------------
+--
 function EchoExperience:DoDeleteQuestTab()
   local exptab = EchoExperience.view.selected.questtab 
   if(exptab~=nil)then
@@ -224,6 +252,8 @@ function EchoExperience:DoDeleteQuestTab()
   EchoExperience:UpdateUIQuestTabs()
 end
 
+------------------------------
+--
 function EchoExperience:DoSaveQuestTab()
   local window = EchoExperience.view.settingstemp.windowQuest
   local tab    = EchoExperience.view.settingstemp.tabQuest
@@ -247,14 +277,15 @@ function EchoExperience:DoSaveQuestTab()
 end
 
 
-
-
 --QUEST
 
-	--Setup Events Related
+------------------------------
+-- Setup Events Related
 function EchoExperience:DoRefreshDropdowns()
 	EchoExperience.SetupExpGainsEvents()
 	EchoExperience.SetupLootGainsEvents()
   EchoExperience.SetupGuildEvents()
   EchoExperience.SetupMiscEvents()  
 end
+
+--EOF

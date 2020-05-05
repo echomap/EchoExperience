@@ -1,4 +1,11 @@
--- Settings menu.
+--[[ Settings GUI ]]-- 
+ 
+----------------------------------------
+-- Functions to SHOW Settings data --
+----------------------------------------
+
+------------------------------
+-- 
 function EchoExperience.LoadSettings()
   local LAM = LibStub("LibAddonMenu-2.0")
 
@@ -9,7 +16,7 @@ function EchoExperience.LoadSettings()
     author  = EchoExperience.Colorize(EchoExperience.author, "AAF0BB"),
     version = EchoExperience.Colorize(EchoExperience.version, "AA00FF"),
     slashCommand = "/EchoExperience",
-    registerForRefresh = true,
+    registerForRefresh  = true,
     registerForDefaults = true,
   }
   LAM:RegisterAddonPanel(EchoExperience.menuName, panelData)
@@ -29,16 +36,16 @@ function EchoExperience.LoadSettings()
   } 
   optionsTable[#optionsTable+1] = {
     type = "button",
-    name = "Refresh dropdowns",
-    tooltip = "Refresh dropdown Data!",
+    name = GetString(SI_ECHOEXP_SETTINGS_REFRESH_TEXT), --"Refresh dropdowns",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_REFRESH_TOOLTIP), --"Refresh dropdown Data. (Use in case things just don't look right, or on first use)",
     func = function()  EchoExperience:DoRefreshDropdowns() end,
     width = "half",	--or "half" (optional)
   } 
   
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
-    name = "Immersive",
-    tooltip = "Be immersive? on or off.",
+    name = GetString(SI_ECHOEXP_SETTINGS_IMMERSIVE), --"Immersive",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_BEIMMERSIVE), --"Be immersive? on or off.",
     getFunc = function() return EchoExperience.savedVariables.immersive end,
     setFunc = function(value)
       EchoExperience.savedVariables.immersive = value
@@ -48,33 +55,33 @@ function EchoExperience.LoadSettings()
   
   optionsTable[#optionsTable+1] = {
     type = "button",
-    name = "Save these as default",
-    tooltip = "Save these as default?",
+    name = GetString(SI_ECHOEXP_SETTINGS_SAVE_TITLE),  --"Save these settings",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_SAVE_MSG), --"Save these as settings so they can be used later?",
     func = function()  EchoExperience:DoSetDefaults() end,
     width = "full",	--or "half" (optional)
-    warning = "No confirmation if you do this!",	--(optional)
+    warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
   optionsTable[#optionsTable+1] = {
     type = "button",
-    name = "Load from defaults",
-    tooltip = "Load settings from default?",
+    name = GetString(SI_ECHOEXP_SETTINGS_LOAD_TITLE), --"Load saved settings",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LOAD_MSG), --"Load settings from saved profile?",
     func = function()  EchoExperience:DoLoadSetDefaults() end,
     width = "full",	--or "half" (optional)
-    warning = "No confirmation if you do this!",	--(optional)
+    warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
   
   --QUEST
   optionsTable[#optionsTable+1] = {
     type = "header",
     title = nil,	--(optional)
-    text = "Quest Options",
-    name = "Quest Options",
+    text = GetString(SI_ECHOEXP_SETTINGS_QUEST_SECTIONTITLE), --"Quest Options",
+    name = GetString(SI_ECHOEXP_SETTINGS_QUEST_SECTIONNAME),  --"Quest Options",
     width = "full",	--or "half" (optional)
   }
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
-    name = "Quest",
-    tooltip = "Show Quests accept/complete? on or off.",
+    name = GetString(SI_ECHOEXP_SETTINGS_QUEST_TITLE), --"Quest",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_QUEST_TOOLTIP), --"Show Quests accept/complete? on or off.",
     getFunc = function() return EchoExperience.savedVariables.showquests end,
     setFunc = function(value)
       EchoExperience.savedVariables.showquests = value
@@ -84,8 +91,8 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
-    name = "Quest Output Tabs",
-    tooltip = "Tab(s) for Quest output.",
+    name = GetString(SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_NAME), --"Quest Output Tabs",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_TOOLTIP), --"Tab(s) for Quest output.",
     choices = EchoExperience:ListOfQuestTabs(),
     getFunc = function() return "Select" end,
     setFunc = function(var) EchoExperience:SelectQuestTab(var) end,
@@ -94,23 +101,23 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "button",
-    name = "Delete",
-    tooltip = "Delete selected Quest's Data!",
+    name = GetString(SI_ECHOEXP_SETTINGS_BTN_DELETE), --"Delete",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_DELETE), --"Delete selected Quest's Data!",
     func = function()  EchoExperience:DoDeleteQuestTab() end,
     width = "full",	--or "half" (optional)
-    warning = "No confirmation if you do this!",	--(optional)
+    warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   } 
   optionsTable[#optionsTable+1] = {
     type = "header",
     title = nil,	--(optional)
-    text = "Add new Quest output:",
-    name = "Add Quest Output",
+    text = GetString(SI_ECHOEXP_SETTINGS_QUEST_NEWOUTPUTS_TEXT), --"Add new Quest output:",
+    name = GetString(SI_ECHOEXP_SETTINGS_QUEST_NEWOUTPUTS_NAME), --"Add Quest Output",
     width = "full",	--or "half" (optional)
   }
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
-    name = "Quest Output to Window",
-    tooltip = "Window for Quest output.",
+    name = GetString(SI_ECHOEXP_SETTINGS_QUEST_WINDOW_NAME), --"Quest Output to Window",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_QUEST_WINDOW_TOOLTIP), --"Window for Quest output.",
     choices = {"1","2","3","4","5"},
     getFunc = function() return tostring(EchoExperience.view.settingstemp.windowQuest) end,
     setFunc = function(var) EchoExperience.view.settingstemp.windowQuest = tonumber(var) end,
@@ -118,8 +125,8 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
-    name = "Quest Output Tab",
-    tooltip = "Tab for Quest output.",
+    name = GetString(SI_ECHOEXP_SETTINGS_QUEST_TAB_NAME), --"Quest Output Tab",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_QUEST_TAB_TOOLTIP), --"Tab for Quest output.",
     choices = {"1", "2", "3", "4", "5", "6"},
     getFunc = function() return tostring(EchoExperience.view.settingstemp.tabQuest) end,
     setFunc = function(var) EchoExperience.view.settingstemp.tabQuest = tonumber(var) end,
@@ -127,8 +134,8 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "colorpicker",
-    name = "Quest Output Color",
-    tooltip = "What Color to use for Quest text.",
+    name = GetString(SI_ECHOEXP_SETTINGS_QUEST_COLOR_TEXT), --"Quest Output Color",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_QUEST_COLOR_TOOLTIP), --"What Color to use for Quest text.",
     getFunc = function() 
         if(EchoExperience.view.settingstemp==nil or EchoExperience.view.settingstemp.colorQuest==nil) then
           EchoExperience.SetupDefaultColors()
@@ -154,11 +161,11 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "button",
-    name = "Save",
-    tooltip = "Save selected Quest chat Data!",
+    name = GetString(SI_ECHOEXP_SETTINGS_BTN_SAVE), --"Save",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_QUEST_NEWOUTPUTS_SAVE), --"Save selected Quest chat Data!",
     func = function()  EchoExperience:DoSaveQuestTab() end,
     width = "full",	--or "half" (optional)
-    warning = "No confirmation if you do this!",	--(optional)
+    warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
   --QUEST
   
@@ -166,14 +173,14 @@ function EchoExperience.LoadSettings()
   optionsTable[#optionsTable+1] = {
     type = "header",
     title = nil,	--(optional)
-    text = "Experience Options",
-    name = "Experience Options",
+    text = GetString(SI_ECHOEXP_SETTINGS_EXP_SECTIONTITLE), --"Experience Options",
+    name =  GetString(SI_ECHOEXP_SETTINGS_EXP_SECTIONNAME), --"Experience Options",
     width = "full",	--or "half" (optional)
   }
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
-    name = "Experience",
-    tooltip = "Report? on or off.",
+    name = GetString(SI_ECHOEXP_SETTINGS_EXP_TITLE), --"Experience",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_TOOLTIP), --"Report? on or off.",
     getFunc = function() return EchoExperience.savedVariables.showExp end,
     setFunc = function(value)
       EchoExperience.savedVariables.showExp = value
@@ -183,8 +190,8 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
-    name = "Verbose Experience",
-    tooltip = "Verbose reporting if experience is on?",
+    name = GetString(SI_ECHOEXP_SETTINGS_EXP_VERB_NAME), --"Verbose Experience",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_VERB_TOOLTIP), --"Verbose reporting if experience is on?",
     getFunc = function() return EchoExperience.savedVariables.verboseExp end,
     setFunc = function(value)
       EchoExperience.savedVariables.verboseExp = value
@@ -194,8 +201,8 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
-    name = "Verbose Skill Experience",
-    tooltip = "Verbose reporting if experience is on?",
+    name = GetString(SI_ECHOEXP_SETTINGS_EXP_VERBSKILL_TITLE), --""Verbose Skill Experience",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_VERBSKILL_TOOLTIP), --""Verbose reporting if experience is on?",
     getFunc = function() return EchoExperience.savedVariables.verboseSkillExp end,
     setFunc = function(value)
       EchoExperience.savedVariables.verboseSkillExp = value
@@ -206,8 +213,8 @@ function EchoExperience.LoadSettings()
   
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
-    name = "Exp Output Tabs",
-    tooltip = "Tab(s) for Exp output.",
+    name = GetString(SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_NAME), --"Exp Output Tabs",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_TOOLTIP), --"Tab(s) for Exp output.",
     choices = EchoExperience:ListOfExpTabs(),
     getFunc = function() return "Select" end,
     setFunc = function(var) EchoExperience:SelectExpTab(var) end,
@@ -216,23 +223,23 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "button",
-    name = "Delete",
-    tooltip = "Delete selected Character's Data!",
+    name = GetString(SI_ECHOEXP_SETTINGS_BTN_DELETE), --"Delete",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_DELETE), --"Delete selected Character's Data!",
     func = function()  EchoExperience:DoDeleteExpTab() end,
     width = "full",	--or "half" (optional)
-    warning = "No confirmation if you do this!",	--(optional)
+    warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   } 
   optionsTable[#optionsTable+1] = {
     type = "header",
     title = nil,	--(optional)
-    text = "Add new Experience output:",
-    name = "Add Experience Output",
+    text = GetString(SI_ECHOEXP_SETTINGS_EXP_NEWOUTPUTS_TEXT), --"Add new Experience output:",
+    name = GetString(SI_ECHOEXP_SETTINGS_EXP_NEWOUTPUTS_NAME), --"Add Experience Output",
     width = "full",	--or "half" (optional)
   }
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
-    name = "Exp Output to Window",
-    tooltip = "Window for Exp output.",
+    name = GetString(SI_ECHOEXP_SETTINGS_EXP_WINDOW_NAME), --"Exp Output to Window",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_WINDOW_TOOLTIP), --"Window for Exp output.",
     choices = {"1","2","3","4","5"},
     getFunc = function() return tostring(EchoExperience.view.settingstemp.windowExp) end,
     setFunc = function(var) EchoExperience.view.settingstemp.windowExp = tonumber(var) end,
@@ -240,8 +247,8 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
-    name = "Exp Output Tab",
-    tooltip = "Tab for Exp output.",
+    name = GetString(SI_ECHOEXP_SETTINGS_EXP_TAB_NAME), --"Exp Output Tab",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_TAB_NAME), --"Tab for Exp output.",
     choices = {"1", "2", "3", "4", "5", "6"},
     getFunc = function() return tostring(EchoExperience.view.settingstemp.tabExp) end,
     setFunc = function(var) EchoExperience.view.settingstemp.tabExp = tonumber(var) end,
@@ -249,8 +256,8 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "colorpicker",
-    name = "EXP Output Color",
-    tooltip = "What Color to use for Exp text.",
+    name = GetString(SI_ECHOEXP_SETTINGS_EXP_COLOR_TEXT), --"EXP Output Color",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_COLOR_TOOLTIP), --"What Color to use for Exp text.",
     getFunc = function() 
         if(EchoExperience.view.settingstemp==nil or EchoExperience.view.settingstemp.colorExp==nil) then
           EchoExperience.SetupDefaultColors()
@@ -276,11 +283,11 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "button",
-    name = "Save",
-    tooltip = "Save selected Exp chat Data!",
+    name = GetString(SI_ECHOEXP_SETTINGS_BTN_SAVE), --"Save",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_NEWOUTPUTS_SAVE), --"Save selected Exp chat Data!",
     func = function()  EchoExperience:DoSaveExpTab() end,
     width = "full",	--or "half" (optional)
-    warning = "No confirmation if you do this!",	--(optional)
+    warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
   
   ---LOOT
@@ -292,14 +299,14 @@ function EchoExperience.LoadSettings()
   optionsTable[#optionsTable+1] = {
     type = "header",
     --title = "My Title",	--(optional)
-    text = "Loot Options",
-    name = "Loot Options",
+    text = GetString(SI_ECHOEXP_SETTINGS_LOOT_SECTIONTITLE), -- "Loot Options",
+    name = GetString(SI_ECHOEXP_SETTINGS_LOOT_SECTIONNAME), -- "Loot Options",
     width = "full",	--or "half" (optional)
   }
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
-    name = "Looted Items",
-    tooltip = "Report? on or off.",
+    name    = GetString(SI_ECHOEXP_SETTINGS_LOOT_TITLE), -- "Looted Items",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LOOT_TOOLTIP), -- "Report? on or off.",
     getFunc = function() return EchoExperience.savedVariables.showLoot end,
     setFunc = function(value)
       EchoExperience.savedVariables.showLoot = value
@@ -309,8 +316,8 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {		
     type = "checkbox",
-    name = "Show other types of item events? (researched/trashed/etc)",
-    tooltip = "Verbose reporting of Looted items?",
+    name    = GetString(SI_ECHOEXP_SETTINGS_LOOT_VERB_NAME), -- "Show other types of item events? (researched/trashed/etc)",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LOOT_VERB_TOOLTIP), -- "Verbose reporting of Looted items?",
     getFunc = function() return EchoExperience.savedVariables.extendedLoot end,
     setFunc = function(value)
       EchoExperience.savedVariables.extendedLoot = value
@@ -320,8 +327,8 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {		
     type = "checkbox",
-    name = "Show other group member's Looted items?",
-    tooltip = "Verbose reporting if Looted is on?",
+    name    = GetString(SI_ECHOEXP_SETTINGS_LOOT_GROUP_TITLE), -- "Show other group member's Looted items?",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LOOT_GROUP_TOOLTIP), -- "Verbose reporting if Looted is on?",
     getFunc = function() return EchoExperience.savedVariables.groupLoot end,
     setFunc = function(value)
       EchoExperience.savedVariables.groupLoot = value
@@ -332,8 +339,8 @@ function EchoExperience.LoadSettings()
   
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
-    name = "Loot Output Tabs",
-    tooltip = "Tab(s) for Loot output.",
+    name    = GetString(SI_ECHOEXP_SETTINGS_LOOT_OUTPUTS_NAME), -- "Loot Output Tabs",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LOOT_OUTPUTS_TOOLTIP), -- "Tab(s) for Loot output.",
     choices = EchoExperience:ListOfLootTabs(),
     getFunc = function() return "Select" end,
     setFunc = function(var) EchoExperience:SelectLootTab(var) end,
@@ -342,23 +349,23 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "button",
-    name = "Delete",
-    tooltip = "Delete selected Character's Data!",
+    name    = GetString(SI_ECHOEXP_SETTINGS_BTN_DELETE), --"Delete",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LOOT_OUTPUTS_DELETE), -- "Delete selected Character's Data!",
     func = function()  EchoExperience:DoDeleteLootTab() end,
     width = "full",	--or "half" (optional)
-    warning = "No confirmation if you do this!",	--(optional)
+    warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   } 
   optionsTable[#optionsTable+1] = {
     type = "header",
     title = nil,	--(optional)
-    text = "Add new Loot output:",
-    name = "Add Loot Output",
+    text = GetString(SI_ECHOEXP_SETTINGS_LOOT_NEWOUTPUTS_TEXT), -- "Add new Loot output:",
+    name = GetString(SI_ECHOEXP_SETTINGS_LOOT_NEWOUTPUTS_NAME), -- "Add Loot Output",
     width = "full",	--or "half" (optional)
   }
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
-    name = "Loot Output to Window",
-    tooltip = "Window for Loot output.",
+    name    = GetString(SI_ECHOEXP_SETTINGS_LOOT_WINDOW_NAME), --"Loot Output to Window",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LOOT_WINDOW_TOOLTIP), --"Window for Loot output.",
     choices = {"1","2","3","4","5"},
     getFunc = function() return tostring(EchoExperience.view.settingstemp.windowLoot) end,
     setFunc = function(var) EchoExperience.view.settingstemp.windowLoot = tonumber(var) end,
@@ -366,8 +373,8 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
-    name = "Loot Output Tab",
-    tooltip = "Tab for Loot output.",
+    name    = GetString(SI_ECHOEXP_SETTINGS_LOOT_TAB_NAME), -- "Loot Output Tab",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LOOT_TAB_TOOLTIP), --"Tab for Loot output.",
     choices = {"1", "2", "3", "4", "5", "6"},
     getFunc = function() return tostring(EchoExperience.view.settingstemp.tabLoot) end,
     setFunc = function(var) EchoExperience.view.settingstemp.tabLoot = tonumber(var) end,
@@ -375,8 +382,8 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "colorpicker",
-    name = "Loot Output Color",
-    tooltip = "What Color to use for Loot text.",
+    name    = GetString(SI_ECHOEXP_SETTINGS_LOOT_COLOR_TEXT), --"Loot Output Color",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LOOT_COLOR_TOOLTIP), --"What Color to use for Loot text.",
     getFunc = function()               
         if(EchoExperience.view.settingstemp==nil or EchoExperience.view.settingstemp.colorLoot==nil) then
           EchoExperience.SetupDefaultColors()
@@ -401,11 +408,11 @@ function EchoExperience.LoadSettings()
     width = "full",	--or "half" (optional)
   }
   
-
+  --[[ ALPHA maybe to let this happen channel by channel?
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
-    name = "Looted Items",
-    tooltip = "Report? on or off.",
+    name    = GetString(SI_ECHOEXP_SETTINGS_LOOT_TITLE), --"Looted Items",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LOOT_TOOLTIP), --"Report? on or off.",
     getFunc = function() return EchoExperience.view.settingstemp.showItemLoot end,
     setFunc = function(value)
       EchoExperience.view.settingstemp.showItemLoot = value
@@ -414,22 +421,23 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {		
     type = "checkbox",
-    name = "Show other group member's Looted items?",
-    tooltip = "Verbose reporting if Looted is on?",
+    name    = GetString(SI_ECHOEXP_SETTINGS_LOOT_GROUP_TITLE), --"Show other group member's Looted items?",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LOOT_GROUP_TOOLTIP), --"Verbose reporting if Looted is on?",
     getFunc = function() return EchoExperience.view.settingstemp.showGroupLoot end,
     setFunc = function(value)
       EchoExperience.view.settingstemp.showGroupLoot = value
     end,
     width = "half",	--or "half" (optional)
   }
+  --]]
   
   optionsTable[#optionsTable+1] = {
     type = "button",
-    name = "Save",
-    tooltip = "Save selected Loot chat Data!",
+    name    = GetString(SI_ECHOEXP_SETTINGS_BTN_SAVE), --"Save",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LOOT_NEWOUTPUTS_SAVE), --"Save selected Loot chat Data!",
     func = function()  EchoExperience:DoSaveLootTab() end,
     width = "full",	--or "half" (optional)
-    warning = "No confirmation if you do this!",	--(optional)
+    warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
   
   ---GUILD
@@ -441,14 +449,14 @@ function EchoExperience.LoadSettings()
   optionsTable[#optionsTable+1] = {
     type = "header",
     --title = "My Title",	--(optional)
-    text = "Guild Options",
-    name = "Guild Options",
+    text = GetString(SI_ECHOEXP_SETTINGS_GUILD_SECTIONTITLE),-- "Guild Options",
+    name = GetString(SI_ECHOEXP_SETTINGS_GUILD_SECTIONNAME),-- "Guild Options",
     width = "full",	--or "half" (optional)
   }
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
-    name = "Show Guild LogOns?",
-    tooltip = "Report? on or off.",
+    name    = GetString(SI_ECHOEXP_SETTINGS_GUILD_LOGON_NAME),-- "Show Guild LogOns?",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_GUILD_LOGON_TOOLTIP),-- "Report? on or off.",
     getFunc = function() return EchoExperience.savedVariables.showGuildLogin end,
     setFunc = function(value)
       EchoExperience.savedVariables.showGuildLogin = value
@@ -459,8 +467,8 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
-    name = "Show Guild LogOffs?",
-    tooltip = "Report? on or off.",
+    name    = GetString(SI_ECHOEXP_SETTINGS_GUILD_LOGOFF_NAME),-- "Show Guild LogOffs?",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_GUILD_LOGOFF_TOOLTIP),-- "Report? on or off.",
     getFunc = function() return EchoExperience.savedVariables.showGuildLogout end,
     setFunc = function(value)
       EchoExperience.savedVariables.showGuildLogout = value
@@ -472,8 +480,8 @@ function EchoExperience.LoadSettings()
 
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
-    name = "Guild Output Tabs",
-    tooltip = "Tab(s) for Guild output.",
+    name    = GetString(SI_ECHOEXP_SETTINGS_GUILD_OUTPUTS_NAME),-- "Guild Output Tabs",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_GUILD_OUTPUTS_TOOLTIP),-- "Tab(s) for Guild output.",
     choices = EchoExperience:ListOfGuildTabs(),
     getFunc = function() return "Select" end,
     setFunc = function(var) EchoExperience:SelectGuildTab(var) end,
@@ -482,23 +490,23 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "button",
-    name = "Delete",
-    tooltip = "Delete selected Character's Data!",
+    name = GetString(SI_ECHOEXP_SETTINGS_BTN_DELETE), --"Delete",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_GUILD_OUTPUTS_DELETE),-- "Delete selected Character's Data!",
     func = function()  EchoExperience:DoDeleteGuildTab() end,
     width = "full",	--or "half" (optional)
-    warning = "No confirmation if you do this!",	--(optional)
+    warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
   optionsTable[#optionsTable+1] = {
     type = "header",
     title = nil,	--(optional)
-    text = "Add new Guild output:",
-    name = "Add Guild Output",
+    text = GetString(XX),-- "Add new Guild output:",
+    name = GetString(XX),-- "Add Guild Output",
     width = "full",	--or "half" (optional)
   }
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
-    name = "Select Guild Output to Window",
-    tooltip = "Window for Guild output. (Zero will disable)",
+    name    = GetString(SI_ECHOEXP_SETTINGS_GUILD_WINDOW_NAME),-- "Select Guild Output to Window",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_GUILD_WINDOW_TOOLTIP),-- "Window for Guild output. (Zero will disable)",
     choices = {"1","2","3","4","5"},
     getFunc = function() return tostring(EchoExperience.view.settingstemp.windowGuild) end,
     setFunc = function(var) EchoExperience.view.settingstemp.windowGuild = tonumber(var) end,
@@ -506,8 +514,8 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
-    name = "Select Guild Output Tab",
-    tooltip = "Tab for Guild output.",
+    name    = GetString(SI_ECHOEXP_SETTINGS_GUILD_TAB_NAME),-- "Select Guild Output Tab",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_GUILD_TAB_TOOLTIP),-- "Tab for Guild output.",
     choices = {"1", "2", "3", "4", "5", "6"},
     getFunc = function() return tostring(EchoExperience.view.settingstemp.tabGuild) end,
     setFunc = function(var) EchoExperience.view.settingstemp.tabGuild = tonumber(var) end,
@@ -515,8 +523,8 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "colorpicker",
-    name = "GUILD Output Color",
-    tooltip = "What Color to use for GUILD text.",
+    name    = GetString(SI_ECHOEXP_SETTINGS_GUILD_COLOR_TEXT),--"GUILD Output Color",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_GUILD_COLOR_TOOLTIP),--"What Color to use for GUILD text.",
     getFunc = function()               
         if(EchoExperience.view.settingstemp==nil or EchoExperience.view.settingstemp.colorGuild==nil) then
           EchoExperience.SetupDefaultColors()
@@ -542,7 +550,7 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
-    name = "G1", -- or string id or function returning a string
+    name = GetString(SI_ECHOEXP_SETTINGS_GUILD_G), --"G1", -- or string id or function returning a string
     getFunc = function() 
       return EchoExperience.view.settingstemp.guild1 
     end,
@@ -552,7 +560,7 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
-    name = "G2", -- or string id or function returning a string
+    name = GetString(SI_ECHOEXP_SETTINGS_GUILD_G2), --"G2", -- or string id or function returning a string
     getFunc = function() return EchoExperience.view.settingstemp.guild2 end,
     setFunc = function(var) EchoExperience.view.settingstemp.guild2 = (var) end,
     tooltip = EchoExperience:GetGuildName(2) ,
@@ -560,7 +568,7 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
-    name = "G3", -- or string id or function returning a string
+    name = GetString(SI_ECHOEXP_SETTINGS_GUILD_G3), --"G3", -- or string id or function returning a string
     getFunc = function() return EchoExperience.view.settingstemp.guild3 end,
     setFunc = function(var) EchoExperience.view.settingstemp.guild3 = (var) end,
     tooltip = EchoExperience:GetGuildName(3),
@@ -568,7 +576,7 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
-    name = "G4", -- or string id or function returning a string
+    name = GetString(SI_ECHOEXP_SETTINGS_GUILD_G4), --"G4", -- or string id or function returning a string
     getFunc = function() return EchoExperience.view.settingstemp.guild4 end,
     setFunc = function(var) EchoExperience.view.settingstemp.guild4 = (var) end,
     tooltip = EchoExperience:GetGuildName(4),
@@ -576,7 +584,7 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
-    name = "G5", -- or string id or function returning a string
+    name = GetString(SI_ECHOEXP_SETTINGS_GUILD_G5), --"G5", -- or string id or function returning a string
     getFunc = function() return EchoExperience.view.settingstemp.guild5 end,
     setFunc = function(var) EchoExperience.view.settingstemp.guild5 = (var) end,
     tooltip = EchoExperience:GetGuildName(5),
@@ -584,11 +592,11 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "button",
-    name = "Save",
-    tooltip = "Save selected Guild chat Data!",
+    name    = GetString(SI_ECHOEXP_SETTINGS_BTN_SAVE), --"Save",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_GUILD_NEWOUTPUTS_SAVE), --"Save selected Guild chat Data!",
     func = function()  EchoExperience:DoSaveGuildTab() end,
     width = "full",	--or "half" (optional)
-    warning = "No confirmation if you do this!",	--(optional)
+    warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
   
   optionsTable[#optionsTable+1] = {
@@ -608,3 +616,5 @@ function EchoExperience.LoadSettings()
     
   LAM:RegisterOptionControls(EchoExperience.menuName, optionsTable)
 end
+
+--EOF

@@ -1,6 +1,6 @@
 ## Title: EchoExperience
-## Version: 0.0.27
-## AddOnVersion: 0027
+## Version: 0.0.30
+## AddOnVersion: 0030
 ## APIVersion: 100030 100031
 ## Author: Echomap
 ## Description: EchoExperience will show experience gains in chat.

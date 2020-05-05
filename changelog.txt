@@ -35,9 +35,15 @@ LitanyOfBlood Gui still a mess
 ## [Testing branch]
 
 ## [Unreleased]
--
+-reword save defaults, added show quest to saved settings
+-localize settings screen
+-show quests in log/total
+-fixed localization bug
 
 ## [Released]
+0.0.29
+- Comments updates
+- derp: Fix bug where defaults constantly show up!
 0.0.28 -defaults for new installs
 0.0.27
 -fix bug on player left guild

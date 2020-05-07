@@ -4,7 +4,7 @@
 -- 
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.30",                    -- A nuisance to match to the Manifest.
+    version         = "0.0.32",                    -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -59,14 +59,18 @@ local defaultSettings = {
 	debug      = false,
 	showExp    = true,
 	verboseExp = true,
-	verboseSkillExp   = true,
+	showSkillExp    = true,
+	showAllSkillExp = true,
 	messageFmt = 1,
 	showLoot    = false,
 	groupLoot   = false,  
 	extendedLoot = false,
 	showGuildLogin = false,
 	showGuildLogout= false,
-	showtracking = false,
+  showmdk          = true,
+	showdiscovery    = true,
+  sessiontracking  = false,
+  lifetimetracking = false,
   immersive = false, 
   rgba    = {
       ["r"] = 1,
@@ -119,9 +123,9 @@ function EchoExperience:ShowDefaults()
 end
 
 ------------------------------
--- TRACKING
+-- TRACKING User command
 function EchoExperience:ShowTracking()
-  d ( zo_strformat( "<<1>> (<<2>>) <<3>>","Session Tracked ", tostring(EchoExperience.savedVariables.showtracking), "Start==>") )
+  d ( zo_strformat( "<<1>> (<<2>>) <<3>>","Session Tracked ", tostring(EchoExperience.savedVariables.sessiontracking), "Start==>") )
   for k, v in pairs(EchoExperience.savedVariables.tracking.items) do
     if(v~=nil and v.quantity~=nil)then
       d ( zo_strformat( "<<3>>=<<2>>",k, v.quantity, v.itemlink) )
@@ -150,7 +154,7 @@ end
 ------------------------------
 -- TRACKING
 function EchoExperience:ShowLifetimeTracking()
-  d ( zo_strformat( "<<1>> (<<2>>) <<3>>","Lifetime Tracked ", tostring(EchoExperience.savedVariables.showtracking), "Start==>") )
+  d ( zo_strformat( "<<1>> (<<2>>) <<3>>","Lifetime Tracked ", tostring(EchoExperience.savedVariables.lifetimetracking), "Start==>") )
   for k, v in pairs(EchoExperience.savedVariables.lifetime.items) do
     if(v~=nil and v.quantity~=nil)then
       d ( zo_strformat( "<<3>>=<<2>>",k, v.quantity, v.itemlink) )
@@ -444,8 +448,8 @@ function EchoExperience.SlashCommandHandler(text)
     EchoExperience.savedVariables.tracking.bg = {}
     EchoExperience.outputMsg("Tracking data reset")
 	elseif #options == 0 or options[1] == "toggletracking" then
-		EchoExperience.savedVariables.showtracking = not EchoExperience.savedVariables.showtracking
-    EchoExperience.outputMsg("Showtracking = " .. tostring(EchoExperience.savedVariables.showtracking) )
+		EchoExperience.savedVariables.sessiontracking = not EchoExperience.savedVariables.sessiontracking
+    EchoExperience.outputMsg("Showtracking = " .. tostring(EchoExperience.savedVariables.sessiontracking) )
     EchoExperience:SetupLootGainsEvents(true)
   
   --Testing
@@ -539,19 +543,17 @@ end
 --EVENT:   EVENT_SKILL_XP_UPDATE
 --RETURNS:(num eventCode, SkillType skillType, num skillIndex, num reason, num rank, num previousXP, num currentXP)
 --NOTES:  XX
-function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex, reason, rank, previousXP, currentXP)
+function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex, reason, rank, previousXP, currentXPIn)
 	local skillLineName, currentSkillRank, available = GetSkillLineInfo(skillType, skillIndex)
 	local lastRankXP, nextRankXP, currentXP          = GetSkillLineXPInfo(skillType, skillIndex)
 	
 	local pressed, normal, mouseOver, announce = ZO_Skills_GetIconsForSkillType(skillType)
-	--if available then
-		--EchoExperience.debugMsg(" name="..skillLineName .." lastRankXP="..lastRankXP .." nextRankXP=".. nextRankXP .." currentXP=".. currentXP)
-	--end
-
+  -- (this used to work, but that stopped working? so put into ability gains) TODO REMOVE
 	-- Output
 	local diff = nextRankXP - currentXP
   --EchoExperience.outputMsg("skillLineName="..tostring(skillLineName) .. " available: " ..tostring(available).. " verboseExp: ".. tostring(EchoExperience.savedVariables.verboseExp)  )
-	if skillLineName ~= nil and available and EchoExperience.savedVariables.verboseExp then
+	if skillLineName ~= nil and available 
+      and EchoExperience.savedVariables.showSkillExp and EchoExperience.savedVariables.showAllSkillExp then
 		local XPgain  = currentXP  - previousXP
 		local curCur  = currentXP  - lastRankXP
 		local curNext = nextRankXP - lastRankXP
@@ -559,7 +561,7 @@ function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex
 		--EchoExperience.outputToChanel("    at "..curCur.."/"..curNext..", need [" .. diff .. "] more, experience")
 		--FORMAT
 		local qualifier = 2
-		if( EchoExperience.savedVariables.verboseSkillExp ) then
+		if( EchoExperience.savedVariables.verboseExp ) then
 			qualifier = 1
 		end
     --EchoExperience.outputMsg("qualifier=" ..tostring(qualifier) )
@@ -617,9 +619,10 @@ end
 --ONEvent  NOT NEEDED
 --EVENT:   EVENT_ABILITY_PROGRESSION_XP_UPDATE
 --RETURNS:(number eventCode, number progressionIndex, number lastRankXP, number nextRankXP, number currentXP, boolean atMorph)
---NOTES:  currentXP is new total xp, last is all the way back.
+--NOTES:  currentXP is new total xp, last is all the way back. (this used to be unnecessary as i used expgains, but that stopped working?)
 function EchoExperience.OnAbilityExperienceUpdate(eventCode, progressionIndex, lastRankXP, nextRankXP, currentXP, atMorph)
-  if( EchoExperience.savedVariables.verboseExp and nextRankXP>0 ) then
+  --Only do this if want to show skillExp and skill has some to gain
+  if( EchoExperience.savedVariables.showSkillExp and nextRankXP>0 ) then
     local name, morph, rank             = GetAbilityProgressionInfo(progressionIndex)     
     local name2, texture,  abilityIndex = GetAbilityProgressionAbilityInfo(progressionIndex, morph, rank)
     local diff =  nextRankXP - currentXP
@@ -634,7 +637,7 @@ function EchoExperience.OnAbilityExperienceUpdate(eventCode, progressionIndex, l
     local nameFmt = name2
     local qualifier = 1
     local qualStr = "SI_ECHOEXP_XP_SKILLLINE_"
-    if(EchoExperience.savedVariables.verboseSkillExp) then
+    if(EchoExperience.savedVariables.verboseExp) then
       qualifier = 3
     end
 		if texture ~= nil then
@@ -662,12 +665,94 @@ function EchoExperience.OnAbilityExperienceUpdate(eventCode, progressionIndex, l
     local sentence = GetString(qualStr,qualifier)    
     local strL = zo_strformat(sentence, tostring(name2), ZO_CommaDelimitNumber(currentXP), ZO_CommaDelimitNumber(nextRankXP), ZO_CommaDelimitNumber(diff), thisGain, texture )
 		EchoExperience.outputToChanel(strL,msgTypeEXP)
-    --
+    -- Table to keep old values of player curent exp to be able to diff
     EchoExperience.savedVariables.skilltracking[tableKey] = {}
     EchoExperience.savedVariables.skilltracking[tableKey].name2 = name2
     EchoExperience.savedVariables.skilltracking[tableKey].morph = morph
     EchoExperience.savedVariables.skilltracking[tableKey].currXP = currentXP
     EchoExperience.savedVariables.skilltracking[tableKey].nextRankXP = nextRankXP
+  end
+end
+
+------------------------------
+-- EVENT
+--ONEvent  on riding skill update
+--EVENT:   EVENT_RIDING_SKILL_IMPROVEMENT
+--RETURNS:(number eventCode, RidingTrainType ridingSkillType, number previous, number current, RidingTrainSource source))
+--NOTES:  XX
+function EchoExperience.OnRidingSkillUpdate(eventCode, ridingSkillType, previous, current, source)
+  if( not EchoExperience.savedVariables.showSkillExp ) then 
+    return
+  end
+  --
+  EchoExperience.debugMsg(EchoExperience.name .. "OnSkillRankUpdate: "
+    .. " eventCode=" .. tostring(eventCode)
+    .. " ridingSkillType="  .. tostring(ridingSkillType)
+    .. " previous=" .. tostring(previous)
+    .. " current="       .. tostring(current)
+    .. " source="  .. tostring(source)
+    .. " RIDING_TRAIN_SPEED="  .. tostring(RIDING_TRAIN_SPEED)
+    .. " RIDING_TRAIN_STAMINA="  .. tostring(RIDING_TRAIN_STAMINA)
+    .. " RIDING_TRAIN_CARRYING_CAPACITY="  .. tostring(RIDING_TRAIN_CARRYING_CAPACITY)
+  )
+  --
+  local sentence = GetString(SI_ECHOEXP_RIDING_UP)
+  local trainingTypeWord = "UNKNOWNSKILL"
+  local sourceWord       = "UNKNOWNSKILL"
+  if(ridingSkillType == nil) then
+  elseif(ridingSkillType==RIDING_TRAIN_SPEED) then
+    trainingTypeWord = GetString(SI_ECHOEXP_RIDING_SPEED)
+  elseif(ridingSkillType==RIDING_TRAIN_STAMINA) then
+    trainingTypeWord = GetString(SI_ECHOEXP_RIDING_STAMINA)
+  elseif(ridingSkillType==RIDING_TRAIN_CARRYING_CAPACITY) then
+    trainingTypeWord = GetString(SI_ECHOEXP_RIDING_CARRY)
+  end
+  if(source == nil) then
+  elseif(source==RIDING_TRAIN_SOURCE_INITIALIZE) then
+    sourceWord = GetString(SI_ECHOEXP_RIDING_INIT)
+  elseif(source==RIDING_TRAIN_SOURCE_ITEM) then
+    sourceWord = GetString(SI_ECHOEXP_RIDING_ITEM)
+  elseif(source==RIDING_TRAIN_SOURCE_STABLES) then
+    sourceWord = GetString(SI_ECHOEXP_RIDING_STABLE)
+  end
+  --
+  local strL = zo_strformat(sentence, eventCode, sourceWord, trainingTypeWord, previous, current )
+  EchoExperience.outputToChanel(strL,msgTypeEXP)
+end
+  
+
+------------------------------
+-- EVENT
+--ONEvent  on skillline rank update
+--EVENT:   EVENT_SKILL_RANK_UPDATE
+--RETURNS:(number eventCode, SkillType skillType, number skillIndex, number rank)
+--NOTES:  XX
+function EchoExperience.OnSkillRankUpdate(eventCode, skillType, skillIndex, rank)
+  --EVENT_SKILL_RANK_UPDATE (number eventCode, SkillType skillType, number skillIndex, number rank)
+	local skillLineName, currentSkillRank, available = GetSkillLineInfo(skillType, skillIndex)
+	--local lastRankXP, nextRankXP, currentXP          = GetSkillLineXPInfo(skillType, skillIndex)
+	local pressed, normal, mouseOver, announce = ZO_Skills_GetIconsForSkillType(skillType)
+  if( EchoExperience.savedVariables.showSkillExp ) then 
+     if(not available) then
+      return
+    end
+    --
+    EchoExperience.debugMsg(EchoExperience.name .. "OnSkillRankUpdate: "
+      .. " eventCode=" .. tostring(eventCode)
+      .. " skillType="  .. tostring(skillType)
+      .. " skillIndex=" .. tostring(skillIndex)
+      .. " rank="       .. tostring(rank)
+      .. " available="  .. tostring(available)
+      .. " skillLineName=" .. tostring(skillLineName)
+    )   
+    -- 
+    local sentence = GetString(SI_ECHOEXP_XP_SKILLLINE_UP)
+    local sName = skillLineName
+    if(normal~=nil) then
+      sName = "|t14:14:"..normal.."|t"..skillLineName
+    end
+    local strL = zo_strformat(sentence, eventCode, sName, rank, normal )
+    EchoExperience.outputToChanel(strL,msgTypeEXP)
   end
 end
   
@@ -691,11 +776,11 @@ function EchoExperience.OnDiscoveryExperienceGain(event, eventCode, areaName, le
 		)
 	end
 	]]
-	local strI = GetString(SI_ECHOEXP_DISCOVERY)
-	local strL = zo_strformat(strI, eventCode )
-	EchoExperience.outputToChanel(strL,msgTypeEXP)
-	--TODO championPoints??
-	--EchoExperience.debugMsg("OnDiscoveryExperienceGain Done")
+  if( EchoExperience.savedVariables.showdiscovery ) then 
+    local strI = GetString(SI_ECHOEXP_DISCOVERY)
+    local strL = zo_strformat(strI, eventCode )
+    EchoExperience.outputToChanel(strL,msgTypeEXP)
+  end
 end
 
 ------------------------------
@@ -791,7 +876,8 @@ function EchoExperience.OnExperienceGain(event, eventCode, reason, level, previo
 		.. " eventCode=" .. eventCode
 		.. " reason=" .. reason
 		.. " level="  .. level
-		.. " champ="  .. tostring(championPoints)) --allways nil?
+		.. " champ="  .. tostring(championPoints) --allways nil?
+    )
 	
 	local XPgain = previousExperience - level
 	--FORMAT
@@ -827,10 +913,10 @@ function EchoExperience.OnBankedCurrency(eventCode, currency, newValue, oldValue
     .." eventCode="  .. tostring(eventCode)
     .." currency="   .. tostring(currency)
     .." newValue="   .. tostring(newValue)
-    .." oldValue="   .. tostring(oldValue)      
+    .." oldValue="   .. tostring(oldValue)
   )
   --Tracking
-  if(EchoExperience.savedVariables.showtracking) then
+  if(EchoExperience.savedVariables.sessiontracking) then
     if(EchoExperience.savedVariables.tracking.currency[currency]==nil)then
       EchoExperience.savedVariables.tracking.currency[currency] = {}
       EchoExperience.savedVariables.tracking.currency[currency].quantity=0
@@ -844,12 +930,12 @@ end
 --EVENT_CURRENCY_UPDATE (number eventCode, CurrencyType currencyType, CurrencyLocation currencyLocation, number newAmount, number oldAmount, CurrencyChangeReason reason) 
 function EchoExperience.OnCurrencyUpdate(eventCode, currencyType, currencyLocation, newAmount, oldAmount, reason) 
   EchoExperience.debugMsg("OnCurrencyUpdate: "
-    .." eventCode="  .. tostring(eventCode)
+    .." eventCode="        .. tostring(eventCode)
     .." currencyType="     .. tostring(currencyType)
-    .." currencyLocation="   .. tostring(currencyLocation)
-    .." newAmount="     .. tostring(newAmount)
-    .." oldAmount="   .. tostring(oldAmount)
-    .." reason="   .. tostring(reason)      
+    .." currencyLocation=" .. tostring(currencyLocation)
+    .." newAmount="        .. tostring(newAmount)
+    .." oldAmount="        .. tostring(oldAmount)
+    .." reason="           .. tostring(reason)      
   )
   if(reason==35) then
     return --Just a UI refresh
@@ -865,7 +951,7 @@ function EchoExperience.OnCurrencyUpdate(eventCode, currencyType, currencyLocati
   end
   if(entryQuantity>1) then isSingular = false end
   --Tracking
-  if(EchoExperience.savedVariables.showtracking) then
+  if(EchoExperience.savedVariables.sessiontracking) then
     if(EchoExperience.savedVariables.tracking.currency[currencyType]==nil)then
       EchoExperience.savedVariables.tracking.currency[currencyType] = {}
       EchoExperience.savedVariables.tracking.currency[currencyType].quantity=0
@@ -879,16 +965,19 @@ function EchoExperience.OnCurrencyUpdate(eventCode, currencyType, currencyLocati
       EchoExperience.savedVariables.tracking.currency[currencyType].minus=EchoExperience.savedVariables.tracking.currency[currencyType].minus+ (newAmount - oldAmount)
     end
   end--Tracking
+  
+  -- TODO IsCurrencyCapped(number CurrencyType currencyType, number CurrencyLocation currencyLocation) Returns: boolean isCapped
 
   local icon = GetCurrencyKeyboardIcon(currencyType) 
   --local icon = GetCurrencyLootKeyboardIcon(currencyType) 
-  local entryName = GetCurrencyName(currencyType, isSingular, false )
+  local entryName   = GetCurrencyName(currencyType, isSingular, false )
+  local totalAmount = GetCurrencyAmount(currencyType, currencyLocation)
   
   local sentence = GetString("SI_ECHOLOOT_CURRENCY_",qualifier)
   if(currencyLocation~=nil and currencyLocation==1 )then --is bank    
     sentence = GetString("SI_ECHOLOOT_CURRENCY_BANK_",qualifier)
   end
-  local strL = zo_strformat(sentence, icon, entryName, ZO_CommaDelimitNumber(entryQuantity) )
+  local strL = zo_strformat(sentence, icon, entryName, ZO_CommaDelimitNumber(entryQuantity), ZO_CommaDelimitNumber(totalAmount) )
   EchoExperience.outputToChanel(strL,msgTypeLOOT)
 	--EchoExperience.debugMsg("OnCurrencyUpdate: "
 	--	.." isSingular="  .. tostring(isSingular)
@@ -1065,7 +1154,7 @@ function EchoExperience.OnInventorySingleSlotUpdate(eventCode, bagId, slotId, is
     --  local strL = zo_strformat(sentence, icon, itemLink, stackCountChange )
     --  EchoExperience.outputToChanel(strL,msgTypeLOOT)      
         --Tracking
-        if(EchoExperience.savedVariables.showtracking) then
+        if(EchoExperience.savedVariables.sessiontracking) then
           if(EchoExperience.savedVariables.tracking.items[itemName]==nil)then
             EchoExperience.savedVariables.tracking.items[itemName] = {}
             EchoExperience.savedVariables.tracking.items[itemName].quantity=0
@@ -1113,7 +1202,7 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 		)
 	end
   --[[Tracking
-  if(EchoExperience.savedVariables.showtracking) then
+  if(EchoExperience.savedVariables.XXXtracking) then
     local itemNameR = GetItemLinkName(itemLink) 
     if(EchoExperience.savedVariables.tracking.items[itemNameR]==nil)then
       EchoExperience.savedVariables.tracking.items[itemNameR] = {}
@@ -1329,7 +1418,7 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
   EchoExperience.view.lastKilledTargetId = targetUnitId
   
  --Tracking
-  if(EchoExperience.savedVariables.showtracking) then
+  if(EchoExperience.savedVariables.sessiontracking) then
     if(EchoExperience.savedVariables.tracking.mobs[targetName]==nil)then
       EchoExperience.savedVariables.tracking.mobs[targetName] = {}
       EchoExperience.savedVariables.tracking.mobs[targetName].quantity=0
@@ -1339,34 +1428,34 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
   end--Tracking
   --TODO localize etc  
   
-  if(sourceUnitId==targetUnitId) then
-      EchoExperience.outputToChanel("You died!",msgTypeSYS)--TODO
-  else
-    --TEST REMOVE TODO
-    EchoExperience.debugMsg("SomethingDied: "
-    .." sourceUnitId="      .. tostring(sourceUnitId)
-    .." targetUnitId="     .. tostring(targetUnitId) 
-    .." result="     .. tostring(result) 
-    )
-    local sentence = GetString(SI_ECHOEXP_KILL_MOB)
-    local strL = zo_strformat(sentence, targetName )
-        
-    EchoExperience.outputToChanel(strL,msgTypeSYS)
-	  
-    --Check LitanyOfBlood
-    if( EchoExperience.savedVariables.LitanyOfBlood ~= nil) then
-      EchoExperience.OnLitanyOfBlood(targetName, targetUnitId)      
+  if(EchoExperience.savedVariables.showmdk) then
+    if(sourceUnitId==targetUnitId) then
+        EchoExperience.outputToChanel("You died!",msgTypeSYS)--TODO
     else
-      EchoExperience.debugMsg("NOT calling lob")
-    end--LitanyOfBlood
-  end --you vs other
+      --TEST REMOVE TODO
+      EchoExperience.debugMsg("SomethingDied: "
+      .." sourceUnitId="      .. tostring(sourceUnitId)
+      .." targetUnitId="     .. tostring(targetUnitId) 
+      .." result="     .. tostring(result) 
+      )
+      local sentence = GetString(SI_ECHOEXP_KILL_MOB)
+      local strL = zo_strformat(sentence, targetName )
+      EchoExperience.outputToChanel(strL,msgTypeSYS)
+      
+      --Check LitanyOfBlood
+      if( EchoExperience.savedVariables.LitanyOfBlood ~= nil) then
+        EchoExperience.OnLitanyOfBlood(targetName, targetUnitId)      
+      else
+        EchoExperience.debugMsg("NOT calling lob")
+      end--LitanyOfBlood
+    end --you vs other
+  end--showmdk
 end
 
 ------------------------------
 -- EVENT
 ----integer eventCode, string questName, integer playerLevel, integer previousXP, integer currentXP, integer playerVeteranRank, integer previousVeteranPoints, integer currentVeteranPoints)
 function EchoExperience.OnEventQuestAdded(eventCode, level, questName)
-  --EchoExperience.outputMsg("OnEventQuestAdded: Called")
   EchoExperience.debugMsg("OnEventQuestAdded: "
     .." eventCode="      .. tostring(eventCode)
     .." questName="     .. tostring(questName) 
@@ -1503,8 +1592,8 @@ function EchoExperience.OnLitanyOfBlood(targetNameL, targetUnitId)
 end
 
 ------------------------------
--- DEFAULTS
-function EchoExperience:DoSetDefaults()
+-- ProfileSettings, from settings
+function EchoExperience:DoSaveProfileSettings()
   local pName = GetUnitName("player")
   EchoExperience.accountVariables.useAsDefault = 	pName
   EchoExperience.accountVariables.defaults = {}
@@ -1513,10 +1602,18 @@ function EchoExperience:DoSetDefaults()
   EchoExperience.accountVariables.defaults.showGuildLogout = EchoExperience.savedVariables.showGuildLogout
   EchoExperience.accountVariables.defaults.showExp         = EchoExperience.savedVariables.showExp
   EchoExperience.accountVariables.defaults.verboseExp      = EchoExperience.savedVariables.verboseExp
-  EchoExperience.accountVariables.defaults.verboseSkillExp = EchoExperience.savedVariables.verboseSkillExp
+  
+  EchoExperience.accountVariables.defaults.showSkillExp = EchoExperience.savedVariables.showSkillExp
+  EchoExperience.accountVariables.defaults.showSkillExp = EchoExperience.savedVariables.showSkillExp
+  
   EchoExperience.accountVariables.defaults.showLoot        = EchoExperience.savedVariables.showLoot
   EchoExperience.accountVariables.defaults.extendedLoot    = EchoExperience.savedVariables.extendedLoot
-  EchoExperience.accountVariables.defaults.showquests    = EchoExperience.savedVariables.showquests
+  EchoExperience.accountVariables.defaults.showquests      = EchoExperience.savedVariables.showquests
+  
+  EchoExperience.accountVariables.defaults.showmdk          = EchoExperience.savedVariables.showmdk
+  EchoExperience.accountVariables.defaults.showdiscovery    = EchoExperience.savedVariables.showdiscovery
+  EchoExperience.accountVariables.defaults.sessiontracking  = EchoExperience.savedVariables.sessiontracking
+  EchoExperience.accountVariables.defaults.lifetimetracking = EchoExperience.savedVariables.lifetimetracking
   
   EchoExperience.accountVariables.defaults.guildsettings   = EchoExperience:deepcopy(EchoExperience.savedVariables.guildsettings)
   EchoExperience.accountVariables.defaults.lootsettings    = EchoExperience:deepcopy(EchoExperience.savedVariables.lootsettings)
@@ -1525,18 +1622,25 @@ function EchoExperience:DoSetDefaults()
 end
 
 ------------------------------
--- DEFAULTS
-function EchoExperience:DoLoadSetDefaults()
+-- ProfileSettings, from settings
+function EchoExperience:DoLoadProfileSettings()
   if(EchoExperience.accountVariables.useAsDefault~=nil and EchoExperience.accountVariables.defaults~=nil )then
     EchoExperience.savedVariables.verboseExp      = EchoExperience.accountVariables.defaults.verboseExp
-	EchoExperience.savedVariables.verboseSkillExp = EchoExperience.accountVariables.defaults.verboseSkillExp	
+    EchoExperience.savedVariables.showAllSkillExp = EchoExperience.accountVariables.defaults.showAllSkillExp	
+    EchoExperience.savedVariables.showSkillExp = EchoExperience.accountVariables.defaults.showSkillExp	
+    
     EchoExperience.savedVariables.groupLoot       = EchoExperience.accountVariables.defaults.groupLoot       
     EchoExperience.savedVariables.showGuildLogin  = EchoExperience.accountVariables.defaults.showGuildLogin
     EchoExperience.savedVariables.showGuildLogout = EchoExperience.accountVariables.defaults.showGuildLogout
     EchoExperience.savedVariables.showExp         = EchoExperience.accountVariables.defaults.showExp
     EchoExperience.savedVariables.showLoot        = EchoExperience.accountVariables.defaults.showLoot
     EchoExperience.savedVariables.extendedLoot    = EchoExperience.accountVariables.defaults.extendedLoot
-    EchoExperience.savedVariables.showquests    = EchoExperience.accountVariables.defaults.showquests
+    EchoExperience.savedVariables.showquests      = EchoExperience.accountVariables.defaults.showquests
+    
+    EchoExperience.savedVariables.showmdk          = EchoExperience.accountVariables.defaults.showmdk
+    EchoExperience.savedVariables.showdiscovery    = EchoExperience.accountVariables.defaults.showdiscovery
+    EchoExperience.savedVariables.sessiontracking  = EchoExperience.accountVariables.defaults.sessiontracking
+    EchoExperience.savedVariables.lifetimetracking = EchoExperience.accountVariables.defaults.lifetimetracking
     
     EchoExperience.savedVariables.guildsettings   = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.guildsettings)
     EchoExperience.savedVariables.lootsettings    = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.lootsettings)
@@ -1595,6 +1699,8 @@ function EchoExperience.SetupExpGainsEvents(reportMe)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnDiscoveryExp",	EVENT_DISCOVERY_EXPERIENCE,     EchoExperience.OnDiscoveryExperienceGain)
 		--not really needed
 	EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."AbilityProgression",EVENT_ABILITY_PROGRESSION_XP_UPDATE, EchoExperience.OnAbilityExperienceUpdate)
+	EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_SKILL_RANK_UPDATE",EVENT_SKILL_RANK_UPDATE, EchoExperience.OnSkillRankUpdate)
+  EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_RIDING_SKILL_IMPROVEMENT",EVENT_RIDING_SKILL_IMPROVEMENT, EchoExperience.OnRidingSkillUpdate)
 		--
 	else
 		if(reportMe) then EchoExperience.outputToChanel(SI_ECHOEXP_EXPGAINS_HIDE,msgTypeSYS) end
@@ -1608,6 +1714,9 @@ function EchoExperience.SetupExpGainsEvents(reportMe)
 
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnDiscoveryExp",		EVENT_DISCOVERY_EXPERIENCE)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."AbilityProgression",EVENT_ABILITY_PROGRESSION_XP_UPDATE)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_SKILL_RANK_UPDATE",EVENT_SKILL_RANK_UPDATE)    
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_RIDING_SKILL_IMPROVEMENT",EVENT_RIDING_SKILL_IMPROVEMENT)
+    --
 	end
 end
 
@@ -1689,7 +1798,7 @@ end
 ------------------------------
 -- SETUP
 function EchoExperience.SetupMiscEvents(reportMe)
-  if( EchoExperience.savedVariables.showtracking ) then
+  if( EchoExperience.savedVariables.sessiontracking or EchoExperience.savedVariables.showmdk ) then
     --if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_XXX_HIDE),msgTypeSYS) end
     local eventNamespace = EchoExperience.name.."EVENT_COMBAT_EVENT"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMBAT_EVENT, EchoExperience.OnCombatSomethingDied)
@@ -2021,7 +2130,7 @@ function EchoExperience.DelayedStart()
 
   -- Clear for session?
   -- Save Tracking data to Lifetime 
-  --if(EchoExperience.savedVariables.showtracking session vs all?
+  --if(EchoExperience.savedVariables.xxxtracking session vs all?
 
   if(EchoExperience.savedVariables.tracking==nil)then
     EchoExperience.savedVariables.tracking = {}
@@ -2046,8 +2155,8 @@ else
 else
     EchoExperience:MoveToLifetime( 4 )
   end
-  if(EchoExperience.savedVariables.showtracking==nil)then
-    EchoExperience.savedVariables.showtracking = false
+  if(EchoExperience.savedVariables.sessiontracking==nil)then
+    EchoExperience.savedVariables.sessiontracking = false
   end
   if(EchoExperience.savedVariables.immersive==nil)then
     EchoExperience.savedVariables.immersive = false

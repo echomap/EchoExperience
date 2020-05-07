@@ -30,6 +30,17 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_LOAD_MSG        = "Load settings from saved profile?",
   SI_ECHOEXP_SETTINGS_IMMERSIVE       = "Immersive",
   SI_ECHOEXP_SETTINGS_BEIMMERSIVE     = "Be immersive? on or off.",
+  
+  SI_ECHOEXP_SETTINGS_KILLS_SHOW        = "Show kills/deaths?",
+  SI_ECHOEXP_SETTINGS_KILLS_SHOW_TT     = "Show kills/deaths?",
+  SI_ECHOEXP_SETTINGS_DISCOVERY_SHOW    = "Show discovered?",
+  SI_ECHOEXP_SETTINGS_DISCOVERY_SHOW_TT = "Show discovered locations?",
+  
+  SI_ECHOEXP_SETTINGS_SESSIONTRACK_NAME = "Keep track of data in session?",
+  SI_ECHOEXP_SETTINGS_SESSIONTRACK_TT   = "Keep track of looted/kills data in session?",
+  SI_ECHOEXP_SETTINGS_LIFETIMETRACK_NAME= "Keep track of data in lifetime?",
+  SI_ECHOEXP_SETTINGS_LIFETIMETRACK_TT  = "Keep track of looted/kills data in lifetime?",
+  
   --
   SI_ECHOEXP_SETTINGS_QUEST_SECTIONTITLE    = "Quest Options",
   SI_ECHOEXP_SETTINGS_QUEST_SECTIONNAME     = "Quest Options",
@@ -54,9 +65,11 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_EXP_TITLE             = "Experience",
   SI_ECHOEXP_SETTINGS_EXP_TOOLTIP           = "Report? on or off.",
   SI_ECHOEXP_SETTINGS_EXP_VERB_NAME         = "Verbose Experience",
-  SI_ECHOEXP_SETTINGS_EXP_VERB_TOOLTIP      = "Verbose reporting if experience is on?",
-  SI_ECHOEXP_SETTINGS_EXP_VERBSKILL_TITLE   = "Verbose Skill Experience",
-  SI_ECHOEXP_SETTINGS_EXP_VERBSKILL_TOOLTIP = "Verbose reporting if experience is on?",
+  SI_ECHOEXP_SETTINGS_EXP_VERB_TOOLTIP      = "Show more Verbose reporting, if experience is on?",
+  SI_ECHOEXP_SETTINGS_EXP_SKILLLINE_TITLE       = "Show Skill Experience",
+  SI_ECHOEXP_SETTINGS_EXP_SKILLLINE_TOOLTIP     = "Report on skill lines Rank Gains? (if experience is on)",
+  SI_ECHOEXP_SETTINGS_EXP_VERBSKILLLINE_TITLE   = "Show Verbose Skill Experience",
+  SI_ECHOEXP_SETTINGS_EXP_VERBSKILLLINE_TOOLTIP = "Report on all skill lines gains? (if experience is on)",
   SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_NAME    = "Exp Output Tabs",
   SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_TOOLTIP = "Tab(s) for Exp output.",
   SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_DELETE  = "Delete selected Exp's Data!",
@@ -121,7 +134,7 @@ local localization_strings = {
   
   ------------------------------
   -- 
-	SI_ECHOEXP_KILL_MOB = "You killed a <<1>>",
+	SI_ECHOEXP_KILL_MOB       = "You killed a <<1>>",
   
   --questName, count, 25
   SI_ECHOEXP_QUEST_ACCEPT   = "You accepted the quest [<<1>>] (<<2>>/<<3>>)",
@@ -132,7 +145,7 @@ local localization_strings = {
   -- EXP
 	SI_ECHOEXP_XP_GAIN         = "You gained <<1>> experience.",
 	SI_ECHOEXP_XP_SKILL_GAIN_1 = "Gained <<1>>xp in [<<2>>] (<<3>>/<<4>>) need <<5>>xp",
-	SI_ECHOEXP_XP_SKILL_GAIN_2 = "Gained <<1>>xp in [<<2>>]",
+	SI_ECHOEXP_XP_SKILL_GAIN_2 = "Gained <<1>>xp in [<<2>>] need <<5>>xp",
   -- <<1>>name, <<2>> currentXP, <<3>> nextXP <<4>> diff, <<5>> thisGain, <<6>> icon
   -- Qualifier: (1) non verb, (2) non verb w/currXP, (3) verb, (4) verb w/currXP
   SI_ECHOEXP_XP_SKILLLINE_1      = "Gained xp in [<<1>>] need <<4>>xp",
@@ -143,9 +156,20 @@ local localization_strings = {
   SI_ECHOEXP_XP_SKILLLINE_ICON_2 = "Gained <<5>>xp in [|t14:14:<<6>>|t<<1>>] need <<4>>xp",
   SI_ECHOEXP_XP_SKILLLINE_ICON_3 = "Gained xp in [|t14:14:<<6>>|t<<1>>]  (<<2>>/<<3>>) need <<4>>xp",
   SI_ECHOEXP_XP_SKILLLINE_ICON_4 = "Gained <<5>>xp in [|t14:14:<<6>>|t<<1>>] (<<2>>/<<3>>) need <<4>>xp",
+  SI_ECHOEXP_XP_SKILLLINE_UP     = "Upgraded rank of [<<2>>] to rank <<3>>!",
   
-	SI_ECHOEXP_CP_UNLOCKED     = "You unlocked Champion points!",
-	SI_ECHOEXP_CP_EARNED       = "You gained a Champion point!",
+  -- eventCode, sourceWord, trainingTypeWord, previous, current )
+  SI_ECHOEXP_RIDING_UP      = "Upgraded Riding [<<3>>] from rank <<4>> to <<5>>!",
+  SI_ECHOEXP_RIDING_SPEED   = "Speed",
+  SI_ECHOEXP_RIDING_STAMINA = "Stamina",
+  SI_ECHOEXP_RIDING_CARRY   = "Carry Capacity",
+  SI_ECHOEXP_RIDING_INIT    = "Initial",
+  SI_ECHOEXP_RIDING_ITEM    = "Item",
+  SI_ECHOEXP_RIDING_STABLE  = "Stable Master",
+  
+  --
+	SI_ECHOEXP_CP_UNLOCKED     = "****You unlocked Champion points!****",
+	SI_ECHOEXP_CP_EARNED       = "****You gained a Champion point!****",
 	SI_ECHOEXP_DISCOVERY       = "You discovered: <<1>>.",
 	SI_ECHOEXP_SKILLINE        = "You learned the skillline: <<1>>",
 
@@ -153,7 +177,7 @@ local localization_strings = {
 	SI_ECHOEXP_AP_LOSS       = "You spent <<1>> AP.",
 
 	SI_ECHOEXP_SKY_1         = "You absorbed a skyshard! (<<1>> of <<2>>).",
-	SI_ECHOEXP_SKY_2         = "You gained a skill point! (<<1>>).",
+	SI_ECHOEXP_SKY_2         = "****You gained a skill point! (<<1>>).****",
 
 	SI_ECHOEXP_GUILD_1       = "eventCode: <<1>>, guildID: <<2>>, playerName: <<3>>, prevStatus: <<4>>, curStatus: <<5>> .",
 	SI_ECHOEXP_GUILD_2       = "<<4>> Login at <<2>> (<<3>>)",
@@ -201,8 +225,9 @@ local localization_strings = {
 	SI_ECHOLOOT_SELL_2     = "You sell |t14:14:<<1>>|t <<2>> x<<3>>",
 	SI_ECHOLOOT_BUY_1      = "You buy |t12:12:<<1>>|t <<2>>",
 	SI_ECHOLOOT_BUY_2      = "You buy |t12:12:<<1>>|t <<2>> x<<3>>",
-	SI_ECHOLOOT_CURRENCY_1 = "You spend <<3>> |t12:12:<<1>>|t <<2>>", 
-	SI_ECHOLOOT_CURRENCY_2 = "You gain <<3>> |t12:12:<<1>>|t <<2>>", 
+  --icon, entryName, (entryQuantity), (totalAmount) )
+	SI_ECHOLOOT_CURRENCY_1 = "You spend <<3>> |t12:12:<<1>>|t <<2>> (Total: <<4>>)", 
+	SI_ECHOLOOT_CURRENCY_2 = "You gain <<3>> |t12:12:<<1>>|t <<2>> (Total: <<4>>)", 
   SI_ECHOLOOT_CURRENCY_BANK_1 = "Bank withdrawl: <<3>> |t12:12:<<1>>|t <<2>>", 
   SI_ECHOLOOT_CURRENCY_BANK_2 = "You banked: <<3>> |t12:12:<<1>>|t <<2>>", 
 

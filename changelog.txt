@@ -36,12 +36,19 @@ LitanyOfBlood Gui still a mess
 ## [Testing branch]
 
 ## [Unreleased]
--Per skillline reporting not working, per either my mistake or api change, updated
--OnAbilityExperienceUpdate
--messages used for skilllines
--
+0.0.32
+-Break out skill line options, to allow just reporting on rank gains
+--verboseSkillExp -> showSkillExp/showAllSkillExp
+-Riding rank gains reported on (per showSkillExp setting)
 
 ## [Released]
+0.0.31
+-Per skillline reporting not working, per either my mistake or api change/updated
+--so updated OnAbilityExperienceUpdate to report on skilllines instead
+-messages used for skilllines updated/localized
+-rename internal showtracking to sessiontracking
+-added checkbox options for showing kills and showing discovery
+-OnSkillRankUpdate to report when player increased rank in a skillline
 0.0.30
 -reworded save defaults, added show quest to saved settings
 -localized settings screen

@@ -44,11 +44,41 @@ function EchoExperience.LoadSettings()
   
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
-    name = GetString(SI_ECHOEXP_SETTINGS_IMMERSIVE), --"Immersive",
+    name    = GetString(SI_ECHOEXP_SETTINGS_IMMERSIVE),   --"Immersive",
     tooltip = GetString(SI_ECHOEXP_SETTINGS_BEIMMERSIVE), --"Be immersive? on or off.",
     getFunc = function() return EchoExperience.savedVariables.immersive end,
     setFunc = function(value)
       EchoExperience.savedVariables.immersive = value
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name    = GetString(SI_ECHOEXP_SETTINGS_KILLS_SHOW),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_KILLS_SHOW_TT), 
+    getFunc = function() return EchoExperience.savedVariables.showmdk end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.showmdk = value
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name    = GetString(SI_ECHOEXP_SETTINGS_DISCOVERY_SHOW),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_DISCOVERY_SHOW_TT), 
+    getFunc = function() return EchoExperience.savedVariables.showdiscovery end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.showdiscovery = value
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name    = GetString(SI_ECHOEXP_SETTINGS_SESSIONTRACK_NAME),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_SESSIONTRACK_TT), 
+    getFunc = function() return EchoExperience.savedVariables.sessiontracking end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.sessiontracking = value
     end,
     width = "half",	--or "half" (optional)
   }
@@ -57,7 +87,7 @@ function EchoExperience.LoadSettings()
     type = "button",
     name = GetString(SI_ECHOEXP_SETTINGS_SAVE_TITLE),  --"Save these settings",
     tooltip = GetString(SI_ECHOEXP_SETTINGS_SAVE_MSG), --"Save these as settings so they can be used later?",
-    func = function()  EchoExperience:DoSetDefaults() end,
+    func = function()  EchoExperience:DoSaveProfileSettings() end,
     width = "full",	--or "half" (optional)
     warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
@@ -65,7 +95,7 @@ function EchoExperience.LoadSettings()
     type = "button",
     name = GetString(SI_ECHOEXP_SETTINGS_LOAD_TITLE), --"Load saved settings",
     tooltip = GetString(SI_ECHOEXP_SETTINGS_LOAD_MSG), --"Load settings from saved profile?",
-    func = function()  EchoExperience:DoLoadSetDefaults() end,
+    func = function()  EchoExperience:DoLoadProfileSettings() end,
     width = "full",	--or "half" (optional)
     warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
@@ -201,11 +231,22 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
-    name = GetString(SI_ECHOEXP_SETTINGS_EXP_VERBSKILL_TITLE), --""Verbose Skill Experience",
-    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_VERBSKILL_TOOLTIP), --""Verbose reporting if experience is on?",
-    getFunc = function() return EchoExperience.savedVariables.verboseSkillExp end,
+    name    = GetString(SI_ECHOEXP_SETTINGS_EXP_SKILLLINE_TITLE), --"" Skill Experience",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_SKILLLINE_TOOLTIP), --""Verbose reporting if experience is on?",
+    getFunc = function() return EchoExperience.savedVariables.showSkillExp end,
     setFunc = function(value)
-      EchoExperience.savedVariables.verboseSkillExp = value
+      EchoExperience.savedVariables.showSkillExp = value
+      --EchoExperience.SetupExpGainsEvents(false)
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name    = GetString(SI_ECHOEXP_SETTINGS_EXP_VERBSKILLLINE_TITLE), --""Verbose Skill Experience",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_VERBSKILLLINE_TOOLTIP), --""Verbose reporting if experience is on?",
+    getFunc = function() return EchoExperience.savedVariables.showAllSkillExp end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.showAllSkillExp = value
       --EchoExperience.SetupExpGainsEvents(false)
     end,
     width = "half",	--or "half" (optional)

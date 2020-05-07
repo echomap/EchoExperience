@@ -1597,24 +1597,27 @@ function EchoExperience:DoSaveProfileSettings()
   local pName = GetUnitName("player")
   EchoExperience.accountVariables.useAsDefault = 	pName
   EchoExperience.accountVariables.defaults = {}
+  --
+  EchoExperience.accountVariables.defaults.immersive        = EchoExperience.savedVariables.immersive
+  EchoExperience.accountVariables.defaults.showmdk          = EchoExperience.savedVariables.showmdk
+  EchoExperience.accountVariables.defaults.showdiscovery    = EchoExperience.savedVariables.showdiscovery
+  EchoExperience.accountVariables.defaults.sessiontracking  = EchoExperience.savedVariables.sessiontracking
+  EchoExperience.accountVariables.defaults.lifetimetracking = EchoExperience.savedVariables.lifetimetracking
+  --
   EchoExperience.accountVariables.defaults.groupLoot       = EchoExperience.savedVariables.groupLoot
   EchoExperience.accountVariables.defaults.showGuildLogin  = EchoExperience.savedVariables.showGuildLogin
   EchoExperience.accountVariables.defaults.showGuildLogout = EchoExperience.savedVariables.showGuildLogout
   EchoExperience.accountVariables.defaults.showExp         = EchoExperience.savedVariables.showExp
   EchoExperience.accountVariables.defaults.verboseExp      = EchoExperience.savedVariables.verboseExp
-  
-  EchoExperience.accountVariables.defaults.showSkillExp = EchoExperience.savedVariables.showSkillExp
-  EchoExperience.accountVariables.defaults.showSkillExp = EchoExperience.savedVariables.showSkillExp
-  
+  --
+  EchoExperience.accountVariables.defaults.showSkillExp    = EchoExperience.savedVariables.showSkillExp
+  EchoExperience.accountVariables.defaults.showAllSkillExp = EchoExperience.savedVariables.showAllSkillExp
+  --
   EchoExperience.accountVariables.defaults.showLoot        = EchoExperience.savedVariables.showLoot
   EchoExperience.accountVariables.defaults.extendedLoot    = EchoExperience.savedVariables.extendedLoot
   EchoExperience.accountVariables.defaults.showquests      = EchoExperience.savedVariables.showquests
-  
-  EchoExperience.accountVariables.defaults.showmdk          = EchoExperience.savedVariables.showmdk
-  EchoExperience.accountVariables.defaults.showdiscovery    = EchoExperience.savedVariables.showdiscovery
-  EchoExperience.accountVariables.defaults.sessiontracking  = EchoExperience.savedVariables.sessiontracking
-  EchoExperience.accountVariables.defaults.lifetimetracking = EchoExperience.savedVariables.lifetimetracking
-  
+  --
+  --Copy table Settings
   EchoExperience.accountVariables.defaults.guildsettings   = EchoExperience:deepcopy(EchoExperience.savedVariables.guildsettings)
   EchoExperience.accountVariables.defaults.lootsettings    = EchoExperience:deepcopy(EchoExperience.savedVariables.lootsettings)
   EchoExperience.accountVariables.defaults.expsettings     = EchoExperience:deepcopy(EchoExperience.savedVariables.expsettings)
@@ -1625,10 +1628,17 @@ end
 -- ProfileSettings, from settings
 function EchoExperience:DoLoadProfileSettings()
   if(EchoExperience.accountVariables.useAsDefault~=nil and EchoExperience.accountVariables.defaults~=nil )then
+    --
+    EchoExperience.savedVariables.immersive        = EchoExperience.accountVariables.defaults.immersive
+    EchoExperience.savedVariables.showmdk          = EchoExperience.accountVariables.defaults.showmdk
+    EchoExperience.savedVariables.showdiscovery    = EchoExperience.accountVariables.defaults.showdiscovery
+    EchoExperience.savedVariables.sessiontracking  = EchoExperience.accountVariables.defaults.sessiontracking
+    EchoExperience.savedVariables.lifetimetracking = EchoExperience.accountVariables.defaults.lifetimetracking
+    --
     EchoExperience.savedVariables.verboseExp      = EchoExperience.accountVariables.defaults.verboseExp
     EchoExperience.savedVariables.showAllSkillExp = EchoExperience.accountVariables.defaults.showAllSkillExp	
-    EchoExperience.savedVariables.showSkillExp = EchoExperience.accountVariables.defaults.showSkillExp	
-    
+    EchoExperience.savedVariables.showSkillExp    = EchoExperience.accountVariables.defaults.showSkillExp	
+    --
     EchoExperience.savedVariables.groupLoot       = EchoExperience.accountVariables.defaults.groupLoot       
     EchoExperience.savedVariables.showGuildLogin  = EchoExperience.accountVariables.defaults.showGuildLogin
     EchoExperience.savedVariables.showGuildLogout = EchoExperience.accountVariables.defaults.showGuildLogout
@@ -1636,12 +1646,8 @@ function EchoExperience:DoLoadProfileSettings()
     EchoExperience.savedVariables.showLoot        = EchoExperience.accountVariables.defaults.showLoot
     EchoExperience.savedVariables.extendedLoot    = EchoExperience.accountVariables.defaults.extendedLoot
     EchoExperience.savedVariables.showquests      = EchoExperience.accountVariables.defaults.showquests
-    
-    EchoExperience.savedVariables.showmdk          = EchoExperience.accountVariables.defaults.showmdk
-    EchoExperience.savedVariables.showdiscovery    = EchoExperience.accountVariables.defaults.showdiscovery
-    EchoExperience.savedVariables.sessiontracking  = EchoExperience.accountVariables.defaults.sessiontracking
-    EchoExperience.savedVariables.lifetimetracking = EchoExperience.accountVariables.defaults.lifetimetracking
-    
+    --
+    --Copy table Settings
     EchoExperience.savedVariables.guildsettings   = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.guildsettings)
     EchoExperience.savedVariables.lootsettings    = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.lootsettings)
     EchoExperience.savedVariables.expsettings     = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.expsettings)

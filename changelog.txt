@@ -36,12 +36,14 @@ LitanyOfBlood Gui still a mess
 ## [Testing branch]
 
 ## [Unreleased]
+0.0.33
+-
+
+## [Released]
 0.0.32
 -Break out skill line options, to allow just reporting on rank gains
 --verboseSkillExp -> showSkillExp/showAllSkillExp
 -Riding rank gains reported on (per showSkillExp setting)
-
-## [Released]
 0.0.31
 -Per skillline reporting not working, per either my mistake or api change/updated
 --so updated OnAbilityExperienceUpdate to report on skilllines instead

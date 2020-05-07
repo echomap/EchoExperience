@@ -156,10 +156,10 @@ local localization_strings = {
   SI_ECHOEXP_XP_SKILLLINE_ICON_2 = "Gained <<5>>xp in [|t14:14:<<6>>|t<<1>>] need <<4>>xp",
   SI_ECHOEXP_XP_SKILLLINE_ICON_3 = "Gained xp in [|t14:14:<<6>>|t<<1>>]  (<<2>>/<<3>>) need <<4>>xp",
   SI_ECHOEXP_XP_SKILLLINE_ICON_4 = "Gained <<5>>xp in [|t14:14:<<6>>|t<<1>>] (<<2>>/<<3>>) need <<4>>xp",
-  SI_ECHOEXP_XP_SKILLLINE_UP     = "Upgraded rank of [<<2>>] to rank <<3>>!",
+  SI_ECHOEXP_XP_SKILLLINE_UP     = "Upgraded rank of [<<2>>] to rank <<3>>!!!",
   
   -- eventCode, sourceWord, trainingTypeWord, previous, current )
-  SI_ECHOEXP_RIDING_UP      = "Upgraded Riding [<<3>>] from rank <<4>> to <<5>>!",
+  SI_ECHOEXP_RIDING_UP      = "Upgraded [Riding <<3>>] from rank <<4>> to <<5>>!!!",
   SI_ECHOEXP_RIDING_SPEED   = "Speed",
   SI_ECHOEXP_RIDING_STAMINA = "Stamina",
   SI_ECHOEXP_RIDING_CARRY   = "Carry Capacity",
@@ -184,9 +184,9 @@ local localization_strings = {
 	SI_ECHOEXP_GUILD_3       = "<<4>> Logout at <<2>> (<<3>>)",
     
   -- <<1>>(guildID), <<2>>GuildName, <<3>>playerName, <<4>>ZO_FormatClockTime(), <<5>>pLink )
-	SI_ECHOEXP_GUILDADD_1    = "[<<5>>] Joined (<<2>>) at <<4>>!",
+	SI_ECHOEXP_GUILDADD_1    = "<<5>> *Joined* (<<2>>) at <<4>>!",
   --<<1>> guildID, <<2>>guild, <<3>>characterName, <<4>>ZO_FormatClockTime() , <<5>>pLink
-	SI_ECHOEXP_GUILDREM_1    = "[<<5>>] Left (<<2>) at <<4>>!",  
+	SI_ECHOEXP_GUILDREM_1    = "<<5>> *Left* (<<2>) at <<4>>!",  
   
 	------------------------------
   -- LOOT

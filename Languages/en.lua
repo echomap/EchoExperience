@@ -35,6 +35,10 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_KILLS_SHOW_TT     = "Show kills/deaths?",
   SI_ECHOEXP_SETTINGS_DISCOVERY_SHOW    = "Show discovered?",
   SI_ECHOEXP_SETTINGS_DISCOVERY_SHOW_TT = "Show discovered locations?",
+  SI_ECHOEXP_SETTINGS_ACHIEVEMENT_SHOW    = "Show Achievments?",
+  SI_ECHOEXP_SETTINGS_ACHIEVEMENT_SHOW_TT = "Show Achievments?",
+  SI_ECHOEXP_SETTINGS_ALPHA_NAME    = "Show Alpha events?",
+  SI_ECHOEXP_SETTINGS_ALPHA_TT = "Dev Alpha?",
   
   SI_ECHOEXP_SETTINGS_SESSIONTRACK_NAME = "Keep track of data in session?",
   SI_ECHOEXP_SETTINGS_SESSIONTRACK_TT   = "Keep track of looted/kills data in session?",
@@ -140,6 +144,9 @@ local localization_strings = {
   SI_ECHOEXP_QUEST_ACCEPT   = "You accepted the quest [<<1>>] (<<2>>/<<3>>)",
   SI_ECHOEXP_QUEST_COMPLETE = "You completed the quest [<<1>>] (<<2>>/<<3>>)",
   SI_ECHOEXP_QUEST_REMOVED  = "The quest [<<1>>] was removed from your log. (<<2>>/<<3>>)",
+  -- name, points, id, link)
+  SI_ECHOEXP_ACHIEVEMENT_AWARDED = "You have earned the achievment [<<4>>]!",
+  SI_ECHOEXP_LEVEL_GAIN = "*** You feel more powerful! *** You have reached the level [<<1>>] ! ***",
   
 	------------------------------
   -- EXP

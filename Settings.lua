@@ -52,6 +52,7 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
+  -- Output to SYS
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
     name    = GetString(SI_ECHOEXP_SETTINGS_KILLS_SHOW),
@@ -59,9 +60,11 @@ function EchoExperience.LoadSettings()
     getFunc = function() return EchoExperience.savedVariables.showmdk end,
     setFunc = function(value)
       EchoExperience.savedVariables.showmdk = value
+      EchoExperience.SetupMiscEvents(true)
     end,
     width = "half",	--or "half" (optional)
   }
+   -- Output to EXP
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
     name    = GetString(SI_ECHOEXP_SETTINGS_DISCOVERY_SHOW),
@@ -69,9 +72,24 @@ function EchoExperience.LoadSettings()
     getFunc = function() return EchoExperience.savedVariables.showdiscovery end,
     setFunc = function(value)
       EchoExperience.savedVariables.showdiscovery = value
+      EchoExperience:SetupDiscoveryEvents(true)
     end,
     width = "half",	--or "half" (optional)
   }
+  --  TODO move to quest section?
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name    = GetString(SI_ECHOEXP_SETTINGS_ACHIEVEMENT_SHOW),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_ACHIEVEMENT_SHOW_TT), 
+    getFunc = function() return EchoExperience.savedVariables.showachievements end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.showachievements = value
+      EchoExperience:SetupAchievmentEvents(true)
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  
+  -- TRACKING
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
     name    = GetString(SI_ECHOEXP_SETTINGS_SESSIONTRACK_NAME),
@@ -79,10 +97,11 @@ function EchoExperience.LoadSettings()
     getFunc = function() return EchoExperience.savedVariables.sessiontracking end,
     setFunc = function(value)
       EchoExperience.savedVariables.sessiontracking = value
+      EchoExperience.SetupMiscEvents(true)
     end,
     width = "half",	--or "half" (optional)
   }
-  
+  -- Save/Load Settings
   optionsTable[#optionsTable+1] = {
     type = "button",
     name = GetString(SI_ECHOEXP_SETTINGS_SAVE_TITLE),  --"Save these settings",
@@ -91,6 +110,7 @@ function EchoExperience.LoadSettings()
     width = "full",	--or "half" (optional)
     warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
+  -- Save/Load Settings
   optionsTable[#optionsTable+1] = {
     type = "button",
     name = GetString(SI_ECHOEXP_SETTINGS_LOAD_TITLE), --"Load saved settings",
@@ -100,7 +120,7 @@ function EchoExperience.LoadSettings()
     warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
   
-  --QUEST
+  --SECTION: QUEST
   optionsTable[#optionsTable+1] = {
     type = "header",
     title = nil,	--(optional)
@@ -199,7 +219,7 @@ function EchoExperience.LoadSettings()
   }
   --QUEST
   
-  ---EXP
+  --SECTION: EXP
   optionsTable[#optionsTable+1] = {
     type = "header",
     title = nil,	--(optional)
@@ -331,7 +351,7 @@ function EchoExperience.LoadSettings()
     warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
   
-  ---LOOT
+  --SECTION: LOOT
   optionsTable[#optionsTable+1] = {        
     type = "header",
     name = "",
@@ -481,7 +501,7 @@ function EchoExperience.LoadSettings()
     warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
   
-  ---GUILD
+  --SECTION: GUILD
   optionsTable[#optionsTable+1] = {
     type = "header",
     name = "",
@@ -640,6 +660,7 @@ function EchoExperience.LoadSettings()
     warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
   
+  --SECTION: DEVs
   optionsTable[#optionsTable+1] = {
     type = "header",
     --title = "My Title",	--(optional)
@@ -655,6 +676,19 @@ function EchoExperience.LoadSettings()
     width = "half",	--or "half" (optional)
   }
     
+  --
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name    = GetString(SI_ECHOEXP_SETTINGS_ALPHA_NAME),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_ALPHA_NAME_TT), 
+    getFunc = function() return EchoExperience.savedVariables.showalpha end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.showalpha = value
+      EchoExperience:SetupAlphaEvents(true)
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  
   LAM:RegisterOptionControls(EchoExperience.menuName, optionsTable)
 end
 

@@ -61,14 +61,16 @@ local defaultSettings = {
 	verboseExp = true,
 	showSkillExp    = true,
 	showAllSkillExp = true,
-	messageFmt = 1,
-	showLoot    = false,
-	groupLoot   = false,  
-	extendedLoot = false,
-	showGuildLogin = false,
-	showGuildLogout= false,
+	messageFmt      = 1,
+	showLoot         = false,
+	groupLoot        = false,  
+	extendedLoot     = false,
+	showGuildLogin   = false,
+	showGuildLogout  = false,
   showmdk          = true,
 	showdiscovery    = true,
+  showachievements = true,
+  showalpha        = false,
   sessiontracking  = false,
   lifetimetracking = false,
   immersive = false, 
@@ -728,9 +730,8 @@ end
 --RETURNS:(number eventCode, SkillType skillType, number skillIndex, number rank)
 --NOTES:  XX
 function EchoExperience.OnSkillRankUpdate(eventCode, skillType, skillIndex, rank)
-  --EVENT_SKILL_RANK_UPDATE (number eventCode, SkillType skillType, number skillIndex, number rank)
 	local skillLineName, currentSkillRank, available = GetSkillLineInfo(skillType, skillIndex)
-	--local lastRankXP, nextRankXP, currentXP          = GetSkillLineXPInfo(skillType, skillIndex)
+	--local lastRankXP, nextRankXP, currentXP        = GetSkillLineXPInfo(skillType, skillIndex)
 	local pressed, normal, mouseOver, announce = ZO_Skills_GetIconsForSkillType(skillType)
   if( EchoExperience.savedVariables.showSkillExp ) then 
      if(not available) then
@@ -860,6 +861,28 @@ function EchoExperience.OnChampionPointGain()
 		EchoExperience.outputToChanel(strL,msgTypeEXP)
 end
 
+
+------------------------------
+-- EVENT
+--ONEvent  
+--EVENT:   EVENT_LEVEL_UPDATE
+--RETURNS:
+--NOTES:  XX
+function EchoExperience.OnExperienceLevelUpdate(eventCode, unitTag, level)
+	--[[EchoExperience.outputMsg(EchoExperience.name .. " OnExperienceLevelUpdate: "
+    .. " eventCode=" .. tostring(eventCode)
+		.. " unitTag="  .. tostring(unitTag)
+		.. " level="  .. tostring(level)
+  )--]]
+  if(unitTag=="player") then
+    local sentence = GetString(SI_ECHOEXP_LEVEL_GAIN)
+    local strL = zo_strformat(sentence, level, unitTag )
+    EchoExperience.outputToChanel(strL,msgTypeEXP)
+  else
+    --unitTag==group#
+  end
+end
+
 ------------------------------
 -- EVENT
 --ONEvent  shows skill exp gains and CP gains
@@ -867,10 +890,7 @@ end
 --RETURNS:(num eventCode, ProgressReason reason, num level, num previousExperience, num currentExperience, num championPoints)
 --NOTES:  XX
 function EchoExperience.OnExperienceGain(event, eventCode, reason, level, previousExperience, currentExperience, championPoints)
-	--EchoExperience.debugMsg("OnExperienceGain Called")
-	--if ( unitTag ~= 'player' ) then return end
-	--local xpPrev = previousExperience;
-	
+	--EchoExperience.debugMsg("OnExperienceGain Called")	
 	EchoExperience.debugMsg(EchoExperience.name .. " previousExperience=" .. previousExperience
 		.. " currentExperience="  .. currentExperience
 		.. " eventCode=" .. eventCode
@@ -1145,6 +1165,7 @@ function EchoExperience.OnInventorySingleSlotUpdate(eventCode, bagId, slotId, is
       else
         qualifier = qualifier + 2
       end
+      --TODO Returns: number count = GetItemTotalCount(number Bag bagId, number slotIndex)
     
       local sentence = GetString("SI_ECHOLOOT_RECEIVE_", qualifier)
       local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName )
@@ -1213,6 +1234,7 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
   --]]
   
   local icon      = GetItemLinkIcon(itemName)
+  --local itemLink  = GetItemLink(bagId, slotId, LINK_STYLE_BRACKETS)
   --
   if(isSelf) then
     --I can't remember why this...
@@ -1497,6 +1519,52 @@ function EchoExperience.OnEventQuestRemoved(eventCode, isCompleted, journalIndex
   end
 end
 
+
+
+------------------------------
+-- EVENT EVENT_ACHIEVEMENT_AWARDED
+-- (number eventCode, string name, number points, number id, string link)
+function EchoExperience.OnAchievementAwarded(eventCode, name, points, id, link)
+  EchoExperience.debugMsg("OnAchievementAwarded: "
+    .." name="     .. tostring(name)
+    .." points="     .. tostring(points)
+    .." id="     .. tostring(id)
+    .." link="     .. tostring(link)
+    .." eventCode="     .. tostring(eventCode) 
+  )  
+  local sentence = GetString(SI_ECHOEXP_ACHIEVEMENT_AWARDED)
+  local strL = zo_strformat(sentence, name, points, id, link)
+  EchoExperience.outputToChanel(strL, msgTypeQuest)
+end
+
+
+------------------------------
+-- EVENT
+-- EVENT_EFFECT_CHANGED (number eventCode, MsgEffectResult changeType, number effectSlot, string effectName, string unitTag, number beginTime, number endTime, number stackCount, string iconName, string buffType, BuffEffectType effectType, AbilityType abilityType, StatusEffectType statusEffectType, string unitName, number unitId, number abilityId, CombatUnitType sourceType)
+--https://wiki.esoui.com/EVENT_EFFECT_CHANGED
+-- NOTES: No the psyjic passive for major protection never gets thrown!
+function EchoExperience.OnCombatEffectChanged(eventCode, changeType, effectSlot, effectName, unitTag, beginTime, endTime, stackCount, iconName, buffType, effectType, abilityType, statusEffectType, unitName, unitId, abilityId, sourceType)
+  --
+  --local pID       = GetCurrentCharacterId()
+  --if(pID ~= unitId) then return end
+  --
+  EchoExperience.outputMsg("OnCombatEffectChanged: "
+    .." eventCode="     .. tostring(eventCode) 
+    .." pID="           .. tostring(pID)
+    .." unitId="        .. tostring(unitId)
+    .." changeType="    .. tostring(changeType)
+    .." effectSlot="    .. tostring(effectSlot)
+    .." effectName="    .. tostring(effectName)
+    .." unitTag="       .. tostring(unitTag)
+    .." buffType="      .. tostring(buffType)
+    .." unitName="      .. tostring(unitName)
+    .." abilityId="     .. tostring(abilityId)    
+  )
+  --
+end
+------------------------------
+------------------------------
+
 ------------------------------
 -- EVENT
 function EchoExperience.OnLitanyOfBlood(targetNameL, targetUnitId)
@@ -1672,14 +1740,15 @@ function EchoExperience:GetExtraInfo(itemName)
 	--bool hasSet, str setName, num numBonuses, num numEquipped, num maxEquipped, num setId
 	local hasSet, setName, numBonuses, numEquipped, maxEquipped, setId = GetItemLinkSetInfo(itemName)
 	EchoExperience.debugMsg("GetExtraInfo:"
-			.." hasSet="  ..tostring(hasSet)
-			.." setName=" ..tostring(setName)
-			.." setId="   ..tostring(setId)
+			.." hasSet="    ..tostring(hasSet)
+			.." setName="   ..tostring(setName)
+			.." setId="     ..tostring(setId)
+      .." traitName=" ..tostring(traitName)
 		)
 	if( hasSet and setId > 0 ) then
 		return traitName, setName
 	end
-	return trainName, nil
+	return traitName, nil
 end
 
 ------------------------------
@@ -1702,7 +1771,6 @@ function EchoExperience.SetupExpGainsEvents(reportMe)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_CHAMPION_POINT_GAINED", EVENT_CHAMPION_POINT_GAINED,          EchoExperience.OnChampionPointGain)
 		--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnAlliancePtGain",	EVENT_ALLIANCE_POINT_UPDATE,    EchoExperience.OnAlliancePtGain)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnSkillPtChange",	EVENT_SKILL_POINTS_CHANGED,     EchoExperience.OnSkillPtChange)
-		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnDiscoveryExp",	EVENT_DISCOVERY_EXPERIENCE,     EchoExperience.OnDiscoveryExperienceGain)
 		--not really needed
 	EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."AbilityProgression",EVENT_ABILITY_PROGRESSION_XP_UPDATE, EchoExperience.OnAbilityExperienceUpdate)
 	EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_SKILL_RANK_UPDATE",EVENT_SKILL_RANK_UPDATE, EchoExperience.OnSkillRankUpdate)
@@ -1713,7 +1781,7 @@ function EchoExperience.SetupExpGainsEvents(reportMe)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."SkillXPGain",	EVENT_SKILL_XP_UPDATE)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."SkillLineAdded",	EVENT_SKILL_LINE_ADDED)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."ChampionUnlocked", EVENT_CHAMPION_SYSTEM_UNLOCKED)
-		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."XPGain",		EVENT_EXPERIENCE_GAIN)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."XPGain",		EVENT_EXPERIENCE_GAIN)    
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_CHAMPION_POINT_GAINED", EVENT_CHAMPION_POINT_GAINED)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnAlliancePtGain",		EVENT_ALLIANCE_POINT_UPDATE)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnSkillPtChange",		EVENT_SKILL_POINTS_CHANGED)
@@ -1798,6 +1866,40 @@ function EchoExperience.SetupGuildEvents()
   else
     EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_GUILD_MEMBER_ADDED",	EVENT_GUILD_MEMBER_ADDED, EchoExperience.OnGuildMemberAdded)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_GUILD_MEMBER_REMOVED",	EVENT_GUILD_MEMBER_REMOVED, EchoExperience.OnGuildMemberRemoved)    
+  end
+end
+
+
+------------------------------
+-- SETUP
+function EchoExperience.SetupAchievmentEvents(reportMe)
+  if( EchoExperience.savedVariables.showachievements) then
+    EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_AWARDED",	EVENT_ACHIEVEMENT_AWARDED, EchoExperience.OnAchievementAwarded)
+    EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_LEVEL_UPDATE",		    EVENT_LEVEL_UPDATE,          EchoExperience.OnExperienceLevelUpdate, REGISTER_FILTER_UNIT_TAG , "player" )
+  else
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_AWARDED",	EVENT_ACHIEVEMENT_AWARDED)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LEVEL_UPDATE", EVENT_LEVEL_UPDATE)
+  end
+end
+
+------------------------------
+-- SETUP
+function EchoExperience.SetupDiscoveryEvents(reportMe)
+  if( EchoExperience.savedVariables.showdiscovery) then
+  		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnDiscoveryExp",	EVENT_DISCOVERY_EXPERIENCE,     EchoExperience.OnDiscoveryExperienceGain)
+  else
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_DISCOVERY_EXPERIENCE",	EVENT_DISCOVERY_EXPERIENCE)
+  end
+end
+
+------------------------------
+-- SETUP
+function EchoExperience.SetupAlphaEvents(reportMe)
+  if( EchoExperience.savedVariables.showalpha) then
+    --EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_EFFECT_CHANGED",	EVENT_EFFECT_CHANGED, EchoExperience.OnCombatEffectChanged)    
+    --EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_UNIT_DESTROYED",	EVENT_UNIT_DESTROYED, EchoExperience.OnUnitDestroyed)
+  else
+    --EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_EFFECT_CHANGED",	EVENT_EFFECT_CHANGED)
   end
 end
 
@@ -2176,6 +2278,10 @@ else
   EchoExperience.SetupGuildEvents()
   EchoExperience.SetupMiscEvents()  
   EchoExperience.SetupEventsQuest()
+  EchoExperience.SetupAchievmentEvents()
+  EchoExperience.SetupDiscoveryEvents()
+  EchoExperience.SetupAlphaEvents()
+  
   EchoExperience.SetupLitanyOfBlood()
   
 end

@@ -37,7 +37,10 @@ LitanyOfBlood Gui still a mess
 
 ## [Unreleased]
 0.0.33
--
+-show achievements
+-show discoveries
+-show Level gain
+-fixed bug on reporting trait of looted
 
 ## [Released]
 0.0.32

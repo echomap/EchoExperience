@@ -1206,7 +1206,7 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 	if lootType ~= nil and lootType ~= LOOT_TYPE_MONEY and lootType ~= LOOT_TYPE_QUEST_ITEM then
 		--if itemType ~= ITEMTYPE_ARMOR_TRAIT and itemType ~= ITEMTYPE_WEAPON_TRAIT -- lootType ~= LOOT_TYPE_COLLECTIBLE
 		local traitName, setName = EchoExperience:GetExtraInfo(itemName)
-		if( traitName ~= nil and setName ~= nil) then
+		if( traitName ~= nil and setName ~= nil and traitName ~= "" and setName ~= "") then
 			extraInfo = string.format("%s, %s set",traitName, setName)
 		elseif( traitName ~= nil) then
 			extraInfo = string.format("%s",traitName)
@@ -1229,7 +1229,7 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
       EchoExperience.savedVariables.tracking.items[itemNameR] = {}
       EchoExperience.savedVariables.tracking.items[itemNameR].quantity=0
     end
-  EchoExperience.savedVariables.tracking.items[itemNameR].quantity=EchoExperience.savedVariables.tracking.items[itemNameR].quantity+1
+EchoExperience.savedVariables.tracking.items[itemNameR].quantity=EchoExperience.savedVariables.tracking.items[itemNameR].quantity+1
   end--Tracking
   --]]
   
@@ -1940,8 +1940,7 @@ function EchoExperience.SetupEventsQuest(reportMe)
     --if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_XXX_HIDE),msgTypeSYS) end
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_ADDED",	EVENT_QUEST_ADDED)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_COMPLETE",	EVENT_QUEST_COMPLETE)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_REMOVED",	EVENT_QUEST_REMOVED)    
-  
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_REMOVED",	EVENT_QUEST_REMOVED)
   end
 end
 
@@ -2255,12 +2254,12 @@ function EchoExperience.DelayedStart()
   end
   if(EchoExperience.savedVariables.tracking.mobs==nil)then
     EchoExperience.savedVariables.tracking.mobs = {}
-else    
+  else    
     EchoExperience:MoveToLifetime( 3 )
   end
   if(EchoExperience.savedVariables.tracking.bg==nil)then
     EchoExperience.savedVariables.tracking.bg = {}
-else
+  else
     EchoExperience:MoveToLifetime( 4 )
   end
   if(EchoExperience.savedVariables.sessiontracking==nil)then

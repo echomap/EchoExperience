@@ -198,7 +198,8 @@ local localization_strings = {
 	------------------------------
   -- LOOT
 	--<<1>>icon, <<2>>itemName, <<3>>quantity, <<4>>traitName 
-  SI_ECHOLOOT_YOU_GAIN_1  = "You looted |t14:14:<<1>>|t <<2>> <<4>>",
+  SI_ECHOLOOT_YOU_GAIN_1  = "You looted |t14:14:<<1>>|t [<<2>>] <<4>>",
+  SI_ECHOLOOT_YOU_GAIN_1  = "You looted |t14:14:<<1>>|t [<<2>>] <<4>>",
 	SI_ECHOLOOT_YOU_PICK_1  = "You acquired |t14:14:<<1>>|t <<2>>.",
 	SI_ECHOLOOT_YOU_QUEST_1 = "You looted |t14:14:<<1>>|t <<2>> (QuestItem)",
 	

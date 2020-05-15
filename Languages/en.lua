@@ -197,32 +197,32 @@ local localization_strings = {
   
 	------------------------------
   -- LOOT
-	--<<1>>icon, <<2>>itemName, <<3>>quantity, <<4>>traitName 
+	--<<1>>icon, <<2>>itemName, <<3>>quantity, <<4>>extraInfo
   SI_ECHOLOOT_YOU_GAIN_1  = "You looted |t14:14:<<1>>|t [<<2>>] <<4>>",
 	SI_ECHOLOOT_YOU_PICK_1  = "You acquired |t14:14:<<1>>|t <<2>>.",
 	SI_ECHOLOOT_YOU_QUEST_1 = "You looted |t14:14:<<1>>|t <<2>> (QuestItem)",
 	
-	SI_ECHOLOOT_YOU_GAIN_2  = "You looted |t14:14:<<1>>|t <<2>> x<<3>>",
+	SI_ECHOLOOT_YOU_GAIN_2  = "You looted |t14:14:<<1>>|t [<<2>>] x<<3>>",
 	SI_ECHOLOOT_YOU_PICK_2  = "You acquired |t14:14:<<1>>|t <<2>>  x<<3>>.",
 	SI_ECHOLOOT_YOU_QUEST_2 = "You looted |t14:14:<<1>>|t <<2>> (quest item).",
 
-	SI_ECHOLOOT_YOU_GAIN_3  = "You looted |t14:14:<<1>>|t <<2>> (*<<4>>*)*<<5>>*.",
-	SI_ECHOLOOT_YOU_PICK_3  = "You acquired |t14:14:<<1>>|t <<2>>(*<<4>>*).",
-	SI_ECHOLOOT_YOU_QUEST_3 = "You looted |t14:14:<<1>>|t <<2>> (*<<4>>*) (quest item).",
+	SI_ECHOLOOT_YOU_GAIN_3  = "You looted |t14:14:<<1>>|t [<<2>>] (<<4>>).",
+	SI_ECHOLOOT_YOU_PICK_3  = "You acquired |t14:14:<<1>>|t [<<2>>] (<<4>>).",
+	SI_ECHOLOOT_YOU_QUEST_3 = "You looted |t14:14:<<1>>|t [<<2>>] (<<4>>) (quest item).",
 		
-	SI_ECHOLOOT_YOU_GAIN_4  = "You looted: <<3>>x |t14:14:<<1>>|t <<2>> (*<<4>>*).",
-	SI_ECHOLOOT_YOU_PICK_4  = "You acquired: <<3>>x |t14:14:<<1>>|t <<2>> (*<<4>>*).",
-	SI_ECHOLOOT_YOU_QUEST_4 = "You looted: <<3>>x |t14:14:<<1>>|t <<2>> (*<<4>>*) (quest item).",
+	SI_ECHOLOOT_YOU_GAIN_4  = "You looted: <<3>>x |t14:14:<<1>>|t [<<2>>] (<<4>>).",
+	SI_ECHOLOOT_YOU_PICK_4  = "You acquired: <<3>>x |t14:14:<<1>>|t [<<2>>] (<<4>>).",
+	SI_ECHOLOOT_YOU_QUEST_4 = "You looted: <<3>>x |t14:14:<<1>>|t [<<2>>] (<<4>>) (quest item).",
 
 	--<<1>>receivedBy, <<2>>icon, <<3>>itemName, <<4>>quantity, <<5>>extraInfo 
-  SI_ECHOLOOT_OTHER_GAIN_1  = "<<1>> looted |t14:14:<<2>>|t <<3>> <<5>>",
-	SI_ECHOLOOT_OTHER_PICK_1  = "<<1>> acquired |t14:14:<<2>>|t <<3>> <<5>>",
-	SI_ECHOLOOT_OTHER_QUEST_1 = "<<1>> acquired |t14:14:<<2>>|t <<3>> (quest item).",
+  SI_ECHOLOOT_OTHER_GAIN_1  = "<<1>> looted |t14:14:<<2>>|t [<<3>>] <<5>>",
+	SI_ECHOLOOT_OTHER_PICK_1  = "<<1>> acquired |t14:14:<<2>>|t [<<3>>] <<5>>",
+	SI_ECHOLOOT_OTHER_QUEST_1 = "<<1>> acquired |t14:14:<<2>>|t [<<3>>] (quest item).",
 		
 	--<<1>>receivedBy, <<2>>icon, <<3>>itemName, <<4>>quantity, <<5>>traitName 
-	SI_ECHOLOOT_OTHER_GAIN_2  = "<<1>> looted |t14:14:<<2>>|t <<3>> x<<4>> <<5>>",
-	SI_ECHOLOOT_OTHER_PICK_2  = "<<1>> acquired |t14:14:<<2>>|t <<3>> x<<4>> <<5>>",
-	SI_ECHOLOOT_OTHER_QUEST_2 = "<<1>> looted |t14:14:<<2>>|t <<3>> (quest item).",
+	SI_ECHOLOOT_OTHER_GAIN_2  = "<<1>> looted |t14:14:<<2>>|t [<<3>>] x<<4>> <<5>>",
+	SI_ECHOLOOT_OTHER_PICK_2  = "<<1>> acquired |t14:14:<<2>>|t [<<3>>] x<<4>> <<5>>",
+	SI_ECHOLOOT_OTHER_QUEST_2 = "<<1>> looted |t14:14:<<2>>|t [<<3>>] (quest item).",
 	
 	------------------------------
   -- Extended Loot info

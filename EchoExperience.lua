@@ -4,7 +4,7 @@
 -- 
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.32",                    -- A nuisance to match to the Manifest.
+    version         = "0.0.33",                    -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -1262,7 +1262,7 @@ EchoExperience.savedVariables.tracking.items[itemNameR].quantity=EchoExperience.
       elseif(lootType==LOOT_TYPE_QUEST_ITEM)then
         sentence = GetString("SI_ECHOLOOT_YOU_QUEST_",qualifier)
       end
-      local strL = zo_strformat(sentence, icon, itemName, quantity, traitName )	  
+      local strL = zo_strformat(sentence, icon, itemName, quantity, extraInfo)
       EchoExperience.outputToChanel(strL,msgTypeLOOT)
     end --isSelf and not extendedLoot
   elseif (EchoExperience.savedVariables.groupLoot and receivedBy~=nil) then

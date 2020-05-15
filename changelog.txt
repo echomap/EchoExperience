@@ -36,13 +36,14 @@ LitanyOfBlood Gui still a mess
 ## [Testing branch]
 
 ## [Unreleased]
+0.0.34
+-
+## [Released]
 0.0.33
 -show achievements
 -show discoveries
 -show Level gain
 -fixed bug on reporting trait of looted
-
-## [Released]
 0.0.32
 -Break out skill line options, to allow just reporting on rank gains
 --verboseSkillExp -> showSkillExp/showAllSkillExp

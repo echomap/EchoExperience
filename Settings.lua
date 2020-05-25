@@ -52,42 +52,6 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
-  -- Output to SYS
-  optionsTable[#optionsTable+1] = {
-    type = "checkbox",
-    name    = GetString(SI_ECHOEXP_SETTINGS_KILLS_SHOW),
-    tooltip = GetString(SI_ECHOEXP_SETTINGS_KILLS_SHOW_TT), 
-    getFunc = function() return EchoExperience.savedVariables.showmdk end,
-    setFunc = function(value)
-      EchoExperience.savedVariables.showmdk = value
-      EchoExperience.SetupMiscEvents(true)
-    end,
-    width = "half",	--or "half" (optional)
-  }
-   -- Output to EXP
-  optionsTable[#optionsTable+1] = {
-    type = "checkbox",
-    name    = GetString(SI_ECHOEXP_SETTINGS_DISCOVERY_SHOW),
-    tooltip = GetString(SI_ECHOEXP_SETTINGS_DISCOVERY_SHOW_TT), 
-    getFunc = function() return EchoExperience.savedVariables.showdiscovery end,
-    setFunc = function(value)
-      EchoExperience.savedVariables.showdiscovery = value
-      EchoExperience:SetupDiscoveryEvents(true)
-    end,
-    width = "half",	--or "half" (optional)
-  }
-  --  TODO move to quest section?
-  optionsTable[#optionsTable+1] = {
-    type = "checkbox",
-    name    = GetString(SI_ECHOEXP_SETTINGS_ACHIEVEMENT_SHOW),
-    tooltip = GetString(SI_ECHOEXP_SETTINGS_ACHIEVEMENT_SHOW_TT), 
-    getFunc = function() return EchoExperience.savedVariables.showachievements end,
-    setFunc = function(value)
-      EchoExperience.savedVariables.showachievements = value
-      EchoExperience:SetupAchievmentEvents(true)
-    end,
-    width = "half",	--or "half" (optional)
-  }
   
   -- TRACKING
   optionsTable[#optionsTable+1] = {
@@ -123,6 +87,11 @@ function EchoExperience.LoadSettings()
   --SECTION: QUEST
   optionsTable[#optionsTable+1] = {
     type = "header",
+    name = "",
+    width = "full",	--or "half" (optional)
+  }
+  optionsTable[#optionsTable+1] = {
+    type = "header",
     title = nil,	--(optional)
     text = GetString(SI_ECHOEXP_SETTINGS_QUEST_SECTIONTITLE), --"Quest Options",
     name = GetString(SI_ECHOEXP_SETTINGS_QUEST_SECTIONNAME),  --"Quest Options",
@@ -139,6 +108,43 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
+  --
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name    = GetString(SI_ECHOEXP_SETTINGS_KILLS_SHOW),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_KILLS_SHOW_TT), 
+    getFunc = function() return EchoExperience.savedVariables.showmdk end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.showmdk = value
+      EchoExperience.SetupMiscEvents(true)
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  --
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name    = GetString(SI_ECHOEXP_SETTINGS_DISCOVERY_SHOW),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_DISCOVERY_SHOW_TT), 
+    getFunc = function() return EchoExperience.savedVariables.showdiscovery end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.showdiscovery = value
+      EchoExperience:SetupDiscoveryEvents(true)
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  --
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name    = GetString(SI_ECHOEXP_SETTINGS_ACHIEVEMENT_SHOW),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_ACHIEVEMENT_SHOW_TT), 
+    getFunc = function() return EchoExperience.savedVariables.showachievements end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.showachievements = value
+      EchoExperience:SetupAchievmentEvents(true)
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
     name = GetString(SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_NAME), --"Quest Output Tabs",
@@ -154,7 +160,7 @@ function EchoExperience.LoadSettings()
     name = GetString(SI_ECHOEXP_SETTINGS_BTN_DELETE), --"Delete",
     tooltip = GetString(SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_DELETE), --"Delete selected Quest's Data!",
     func = function()  EchoExperience:DoDeleteQuestTab() end,
-    width = "full",	--or "half" (optional)
+    width = "half",	--or "half" (optional)
     warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   } 
   optionsTable[#optionsTable+1] = {
@@ -207,19 +213,24 @@ function EchoExperience.LoadSettings()
       EchoExperience.view.settingstemp.colorQuest.b = b
       EchoExperience.view.settingstemp.colorQuest.a = a
     end,
-    width = "full",	--or "half" (optional)
+    width = "half",	--or "half" (optional)
   }
   optionsTable[#optionsTable+1] = {
     type = "button",
     name = GetString(SI_ECHOEXP_SETTINGS_BTN_SAVE), --"Save",
     tooltip = GetString(SI_ECHOEXP_SETTINGS_QUEST_NEWOUTPUTS_SAVE), --"Save selected Quest chat Data!",
     func = function()  EchoExperience:DoSaveQuestTab() end,
-    width = "full",	--or "half" (optional)
+    width = "half",	--or "half" (optional)
     warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
   --QUEST
   
   --SECTION: EXP
+  optionsTable[#optionsTable+1] = {
+    type = "header",
+    name = "",
+    width = "full",	--or "half" (optional)
+  }
   optionsTable[#optionsTable+1] = {
     type = "header",
     title = nil,	--(optional)
@@ -287,7 +298,7 @@ function EchoExperience.LoadSettings()
     name = GetString(SI_ECHOEXP_SETTINGS_BTN_DELETE), --"Delete",
     tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_DELETE), --"Delete selected Character's Data!",
     func = function()  EchoExperience:DoDeleteExpTab() end,
-    width = "full",	--or "half" (optional)
+    width = "half",	--or "half" (optional)
     warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   } 
   optionsTable[#optionsTable+1] = {
@@ -340,14 +351,14 @@ function EchoExperience.LoadSettings()
       EchoExperience.view.settingstemp.colorExp.b = b
       EchoExperience.view.settingstemp.colorExp.a = a
     end,
-    width = "full",	--or "half" (optional)
+    width = "half",	--or "half" (optional)
   }
   optionsTable[#optionsTable+1] = {
     type = "button",
     name = GetString(SI_ECHOEXP_SETTINGS_BTN_SAVE), --"Save",
     tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_NEWOUTPUTS_SAVE), --"Save selected Exp chat Data!",
     func = function()  EchoExperience:DoSaveExpTab() end,
-    width = "full",	--or "half" (optional)
+    width = "half",	--or "half" (optional)
     warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
   
@@ -395,9 +406,8 @@ function EchoExperience.LoadSettings()
       EchoExperience.savedVariables.groupLoot = value
       EchoExperience.SetupLootGainsEvents(false)
     end,
-    width = "half",	--or "half" (optional)
+    width = "full",	--or "half" (optional)
   }
-  
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
     name    = GetString(SI_ECHOEXP_SETTINGS_LOOT_OUTPUTS_NAME), -- "Loot Output Tabs",
@@ -413,7 +423,7 @@ function EchoExperience.LoadSettings()
     name    = GetString(SI_ECHOEXP_SETTINGS_BTN_DELETE), --"Delete",
     tooltip = GetString(SI_ECHOEXP_SETTINGS_LOOT_OUTPUTS_DELETE), -- "Delete selected Character's Data!",
     func = function()  EchoExperience:DoDeleteLootTab() end,
-    width = "full",	--or "half" (optional)
+    width = "half",	--or "half" (optional)
     warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   } 
   optionsTable[#optionsTable+1] = {
@@ -466,7 +476,7 @@ function EchoExperience.LoadSettings()
       EchoExperience.view.settingstemp.colorLoot.b = b
       EchoExperience.view.settingstemp.colorLoot.a = a
     end,
-    width = "full",	--or "half" (optional)
+    width = "half",	--or "half" (optional)
   }
   
   --[[ ALPHA maybe to let this happen channel by channel?
@@ -497,7 +507,7 @@ function EchoExperience.LoadSettings()
     name    = GetString(SI_ECHOEXP_SETTINGS_BTN_SAVE), --"Save",
     tooltip = GetString(SI_ECHOEXP_SETTINGS_LOOT_NEWOUTPUTS_SAVE), --"Save selected Loot chat Data!",
     func = function()  EchoExperience:DoSaveLootTab() end,
-    width = "full",	--or "half" (optional)
+    width = "half",	--or "half" (optional)
     warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
   
@@ -538,7 +548,6 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
-
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
     name    = GetString(SI_ECHOEXP_SETTINGS_GUILD_OUTPUTS_NAME),-- "Guild Output Tabs",
@@ -554,9 +563,10 @@ function EchoExperience.LoadSettings()
     name = GetString(SI_ECHOEXP_SETTINGS_BTN_DELETE), --"Delete",
     tooltip = GetString(SI_ECHOEXP_SETTINGS_GUILD_OUTPUTS_DELETE),-- "Delete selected Character's Data!",
     func = function()  EchoExperience:DoDeleteGuildTab() end,
-    width = "full",	--or "half" (optional)
+    width = "half",	--or "half" (optional)
     warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
+  
   optionsTable[#optionsTable+1] = {
     type = "header",
     title = nil,	--(optional)
@@ -607,11 +617,11 @@ function EchoExperience.LoadSettings()
       EchoExperience.view.settingstemp.colorGuild.b = b
       EchoExperience.view.settingstemp.colorGuild.a = a
     end,
-    width = "full",	--or "half" (optional)
+    width = "half",	--or "half" (optional)
   }
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
-    name = GetString(SI_ECHOEXP_SETTINGS_GUILD_G), --"G1", -- or string id or function returning a string
+    name = GetString(SI_ECHOEXP_SETTINGS_GUILD_G1), --"G1", -- or string id or function returning a string
     getFunc = function() 
       return EchoExperience.view.settingstemp.guild1 
     end,
@@ -661,6 +671,11 @@ function EchoExperience.LoadSettings()
   }
   
   --SECTION: DEVs
+  optionsTable[#optionsTable+1] = {
+    type = "header",
+    name = "",
+    width = "full",	--or "half" (optional)
+  }
   optionsTable[#optionsTable+1] = {
     type = "header",
     --title = "My Title",	--(optional)

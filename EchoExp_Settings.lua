@@ -263,10 +263,10 @@ function EchoExperience:DoSaveQuestTab()
     EchoExperience.savedVariables.questsettings = {}
   end
   
-  local elem = {}
-  elem["window"]=window
-  elem["tab"]   =tab
-  elem["color"] =color
+  local elem     = {}
+  elem["window"] = window
+  elem["tab"]    = tab
+  elem["color"]  = color
   table.insert(EchoExperience.savedVariables.questsettings, elem)
  
   --reset
@@ -275,8 +275,6 @@ function EchoExperience:DoSaveQuestTab()
   
   EchoExperience:UpdateUIQuestTabs()
 end
-
-
 --QUEST
 
 ------------------------------

@@ -48,7 +48,7 @@ local localization_strings = {
   --
   SI_ECHOEXP_SETTINGS_QUEST_SECTIONTITLE    = "Quest Options",
   SI_ECHOEXP_SETTINGS_QUEST_SECTIONNAME     = "Quest Options",
-  SI_ECHOEXP_SETTINGS_QUEST_TITLE           = "Quest",
+  SI_ECHOEXP_SETTINGS_QUEST_TITLE           = "Show Quest",
   SI_ECHOEXP_SETTINGS_QUEST_TOOLTIP         = "Show Quests accept/complete? on or off.",
   SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_NAME    = "Quest Output Tabs",
   SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_TOOLTIP = "Tab(s) for Quest output.",
@@ -147,10 +147,14 @@ local localization_strings = {
   -- name, points, id, link)
   SI_ECHOEXP_ACHIEVEMENT_AWARDED = "You have earned the achievment [<<4>>]!",
   SI_ECHOEXP_LEVEL_GAIN = "*** You feel more powerful! *** You have reached the level [<<1>>] ! ***",
+  --questName, shareTargetCharacterName, shareTargetDisplayName, resultString)
+  SI_ECHOEXP_QUEST_SHARE_RESULT = "<<2>>@<<3>> <<4>> quest [<<1>>].",  
   
 	------------------------------
   -- EXP
 	SI_ECHOEXP_XP_GAIN         = "You gained <<1>> experience.",
+  --You discovered <whateverplace> - 42 xp
+  SI_ECHOEXP_XP_GAIN_SOURCE  = "You <<1>> <<2>> - <<3>> xp.",
 	SI_ECHOEXP_XP_SKILL_GAIN_1 = "Gained <<1>>xp in [<<2>>] (<<3>>/<<4>>) need <<5>>xp",
 	SI_ECHOEXP_XP_SKILL_GAIN_2 = "Gained <<1>>xp in [<<2>>] need <<5>>xp",
   -- <<1>>name, <<2>> currentXP, <<3>> nextXP <<4>> diff, <<5>> thisGain, <<6>> icon
@@ -176,7 +180,7 @@ local localization_strings = {
   
   --
 	SI_ECHOEXP_CP_UNLOCKED     = "****You unlocked Champion points!****",
-	SI_ECHOEXP_CP_EARNED       = "****You gained a Champion point!****",
+	SI_ECHOEXP_CP_EARNED       = "****You gained a Champion point!****",  
 	SI_ECHOEXP_DISCOVERY       = "You discovered: <<1>>.",
 	SI_ECHOEXP_SKILLINE        = "You learned the skillline: <<1>>",
 

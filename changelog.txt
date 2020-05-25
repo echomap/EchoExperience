@@ -37,7 +37,10 @@ LitanyOfBlood Gui still a mess
 
 ## [Unreleased]
 0.0.34
--
+-rearranged setting menus
+-moved options to proper section to show better where they are outputted
+-testing quest share
+
 ## [Released]
 0.0.33
 -show achievements

@@ -397,6 +397,65 @@ function EchoExperience:deepcopy(orig)
     return copy
 end
 
+
+------------------------------
+-- UTIL
+function EchoExperience.lookupExpSourceText(reasonId)
+  local retVal = "gained exp"
+  if(reasonId == nil) then
+    
+  elseif(reasonId==PROGRESS_REASON_ACHIEVEMENT) then
+    retVal = "earned an achievement"
+  elseif(reasonId==PROGRESS_REASON_ACTION) then
+    retVal = "completed something"
+  elseif(reasonId==PROGRESS_REASON_ALLIANCE_POINTS) then
+    retVal = "gained ap exp"
+  --[[  
+  PROGRESS_REASON_AVA
+  PROGRESS_REASON_BATTLEGROUND
+  PROGRESS_REASON_BOOK_COLLECTION_COMPLETE
+  PROGRESS_REASON_BOSS_KILL
+  PROGRESS_REASON_COLLECT_BOOK
+  PROGRESS_REASON_COMMAND
+  PROGRESS_REASON_COMPLETE_POI
+  PROGRESS_REASON_DARK_ANCHOR_CLOSED
+  PROGRESS_REASON_DARK_FISSURE_CLOSED
+  PROGRESS_REASON_DISCOVER_POI
+  PROGRESS_REASON_DRAGON_KILL
+  PROGRESS_REASON_DUNGEON_CHALLENGE
+  PROGRESS_REASON_EVENT
+  PROGRESS_REASON_FINESSE
+  PROGRESS_REASON_GRANT_REPUTATION
+  PROGRESS_REASON_GUILD_REP
+  PROGRESS_REASON_JUSTICE_SKILL_EVENT
+  PROGRESS_REASON_KEEP_REWARD
+  PROGRESS_REASON_KILL
+  PROGRESS_REASON_LFG_REWARD
+  PROGRESS_REASON_LOCK_PICK
+  PROGRESS_REASON_MEDAL
+  PROGRESS_REASON_NONE
+  PROGRESS_REASON_OTHER
+  PROGRESS_REASON_OVERLAND_BOSS_KILL
+  PROGRESS_REASON_PVP_EMPEROR
+  --]]  
+  elseif(reasonId==PROGRESS_REASON_QUEST) then
+    retVal = "completed a quest"
+  --[[
+  PROGRESS_REASON_REWARD
+  PROGRESS_REASON_SCRIPTED_EVENT
+  PROGRESS_REASON_SKILL_BOOK
+  PROGRESS_REASON_TRADESKILL
+  PROGRESS_REASON_TRADESKILL_ACHIEVEMENT
+  PROGRESS_REASON_TRADESKILL_CONSUME
+  PROGRESS_REASON_TRADESKILL_HARVEST
+  PROGRESS_REASON_TRADESKILL_QUEST
+  PROGRESS_REASON_TRADESKILL_RECIPE
+  PROGRESS_REASON_TRADESKILL_TRAIT
+  PROGRESS_REASON_WORLD_EVENT_COMPLETED
+  --]]
+  end
+  return retVal;
+end
 ------------------------------
 -- SLASH
 function EchoExperience.SlashCommandHandler(text)
@@ -884,12 +943,56 @@ function EchoExperience.OnExperienceLevelUpdate(eventCode, unitTag, level)
 end
 
 ------------------------------
+-- EVENT  uuuiii
+--ONEvent  shows skill exp gains and CP gains
+--EVENT:   EVENT_EXPERIENCE_UPDATE
+--RETURNS:(xxx)
+--NOTES:  XX
+function EchoExperience.OnExperienceUpdate(eventCode, unitTag, currentExp, maxExp, reason)
+  EchoExperience.debugMsg(EchoExperience.name .. " EVENT_EXPERIENCE_UPDATE: "
+    .. " eventCode=" .. eventCode
+		.. " unitTag="  .. unitTag
+		.. " currentExp=" .. currentExp
+    .. " maxExp=" .. maxExp
+		.. " reason=" .. reason
+  )
+  --[[ --]]
+  -- 
+  --WHY the heck is this reporting just once, and just the exp I gain from a skilline?
+  --wanted 4138 
+  --is it only working sub 50?
+	-- TODO CHECKBOX TO ENABLE!
+  if(EchoExperience.savedVariables.currentExp == nil) then
+    -- Can't report on what we don't know.
+  else    
+    local XPgain = currentExp - EchoExperience.savedVariables.currentExp
+    EchoExperience.debugMsg(EchoExperience.name .. " EVENT_EXPERIENCE_UPDATE: "
+      .. " XPgain=" .. XPgain
+    )
+    --[[
+    --FORMAT
+    --You discovered <whateverplace> - 42 xp
+    --"You <<1>> <<2>> - <<3>>.",
+    local sourceText1 = EchoExperience.lookupExpSourceText(reason)
+    local sourceText2 = ""
+    local sentence = GetString(SI_ECHOEXP_XP_GAIN_SOURCE)
+    XPgain = ZO_CommaDelimitNumber(XPgain)
+    local strL = zo_strformat(sentence, sourceText1, sourceText2, XPgain )    
+    EchoExperience.outputToChanel(strL,msgTypeEXP)
+    --]]
+  end
+  --
+  EchoExperience.savedVariables.currentExp = currentExp
+  --[[ --]]
+end
+
+------------------------------
 -- EVENT
 --ONEvent  shows skill exp gains and CP gains
 --EVENT:   EVENT_EXPERIENCE_GAIN
 --RETURNS:(num eventCode, ProgressReason reason, num level, num previousExperience, num currentExperience, num championPoints)
 --NOTES:  XX
-function EchoExperience.OnExperienceGain(event, eventCode, reason, level, previousExperience, currentExperience, championPoints)
+function EchoExperience.OnExperienceGain(eventCode, reason, level, previousExperience, currentExperience, championPoints)
 	--EchoExperience.debugMsg("OnExperienceGain Called")	
 	EchoExperience.debugMsg(EchoExperience.name .. " previousExperience=" .. previousExperience
 		.. " currentExperience="  .. currentExperience
@@ -897,9 +1000,12 @@ function EchoExperience.OnExperienceGain(event, eventCode, reason, level, previo
 		.. " reason=" .. reason
 		.. " level="  .. level
 		.. " champ="  .. tostring(championPoints) --allways nil?
-    )
-	
-	local XPgain = previousExperience - level
+  )
+	-- TODO ugh need less than 50 char to test this, is it level or this is fine?
+	local XPgain = currentExperience - previousExperience
+  --if(championPoints ~= nil and championPoints>0) then
+  --    XPgain = currentExperience - previousExperience
+  --end  
 	--FORMAT
 	local sentence = GetString(SI_ECHOEXP_XP_GAIN)
   XPgain = ZO_CommaDelimitNumber(XPgain)
@@ -908,9 +1014,10 @@ function EchoExperience.OnExperienceGain(event, eventCode, reason, level, previo
 	EchoExperience.outputToChanel(strL,msgTypeEXP)
 	--EchoExperience.outputToChanel("You gained " .. XPgain .. " experience.",msgTypeEXP)
 	if(championPoints) then
-		local sentence = GetString(SI_ECHOEXP_CP_EARNED)
-		local strL = zo_strformat(sentence, championPoints)
-		EchoExperience.outputToChanel(strL,msgTypeEXP)
+    --this reports what CP you curently have! not a gain!
+		--local sentence = GetString(SI_ECHOEXP_CP_EARNED2)
+		--local strL = zo_strformat(sentence, championPoints)
+		--EchoExperience.outputToChanel(strL,msgTypeEXP)
 	end
 end
 
@@ -1462,7 +1569,7 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
       )
       local sentence = GetString(SI_ECHOEXP_KILL_MOB)
       local strL = zo_strformat(sentence, targetName )
-      EchoExperience.outputToChanel(strL,msgTypeSYS)
+      EchoExperience.outputToChanel(strL,msgTypeQuest)
       
       --Check LitanyOfBlood
       if( EchoExperience.savedVariables.LitanyOfBlood ~= nil) then
@@ -1472,6 +1579,48 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
       end--LitanyOfBlood
     end --you vs other
   end--showmdk
+end
+
+
+------------------------------
+-- EVENT
+--EVENT_QUEST_SHARE_RESULT
+--(number eventCode, string shareTargetCharacterName, string shareTargetDisplayName, string questName, number QuestShareResult result)
+function EchoExperience.OnEventQuestSharedResult(eventCode, shareTargetCharacterName, shareTargetDisplayName, questName, result)
+  EchoExperience.debugMsg("OnEventQuestSharedResult: "
+    .." eventCode="      .. tostring(eventCode)
+    .." shareTargetCharacterName="     .. tostring(shareTargetCharacterName) 
+    .." shareTargetDisplayName="     .. tostring(shareTargetDisplayName) 
+    .." questName="     .. tostring(questName) 
+    .." result="     .. tostring(result) 
+  )
+  --QuestShareResult
+  --QUEST_SHARE_RESULT_ACCEPTED
+  --QUEST_SHARE_RESULT_DECLINED
+  --QUEST_SHARE_RESULT_FAILED_TO_SHARE
+  if(EchoExperience.view.sharedquests==nil) then
+    EchoExperience.view.sharedquests = {}
+  end
+  local oldval = EchoExperience.view.sharedquests[questName..shareTargetCharacterName];
+  local sharedThisSession = false;
+  if(oldval~=nil) then
+    --shared in this session
+    sharedThisSession = true
+  else 
+    --not shared in this session
+  end
+  local resultString = "Unknown"
+  if(result==QUEST_SHARE_RESULT_ACCEPTED) then
+    resultString = "Accepted"
+  elseif(result==QUEST_SHARE_RESULT_DECLINED) then
+    resultString = "Declined"
+  elseif(result==QUEST_SHARE_RESULT_FAILED_TO_SHARE) then
+    resultString = "Failed to Share"
+  end
+  local sentence = GetString(SI_ECHOEXP_QUEST_SHARE_RESULT)
+  local strL = zo_strformat(sentence, questName, shareTargetCharacterName, shareTargetDisplayName, resultString )
+  EchoExperience.outputToChanel(strL, msgTypeQuest)
+  EchoExperience.view.sharedquests[questName..shareTargetCharacterName] = GetTimeStamp()
 end
 
 ------------------------------
@@ -1766,7 +1915,7 @@ function EchoExperience.SetupExpGainsEvents(reportMe)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."SkillLineAdded",	EVENT_SKILL_LINE_ADDED,         EchoExperience.OnSkillLineAdded)
 		--TODO dont need sometimes?
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."ChampionUnlocked", EVENT_CHAMPION_SYSTEM_UNLOCKED, EchoExperience.OnChampionUnlocked)
-		--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPUpdate",		EVENT_EXPERIENCE_UPDATE,        EchoExperience.OnExperienceUpdate)
+		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPUpdate",		EVENT_EXPERIENCE_UPDATE,        EchoExperience.OnExperienceUpdate)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPGain",		    EVENT_EXPERIENCE_GAIN,          EchoExperience.OnExperienceGain)
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_CHAMPION_POINT_GAINED", EVENT_CHAMPION_POINT_GAINED,          EchoExperience.OnChampionPointGain)
 		--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnAlliancePtGain",	EVENT_ALLIANCE_POINT_UPDATE,    EchoExperience.OnAlliancePtGain)
@@ -1781,6 +1930,7 @@ function EchoExperience.SetupExpGainsEvents(reportMe)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."SkillXPGain",	EVENT_SKILL_XP_UPDATE)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."SkillLineAdded",	EVENT_SKILL_LINE_ADDED)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."ChampionUnlocked", EVENT_CHAMPION_SYSTEM_UNLOCKED)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."XPUpdate",		EVENT_EXPERIENCE_UPDATE)    
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."XPGain",		EVENT_EXPERIENCE_GAIN)    
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_CHAMPION_POINT_GAINED", EVENT_CHAMPION_POINT_GAINED)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnAlliancePtGain",		EVENT_ALLIANCE_POINT_UPDATE)
@@ -1936,11 +2086,14 @@ function EchoExperience.SetupEventsQuest(reportMe)
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_QUEST_COMPLETE, EchoExperience.OnEventQuestComplete)    
     eventNamespace = EchoExperience.name.."EVENT_QUEST_REMOVED"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_QUEST_REMOVED, EchoExperience.OnEventQuestRemoved)    
+    eventNamespace = EchoExperience.name.."EVENT_QUEST_SHARE_RESULT"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_QUEST_SHARE_RESULT, EchoExperience.OnEventQuestSharedResult)
   else
     --if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_XXX_HIDE),msgTypeSYS) end
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_ADDED",	EVENT_QUEST_ADDED)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_COMPLETE",	EVENT_QUEST_COMPLETE)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_REMOVED",	EVENT_QUEST_REMOVED)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_SHARE_RESULT",	EVENT_QUEST_SHARE_RESULT)
   end
 end
 

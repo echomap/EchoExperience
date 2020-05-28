@@ -39,6 +39,7 @@ LitanyOfBlood Gui still a mess
 ## [Unreleased]
 
 ## [Released]
+0.0.35
 0.0.34
 -rearranged setting menus
 -moved options to proper section to show better where they are outputted

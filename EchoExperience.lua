@@ -402,91 +402,90 @@ end
 ------------------------------
 -- UTIL
 function EchoExperience.lookupExpSourceText(reasonId)
-  local retVal = "gained exp"
+  local retVal = GetString(SI_ECHOEXP_LEST_GAIN)
   if(reasonId == nil) then
-    --
   elseif(reasonId==PROGRESS_REASON_ACHIEVEMENT) then
-    retVal = "earned an achievement"
+    retVal = GetString(SI_ECHOEXP_LEST_ACHIEVE)
   elseif(reasonId==PROGRESS_REASON_ACTION) then
-    retVal = "completed something"
+    retVal = GetString(SI_ECHOEXP_LEST_ACTION)
   elseif(reasonId==PROGRESS_REASON_ALLIANCE_POINTS) then
-    retVal = "gained ap"
+    retVal = GetString(SI_ECHOEXP_LEST_AP)
   elseif(reasonId==PROGRESS_REASON_AVA) then
-    retVal = "did AVA"
+    retVal = GetString(SI_ECHOEXP_LEST_AVA)
   elseif(reasonId==PROGRESS_REASON_BATTLEGROUND) then
-    retVal = "did BG"
+    retVal = GetString(SI_ECHOEXP_LEST_BG)
   elseif(reasonId==PROGRESS_REASON_BOOK_COLLECTION_COMPLETE) then
-    retVal = "completed a collection"
+    retVal = GetString(SI_ECHOEXP_LEST_COLLECTION)
   elseif(reasonId==PROGRESS_REASON_BOSS_KILL) then
-    retVal = "kill a boss"
+    retVal = GetString(SI_ECHOEXP_LEST_BOSSKILL)
   elseif(reasonId==PROGRESS_REASON_COLLECT_BOOK) then
-    retVal = "collected a book"
+    retVal = GetString(SI_ECHOEXP_LEST_COLLECTBOOK)
   elseif(reasonId==PROGRESS_REASON_COMMAND) then
-    retVal = "command?"
+    retVal = GetString(SI_ECHOEXP_LEST_COMMAND)
   elseif(reasonId==PROGRESS_REASON_COMPLETE_POI) then
-    retVal = "completed a poi"
+    retVal = GetString(SI_ECHOEXP_LEST_COMPLETEPOI)
   elseif(reasonId==PROGRESS_REASON_DARK_ANCHOR_CLOSED) then
-    retVal = "closed a darkanchor"
+    retVal = GetString(SI_ECHOEXP_LEST_DARKANCHOR)
   elseif(reasonId==PROGRESS_REASON_DARK_FISSURE_CLOSED) then
-    retVal = "closed a fissure"
+    retVal = GetString(SI_ECHOEXP_LEST_FISSURE)
   elseif(reasonId==PROGRESS_REASON_DISCOVER_POI) then
-    retVal = "discovered a poi"
+    retVal = GetString(SI_ECHOEXP_LEST_DISCOVERPOI)
   elseif(reasonId==PROGRESS_REASON_DRAGON_KILL) then
-    retVal = "killed a dragon"
+    retVal = GetString(SI_ECHOEXP_LEST_DRAGONKILL)
   elseif(reasonId==PROGRESS_REASON_DUNGEON_CHALLENGE) then
-    retVal = "dungeon challenge"
+    retVal = GetString(SI_ECHOEXP_LEST_DUNGEONCHALLENGE)
   elseif(reasonId==PROGRESS_REASON_EVENT) then
-    retVal = "event"
+    retVal = GetString(SI_ECHOEXP_LEST_EVENT)
   elseif(reasonId==PROGRESS_REASON_FINESSE) then
-    retVal = "got finesse"
+    retVal = GetString(SI_ECHOEXP_LEST_FINESSE)
   elseif(reasonId==PROGRESS_REASON_GRANT_REPUTATION) then
-    retVal = "got reputation"
+    retVal = GetString(SI_ECHOEXP_LEST_REPUTATION)
   elseif(reasonId==PROGRESS_REASON_GUILD_REP) then
-    retVal = "got guild rep"
+    retVal = GetString(SI_ECHOEXP_LEST_GUILDREP)
   elseif(reasonId==PROGRESS_REASON_JUSTICE_SKILL_EVENT) then
-    retVal = "got a justice reward"
+    retVal = GetString(SI_ECHOEXP_LEST_JUSTICESKILL)
   elseif(reasonId==PROGRESS_REASON_KEEP_REWARD) then
-    retVal = "got a keep reward"
+    retVal = GetString(SI_ECHOEXP_LEST_KEEPREWARD)
   elseif(reasonId==PROGRESS_REASON_KILL) then
-    retVal = "killed something"
+    retVal = GetString(SI_ECHOEXP_LEST_KILL)
   elseif(reasonId==PROGRESS_REASON_LFG_REWARD) then
-    retVal = "got a lfg reward"
+    retVal = GetString(SI_ECHOEXP_LEST_LFG)
   elseif(reasonId==PROGRESS_REASON_LOCK_PICK) then
-    retVal = "sucessfuly pick a lock"
+    retVal = GetString(SI_ECHOEXP_LEST_LOCKPICK)
   elseif(reasonId==PROGRESS_REASON_MEDAL) then
-    retVal = "got a medal"
+    retVal = GetString(SI_ECHOEXP_LEST_MEDAL)
   elseif(reasonId==PROGRESS_REASON_NONE) then
-    retVal = "did something"
+    retVal = GetString(SI_ECHOEXP_LEST_NONE)
   elseif(reasonId==PROGRESS_REASON_OTHER) then
-    retVal = "did something"
+    retVal = GetString(SI_ECHOEXP_LEST_OTHER)
   elseif(reasonId==PROGRESS_REASON_OVERLAND_BOSS_KILL) then
-    retVal = "kiled a boss"
+    retVal = GetString(SI_ECHOEXP_LEST_WBKILL)
   elseif(reasonId==PROGRESS_REASON_PVP_EMPEROR) then
-    retVal = "emperor exp"
+    retVal = GetString(SI_ECHOEXP_LEST_EMPEROR)
   elseif(reasonId==PROGRESS_REASON_QUEST) then
-    retVal = "completed a quest"
+    retVal = GetString(SI_ECHOEXP_LEST_COMPLETEQUEST)
   elseif(reasonId==PROGRESS_REASON_REWARD) then
-    retVal = "got a reward"
+    retVal = GetString(SI_ECHOEXP_LEST_REWARD)
   elseif(reasonId==PROGRESS_REASON_SCRIPTED_EVENT) then
-    retVal = "did an event"
+    retVal = GetString(SI_ECHOEXP_LEST_SCRIPTEVENT)
   elseif(reasonId==PROGRESS_REASON_SKILL_BOOK) then
-    retVal = "used a skill book"
+    retVal = GetString(SI_ECHOEXP_LEST_SKILLBOOK)
   elseif(reasonId==PROGRESS_REASON_TRADESKILL) then
-    retVal = "used a trade skill"
+    retVal = GetString(SI_ECHOEXP_LEST_TRADESKILL)
   elseif(reasonId==PROGRESS_REASON_TRADESKILL_ACHIEVEMENT) then
-    retVal = "got an achievement"
+    retVal = GetString(SI_ECHOEXP_LEST_TRADEACHIEVE)
   elseif(reasonId==PROGRESS_REASON_TRADESKILL_CONSUME) then
-    retVal = "used a tradeskil consumable"
+    retVal = GetString(SI_ECHOEXP_LEST_TRADECONSUME)
   elseif(reasonId==PROGRESS_REASON_TRADESKILL_HARVEST) then
-    retVal = "harvested"
+    retVal = GetString(SI_ECHOEXP_LEST_HARVEST)
   elseif(reasonId==PROGRESS_REASON_TRADESKILL_QUEST) then
-    retVal = "tradeskill quest"
+    retVal = GetString(SI_ECHOEXP_LEST_TRADEQUEST)
   elseif(reasonId==PROGRESS_REASON_TRADESKILL_RECIPE) then
-    retVal = "recipe"
+    retVal = GetString(SI_ECHOEXP_LEST_RECIPE)
   elseif(reasonId==PROGRESS_REASON_TRADESKILL_TRAIT) then
-    retVal = "learned a trait"
+    retVal = GetString(SI_ECHOEXP_LEST_TRAIT)
   elseif(reasonId==PROGRESS_REASON_WORLD_EVENT_COMPLETED) then
-    retVal = "did a world event"
+    retVal = GetString(SI_ECHOEXP_LEST_WORLDEVENT)
   end
   return retVal;
 end
@@ -643,7 +642,8 @@ function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex
 	local lastRankXP, nextRankXP, currentXP          = GetSkillLineXPInfo(skillType, skillIndex)
 	
 	local pressed, normal, mouseOver, announce = ZO_Skills_GetIconsForSkillType(skillType)
-  -- (this used to work, but that stopped working? so put into ability gains) TODO REMOVE
+  -- (this used to work, but that stopped working? so put into ability gains)
+  --Oh! there are changes to these calls when you hit 50! ??
 	-- Output
 	local diff = nextRankXP - currentXP
   --EchoExperience.outputMsg("skillLineName="..tostring(skillLineName) .. " available: " ..tostring(available).. " verboseExp: ".. tostring(EchoExperience.savedVariables.verboseExp)  )

@@ -34,14 +34,17 @@ LitanyOfBlood Gui still a mess
 
 
 ## [Testing branch]
+- Added another way to view EXP, this one shows the source (beta, messages not quite right, probably works though)
 
 ## [Unreleased]
+
+## [Released]
 0.0.34
 -rearranged setting menus
 -moved options to proper section to show better where they are outputted
 -testing quest share
-
-## [Released]
+-trying to update messages for events, EVENT_EXPERIENCE_UPDATE
+-- Added another way to view EXP, this one shows the source (beta, messages not quite right, probably works though)
 0.0.33
 -show achievements
 -show discoveries

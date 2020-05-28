@@ -7,8 +7,8 @@
 ------------------------------
 -- 
 function EchoExperience.LoadSettings()
-  local LAM = LibStub("LibAddonMenu-2.0")
-
+  --local LAM = LibStub("LibAddonMenu-2.0")
+  local LAM = LibAddonMenu2
   local panelData = {
     type = "panel",
     name = EchoExperience.menuDisplayName,
@@ -250,6 +250,33 @@ function EchoExperience.LoadSettings()
     width = "half",	--or "half" (optional)
   }
   optionsTable[#optionsTable+1] = {
+    type = "description",
+    text = GetString(SI_ECHOEXP_SETTINGS_EXP_TY12_TEXT),
+    width = "full",	--or "half" (optional)
+  }
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name = GetString(SI_ECHOEXP_SETTINGS_EXP_TY1_TITLE), 
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_TY1_TOOLTIP),
+    getFunc = function() return EchoExperience.savedVariables.showExpT1 end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.showExpT1 = value
+      EchoExperience.SetupExpGainsEvents(true)
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name = GetString(SI_ECHOEXP_SETTINGS_EXP_TY2_TITLE), 
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_TY2_TOOLTIP),
+    getFunc = function() return EchoExperience.savedVariables.showExpT2 end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.showExpT2 = value
+      EchoExperience.SetupExpGainsEvents(true)
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  optionsTable[#optionsTable+1] = {
     type = "checkbox",
     name = GetString(SI_ECHOEXP_SETTINGS_EXP_VERB_NAME), --"Verbose Experience",
     tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_VERB_TOOLTIP), --"Verbose reporting if experience is on?",
@@ -259,6 +286,11 @@ function EchoExperience.LoadSettings()
       --EchoExperience.SetupExpGainsEvents(false)
     end,
     width = "half",	--or "half" (optional)
+  }
+  optionsTable[#optionsTable+1] = {
+    type = "description",
+    text = "",
+    width = "full",	--or "half" (optional)
   }
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
@@ -406,6 +438,11 @@ function EchoExperience.LoadSettings()
       EchoExperience.savedVariables.groupLoot = value
       EchoExperience.SetupLootGainsEvents(false)
     end,
+    width = "half",	--or "half" (optional)
+  }
+  optionsTable[#optionsTable+1] = {
+    type = "description",
+    text = "",
     width = "full",	--or "half" (optional)
   }
   optionsTable[#optionsTable+1] = {

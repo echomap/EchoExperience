@@ -68,8 +68,14 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_EXP_SECTIONNAME       = "Experience Options",
   SI_ECHOEXP_SETTINGS_EXP_TITLE             = "Experience",
   SI_ECHOEXP_SETTINGS_EXP_TOOLTIP           = "Report? on or off.",
-  SI_ECHOEXP_SETTINGS_EXP_VERB_NAME         = "Verbose Experience",
-  SI_ECHOEXP_SETTINGS_EXP_VERB_TOOLTIP      = "Show more Verbose reporting, if experience is on?",
+  
+  SI_ECHOEXP_SETTINGS_EXP_TY12_TEXT         = "Pick one or more of these Views or nothing will print for exp (where the 'on off' above shuts every exp option off)",
+  SI_ECHOEXP_SETTINGS_EXP_TY1_TITLE         = "a) Use Plain View?",
+  SI_ECHOEXP_SETTINGS_EXP_TY1_TOOLTIP       = "Use the reporting where it just prints the experience earned without source",
+  SI_ECHOEXP_SETTINGS_EXP_TY2_TITLE         = "b) Use Combined View?",
+  SI_ECHOEXP_SETTINGS_EXP_TY2_TOOLTIP       = "Use the reporting where it says the type of the action it is reporting on? (ie: You killed something - 10 exp.) instead of the general way: (ie: You gained 10 experience.)",
+  SI_ECHOEXP_SETTINGS_EXP_VERB_NAME             = "Verbose Experience",
+  SI_ECHOEXP_SETTINGS_EXP_VERB_TOOLTIP          = "Show more Verbose reporting, if experience is on? (Show % have and need)",
   SI_ECHOEXP_SETTINGS_EXP_SKILLLINE_TITLE       = "Show Skill Experience",
   SI_ECHOEXP_SETTINGS_EXP_SKILLLINE_TOOLTIP     = "Report on skill lines Rank Gains? (if experience is on)",
   SI_ECHOEXP_SETTINGS_EXP_VERBSKILLLINE_TITLE   = "Show Verbose Skill Experience",
@@ -138,14 +144,20 @@ local localization_strings = {
   
   ------------------------------
   -- 
-	SI_ECHOEXP_KILL_MOB       = "You killed a <<1>>",
+	SI_ECHOEXP_KILL_MOB = "You killed a <<1>>",
+  SI_ECHOEXP_KILL_LB1 = "You have killed someone in the Litany of Blood!",
+  SI_ECHOEXP_KILL_LB0 = "You have killed someone.",
+  
+  --lookupExpSourceText
+  --TODO
+  
   
   --questName, count, 25
   SI_ECHOEXP_QUEST_ACCEPT   = "You accepted the quest [<<1>>] (<<2>>/<<3>>)",
   SI_ECHOEXP_QUEST_COMPLETE = "You completed the quest [<<1>>] (<<2>>/<<3>>)",
   SI_ECHOEXP_QUEST_REMOVED  = "The quest [<<1>>] was removed from your log. (<<2>>/<<3>>)",
   -- name, points, id, link)
-  SI_ECHOEXP_ACHIEVEMENT_AWARDED = "You have earned the achievment [<<4>>]!",
+  SI_ECHOEXP_ACHIEVEMENT_AWARDED = "You have earned the achievment **<<4>>**",
   SI_ECHOEXP_LEVEL_GAIN = "*** You feel more powerful! *** You have reached the level [<<1>>] ! ***",
   --questName, shareTargetCharacterName, shareTargetDisplayName, resultString)
   SI_ECHOEXP_QUEST_SHARE_RESULT = "<<2>>@<<3>> <<4>> quest [<<1>>].",  
@@ -156,6 +168,7 @@ local localization_strings = {
   --You discovered <whateverplace> - 42 xp
   SI_ECHOEXP_XP_GAIN_SOURCE  = "You <<1>> <<2>> - <<3>> xp.",
 	SI_ECHOEXP_XP_SKILL_GAIN_1 = "Gained <<1>>xp in [<<2>>] (<<3>>/<<4>>) need <<5>>xp",
+
 	SI_ECHOEXP_XP_SKILL_GAIN_2 = "Gained <<1>>xp in [<<2>>] need <<5>>xp",
   -- <<1>>name, <<2>> currentXP, <<3>> nextXP <<4>> diff, <<5>> thisGain, <<6>> icon
   -- Qualifier: (1) non verb, (2) non verb w/currXP, (3) verb, (4) verb w/currXP

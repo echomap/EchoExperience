@@ -197,7 +197,7 @@ local localization_strings = {
   SI_ECHOEXP_QUEST_COMPLETE = "You completed the quest [<<1>>] (<<2>>/<<3>>)",
   SI_ECHOEXP_QUEST_REMOVED  = "The quest [<<1>>] was removed from your log. (<<2>>/<<3>>)",
   -- name, points, id, link)
-  SI_ECHOEXP_ACHIEVEMENT_AWARDED = "You have earned the achievment **<<4>>**",
+  SI_ECHOEXP_ACHIEVEMENT_AWARDED = "You have earned the achievment **<<4>>**!!!",
   SI_ECHOEXP_LEVEL_GAIN = "*** You feel more powerful! *** You have reached the level [<<1>>] ! ***",
   --questName, shareTargetCharacterName, shareTargetDisplayName, resultString)
   SI_ECHOEXP_QUEST_SHARE_RESULT = "<<2>>@<<3>> <<4>> quest [<<1>>].",  
@@ -302,6 +302,8 @@ local localization_strings = {
 	SI_ECHOLOOT_RECEIVE_4 = "You receive |t14:14:<<1>>|t <<2>> x<<3>> (<<4>>)",
 	SI_ECHOLOOT_LOSE_1    = "You lose |t14:14:<<1>>|t <<2>>",
 	SI_ECHOLOOT_LOSE_2    = "You lose|t14:14:<<1>>|t <<2>> x<<3>>",
+  --texture, iconFileIndex, name
+  SI_ECHOANTIQ_RECEIVE  = "You found a lead! |t14:14:<<1>>|t <<3>>.",
 }
 ------------------------------
 -- 

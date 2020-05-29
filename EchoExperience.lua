@@ -130,6 +130,17 @@ end
 -- TRACKING User command
 function EchoExperience:ShowTracking()
   d ( zo_strformat( "<<1>> (<<2>>) <<3>>","Session Tracked ", tostring(EchoExperience.savedVariables.sessiontracking), "Start==>") )
+  --
+  d ( "General:") 
+  for k, v in pairs(EchoExperience.savedVariables.tracking) do
+      for kk, vv in pairs(EchoExperience.savedVariables.tracking[k]) do
+        if(vv~=nil and vv.quantity~=nil)then
+          d ( zo_strformat( "<<3>>=<<2>>",kk, vv.quantity, vv.itemlink) )
+        end
+      end
+  end
+  --
+   d ( "Specfic") 
   for k, v in pairs(EchoExperience.savedVariables.tracking.items) do
     if(v~=nil and v.quantity~=nil)then
       d ( zo_strformat( "<<3>>=<<2>>",k, v.quantity, v.itemlink) )
@@ -402,7 +413,7 @@ end
 ------------------------------
 -- UTIL
 function EchoExperience.lookupExpSourceText(reasonId)
-  local retVal = GetString(SI_ECHOEXP_LEST_GAIN)
+  local retVal = GetString(SI_ECHOEXP_LEST_GAIN) .. "("..tostring(reasonId)..")"
   if(reasonId == nil) then
   elseif(reasonId==PROGRESS_REASON_ACHIEVEMENT) then
     retVal = GetString(SI_ECHOEXP_LEST_ACHIEVE)
@@ -1308,6 +1319,21 @@ end
 
 ------------------------------
 -- EVENT
+--EVENT_ANTIQUITY_LEAD_ACQUIRED
+function EchoExperience.OnAntiquityLeadAcquired(eventCode ,antiquityId)
+  EchoExperience.debugMsg("OnAntiquityLeadAcquired: "
+      .." eventCode="  .. tostring(eventCode)    
+			.." antiquityId="  .. tostring(antiquityId)
+		)
+  local texture, iconFileIndex = GetAntiquityIcon(antiquityId)
+  local name = GetAntiquityName(antiquityId)
+  local sentence = GetString(SI_ECHOANTIQ_RECEIVE)
+  local strL = zo_strformat(sentence, texture, iconFileIndex, name)
+  EchoExperience.outputToChanel(strL,msgTypeLOOT)
+end
+
+------------------------------
+-- EVENT
 --EVENT_INVENTORY_SINGLE_SLOT_UPDATE (number eventCode, Bag bagId, number slotId, boolean isNewItem, ItemUISoundCategory itemSoundCategory, number inventoryUpdateReason, number stackCountChange) 
 function EchoExperience.OnInventorySingleSlotUpdate(eventCode, bagId, slotId, isNewItem, itemSoundCategory, inventoryUpdateReason, stackCountChange)
     if(not isNewItem) then
@@ -1783,6 +1809,16 @@ function EchoExperience.OnAchievementAwarded(eventCode, name, points, id, link)
   local sentence = GetString(SI_ECHOEXP_ACHIEVEMENT_AWARDED)
   local strL = zo_strformat(sentence, name, points, id, link)
   EchoExperience.outputToChanel(strL, msgTypeQuest)
+  if(EchoExperience.savedVariables.sessiontracking) then
+    if(EchoExperience.savedVariables.tracking.achievements==nil) then
+      EchoExperience.savedVariables.tracking.achievements = {}
+    end
+    EchoExperience.savedVariables.tracking.achievements[name] = {}
+    EchoExperience.savedVariables.tracking.achievements[name].earned = GetTimeStamp() -- id64
+    EchoExperience.savedVariables.tracking.achievements[name].link   = link
+    EchoExperience.savedVariables.tracking.achievements[name].id     = id
+    EchoExperience.savedVariables.tracking.achievements[name].points = points
+  end  
 end
 
 
@@ -2067,6 +2103,8 @@ function EchoExperience.SetupLootGainsEvents(reportMe)
 	if (EchoExperience.savedVariables.showLoot) then
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."LootReceived",	EVENT_LOOT_RECEIVED, EchoExperience.OnLootReceived)
 		if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINS_SHOW),msgTypeSYS) end
+    
+    --TODO redundency here can fix?
     --extendedLoot xxxxx    
     if (EchoExperience.savedVariables.extendedLoot) then
       if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINSE_SHOW),msgTypeSYS) end
@@ -2084,6 +2122,9 @@ function EchoExperience.SetupLootGainsEvents(reportMe)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnInventoryItemDestroyed",	EVENT_INVENTORY_ITEM_DESTROYED, EchoExperience.OnInventoryItemDestroyed)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnInventoryItemUsed",	EVENT_INVENTORY_ITEM_USED, EchoExperience.OnInventoryItemUsed)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnInventorySingleSlotUpdate",	EVENT_INVENTORY_SINGLE_SLOT_UPDATE, EchoExperience.OnInventorySingleSlotUpdate)
+      --
+      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ANTIQUITY_LEAD_ACQUIRED",	EVENT_ANTIQUITY_LEAD_ACQUIRED, EchoExperience.OnAntiquityLeadAcquired)
+      
       --Extended loot
     else
       if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINSE_HIDE),msgTypeSYS) end
@@ -2106,7 +2147,7 @@ function EchoExperience.SetupLootGainsEvents(reportMe)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventoryItemDestroyed",	EVENT_INVENTORY_ITEM_DESTROYED, EchoExperience.OnCurrencyUpdate)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventoryItemUsed",	EVENT_INVENTORY_ITEM_USED, EchoExperience.OnCurrencyUpdate)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventorySingleSlotUpdate",	EVENT_INVENTORY_SINGLE_SLOT_UPDATE, EchoExperience.OnInventorySingleSlotUpdate)
-      
+  EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ANTIQUITY_LEAD_ACQUIRED",	EVENT_ANTIQUITY_LEAD_ACQUIRED, EchoExperience.OnAntiquityLeadAcquired)
 		if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINS_HIDE),msgTypeSYS) end
 	end
 end

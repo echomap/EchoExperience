@@ -37,9 +37,10 @@ LitanyOfBlood Gui still a mess
 - Added another way to view EXP, this one shows the source (beta, messages not quite right, probably works though)
 
 ## [Unreleased]
+0.0.35
+-lookupExpSourceText text updates
 
 ## [Released]
-0.0.35
 0.0.34
 -rearranged setting menus
 -moved options to proper section to show better where they are outputted

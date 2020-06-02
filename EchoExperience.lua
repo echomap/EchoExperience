@@ -4,7 +4,8 @@
 -- 
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.33",                    -- A nuisance to match to the Manifest.
+    version         = "0.0.33",                   -- A nuisance to match to the Manifest.
+    versionnumeric  = 33,                         -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -56,6 +57,7 @@ local msgTypeQuest   = 8
 -- 
 local defaultSettings = {
 	sversion   = EchoExperience.version,
+  iversion   = EchoExperience.versionnumeric,
 	debug      = false,
 	showExp    = true,
 	verboseExp = true,
@@ -75,19 +77,7 @@ local defaultSettings = {
   showalpha        = false,
   sessiontracking  = false,
   lifetimetracking = false,
-  immersive = false, 
-  rgba    = {
-      ["r"] = 1,
-      ["g"] = 1,
-      ["b"] = 1,
-      ["a"] = 0.9,
-	},
-	rgba2   = {
-      ["r"] = 1,
-      ["g"] = 1,
-      ["b"] = 1,
-      ["a"] = 0.9,
-	},
+  immersive = false,
 }
 
 ------------------------------
@@ -132,8 +122,8 @@ function EchoExperience:ShowTracking()
   d ( zo_strformat( "<<1>> (<<2>>) <<3>>","Session Tracked ", tostring(EchoExperience.savedVariables.sessiontracking), "Start==>") )
   --
   d ( "General:") 
-  for k, v in pairs(EchoExperience.savedVariables.tracking) do
-      for kk, vv in pairs(EchoExperience.savedVariables.tracking[k]) do
+  for k, v in pairs(EchoExperience.view.tracking) do
+      for kk, vv in pairs(EchoExperience.view.tracking[k]) do
         if(vv~=nil and vv.quantity~=nil)then
           d ( zo_strformat( "<<3>>=<<2>>",kk, vv.quantity, vv.itemlink) )
         end
@@ -141,12 +131,12 @@ function EchoExperience:ShowTracking()
   end
   --
    d ( "Specfic") 
-  for k, v in pairs(EchoExperience.savedVariables.tracking.items) do
+  for k, v in pairs(EchoExperience.view.tracking.items) do
     if(v~=nil and v.quantity~=nil)then
       d ( zo_strformat( "<<3>>=<<2>>",k, v.quantity, v.itemlink) )
     end
   end
-  for k, v in pairs(EchoExperience.savedVariables.tracking.currency) do
+  for k, v in pairs(EchoExperience.view.tracking.currency) do
     if(v~=nil and v.quantity~=nil)then
       local currname = GetCurrencyName(k, true, false)
       d ( zo_strformat( "<<1>>=<<2>>", currname, v.quantity) )
@@ -154,7 +144,7 @@ function EchoExperience:ShowTracking()
       d ( zo_strformat( "--minus=<<2>>", currname, v.minus) )
     end
   end  
-  for k, v in pairs(EchoExperience.savedVariables.tracking.mobs) do
+  for k, v in pairs(EchoExperience.view.tracking.mobs) do
     if(v~=nil and v.quantity~=nil)then
       local ctype = EchoExperience:GetCombatUnitType(v.targetType)
       d ( zo_strformat( "<<1>>=<<2>> (<<4>>)", k, v.quantity, v.itemlink, ctype)  )
@@ -169,30 +159,7 @@ end
 ------------------------------
 -- TRACKING
 function EchoExperience:ShowLifetimeTracking()
-  d ( zo_strformat( "<<1>> (<<2>>) <<3>>","Lifetime Tracked ", tostring(EchoExperience.savedVariables.lifetimetracking), "Start==>") )
-  for k, v in pairs(EchoExperience.savedVariables.lifetime.items) do
-    if(v~=nil and v.quantity~=nil)then
-      d ( zo_strformat( "<<3>>=<<2>>",k, v.quantity, v.itemlink) )
-    end
-  end
-  for k, v in pairs(EchoExperience.savedVariables.lifetime.currency) do
-    if(v~=nil and v.quantity~=nil)then
-      local currname = GetCurrencyName(k, true, false)
-      d ( zo_strformat( "<<1>>=<<2>>", currname, v.quantity) )
-      d ( zo_strformat( "--plus=<<2>>", currname, v.plus) )
-      d ( zo_strformat( "--minus=<<2>>", currname, v.minus) )
-    end
-  end  
-  for k, v in pairs(EchoExperience.savedVariables.lifetime.mobs) do
-    if(v~=nil and v.quantity~=nil)then
-      local ctype = EchoExperience:GetCombatUnitType(v.targetType)
-      d ( zo_strformat( "<<1>>=<<2>> (<<4>>)", k, v.quantity, v.itemlink, ctype)  )
-    end
-  end
-  d("<==Lifetime Tracked Done")
-  --EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.expsettings,   "EXP outputs")
-  --EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.lootsettings,  "LOOT outputs", msgTypeLOOT)
-  --EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.guildsettings, "GUILD outputs",msgTypeGUILD)
+  --
 end
 
 ------------------------------
@@ -546,11 +513,11 @@ function EchoExperience.SlashCommandHandler(text)
   elseif #options == 0 or options[1] == "clearlifetimedata" then
     EchoExperience.savedVariables.lifetime = {}
 	elseif #options == 0 or options[1] == "cleartracking" then
-		EchoExperience.savedVariables.tracking = {}
-    EchoExperience.savedVariables.tracking.items = {}
-    EchoExperience.savedVariables.tracking.currency = {}
-    EchoExperience.savedVariables.tracking.mobs = {}
-    EchoExperience.savedVariables.tracking.bg = {}
+		EchoExperience.view.tracking = {}
+    EchoExperience.view.tracking.items = {}
+    EchoExperience.view.tracking.currency = {}
+    EchoExperience.view.tracking.mobs = {}
+    EchoExperience.view.tracking.bg = {}
     EchoExperience.outputMsg("Tracking data reset")
 	elseif #options == 0 or options[1] == "toggletracking" then
 		EchoExperience.savedVariables.sessiontracking = not EchoExperience.savedVariables.sessiontracking
@@ -577,6 +544,11 @@ function EchoExperience.SlashCommandHandler(text)
 		EchoExperience.OnLootReceived(0,"testuser","testitem",1,nil,nil,true,false,false,0,false)
 		EchoExperience.OnLootReceived(0,"testuser","testitem",2,nil,nil,true,false,false,0,false)
 		EchoExperience.OnLootReceived(0,"testuser","testitem",2,nil,nil,false,false,false,0,false)
+    for i = ITEM_QUALITY_TRASH, ITEM_QUALITY_LEGENDARY do --for i = 0, 5 do
+      local color = GetItemQualityColor(i)
+      local qualName = GetString("SI_ITEMQUALITY", i)
+      d("I="..tostring(i).."color=".. color:Colorize(qualName) )
+    end
 	elseif #options == 0 or options[1] == "debug" then
 		local dg = EchoExperience.savedVariables.debug
 		EchoExperience.savedVariables.debug = not dg
@@ -604,6 +576,10 @@ end
 function EchoExperience:ToggleTrackingFrame()
 	EOL_GUI:SetHidden(not EOL_GUI:IsControlHidden())
   --EOL_GUI:SetHidden( not EOL_GUI:IsHidden() )
+  --
+  if(EchoExperience.view.tracking==nil) then
+    EchoExperience.view.tracking = {}
+  end
   --
   EEXPTooltip:SetParent(PopupTooltipTopLevel)
   EOL_GUI_Header_Dropdown_Main.comboBox = EOL_GUI_Header_Dropdown_Main.comboBox or ZO_ComboBox_ObjectFromContainer(EOL_GUI_Header_Dropdown_Main)
@@ -783,7 +759,7 @@ end
   
 ------------------------------
 -- EVENT
---ONEvent  on riding skill update
+--ONEvent  on skill update ??
 --EVENT:   EVENT_ABILITY_PROGRESSION_RANK_UPDATE
 --RETURNS:(evebtCode, number progressionIndex, number rank, number maxRank, number morph)
 --NOTES:  XXuuuiii
@@ -795,10 +771,16 @@ function EchoExperience:OnSkillProgressRankUpdate(eventCode, progressionIndex, r
   EchoExperience.outputMsg(EchoExperience.name .. "OnSkillProgressRankUpdate: "
     .. " eventCode=" .. tostring(eventCode)
     .. " progressionIndex="  .. tostring(progressionIndex)
-    .. " rank=" .. tostring(rank)
-    .. " maxRank="       .. tostring(maxRank)
-    .. " morph="  .. tostring(morph)
+    .. " rank="      .. tostring(rank)
+    .. " maxRank="   .. tostring(maxRank)
+    .. " morph="     .. tostring(morph)
   )  
+  local skillType,skillLineIndex,abilityIndex = GetSkillAbilityIndicesFromProgressionIndex(progressionIndex)
+  local skillLineName, currentSkillRank = GetSkillLineInfo(skillType, skillLineIndex)
+  --
+  local sentence = GetString(SI_ECHOEXP_XP_SKILLLINE_GAIN)  
+  local strL = zo_strformat(sentence, skillLineName,currentSkillRank, skillType )
+  EchoExperience.outputToChanel(strL,msgTypeEXP) 
 end
 
 ------------------------------
@@ -1132,13 +1114,23 @@ function EchoExperience.OnBankedCurrency(eventCode, currency, newValue, oldValue
     .." newValue="   .. tostring(newValue)
     .." oldValue="   .. tostring(oldValue)
   )
+
+  --New Tracking Module
+  if(EchoTracking~=nil and EchoExperience.savedVariables.lifetimetracking )then
+    EchoTracking.saveCurrency(currency, oldValue, newValue, GetTimeStamp() )
+  end
   --Tracking
   if(EchoExperience.savedVariables.sessiontracking) then
-    if(EchoExperience.savedVariables.tracking.currency[currency]==nil)then
-      EchoExperience.savedVariables.tracking.currency[currency] = {}
-      EchoExperience.savedVariables.tracking.currency[currency].quantity=0
+    if(EchoExperience.view.tracking.currency==nil)then
+      EchoExperience.view.tracking.currency = {}
     end
-    EchoExperience.savedVariables.tracking.currency[currency].quantity=EchoExperience.savedVariables.tracking.currency[currency].quantity+ (oldValue - newValue)
+    if(EchoExperience.view.tracking.currency[currency]==nil)then
+      EchoExperience.view.tracking.currency[currency] = {}
+      EchoExperience.view.tracking.currency[currency].quantity=0
+    end
+    EchoExperience.view.tracking.currency[currency].quantity=EchoExperience.view.tracking.currency[currency].quantity+ (oldValue - newValue)
+
+    --
   end--Tracking
 end
 
@@ -1167,19 +1159,26 @@ function EchoExperience.OnCurrencyUpdate(eventCode, currencyType, currencyLocati
     entryQuantity = newAmount - oldAmount
   end
   if(entryQuantity>1) then isSingular = false end
+  --New Tracking Module
+  if(EchoTracking~=nil and EchoExperience.savedVariables.lifetimetracking )then
+    EchoTracking.saveCurrency(currencyType, oldAmount, newAmount, GetTimeStamp() )
+  end
   --Tracking
   if(EchoExperience.savedVariables.sessiontracking) then
-    if(EchoExperience.savedVariables.tracking.currency[currencyType]==nil)then
-      EchoExperience.savedVariables.tracking.currency[currencyType] = {}
-      EchoExperience.savedVariables.tracking.currency[currencyType].quantity=0
-      EchoExperience.savedVariables.tracking.currency[currencyType].plus=0
-      EchoExperience.savedVariables.tracking.currency[currencyType].minus=0
+    if(EchoExperience.view.tracking.currency==nil)then
+      EchoExperience.view.tracking.currency = {}
     end
-    EchoExperience.savedVariables.tracking.currency[currencyType].quantity=EchoExperience.savedVariables.tracking.currency[currencyType].quantity+ (newAmount - oldAmount)
+    if(EchoExperience.view.tracking.currency[currencyType]==nil)then
+      EchoExperience.view.tracking.currency[currencyType] = {}
+      EchoExperience.view.tracking.currency[currencyType].quantity=0
+      EchoExperience.view.tracking.currency[currencyType].plus=0
+      EchoExperience.view.tracking.currency[currencyType].minus=0
+    end
+    EchoExperience.view.tracking.currency[currencyType].quantity=EchoExperience.view.tracking.currency[currencyType].quantity+ (newAmount - oldAmount)
     if( qualifier == 2 ) then
-      EchoExperience.savedVariables.tracking.currency[currencyType].plus=EchoExperience.savedVariables.tracking.currency[currencyType].plus+ (newAmount - oldAmount)
+      EchoExperience.view.tracking.currency[currencyType].plus=EchoExperience.view.tracking.currency[currencyType].plus+ (newAmount - oldAmount)
     else
-      EchoExperience.savedVariables.tracking.currency[currencyType].minus=EchoExperience.savedVariables.tracking.currency[currencyType].minus+ (newAmount - oldAmount)
+      EchoExperience.view.tracking.currency[currencyType].minus=EchoExperience.view.tracking.currency[currencyType].minus+ (newAmount - oldAmount)
     end
   end--Tracking
   
@@ -1320,13 +1319,35 @@ end
 ------------------------------
 -- EVENT
 --EVENT_ANTIQUITY_LEAD_ACQUIRED
-function EchoExperience.OnAntiquityLeadAcquired(eventCode ,antiquityId)
+function EchoExperience.OnAntiquityLeadAcquired(eventCode, antiquityId)
   EchoExperience.debugMsg("OnAntiquityLeadAcquired: "
       .." eventCode="  .. tostring(eventCode)    
 			.." antiquityId="  .. tostring(antiquityId)
 		)
   local texture, iconFileIndex = GetAntiquityIcon(antiquityId)
   local name = GetAntiquityName(antiquityId)
+  --AntiquityQuality]* _antiquityQuality_
+  local antiquityQuality = GetAntiquityQuality(antiquityId)
+  -- COLOR
+  
+  --local red, green, blue, alpha = GetInterfaceColor( INTERFACE_COLOR_TYPE_ITEM_QUALITY_COLORS, antiquityQuality)
+  --local cCD = ZO_ColorDef:New(red,green,blue,alpha)
+  --name = cCD:Colorize(name)
+  if(antiquityQuality==ANTIQUITY_QUALITY_BLUE) then
+    name = EchoExperience.Colorize(name, "5499C7")
+  elseif(antiquityQuality==ANTIQUITY_QUALITY_GOLD) then
+    name = EchoExperience.Colorize(name, "EED700")
+  elseif(antiquityQuality==ANTIQUITY_QUALITY_GREEN) then
+    local cCD = ZO_ColorDef:New(0,1,0,1)
+    name = cCD:Colorize(name)
+  elseif(antiquityQuality==ANTIQUITY_QUALITY_ORANGE) then
+    name = EchoExperience.Colorize(name, "FFA500")
+  elseif(antiquityQuality==ANTIQUITY_QUALITY_PURPLE) then
+    name = EchoExperience.Colorize(name, "800080")
+  elseif(antiquityQuality==ANTIQUITY_QUALITY_WHITE) then
+    local cCD = ZO_ColorDef:New(0,0,0,1)
+    name = cCD:Colorize(name)
+  end
   local sentence = GetString(SI_ECHOANTIQ_RECEIVE)
   local strL = zo_strformat(sentence, texture, iconFileIndex, name)
   EchoExperience.outputToChanel(strL,msgTypeLOOT)
@@ -1367,8 +1388,9 @@ function EchoExperience.OnInventorySingleSlotUpdate(eventCode, bagId, slotId, is
     
     local qualifier = 1
     if(stackCountChange>1) then qualifier = 2 end
-    local icon = GetItemLinkIcon(itemLink) 
+    local icon     = GetItemLinkIcon(itemLink) 
     local itemName = GetItemLinkName(itemLink) 
+    local hasTraitInfo = false
     if(isNewItem and itemLink~=nil) then
       --local curricon = GetCurrencyKeyboardIcon(currencyType) 
       local traitName, setName = EchoExperience:GetExtraInfo(itemLink)
@@ -1376,30 +1398,43 @@ function EchoExperience.OnInventorySingleSlotUpdate(eventCode, bagId, slotId, is
         traitName = ""
       else
         qualifier = qualifier + 2
+        hasTraitInfo = true
       end
-      --TODO Returns: number count = GetItemTotalCount(number Bag bagId, number slotIndex)
+      local totalBagCount = GetItemTotalCount(bagId, slotId)
+      --textureName icon, number stack, number sellPrice, boolean meetsUsageRequirement, boolean locked, number EquipType equipType, number itemStyleId, number ItemQuality quality = GetItemInfo(number Bag bagId, number slotIndex)
+      --For some reason these bags do NOT report count
+      --TODO to show count? use verbose setting or EchoExperience.savedVariables.extendedLoot ?
+      if(not hasTraitInfo and EchoExperience.savedVariables.extendedLoot and bagId ~= BAG_SUBSCRIBER_BANK and bagId ~= BAG_VIRTUAL) then
+        qualifier = qualifier + 4
+      end
+
     
       local sentence = GetString("SI_ECHOLOOT_RECEIVE_", qualifier)
-      local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName )
-      EchoExperience.outputToChanel(strL,msgTypeLOOT)
-    --elseif( itemLink~=nil and icon~=nil ) then
-    --  local sentence = GetString("SI_ECHOLOOT_LOSE_",qualifier)
-    --  local strL = zo_strformat(sentence, icon, itemLink, stackCountChange )
-    --  EchoExperience.outputToChanel(strL,msgTypeLOOT)      
-        --Tracking
-        if(EchoExperience.savedVariables.sessiontracking) then
-          if(EchoExperience.savedVariables.tracking.items[itemName]==nil)then
-            EchoExperience.savedVariables.tracking.items[itemName] = {}
-            EchoExperience.savedVariables.tracking.items[itemName].quantity=0
-          end
-          EchoExperience.savedVariables.tracking.items[itemName].quantity=EchoExperience.savedVariables.tracking.items[itemName].quantity+ (stackCountChange)
-          --if(itemLink==nil) then itemLink = itemName
-          EchoExperience.savedVariables.tracking.items[itemName].itemlink=itemLink
-        end--Tracking
-    else
+      local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName, totalBagCount )
+      EchoExperience.outputToChanel(strL,msgTypeLOOT) 
       --
+      --New Tracking Module
+      if(EchoTracking~=nil and EchoExperience.savedVariables.lifetimetracking )then
+        EchoTracking.saveLoot(itemName,itemLink,stackCountChange, GetTimeStamp() )
+      end
+      --Tracking
+      if(EchoExperience.savedVariables.sessiontracking) then
+        if(EchoExperience.view.tracking.items==nil)then
+          EchoExperience.view.tracking.items = {}
+        end
+        if(EchoExperience.view.tracking.items[itemName]==nil)then
+          EchoExperience.view.tracking.items[itemName] = {}
+          EchoExperience.view.tracking.items[itemName].quantity=0
+        end
+        EchoExperience.view.tracking.items[itemName].quantity=EchoExperience.view.tracking.items[itemName].quantity+ (stackCountChange)
+        --if(itemLink==nil) then itemLink = itemName
+        EchoExperience.view.tracking.items[itemName].itemlink=itemLink
+      end--Tracking
+      --
+    else
+      --TODO notnew or no itemlink
     end
-    
+    --
 end
 
 ------------------------------
@@ -1437,11 +1472,11 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
   --[[Tracking
   if(EchoExperience.savedVariables.XXXtracking) then
     local itemNameR = GetItemLinkName(itemLink) 
-    if(EchoExperience.savedVariables.tracking.items[itemNameR]==nil)then
-      EchoExperience.savedVariables.tracking.items[itemNameR] = {}
-      EchoExperience.savedVariables.tracking.items[itemNameR].quantity=0
+    if(EchoExperience.view.tracking.items[itemNameR]==nil)then
+      EchoExperience.view.tracking.items[itemNameR] = {}
+      EchoExperience.view.tracking.items[itemNameR].quantity=0
     end
-EchoExperience.savedVariables.tracking.items[itemNameR].quantity=EchoExperience.savedVariables.tracking.items[itemNameR].quantity+1
+EchoExperience.view.tracking.items[itemNameR].quantity=EchoExperience.view.tracking.items[itemNameR].quantity+1
   end--Tracking
   --]]
   
@@ -1651,14 +1686,22 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
   
   EchoExperience.view.lastKilledTargetId = targetUnitId
   
- --Tracking
+  --
+  --New Tracking Module
+  if(EchoTracking~=nil and EchoExperience.savedVariables.lifetimetracking )then
+    EchoTracking.saveKills(targetName,targetType,targetUnitId, GetTimeStamp() )
+  end
+  --Tracking
   if(EchoExperience.savedVariables.sessiontracking) then
-    if(EchoExperience.savedVariables.tracking.mobs[targetName]==nil)then
-      EchoExperience.savedVariables.tracking.mobs[targetName] = {}
-      EchoExperience.savedVariables.tracking.mobs[targetName].quantity=0
+    if(EchoExperience.view.tracking.mobs==nil)then
+      EchoExperience.view.tracking.mobs = {}
+    end
+    if(EchoExperience.view.tracking.mobs[targetName]==nil)then
+      EchoExperience.view.tracking.mobs[targetName] = {}
+      EchoExperience.view.tracking.mobs[targetName].quantity=0
     end    
-    EchoExperience.savedVariables.tracking.mobs[targetName].quantity=EchoExperience.savedVariables.tracking.mobs[targetName].quantity+ 1
-    EchoExperience.savedVariables.tracking.mobs[targetName].targetType=targetType
+    EchoExperience.view.tracking.mobs[targetName].quantity=EchoExperience.view.tracking.mobs[targetName].quantity+ 1
+    EchoExperience.view.tracking.mobs[targetName].targetType=targetType
   end--Tracking
   --TODO localize etc  
   
@@ -1677,11 +1720,7 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
       EchoExperience.outputToChanel(strL,msgTypeQuest)
       
       --Check LitanyOfBlood
-      if( EchoExperience.savedVariables.LitanyOfBlood ~= nil) then
-        EchoExperience.OnLitanyOfBlood(targetName, targetUnitId)      
-      else
-        EchoExperience.debugMsg("NOT calling lob")
-      end--LitanyOfBlood
+      EchoExperience.OnLitanyOfBlood(tostring(targetName), targetUnitId)      
     end --you vs other
   end--showmdk
 end
@@ -1809,16 +1848,25 @@ function EchoExperience.OnAchievementAwarded(eventCode, name, points, id, link)
   local sentence = GetString(SI_ECHOEXP_ACHIEVEMENT_AWARDED)
   local strL = zo_strformat(sentence, name, points, id, link)
   EchoExperience.outputToChanel(strL, msgTypeQuest)
+  --if(EchoExperience.savedVariables.sessiontracking) then
+    --New Tracking Module
+  if(EchoTracking~=nil and EchoExperience.savedVariables.lifetimetracking )then
+    EchoTracking.saveAchievement(name, points, id, link, GetTimeStamp() )
+  end
+  if(EchoExperience.view.tracking==nil) then
+    EchoExperience.view.tracking = {}
+  end
+  --Tracking
   if(EchoExperience.savedVariables.sessiontracking) then
-    if(EchoExperience.savedVariables.tracking.achievements==nil) then
-      EchoExperience.savedVariables.tracking.achievements = {}
+    if(EchoExperience.view.tracking.achievements==nil) then
+      EchoExperience.view.tracking.achievements = {}
     end
-    EchoExperience.savedVariables.tracking.achievements[name] = {}
-    EchoExperience.savedVariables.tracking.achievements[name].earned = GetTimeStamp() -- id64
-    EchoExperience.savedVariables.tracking.achievements[name].link   = link
-    EchoExperience.savedVariables.tracking.achievements[name].id     = id
-    EchoExperience.savedVariables.tracking.achievements[name].points = points
-  end  
+    EchoExperience.view.tracking.achievements[name] = {}
+    EchoExperience.view.tracking.achievements[name].earned = GetTimeStamp() -- id64
+    EchoExperience.view.tracking.achievements[name].link   = link
+    EchoExperience.view.tracking.achievements[name].id     = id
+    EchoExperience.view.tracking.achievements[name].points = points
+  end
 end
 
 
@@ -1854,8 +1902,8 @@ end
 function EchoExperience.OnLitanyOfBlood(targetNameL, targetUnitId)
   --name coming in might not be a string
   local targetName = zo_strformat("<<1>>", targetNameL )
-  EchoExperience.debugMsg("lob called w/targetName='"..tostring(targetName).."'")
-  local lob = EchoExperience.savedVariables.LitanyOfBlood
+  EchoExperience.debugMsg("lob called w/targetName='"..tostring(targetName).."'")  
+  local lob = EchoExperience.LitanyOfBlood
   if( lob == nil) then
     EchoExperience.debugMsg("lob null")
     return
@@ -1865,8 +1913,6 @@ function EchoExperience.OnLitanyOfBlood(targetNameL, targetUnitId)
     EchoExperience.debugMsg("loblist null")
     return
   end
-  
-  --TEST PRINT
   local targetData = nil
   for k, v in pairs(loblist) do
     EchoExperience.debugMsg( zo_strformat( "<<1>>=<<2>>",tostring(k), tostring(v) ) )
@@ -1874,19 +1920,14 @@ function EchoExperience.OnLitanyOfBlood(targetNameL, targetUnitId)
       targetData = v
     end
   end
-  
+  --
   local elemLB = targetData -- loblist[targetName]
-  --if( elemLB == nil) then
-    --elemLB = loblist[tostring(targetName)]
-  --end
   if( elemLB == nil) then
     EchoExperience.debugMsg("Corpse not on list for Litany")
     return
-  end
-  
+  end  
   -- found person on list 
-   EchoExperience.outputMsg("Corpse may be on list for Litany")
-  
+  EchoExperience.debugMsg("Corpse may be on list for Litany")
   local elemLBZoneName = zo_strformat("<<1>>", elemLB["ZoneName"] )
   EchoExperience.debugMsg("LitanyOfBlood1: "
     .." elemLBZoneName='"      .. tostring(elemLBZoneName) .."'"
@@ -1894,9 +1935,7 @@ function EchoExperience.OnLitanyOfBlood(targetNameL, targetUnitId)
   local elemLBSubzoneName = zo_strformat("<<1>>", elemLB["SubzoneName"] ) 
   EchoExperience.debugMsg("LitanyOfBlood1: "
     .." elemLBSubzoneName='"      .. tostring(elemLBSubzoneName).."'"
-  )        
-  --["Cimalire"] = { done=false, location="Skywatch",  },
-
+  )
   local subzoneNamePL = zo_strformat("<<1>>",  GetPlayerActiveSubzoneName() )
   local zoneNamePL    =  zo_strformat("<<1>>", GetPlayerActiveZoneName() )
    EchoExperience.debugMsg("LitanyOfBlood1: "
@@ -1904,8 +1943,7 @@ function EchoExperience.OnLitanyOfBlood(targetNameL, targetUnitId)
   )
   EchoExperience.debugMsg("LitanyOfBlood1: "
     .." subzoneNamePL='"      .. tostring(subzoneNamePL) .."'"
-  )        
-
+  )
   local lbDataHasSubzone = true
   if(elemLBSubzoneName==nil or elemLBSubzoneName=="" ) then
     lbDataHasSubzone = false
@@ -1938,11 +1976,12 @@ function EchoExperience.OnLitanyOfBlood(targetNameL, targetUnitId)
   if(lbMatch) then
     local sentence = GetString(SI_ECHOEXP_KILL_LB1)
     EchoExperience.outputMsg(sentence)
+    EchoExperience.savedVariables.LitanyOfBloodDone[targetName] = GetTimeStamp()
   else
     local sentence = GetString(SI_ECHOEXP_KILL_LB0)
     EchoExperience.outputMsg(sentence)
   end
-  
+  --
 end
 
 ------------------------------
@@ -2267,12 +2306,36 @@ end
 function EchoExperience:UpgradeSettings()
   local upgraded = false
   --
+  local needUpgrade = false
+  if( EchoExperience.savedVariables.iversion == nil) then
+    needUpgrade = true
+  end
+  if( EchoExperience.savedVariables.iversion < EchoExperience.versionnumeric) then
+    needUpgrade = true
+  end
+  if(needUpgrade) then
+    EchoExperience.savedVariables.LitanyOfBloodDone = {}
+    for k, v in pairs(EchoExperience.savedVariables.LitanyOfBlood) do
+      d ( zo_strformat( "litany: <<1>>=<<2>>", k, v ))
+      if(v.done) then
+        EchoExperience.savedVariables.LitanyOfBloodDone[k] = GetTimeStamp()
+      end
+    end
+    EchoExperience.savedVariables.LitanyOfBlood = nil
+    upgraded = true    
+  end
+  
+  --
   if(upgraded) then
-    EchoExperience.savedVariables.oldversion = EchoExperience.savedVariables.sversion
-    EchoExperience.savedVariables.sversion   = EchoExperience.version
+    EchoExperience.savedVariables.oldversion  = EchoExperience.savedVariables.sversion
+    EchoExperience.savedVariables.sversion    = EchoExperience.version
+    EchoExperience.savedVariables.oldversion  = EchoExperience.savedVariables.sversion
+    EchoExperience.savedVariables.iversion    = EchoExperience.versionnumeric
+    EchoExperience.savedVariables.oldiversion = EchoExperience.savedVariables.iversion
     EchoExperience:UpdateUIExpTabs()
     EchoExperience:UpdateUILootTabs()
     EchoExperience:UpdateUIGuildTabs()
+    EchoExperience.outputMsg("Upgraded EchoExp Version")
     zo_callLater(EchoExperience.RefreshTabs, 12000)
   end
 end
@@ -2340,57 +2403,6 @@ function EchoExperience:UpdateUIQuestTabs()
 end
 
 ------------------------------
--- TRACKING
---EchoExperience.savedVariables.lifetime.currency,EchoExperience.savedVariables.tracking.currency)
-function EchoExperience:MoveToLifetime(mode)
-  EchoExperience.debugMsg("MoveToLifetime: Called mode="..tostring(mode) )
-  local session = nil
-  local lifetime = nil
-  if(mode==1) then    
-    for k, v in pairs(EchoExperience.savedVariables.tracking.items) do
-      if(EchoExperience.savedVariables.lifetime.items[k]~=nil)then
-        EchoExperience.savedVariables.lifetime.items[k].quantity = EchoExperience.savedVariables.lifetime.items[k].quantity + v.quantity
-      else
-        EchoExperience.savedVariables.lifetime.items[k] = v
-      end
-    end
-    EchoExperience.savedVariables.tracking.items = {}
-  elseif(mode==2) then
-    for k, v in pairs(EchoExperience.savedVariables.tracking.currency) do
-      local elemL = EchoExperience.savedVariables.lifetime.currency[k]
-      if(elemL~=nil)then
-        EchoExperience.savedVariables.lifetime.currency[k].quantity = EchoExperience.savedVariables.lifetime.currency[k].quantity + v.quantity
-      else
-        EchoExperience.savedVariables.lifetime.currency[k] = v
-      end
-    end
-    EchoExperience.savedVariables.tracking.currency = {}
-  elseif(mode==3) then
-    for k, v in pairs(EchoExperience.savedVariables.tracking.mobs) do
-      local elemL = EchoExperience.savedVariables.lifetime.mobs[k]
-      if(elemL~=nil)then
-        EchoExperience.savedVariables.lifetime.mobs[k].quantity = EchoExperience.savedVariables.lifetime.mobs[k].quantity + v.quantity
-      else
-        EchoExperience.savedVariables.lifetime.mobs[k] = v
-      end
-    end
-    EchoExperience.savedVariables.tracking.mobs = {}
-  elseif(mode==4) then
-    for k, v in pairs(EchoExperience.savedVariables.tracking.bg) do
-      local elemL = EchoExperience.savedVariables.lifetime.bg[k]
-      if(elemL~=nil)then
-        EchoExperience.savedVariables.lifetime.bg[k].quantity = EchoExperience.savedVariables.lifetime.bg[k].quantity + v.quantity
-      else
-        EchoExperience.savedVariables.lifetime.bg[k] = v
-      end
-    end
-    EchoExperience.savedVariables.tracking.bg = {}
-  else
-    --
-  end
-end
-
-------------------------------
 -- UI
 function EchoExperience.InitializeGui()
 	EOL_GUI_ListHolder.rowHeight = 24
@@ -2431,8 +2443,9 @@ end
 -- LITANY
 function EchoExperience.SetupLitanyOfBlood()
 	--if( EchoExperience.savedVariables.LitanyOfBlood == nil) then
-		EchoExperience.savedVariables.LitanyOfBlood   = EchoExperience:deepcopy(EchoExperience.LitanyOfBlood)    
+		--EchoExperience.savedVariables.LitanyOfBlood = EchoExperience:deepcopy(EchoExperience.LitanyOfBlood)
 	--TESTINGend
+  EchoExperience.savedVariables.LitanyOfBlood = nil
 end
 
 ------------------------------
@@ -2484,38 +2497,32 @@ function EchoExperience.CheckVerifyDefaults()
     madeChange = true
   end
   
-  -- Tracking reset
-  if(EchoExperience.savedVariables.lifetime==nil)then
-    EchoExperience.savedVariables.lifetime = {}
-    if(EchoExperience.savedVariables.lifetime.items==nil)then
-      EchoExperience.savedVariables.lifetime.items = {}
-      madeChange = true
-    end
-    if(EchoExperience.savedVariables.lifetime.currency==nil)then
-      EchoExperience.savedVariables.lifetime.currency = {}
-      madeChange = true
-    end
-    if(EchoExperience.savedVariables.lifetime.mobs==nil)then
-      EchoExperience.savedVariables.lifetime.mobs = {}
-      madeChange = true
-    end
-    if(EchoExperience.savedVariables.lifetime.bg==nil)then
-      EchoExperience.savedVariables.lifetime.bg = {}
-      madeChange = true
-    end
-  end
+  --Old settings
+  EchoExperience.savedVariables.rgba = nil
+  EchoExperience.savedVariables.rgba2 = nil
+  
   --
-  if(EchoExperience.savedVariables.tracking==nil)then
-    EchoExperience.savedVariables.tracking = {}
+  if(EchoExperience.view.tracking==nil)then
+    EchoExperience.view.tracking = {}
     madeChange = true
-  end  
+  end 
   
   if( EchoExperience.savedVariables.skilltracking == nil ) then
     EchoExperience.savedVariables.skilltracking = {}
     madeChange = true
   end
     
+  --
+  if( EchoExperience.savedVariables.LitanyOfBloodDone == nil ) then
+    EchoExperience.savedVariables.LitanyOfBloodDone = {}
+    madeChange = true
+  end
+
+  -- Clean up tracking data
+  EchoExperience.savedVariables.tracking = nil
+  EchoExperience.savedVariables.lifetime = nil
   
+  --
   if(madeChange) then
     zo_callLater(EchoExperience.RefreshTabs, 12000)
   end
@@ -2552,35 +2559,12 @@ function EchoExperience.DelayedStart()
   
   EchoExperience.CheckVerifyDefaults()
 
-  -- Clear for session?
-  -- Save Tracking data to Lifetime 
-  --if(EchoExperience.savedVariables.xxxtracking session vs all?
-
-  if(EchoExperience.savedVariables.tracking==nil)then
-    EchoExperience.savedVariables.tracking = {}
-  end    
-  if(EchoExperience.savedVariables.tracking.items==nil)then
-    EchoExperience.savedVariables.tracking.items = {}
-  else
-    EchoExperience:MoveToLifetime( 1 )
-  end
-  if(EchoExperience.savedVariables.tracking.currency==nil)then
-    EchoExperience.savedVariables.tracking.currency = {}
-  else
-    EchoExperience:MoveToLifetime( 2 )
-  end
-  if(EchoExperience.savedVariables.tracking.mobs==nil)then
-    EchoExperience.savedVariables.tracking.mobs = {}
-  else    
-    EchoExperience:MoveToLifetime( 3 )
-  end
-  if(EchoExperience.savedVariables.tracking.bg==nil)then
-    EchoExperience.savedVariables.tracking.bg = {}
-  else
-    EchoExperience:MoveToLifetime( 4 )
-  end
+  --
   if(EchoExperience.savedVariables.sessiontracking==nil)then
     EchoExperience.savedVariables.sessiontracking = false
+  end
+  if(EchoExperience.savedVariables.lifetimetracking==nil)then
+    EchoExperience.savedVariables.lifetimetracking = false
   end
   if(EchoExperience.savedVariables.immersive==nil)then
     EchoExperience.savedVariables.immersive = false

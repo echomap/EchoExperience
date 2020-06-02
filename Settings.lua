@@ -740,7 +740,19 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
-  
+    -- TRACKING
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name    = GetString(SI_ECHOEXP_SETTINGS_LIFETIMETRACK_NAME),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LIFETIMETRACK_TT), 
+    getFunc = function() return EchoExperience.savedVariables.lifetimetracking end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.lifetimetracking = value
+      EchoExperience.lifetimetracking(true)
+    end,
+    width = "half",	--or "half" (optional)
+  }
+
   LAM:RegisterOptionControls(EchoExperience.menuName, optionsTable)
 end
 

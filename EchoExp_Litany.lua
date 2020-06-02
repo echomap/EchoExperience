@@ -9,21 +9,22 @@ function EchoExperience:Litany_DoSelectedButtonClicked(btn,idx,curline,curItem)
   
   curItem.done = not curItem.done
   EchoExperience.debugMsg("OnClicked: Done? Name: "..tostring(curItem.name) .. " Done: "..tostring(curItem.done) )
-  EchoExperience.savedVariables.LitanyOfBlood.list[curItem.name].done = curItem.done
+  local foundItem = EchoExperience.LitanyOfBlood.list[curItem.name]
+  EchoExperience.savedVariables.LitanyOfBloodDone[curItem.name] = GetTimeStamp()  
   
-  if(curItem.done) then
-      btn:SetNormalTexture("esoui\art\buttons\checkbox_checked.dds")
+  --if(curItem.do ne) then
+  btn:SetNormalTexture("esoui\art\buttons\checkbox_checked.dds")
       --local btnIcon  = btn:GetNamedChild("Icon")
       --if(btnIcon~=nil) then
       --  btnIcon:SetTexture("esoui\art\buttons\checkbox_checked.dds")
       --end
-  else
-      btn:SetNormalTexture("esoui\art\buttons\checkbox_unchecked.dds")
+  --else
+      --btn:SetNormalTexture("esoui\art\buttons\checkbox_unchecked.dds")
       --local btnIcon  = btn:GetNamedChild("Icon")
       --if(btnIcon~=nil) then
       --  btnIcon:SetTexture("esoui\art\buttons\checkbox_unchecked.dds")
       --end
-  end
+  --end
 
 end
 
@@ -244,15 +245,16 @@ function EchoExperience:Litany_UpdateScrollDataLinesData()
   local itemCount = 0
   
   local elemListS = nil
-  elemListS = EchoExperience.savedVariables.LitanyOfBlood.list
+  elemListS = EchoExperience.LitanyOfBlood.list
   if(elemListS~=nil) then
     for iName, dbItem in pairs(elemListS) do
       --k, v.done, v.ZoneName, v.SubzoneName
+      local donem = EchoExperience.savedVariables.LitanyOfBloodDone[iName]
       tempDataLine = {
         ZoneName    = dbItem.ZoneName,
         SubzoneName = dbItem.SubzoneName,
         name = iName,
-        done = dbItem.done,
+        done = donem,
       }
       --d("iName="..iName );
       table.insert(dataLines, tempDataLine)

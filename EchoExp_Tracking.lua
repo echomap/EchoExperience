@@ -8,7 +8,7 @@
 --TOOLTIP
 function EchoExperience:Misc2HeaderTipEnter(sender,key)
   InitializeTooltip(EEXPTooltip, sender, TOPLEFT, 5, -56, TOPRIGHT)
-  EOLTooltip:AddLine(key, "ZoFontHeader3")
+  EEXPTooltip:AddLine(key, "ZoFontHeader3")
 end
 function EchoExperience:Misc2HeaderTipExit(sender)
   --ClearTooltip(InformationTooltip)
@@ -200,7 +200,7 @@ function EchoExperience:UpdateScrollDataLinesData()
   if(EchoExperience.view.trackingSelection=="Lifetime") then
     elemListP = EchoExperience.savedVariables.lifetime
   else
-    elemListP = EchoExperience.savedVariables.tracking
+    elemListP = EchoExperience.view.tracking --EchoExperience.savedVariables.tracking
   end
   if(EchoExperience.view.filterType=="Items")then
     elemListS = elemListP.items
@@ -230,65 +230,77 @@ function EchoExperience:UpdateScrollDataLinesData()
         --filter = itemTypeFilter,
         --worn = bWorn
       }
-      d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
+      --d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
       table.insert(dataLines, tempDataLine)
       totItems = totItems + (itemCount or 0)
     end 
   elseif(elemListP~=nil) then
-    for itemKey, dbItem in pairs(elemListP.currency) do
-      --k, v.quantity, v.itemlink
-      tempDataLine = {
-        link = dbItem.itemLink,
-        qty  = dbItem.quantity,
-        icon = GetItemLinkIcon(dbItem.itemLink),
-        name = GetCurrencyName(itemKey, true, false),
-        --quality = dbItem.itemQuality,
-        --filter = itemTypeFilter,
-        --worn = bWorn
-      }
-      if(dbItem.itemLink~=nil)then
-        d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
+    if(elemListP.currency==nil) then
+      -- 
+    else
+      for itemKey, dbItem in pairs(elemListP.currency) do
+        --k, v.quantity, v.itemlink
+        tempDataLine = {
+          link = dbItem.itemLink,
+          qty  = dbItem.quantity,
+          icon = GetItemLinkIcon(dbItem.itemLink),
+          name = GetCurrencyName(itemKey, true, false),
+          --quality = dbItem.itemQuality,
+          --filter = itemTypeFilter,
+          --worn = bWorn
+        }
+        if(dbItem.itemLink~=nil)then
+          --d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
+        end
+        table.insert(dataLines, tempDataLine)
+        totItems = totItems + (itemCount or 0)
       end
-      table.insert(dataLines, tempDataLine)
-      totItems = totItems + (itemCount or 0)
-    end 
-    for itemKey, dbItem in pairs(elemListP.items) do
-      --k, v.quantity, v.itemlink
-      tempDataLine = {
-        link = dbItem.itemLink,
-        qty  = dbItem.quantity,
-        icon = GetItemLinkIcon(dbItem.itemLink),
-        name = itemKey,
-        --quality = dbItem.itemQuality,
-        --filter = itemTypeFilter,
-        --worn = bWorn
-      }
-      if(dbItem.itemLink~=nil)then
-        d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
+    end
+    if(elemListP.items==nil) then
+      -- 
+    else
+      for itemKey, dbItem in pairs(elemListP.items) do
+        --k, v.quantity, v.itemlink
+        tempDataLine = {
+          link = dbItem.itemLink,
+          qty  = dbItem.quantity,
+          icon = GetItemLinkIcon(dbItem.itemLink),
+          name = itemKey,
+          --quality = dbItem.itemQuality,
+          --filter = itemTypeFilter,
+          --worn = bWorn
+        }
+        if(dbItem.itemLink~=nil)then
+          --d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
+        end
+        table.insert(dataLines, tempDataLine)
+        totItems = totItems + (itemCount or 0)
       end
-      table.insert(dataLines, tempDataLine)
-      totItems = totItems + (itemCount or 0)
-    end 
-    for itemKey, dbItem in pairs(elemListP.mobs) do
-      --k, v.quantity, v.itemlink
-      tempDataLine = {
-        link = dbItem.itemLink,
-        qty  = dbItem.quantity,
-        icon = GetItemLinkIcon(dbItem.itemLink),
-        name = itemKey,
-        --quality = dbItem.itemQuality,
-        --filter = itemTypeFilter,
-        --worn = bWorn
-      }
-      if(dbItem.itemLink~=nil)then
-        d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
+    end
+    if(elemListP.mobs==nil) then
+      -- 
+    else
+      for itemKey, dbItem in pairs(elemListP.mobs) do
+        --k, v.quantity, v.itemlink
+        tempDataLine = {
+          link = dbItem.itemLink,
+          qty  = dbItem.quantity,
+          icon = GetItemLinkIcon(dbItem.itemLink),
+          name = itemKey,
+          --quality = dbItem.itemQuality,
+          --filter = itemTypeFilter,
+          --worn = bWorn
+        }
+        if(dbItem.itemLink~=nil)then
+          --d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
+        end
+        table.insert(dataLines, tempDataLine)
+        totItems = totItems + (itemCount or 0)
       end
-      table.insert(dataLines, tempDataLine)
-      totItems = totItems + (itemCount or 0)
-    end 
-  end
+    end
+  end--sort or all
   
-  
+  --
   if(EchoExperience.view.trackingSelection=="Lifetime2") then
     for itemKey, dbItem in pairs(EchoExperience.savedVariables.lifetime.items) do
       --k, v.quantity, v.itemlink
@@ -301,12 +313,12 @@ function EchoExperience:UpdateScrollDataLinesData()
         --filter = itemTypeFilter,
         --worn = bWorn
       }
-      d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
+      --d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
       table.insert(dataLines, tempDataLine)
       totItems = totItems + (itemCount or 0)
     end
   elseif(EchoExperience.view.trackingSelection=="Session2") then
-    for itemKey, dbItem in pairs(EchoExperience.savedVariables.tracking.items) do
+    for itemKey, dbItem in pairs(EchoExperience.view.tracking.items) do
       --k, v.quantity, v.itemlink
       tempDataLine = {
         link = dbItem.itemLink,
@@ -317,7 +329,7 @@ function EchoExperience:UpdateScrollDataLinesData()
         --filter = itemTypeFilter,
         --worn = bWorn
       }
-      d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
+      --d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
       table.insert(dataLines, tempDataLine)
       totItems = totItems + (itemCount or 0)
     end 

@@ -145,7 +145,7 @@ local localization_strings = {
   ------------------------------
   -- 
 	SI_ECHOEXP_KILL_MOB = "You killed a <<1>>",
-  SI_ECHOEXP_KILL_LB1 = "You have killed someone in the Litany of Blood!",
+  SI_ECHOEXP_KILL_LB1 = "You have killed someone listed in the Litany of Blood!",
   SI_ECHOEXP_KILL_LB0 = "You have killed someone.",
   
   --lookupExpSourceText
@@ -197,7 +197,7 @@ local localization_strings = {
   SI_ECHOEXP_QUEST_COMPLETE = "You completed the quest [<<1>>] (<<2>>/<<3>>)",
   SI_ECHOEXP_QUEST_REMOVED  = "The quest [<<1>>] was removed from your log. (<<2>>/<<3>>)",
   -- name, points, id, link)
-  SI_ECHOEXP_ACHIEVEMENT_AWARDED = "You have earned the achievment **<<4>>**!!!",
+  SI_ECHOEXP_ACHIEVEMENT_AWARDED = "You have earned the achievment [<<4>>] !!!",
   SI_ECHOEXP_LEVEL_GAIN = "*** You feel more powerful! *** You have reached the level [<<1>>] ! ***",
   --questName, shareTargetCharacterName, shareTargetDisplayName, resultString)
   SI_ECHOEXP_QUEST_SHARE_RESULT = "<<2>>@<<3>> <<4>> quest [<<1>>].",  
@@ -221,6 +221,7 @@ local localization_strings = {
   SI_ECHOEXP_XP_SKILLLINE_ICON_3 = "Gained xp in [|t14:14:<<6>>|t<<1>>]  (<<2>>/<<3>>) need <<4>>xp",
   SI_ECHOEXP_XP_SKILLLINE_ICON_4 = "Gained <<5>>xp in [|t14:14:<<6>>|t<<1>>] (<<2>>/<<3>>) need <<4>>xp",
   SI_ECHOEXP_XP_SKILLLINE_UP     = "Upgraded rank of [<<2>>] to rank <<3>>!!!",
+  SI_ECHOEXP_XP_SKILLLINE_GAIN   = "Gained skill [<<1>>] !!!",
   
   -- eventCode, sourceWord, trainingTypeWord, previous, current )
   SI_ECHOEXP_RIDING_UP      = "Upgraded [Riding <<3>>] from rank <<4>> to <<5>>!!!",
@@ -235,7 +236,7 @@ local localization_strings = {
 	SI_ECHOEXP_CP_UNLOCKED     = "****You unlocked Champion points!****",
 	SI_ECHOEXP_CP_EARNED       = "****You gained a Champion point!****",  
 	SI_ECHOEXP_DISCOVERY       = "You discovered: <<1>>.",
-	SI_ECHOEXP_SKILLINE        = "You learned the skillline: <<1>>",
+	SI_ECHOEXP_SKILLINE        = "You learned the skillline: [<<1>>] !!",
 
 	SI_ECHOEXP_AP_GAIN       = "You gained <<1>> AP.",
 	SI_ECHOEXP_AP_LOSS       = "You spent <<1>> AP.",
@@ -300,10 +301,15 @@ local localization_strings = {
 	SI_ECHOLOOT_RECEIVE_2 = "You receive |t14:14:<<1>>|t <<2>> x<<3>>",
 	SI_ECHOLOOT_RECEIVE_3 = "You receive |t14:14:<<1>>|t <<2>> (<<4>>)",
 	SI_ECHOLOOT_RECEIVE_4 = "You receive |t14:14:<<1>>|t <<2>> x<<3>> (<<4>>)",
+  
+  SI_ECHOLOOT_RECEIVE_5 = "You receive |t14:14:<<1>>|t <<2>>  (Total: <<5>>)",
+	SI_ECHOLOOT_RECEIVE_6 = "You receive |t14:14:<<1>>|t <<2>> x<<3>>   (Total: <<5>>)",
+
+  --
 	SI_ECHOLOOT_LOSE_1    = "You lose |t14:14:<<1>>|t <<2>>",
 	SI_ECHOLOOT_LOSE_2    = "You lose|t14:14:<<1>>|t <<2>> x<<3>>",
   --texture, iconFileIndex, name
-  SI_ECHOANTIQ_RECEIVE  = "You found a lead! |t14:14:<<1>>|t <<3>>.",
+  SI_ECHOANTIQ_RECEIVE  = "You found the lead [|t14:14:<<1>>|t <<3>>] !!",
 }
 ------------------------------
 -- 

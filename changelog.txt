@@ -39,6 +39,8 @@ LitanyOfBlood Gui still a mess
 ## [Unreleased]
 0.0.35
 -lookupExpSourceText text updates
+-alpha: updates to tracking, store less in this mod
+-tring to report on leads
 
 ## [Released]
 0.0.34

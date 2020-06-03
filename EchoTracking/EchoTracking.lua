@@ -115,17 +115,18 @@ end
 ------------------------------
 -- API
 function EchoTracking.saveLoot(itemName,itemLink,stackCountChange, timeStamp)
-  --EchoTracking.outputMsg("saveLoot: Called. itemName='"..itemName.."'")
-  if(EchoTracking.svLoot.loot==nil) then
-    EchoTracking.svLoot.loot = {}
-  end
-  local elemL = {}
-  elemL.itemName  = itemName
-  elemL.itemLink  = itemLink
-  elemL.change    = stackCountChange
-  elemL.timeStamp = timeStamp
-  table.insert(EchoTracking.svLoot.loot, elemL)
   --TODO Sums only for the common/trash loots?
+  --
+  if(EchoTracking.svLoot[itemLink]==nil) then
+   EchoTracking.svLoot[itemLink] = {}
+   EchoTracking.svLoot[itemLink].quantity = 0
+  end
+  local elemA    = EchoTracking.svLoot[id]
+  elemA.itemName = itemName
+  elemA.itemLink = itemLink
+  elemA.quantity = elemA.quantity+stackCountChange
+  elemA.earned   = timeStamp -- id64
+  --   
 end
 
 ------------------------------

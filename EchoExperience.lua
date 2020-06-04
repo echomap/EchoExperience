@@ -4,7 +4,7 @@
 -- 
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.33",                   -- A nuisance to match to the Manifest.
+    version         = "0.0.35",                   -- A nuisance to match to the Manifest.
     versionnumeric  = 33,                         -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
@@ -768,19 +768,23 @@ function EchoExperience:OnSkillProgressRankUpdate(eventCode, progressionIndex, r
     return
   end
   --
-  EchoExperience.outputMsg(EchoExperience.name .. "OnSkillProgressRankUpdate: "
+  EchoExperience.debugMsg(EchoExperience.name .. "OnSkillProgressRankUpdate: "
     .. " eventCode=" .. tostring(eventCode)
     .. " progressionIndex="  .. tostring(progressionIndex)
     .. " rank="      .. tostring(rank)
     .. " maxRank="   .. tostring(maxRank)
     .. " morph="     .. tostring(morph)
   )  
-  local skillType,skillLineIndex,abilityIndex = GetSkillAbilityIndicesFromProgressionIndex(progressionIndex)
-  local skillLineName, currentSkillRank = GetSkillLineInfo(skillType, skillLineIndex)
-  --
-  local sentence = GetString(SI_ECHOEXP_XP_SKILLLINE_GAIN)  
-  local strL = zo_strformat(sentence, skillLineName,currentSkillRank, skillType )
-  EchoExperience.outputToChanel(strL,msgTypeEXP) 
+  if(maxRank==0) then
+    EchoExperience.debugMsg(EchoExperience.name .. "OnSkillProgressRankUpdate: skipped per can't rank up")
+  else  
+    local skillType,skillLineIndex,abilityIndex = GetSkillAbilityIndicesFromProgressionIndex(progressionIndex)
+    local skillLineName, currentSkillRank = GetSkillLineInfo(skillType, skillLineIndex)
+    --
+    local sentence = GetString(SI_ECHOEXP_XP_SKILLLINE_GAIN)  
+    local strL = zo_strformat(sentence, skillLineName,currentSkillRank, skillType )
+    EchoExperience.outputToChanel(strL,msgTypeEXP) 
+  end
 end
 
 ------------------------------

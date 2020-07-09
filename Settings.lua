@@ -108,6 +108,18 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name = GetString(SI_ECHOEXP_SETTINGS_QUESTADV_TITLE), --"Quest",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_QUESTADV_TOOLTIP), --"Show Quests accept/complete? on or off.",
+    getFunc = function() return EchoExperience.savedVariables.showquestsadvanced end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.showquestsadvanced = value
+      EchoExperience.SetupEventsQuest(true)
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  
   --
   optionsTable[#optionsTable+1] = {
     type = "checkbox",

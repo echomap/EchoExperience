@@ -50,6 +50,8 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_QUEST_SECTIONNAME     = "Quest Options",
   SI_ECHOEXP_SETTINGS_QUEST_TITLE           = "Show Quest",
   SI_ECHOEXP_SETTINGS_QUEST_TOOLTIP         = "Show Quests accept/complete? on or off.",
+  SI_ECHOEXP_SETTINGS_QUESTADV_TITLE        = "Quest Steps done? ",
+  SI_ECHOEXP_SETTINGS_QUESTADV_TOOLTIP      = "Show Quests steps completed?",
   SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_NAME    = "Quest Output Tabs",
   SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_TOOLTIP = "Tab(s) for Quest output.",
   SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_DELETE  = "Delete selected Quest's Data!",
@@ -196,6 +198,7 @@ local localization_strings = {
   SI_ECHOEXP_QUEST_ACCEPT   = "You accepted the quest [<<1>>] (<<2>>/<<3>>)",
   SI_ECHOEXP_QUEST_COMPLETE = "You completed the quest [<<1>>] (<<2>>/<<3>>)",
   SI_ECHOEXP_QUEST_REMOVED  = "The quest [<<1>>] was removed from your log. (<<2>>/<<3>>)",
+  SI_ECHOEXP_QUEST_STEPDONE1 = "You finished a step of the quest [<<1>>]",
   -- name, points, id, link)
   SI_ECHOEXP_ACHIEVEMENT_AWARDED = "You have earned the achievment [<<4>>] !!!",
   SI_ECHOEXP_LEVEL_GAIN = "*** You feel more powerful! *** You have reached the level [<<1>>] ! ***",
@@ -284,12 +287,12 @@ local localization_strings = {
 	
 	------------------------------
   -- Extended Loot info
-	SI_ECHOLOOT_BUYBACK_1  = "You buyback |t14:14:<<1>>|t <<2>>",
-	SI_ECHOLOOT_BUYBACK_2  = "You buyback |t14:14:<<1>>|t <<2>> x<<3>>",
-	SI_ECHOLOOT_SELL_1     = "You sell |t14:14:<<1>>|t <<2>>",
-	SI_ECHOLOOT_SELL_2     = "You sell |t14:14:<<1>>|t <<2>> x<<3>>",
-	SI_ECHOLOOT_BUY_1      = "You buy |t14:14:<<1>>|t <<2>>",
-	SI_ECHOLOOT_BUY_2      = "You buy |t14:14:<<1>>|t <<2>> x<<3>>",
+	SI_ECHOLOOT_BUYBACK_1  = "You buyback [|t14:14:<<1>>|t <<2>>]",
+	SI_ECHOLOOT_BUYBACK_2  = "You buyback [|t14:14:<<1>>|t <<2>>] x<<3>>",
+	SI_ECHOLOOT_SELL_1     = "You sell [|t14:14:<<1>>|t <<2>>]",
+	SI_ECHOLOOT_SELL_2     = "You sell [|t14:14:<<1>>|t <<2>>] x<<3>>",
+	SI_ECHOLOOT_BUY_1      = "You buy [|t14:14:<<1>>|t <<2>>]",
+	SI_ECHOLOOT_BUY_2      = "You buy [|t14:14:<<1>>|t <<2>>] x<<3>>",
   --icon, entryName, (entryQuantity), (totalAmount) )
 	SI_ECHOLOOT_CURRENCY_1 = "You spend <<3>> |t14:14:<<1>>|t <<2>> (Total: <<4>>)", 
 	SI_ECHOLOOT_CURRENCY_2 = "You gain <<3>> |t14:14:<<1>>|t <<2>> (Total: <<4>>)", 
@@ -309,7 +312,12 @@ local localization_strings = {
 	SI_ECHOLOOT_LOSE_1    = "You lose |t14:14:<<1>>|t <<2>>",
 	SI_ECHOLOOT_LOSE_2    = "You lose|t14:14:<<1>>|t <<2>> x<<3>>",
   --texture, iconFileIndex, name
-  SI_ECHOANTIQ_RECEIVE  = "You found the lead [|t14:14:<<1>>|t <<3>>] !!",
+  SI_ECHOANTIQ_RECEIVE  = "You found the lead [|t14:14:<<1>>|t <<3>>] !!",  
+  
+  --icon, itemLink, stackCountChange
+  SI_ECHOLOOT_BANK_GET = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>>", 
+  SI_ECHOLOOT_BANK_DEP = "You deposit [|t14:14:<<1>>|t <<2>>] x<<3>> ", 
+
 }
 ------------------------------
 -- 

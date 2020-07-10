@@ -37,6 +37,10 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_DISCOVERY_SHOW_TT = "Show discovered locations?",
   SI_ECHOEXP_SETTINGS_ACHIEVEMENT_SHOW    = "Show Achievments?",
   SI_ECHOEXP_SETTINGS_ACHIEVEMENT_SHOW_TT = "Show Achievments?",
+  SI_ECHOEXP_SETTINGS_ACHIEVEMENTDETAIL_SHOW    = "Detailed Achievments?",
+  SI_ECHOEXP_SETTINGS_ACHIEVEMENTDETAIL_SHOW_TT = "Show detailed Achievment messages?",
+  
+  
   SI_ECHOEXP_SETTINGS_ALPHA_NAME    = "Show Alpha events?",
   SI_ECHOEXP_SETTINGS_ALPHA_TT = "Dev Alpha?",
   
@@ -204,6 +208,8 @@ local localization_strings = {
   SI_ECHOEXP_LEVEL_GAIN = "*** You feel more powerful! *** You have reached the level [<<1>>] ! ***",
   --questName, shareTargetCharacterName, shareTargetDisplayName, resultString)
   SI_ECHOEXP_QUEST_SHARE_RESULT = "<<2>>@<<3>> <<4>> quest [<<1>>].",  
+  --name, achievementID, description, numCompleted, numRequired
+  SI_ECHOEXP_ACHIEVEMENT_UPDATED = "Achievement <<1>> progressed (<<4>>/<<5>>).",
   
 	------------------------------
   -- EXP

@@ -156,7 +156,18 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
-  
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name    = GetString(SI_ECHOEXP_SETTINGS_ACHIEVEMENTDETAIL_SHOW),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_ACHIEVEMENTDETAIL_SHOW_TT), 
+    getFunc = function() return EchoExperience.savedVariables.showachievementdetails end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.showachievementdetails = value
+      EchoExperience:SetupAchievmentEvents(true)
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  --
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
     name = GetString(SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_NAME), --"Quest Output Tabs",

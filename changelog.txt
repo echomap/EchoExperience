@@ -35,7 +35,7 @@ LitanyOfBlood Gui still a mess
 
 ## [Unreleased]
 0.0.36
--
+-Achievement in progress reporting
 ## [Released]
 0.0.35
 -lookupExpSourceText text updates/fixed up exp reporting

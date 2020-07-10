@@ -73,8 +73,9 @@ local defaultSettings = {
 	showGuildLogout  = false,
   showmdk          = true,
 	showdiscovery    = true,
-  showachievements = true,
-  showquests       = false,
+  showachievements       = true,
+  showachievementdetails = true,
+  showquests         = false,
   showquestsadvanced = false,
   showalpha        = false,
   sessiontracking  = false,
@@ -2013,6 +2014,44 @@ function EchoExperience.OnEventQuestRemoved(eventCode, isCompleted, journalIndex
 end
 
 
+------------------------------
+-- EVENT EVENT_ACHIEVEMENTS_UPDATED (number eventCode)
+function EchoExperience.OnAchievementsUpdated(eventCode)
+  EchoExperience.outputMsg("OnAchievementsUpdated: "
+    .." eventCode="     .. tostring(eventCode) 
+  ) 
+end
+
+------------------------------
+-- EVENT EVENT_ACHIEVEMENT_UPDATED (number eventCode, number id)
+function EchoExperience.OnAchievementUpdated(eventCode, achievementID)
+  EchoExperience.debugMsg("OnAchievementUpdated: "
+    .." eventCode="     .. tostring(eventCode) 
+    .." achievementID=" .. tostring(achievementID) 
+  )   
+  local name        = GetAchievementInfo(achievementID)
+  local link        = GetAchievementLink(achievementID, LINK_STYLE_BRACKETS)
+  local numCriteria = GetAchievementNumCriteria(achievementID)
+  --string description, number numCompleted, number numRequired
+  --local description, numCompleted, numRequired = GetAchievementCriterion(achievementID, criterionIndex)
+
+  for i = 1, numCriteria do
+      local description, numCompleted, numRequired = GetAchievementCriterion(achievementID, i)
+      EchoExperience.debugMsg("OnAchievementUpdated: "
+        .." description="  .. tostring(description) 
+        .." numCompleted=" .. tostring(numCompleted) 
+        .." numRequired="  .. tostring(numRequired) 
+      )
+      if numRequired > 1 and numCompleted~=numRequired then 
+        --d(zo_strformat("<<1>> (<<2>>/<<3>>)", description, numCompleted, numRequired))
+        local sentence = GetString(SI_ECHOEXP_ACHIEVEMENT_UPDATED)
+        local strL = zo_strformat(sentence, link, achievementID, description, numCompleted, numRequired)
+        EchoExperience.outputToChanel(strL, msgTypeQuest)
+      end
+   end
+  --d("Progress has been made toward this achievement: " .. name)  
+  --local categoryIndex, subCategoryIndex = GetCategoryInfoFromAchievementId(achievementId)  
+end
 
 ------------------------------
 -- EVENT EVENT_ACHIEVEMENT_AWARDED
@@ -2405,9 +2444,21 @@ function EchoExperience.SetupAchievmentEvents(reportMe)
   if( EchoExperience.savedVariables.showachievements) then
     EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_AWARDED",	EVENT_ACHIEVEMENT_AWARDED, EchoExperience.OnAchievementAwarded)
     EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_LEVEL_UPDATE",		    EVENT_LEVEL_UPDATE,          EchoExperience.OnExperienceLevelUpdate, REGISTER_FILTER_UNIT_TAG , "player" )
+    if(EchoExperience.savedVariables.showachievementdetails) then
+      --EVENT_ACHIEVEMENTS_SEARCH_RESULTS_READY (number eventCode)
+      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENTS_UPDATED",	EVENT_ACHIEVEMENTS_UPDATED, EchoExperience.OnAchievementsUpdated)
+      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_UPDATED",	EVENT_ACHIEVEMENT_UPDATED, EchoExperience.OnAchievementUpdated)    
+      --EVENT_PLAYER_TITLES_UPDATE (number eventCode)
+      --EVENT_TITLE_UPDATE (number eventCode, string unitTag)
+    end
   else
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_AWARDED",	EVENT_ACHIEVEMENT_AWARDED)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LEVEL_UPDATE", EVENT_LEVEL_UPDATE)
+    --EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENTS_SEARCH_RESULTS_READY", EVENT_ACHIEVEMENTS_SEARCH_RESULTS_READY)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENTS_UPDATED", EVENT_ACHIEVEMENTS_UPDATED)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_UPDATED", EVENT_ACHIEVEMENT_UPDATED)
+    --EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_PLAYER_TITLES_UPDATE", EVENT_PLAYER_TITLES_UPDATE)
+    --EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_TITLE_UPDATE", EVENT_TITLE_UPDATE)
   end
 end
 

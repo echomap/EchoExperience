@@ -72,11 +72,13 @@ local defaultSettings = {
 	showGuildLogin   = false,
 	showGuildLogout  = false,
   showmdk          = true,
-	showdiscovery    = true,
+  showquests             = false,
+  showquestsadvanced     = false,
+	showdiscovery          = true,
   showachievements       = true,
-  showachievementdetails = true,
-  showquests         = false,
-  showquestsadvanced = false,
+  showachievementdetails = false,
+  showachievementmax     = 10,
+  lorebooktracking       = false,  
   showalpha        = false,
   sessiontracking  = false,
   lifetimetracking = false,
@@ -1471,6 +1473,10 @@ end
 -- EVENT
 --EVENT_INVENTORY_SINGLE_SLOT_UPDATE (number eventCode, Bag bagId, number slotId, boolean isNewItem, ItemUISoundCategory itemSoundCategory, number inventoryUpdateReason, number stackCountChange) 
 function EchoExperience.OnInventorySingleSlotUpdate(eventCode, bagId, slotId, isNewItem, itemSoundCategory, inventoryUpdateReason, stackCountChange)
+  -- Short circuit for damaged items,  TODO filter at event register?
+  if(not isNewItem and bagId == BAG_WORN and inventoryUpdateReason==INVENTORY_UPDATE_REASON_DURABILITY_CHANGE) then
+    return
+  end
   EchoExperience.debugMsg("OnInventorySingleSlotUpdate: "
 			.." eventCode="  .. tostring(eventCode)
       .." bagId="      .. tostring(bagId)
@@ -1481,10 +1487,6 @@ function EchoExperience.OnInventorySingleSlotUpdate(eventCode, bagId, slotId, is
       .." inventoryUpdateReason="  .. tostring(inventoryUpdateReason)            
       .." stackCountChange="       .. tostring(stackCountChange)
   )   
-  -- Short circuit for damaged items,  TODO filter at event register?
-  if(not isNewItem and bagId == BAG_WORN and inventoryUpdateReason==INVENTORY_UPDATE_REASON_DURABILITY_CHANGE) then
-    return
-  end
   
     local itemLink = GetItemLink(bagId, slotId, LINK_STYLE_BRACKETS)	
 		EchoExperience.debugMsg("GetItemInfo: "
@@ -2013,6 +2015,112 @@ function EchoExperience.OnEventQuestRemoved(eventCode, isCompleted, journalIndex
   end
 end
 
+  
+  
+
+------------------------------
+-- EVENT_LORE_BOOK_ALREADY_KNOWN (number eventCode, string bookTitle)
+function EchoExperience.OnLoreBookAlreadyKnown(eventCode,bookTitle)
+  EchoExperience.debugMsg("OnLoreBookAlreadyKnown: "
+    .." eventCode="     .. tostring(eventCode) 
+    .." bookTitle="     .. tostring(bookTitle) 
+  )
+end
+
+------------------------------
+-- EVENT_LORE_BOOK_LEARNED (number eventCode, number categoryIndex, number collectionIndex, number bookIndex, number guildIndex, boolean isMaxRank)
+function EchoExperience.OnLoreBookLearned(eventCode, categoryIndex, collectionIndex, bookIndex, guildIndex, isMaxRank)
+  EchoExperience.debugMsg("OnLoreBookLearned: "
+    .." eventCode="       .. tostring(eventCode) 
+    .." categoryIndex="   .. tostring(categoryIndex) 
+    .." collectionIndex=" .. tostring(collectionIndex) 
+    .." bookIndex="       .. tostring(bookIndex) 
+    .." guildIndex="      .. tostring(guildIndex) 
+    .." isMaxRank="       .. tostring(isMaxRank) 
+  )
+  --eventCode=131477 categoryIndex=3 collectionIndex=15 bookIndex=26 guildIndex=0 isMaxRank=false
+  --eventCode=131477 categoryIndex=1 collectionIndex=24 bookIndex=7 guildIndex=8 isMaxRank=true
+  
+  --Returns: string title, textureName icon, boolean known, number bookId
+  local title, icon, known, bookId = GetLoreBookInfo(categoryIndex, collectionIndex, bookIndex)  
+  --Returns: string link
+  local link = GetLoreBookLink(categoryIndex, collectionIndex, bookIndex, LINK_STYLE_BRACKETS )
+   
+  --Returns: string name, number numCollections, number categoryId
+  local nameC, numCollectionsC, categoryIdC = GetLoreCategoryInfo(categoryIndex)
+  
+  --Returns: string name, string description, number numKnownBooks, number totalBooks, boolean hidden, textureName gamepadIcon, number collectionId
+  local nameCI, descriptionCI, numKnownBooksCI, totalBooksCI, hiddenCI, gamepadIconCI, collectionIdCI = GetLoreCollectionInfo(categoryIndex, collectionIndex)
+  
+    EchoExperience.debugMsg("OnLoreBookLearned: "
+    .." nameCI="          .. tostring(nameCI) 
+    .." descriptionCI="   .. tostring(descriptionCI) 
+    .." numKnownBooksCI=" .. tostring(numKnownBooksCI) 
+    .." totalBooksCI="    .. tostring(totalBooksCI) 
+    .." link="            .. tostring(link) 
+  )
+--eventCode=131477 categoryIndex=3 collectionIndex=20 bookIndex=19 guildIndex=0 isMaxRank=false
+--nameCI=The World and Its Creatures descriptionCI=Books about the many and varied environments of Tamriel and the creatures that live in them. numKnownBooksCI=28 totalBooksCI=79 link=[]
+    local sentence = GetString(SI_ECHOEXP_LOREBOOK_LEARNED)
+    local strL     = zo_strformat(sentence, link, nameCI, numKnownBooksCI, totalBooksCI)
+    EchoExperience.outputToChanel(strL, msgTypeQuest)
+end
+
+------------------------------
+--   EVENT_LORE_BOOK_LEARNED_SKILL_EXPERIENCE (number eventCode, number categoryIndex, number collectionIndex, number bookIndex, number guildIndex, SkillType skillType, number skillIndex, number rank, number previousXP, number currentXP)
+function EchoExperience.OnLoreBookSkillExp(eventCode,categoryIndex, collectionIndex, bookIndex, guildIndex, skillType, skillIndex, rank, previousXP, currentXP)
+  EchoExperience.outputMsg("OnLoreBookSkillExp: "
+    .." eventCode="     .. tostring(eventCode) 
+    .." categoryIndex="     .. tostring(categoryIndex) 
+    .." collectionIndex="     .. tostring(collectionIndex) 
+    .." bookIndex="     .. tostring(bookIndex) 
+    .." guildIndex="     .. tostring(guildIndex) 
+    .." skillType="     .. tostring(skillType) 
+    .." skillIndex="     .. tostring(skillIndex) 
+    .." rank="     .. tostring(rank) 
+    .." previousXP="     .. tostring(previousXP) 
+    .." currentXP="     .. tostring(currentXP) 
+  )
+end
+
+------------------------------
+-- EVENT_LORE_COLLECTION_COMPLETED (number eventCode, number categoryIndex, number collectionIndex, number guildIndex, boolean isMaxRank)
+function EchoExperience.OnLoreBookCollectionComplete(eventCode, categoryIndex, collectionIndex, guildIndex, isMaxRank)
+  EchoExperience.outputMsg("OnLoreBookCollectionComplete: "
+    .." eventCode="     .. tostring(eventCode) 
+    .." categoryIndex="     .. tostring(categoryIndex) 
+    .." collectionIndex="     .. tostring(collectionIndex) 
+    .." guildIndex="     .. tostring(guildIndex) 
+    .." isMaxRank="     .. tostring(isMaxRank) 
+  )
+end
+
+------------------------------
+-- EVENT_LORE_COLLECTION_COMPLETED_SKILL_EXPERIENCE (number eventCode, number categoryIndex, number collectionIndex, number guildIndex, SkillType skillType, number skillIndex, number rank, number previousXP, number currentXP)
+function EchoExperience.OnLoreBookCollectionCompleteSkillExp(eventCode, categoryIndex, collectionIndex, guildIndex, skillType, skillIndex, rank, previousXP, currentXP)
+  EchoExperience.outputMsg("OnLoreBookCollectionCompleteSkillExp: "
+    .." eventCode="     .. tostring(eventCode) 
+    .." categoryIndex="     .. tostring(categoryIndex) 
+    .." collectionIndex="     .. tostring(collectionIndex) 
+    .." guildIndex="     .. tostring(guildIndex) 
+    .." skillType="     .. tostring(skillType) 
+    .." skillIndex="     .. tostring(skillIndex) 
+    .." rank="     .. tostring(rank) 
+    .." previousXP="     .. tostring(previousXP) 
+    .." currentXP="     .. tostring(currentXP)
+  )
+end
+
+------------------------------
+-- EVENT_LORE_LIBRARY_INITIALIZED (number eventCode)
+function EchoExperience.OnLoreBookLibraryInit(eventCode)
+  EchoExperience.debugMsg("OnLoreBookLibraryInit: "
+    .." eventCode="     .. tostring(eventCode) 
+  )
+end
+
+----
+
 
 ------------------------------
 -- EVENT EVENT_ACHIEVEMENTS_UPDATED (number eventCode)
@@ -2032,25 +2140,59 @@ function EchoExperience.OnAchievementUpdated(eventCode, achievementID)
   local name        = GetAchievementInfo(achievementID)
   local link        = GetAchievementLink(achievementID, LINK_STYLE_BRACKETS)
   local numCriteria = GetAchievementNumCriteria(achievementID)
-  --string description, number numCompleted, number numRequired
-  --local description, numCompleted, numRequired = GetAchievementCriterion(achievementID, criterionIndex)
+  local progress    = GetAchievementProgress(achievementID)
+  
+  --
+  local maxCnt = numCriteria
+  if(EchoExperience.savedVariables.showachievementmax<10) then    
+    if( numCriteria > EchoExperience.savedVariables.showachievementmax) then
+      --EchoExperience.outputMsg("OnAchievementUpdated: Achievement " .. name .. " has criteria:" .. tostring(numCriteria) )
+      --numCriteria = EchoExperience.savedVariables.showachievementmax
+      maxCnt = EchoExperience.savedVariables.showachievementmax
+     -- EchoExperience.outputMsg("OnAchievementUpdated: Going to skip criteria over:" .. tostring(maxCnt) )
+    end
+  end
 
+  --
+  local cnt = 0
+  local successCnt = 0
   for i = 1, numCriteria do
       local description, numCompleted, numRequired = GetAchievementCriterion(achievementID, i)
       EchoExperience.debugMsg("OnAchievementUpdated: "
         .." description="  .. tostring(description) 
         .." numCompleted=" .. tostring(numCompleted) 
         .." numRequired="  .. tostring(numRequired) 
+        .." maxCnt="  .. tostring(maxCnt) 
+        .." cnt="  .. tostring(cnt) 
+        .." progress="  .. tostring(progress) 
       )
-      if numRequired > 1 and numCompleted~=numRequired then 
-        --d(zo_strformat("<<1>> (<<2>>/<<3>>)", description, numCompleted, numRequired))
-        local sentence = GetString(SI_ECHOEXP_ACHIEVEMENT_UPDATED)
-        local strL = zo_strformat(sentence, link, achievementID, description, numCompleted, numRequired)
-        EchoExperience.outputToChanel(strL, msgTypeQuest)
+      if numCompleted == numRequired then
+        successCnt = successCnt + 1
       end
-   end
-  --d("Progress has been made toward this achievement: " .. name)  
-  --local categoryIndex, subCategoryIndex = GetCategoryInfoFromAchievementId(achievementId)  
+      if( numRequired > 1 and numCompleted > 0 ) then
+        if( cnt <= maxCnt) then
+          local sentence = GetString(SI_ECHOEXP_ACHIEVEMENT_UPDATED)
+          local strL = zo_strformat(sentence, link, achievementID, description, numCompleted, numRequired)
+          EchoExperience.outputToChanel(strL, msgTypeQuest)
+        end
+        cnt = cnt + 1
+      end
+  end
+  --
+  if(numCriteria==1 and successCnt==numCriteria) then
+    local sentence = GetString(SI_ECHOEXP_ACHIEVEMENT_COMPLETED)
+    local strL = zo_strformat(sentence, link, achievementID, description)
+    EchoExperience.outputToChanel(strL, msgTypeQuest)    
+  elseif(numCriteria > 1 and successCnt==numCriteria) then
+    local sentence = GetString(SI_ECHOEXP_ACHIEVEMENT_UPDATED1)
+    local strL = zo_strformat(sentence, link, achievementID, description)
+    EchoExperience.outputToChanel(strL, msgTypeQuest)
+  elseif( numCriteria > 1 ) then
+    local sentence = GetString(SI_ECHOEXP_ACHIEVEMENT_UPDATED2)
+    local strL = zo_strformat(sentence, link, achievementID, description, successCnt, numCriteria)
+    EchoExperience.outputToChanel(strL, msgTypeQuest)
+  end
+  --
 end
 
 ------------------------------
@@ -2232,6 +2374,11 @@ function EchoExperience:DoSaveProfileSettings()
   EchoExperience.accountVariables.defaults.extendedLoot    = EchoExperience.savedVariables.extendedLoot
   EchoExperience.accountVariables.defaults.showquests      = EchoExperience.savedVariables.showquests
   EchoExperience.accountVariables.defaults.showquestsadvanced = EchoExperience.savedVariables.showquestsadvanced
+  
+  EchoExperience.accountVariables.defaults.showachievements       = EchoExperience.savedVariables.showachievements
+  EchoExperience.accountVariables.defaults.showachievementdetails = EchoExperience.savedVariables.showachievementdetails
+  EchoExperience.accountVariables.defaults.lorebooktracking       = EchoExperience.savedVariables.lorebooktracking
+  
   --
   --Copy table Settings
   EchoExperience.accountVariables.defaults.guildsettings   = EchoExperience:deepcopy(EchoExperience.savedVariables.guildsettings)
@@ -2265,6 +2412,10 @@ function EchoExperience:DoLoadProfileSettings()
     EchoExperience.savedVariables.extendedLoot    = EchoExperience.accountVariables.defaults.extendedLoot
     EchoExperience.savedVariables.showquests      = EchoExperience.accountVariables.defaults.showquests
     EchoExperience.savedVariables.showquestsadvanced = EchoExperience.accountVariables.defaults.showquestsadvanced
+    
+    EchoExperience.savedVariables.defaults.showachievements       = EchoExperience.accountVariables.defaults.showachievements
+    EchoExperience.savedVariables.defaults.showachievementdetails = EchoExperience.accountVariables.defaults.showachievementdetails
+    EchoExperience.savedVariables.defaults.lorebooktracking       = EchoExperience.accountVariables.defaults.lorebooktracking
     --
     --Copy table Settings
     EchoExperience.savedVariables.guildsettings   = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.guildsettings)
@@ -2382,6 +2533,8 @@ function EchoExperience.SetupLootGainsEvents(reportMe)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnInventoryItemDestroyed",	EVENT_INVENTORY_ITEM_DESTROYED, EchoExperience.OnInventoryItemDestroyed)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnInventoryItemUsed",	EVENT_INVENTORY_ITEM_USED, EchoExperience.OnInventoryItemUsed)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnInventorySingleSlotUpdate",	EVENT_INVENTORY_SINGLE_SLOT_UPDATE, EchoExperience.OnInventorySingleSlotUpdate)
+      --EVENT_MANAGER:AddFilterForEvent(namespace, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, REGISTER_FILTER_INVENTORY_UPDATE_REASON, ~INVENTORY_UPDATE_REASON_DURABILITY_CHANGE)
+      --INVENTORY_UPDATE_REASON_DURABILITY_CHANGE
       --
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ANTIQUITY_LEAD_ACQUIRED",	EVENT_ANTIQUITY_LEAD_ACQUIRED, EchoExperience.OnAntiquityLeadAcquired)
       
@@ -2445,13 +2598,22 @@ function EchoExperience.SetupAchievmentEvents(reportMe)
     EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_AWARDED",	EVENT_ACHIEVEMENT_AWARDED, EchoExperience.OnAchievementAwarded)
     EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_LEVEL_UPDATE",		    EVENT_LEVEL_UPDATE,          EchoExperience.OnExperienceLevelUpdate, REGISTER_FILTER_UNIT_TAG , "player" )
     if(EchoExperience.savedVariables.showachievementdetails) then
+      --EchoExperience.outputMsg("Showing achievement details")
       --EVENT_ACHIEVEMENTS_SEARCH_RESULTS_READY (number eventCode)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENTS_UPDATED",	EVENT_ACHIEVEMENTS_UPDATED, EchoExperience.OnAchievementsUpdated)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_UPDATED",	EVENT_ACHIEVEMENT_UPDATED, EchoExperience.OnAchievementUpdated)    
       --EVENT_PLAYER_TITLES_UPDATE (number eventCode)
       --EVENT_TITLE_UPDATE (number eventCode, string unitTag)
+    else
+      --EchoExperience.outputMsg("Not showing achievement details")
+      --EVENT_ACHIEVEMENTS_SEARCH_RESULTS_READY (number eventCode)
+      EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENTS_UPDATED",	EVENT_ACHIEVEMENTS_UPDATED)
+      EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_UPDATED",	EVENT_ACHIEVEMENT_UPDATED)    
+      --EVENT_PLAYER_TITLES_UPDATE (number eventCode)
+      --EVENT_TITLE_UPDATE (number eventCode, string unitTag)
     end
   else
+    --EchoExperience.outputMsg("Not showing achievement details")
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_AWARDED",	EVENT_ACHIEVEMENT_AWARDED)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LEVEL_UPDATE", EVENT_LEVEL_UPDATE)
     --EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENTS_SEARCH_RESULTS_READY", EVENT_ACHIEVEMENTS_SEARCH_RESULTS_READY)
@@ -2475,11 +2637,26 @@ end
 ------------------------------
 -- SETUP
 function EchoExperience.SetupAlphaEvents(reportMe)
-  if( EchoExperience.savedVariables.showalpha) then
+  if( EchoExperience.savedVariables.showalpha ) then
+    local eventNamespace
+    eventNamespace = EchoExperience.name.."EVENT_QUEST_SHARE_RESULT"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_QUEST_SHARE_RESULT, EchoExperience.OnEventQuestSharedResult)
+    eventNamespace = EchoExperience.name.."EVENT_QUEST_SHARE_REMOVED"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_QUEST_SHARE_REMOVED, EchoExperience.OnEventQuestSharedRemoved)
+    eventNamespace = EchoExperience.name.."EVENT_QUEST_SHARED"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_QUEST_SHARED, EchoExperience.OnEventQuestSharedStart)
+    
     --EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_EFFECT_CHANGED",	EVENT_EFFECT_CHANGED, EchoExperience.OnCombatEffectChanged)    
     --EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_UNIT_DESTROYED",	EVENT_UNIT_DESTROYED, EchoExperience.OnUnitDestroyed)
   else
+    local eventNamespace
     --EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_EFFECT_CHANGED",	EVENT_EFFECT_CHANGED)
+    eventNamespace = EchoExperience.name.."EVENT_QUEST_SHARE_RESULT"
+    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_QUEST_SHARE_RESULT)
+    eventNamespace = EchoExperience.name.."EVENT_QUEST_SHARE_REMOVED"
+    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_QUEST_SHARE_REMOVED)
+    eventNamespace = EchoExperience.name.."EVENT_QUEST_SHARED"
+    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_QUEST_SHARED)
   end
 end
 
@@ -2489,13 +2666,13 @@ function EchoExperience.SetupLoreBookEvents(reportMe)
   if( EchoExperience.savedVariables.lorebooktracking ) then
     local eventNamespace = EchoExperience.name.."EVENT_LORE_BOOK_ALREADY_KNOWN"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_LORE_BOOK_ALREADY_KNOWN, EchoExperience.OnLoreBookAlreadyKnown)
-    local eventNamespace = EchoExperience.name.."EVENT_LORE_BOOK_LEARNED"
+    eventNamespace = EchoExperience.name.."EVENT_LORE_BOOK_LEARNED"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_LORE_BOOK_LEARNED, EchoExperience.OnLoreBookLearned)    
     eventNamespace = EchoExperience.name.."EVENT_LORE_BOOK_LEARNED_SKILL_EXPERIENCE"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_LORE_BOOK_LEARNED_SKILL_EXPERIENCE, EchoExperience.OnLoreBookSkillExp)
     eventNamespace = EchoExperience.name.."EVENT_LORE_COLLECTION_COMPLETED"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_LORE_COLLECTION_COMPLETED, EchoExperience.OnLoreBookCollectionComplete)
-    eventNamespace = EchoExperience.name.."EVENT_LORE_COLLECTION_COMPLETED"
+    eventNamespace = EchoExperience.name.."EVENT_LORE_COLLECTION_COMPLETED_SKILL_EXPERIENCE"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_LORE_COLLECTION_COMPLETED_SKILL_EXPERIENCE, EchoExperience.OnLoreBookCollectionCompleteSkillExp)
     eventNamespace = EchoExperience.name.."EVENT_LORE_LIBRARY_INITIALIZED"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_LORE_LIBRARY_INITIALIZED, EchoExperience.OnLoreBookLibraryInit)    
@@ -2504,7 +2681,7 @@ function EchoExperience.SetupLoreBookEvents(reportMe)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LORE_BOOK_LEARNED",	EVENT_LORE_BOOK_LEARNED)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LORE_BOOK_LEARNED_SKILL_EXPERIENCE",	EVENT_LORE_BOOK_LEARNED_SKILL_EXPERIENCE)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LORE_COLLECTION_COMPLETED",	EVENT_LORE_COLLECTION_COMPLETED)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LORE_COLLECTION_COMPLETED",	EVENT_LORE_COLLECTION_COMPLETED)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LORE_COLLECTION_COMPLETED_SKILL_EXPERIENCE",	EVENT_LORE_COLLECTION_COMPLETED_SKILL_EXPERIENCE)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LORE_LIBRARY_INITIALIZED",	EVENT_LORE_LIBRARY_INITIALIZED)
   end
   
@@ -2552,28 +2729,17 @@ function EchoExperience.SetupEventsQuest(reportMe)
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_QUEST_COMPLETE, EchoExperience.OnEventQuestComplete)    
     eventNamespace = EchoExperience.name.."EVENT_QUEST_REMOVED"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_QUEST_REMOVED, EchoExperience.OnEventQuestRemoved)    
-    
-    eventNamespace = EchoExperience.name.."EVENT_QUEST_SHARE_RESULT"
-    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_QUEST_SHARE_RESULT, EchoExperience.OnEventQuestSharedResult)
-    eventNamespace = EchoExperience.name.."EVENT_QUEST_SHARE_REMOVED"
-    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_QUEST_SHARE_REMOVED, EchoExperience.OnEventQuestSharedRemoved)
-    eventNamespace = EchoExperience.name.."EVENT_QUEST_SHARED"
-    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_QUEST_SHARED, EchoExperience.OnEventQuestSharedStart)
-    eventNamespace = EchoExperience.name.."EVENT_QUEST_ADVANCED"
+        
     if( EchoExperience.savedVariables.showquestsadvanced ) then
+      eventNamespace = EchoExperience.name.."EVENT_QUEST_ADVANCED"
       EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_QUEST_ADVANCED, EchoExperience.OnEventQuestAdvanced)
     end
   else
     --if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_XXX_HIDE),msgTypeSYS) end
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_ADDED",	EVENT_QUEST_ADDED)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_COMPLETE",	EVENT_QUEST_COMPLETE)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_REMOVED",	EVENT_QUEST_REMOVED)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_SHARE_RESULT",	EVENT_QUEST_SHARE_RESULT)
-    
-    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_QUEST_SHARE_REMOVED)
-    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_QUEST_SHARED)
-    
-    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_QUEST_ADVANCED)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_REMOVED",	EVENT_QUEST_REMOVED)    
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_ADVANCED",	EVENT_QUEST_ADVANCED)
   end
 end
 
@@ -2854,7 +3020,7 @@ function EchoExperience.DelayedStart()
 	EchoExperience.SetupLootGainsEvents()
   EchoExperience.SetupGuildEvents()
   EchoExperience.SetupMiscEvents()  
-  --TODO EchoExperience.SetupLoreBookEvents()
+  EchoExperience.SetupLoreBookEvents()
   EchoExperience.SetupEventsQuest()
   EchoExperience.SetupAchievmentEvents()
   EchoExperience.SetupDiscoveryEvents()

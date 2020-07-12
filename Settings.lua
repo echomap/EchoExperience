@@ -87,11 +87,6 @@ function EchoExperience.LoadSettings()
   --SECTION: QUEST
   optionsTable[#optionsTable+1] = {
     type = "header",
-    name = "",
-    width = "full",	--or "half" (optional)
-  }
-  optionsTable[#optionsTable+1] = {
-    type = "header",
     title = nil,	--(optional)
     text = GetString(SI_ECHOEXP_SETTINGS_QUEST_SECTIONTITLE), --"Quest Options",
     name = GetString(SI_ECHOEXP_SETTINGS_QUEST_SECTIONNAME),  --"Quest Options",
@@ -167,6 +162,35 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
+  
+  optionsTable[#optionsTable+1] = {
+    type = "slider",
+    name    = GetString(SI_ECHOEXP_SETTINGS_ACHIEVEMENTDETAIL_SLIDER),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_ACHIEVEMENTDETAIL_SLIDER_TT), 
+    min = 0,
+    max = 10,
+    default = 10,
+    getFunc = function() return EchoExperience.savedVariables.showachievementmax end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.showachievementmax = value
+      --EchoExperience:SetupAchievmentEvents(true)
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  
+  
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name    = GetString(SI_ECHOEXP_SETTINGS_LOREOBOOK_SHOW),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LOREBOOK_SHOW_TT), 
+    getFunc = function() return EchoExperience.savedVariables.lorebooktracking end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.lorebooktracking = value
+      EchoExperience:SetupLoreBookEvents(true)
+    end,
+    width = "half",
+  }
+
   --
   optionsTable[#optionsTable+1] = {
     type = "dropdown",

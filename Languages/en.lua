@@ -39,6 +39,10 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_ACHIEVEMENT_SHOW_TT = "Show Achievments?",
   SI_ECHOEXP_SETTINGS_ACHIEVEMENTDETAIL_SHOW    = "Detailed Achievments?",
   SI_ECHOEXP_SETTINGS_ACHIEVEMENTDETAIL_SHOW_TT = "Show detailed Achievment messages?",
+  SI_ECHOEXP_SETTINGS_ACHIEVEMENTDETAIL_SLIDER    = "Criteria Max #",
+  SI_ECHOEXP_SETTINGS_ACHIEVEMENTDETAIL_SLIDER_TT = "How many lines to show max for achievements that have multiple criteria (10=all)",
+  SI_ECHOEXP_SETTINGS_LOREOBOOK_SHOW            = "Show Lorebooks?",
+  SI_ECHOEXP_SETTINGS_LOREOBOOK_SHOW_TT         = "Show Lorebook events found/learned/collected",
   
   
   SI_ECHOEXP_SETTINGS_ALPHA_NAME    = "Show Alpha events?",
@@ -209,7 +213,11 @@ local localization_strings = {
   --questName, shareTargetCharacterName, shareTargetDisplayName, resultString)
   SI_ECHOEXP_QUEST_SHARE_RESULT = "<<2>>@<<3>> <<4>> quest [<<1>>].",  
   --name, achievementID, description, numCompleted, numRequired
-  SI_ECHOEXP_ACHIEVEMENT_UPDATED = "Achievement <<1>> progressed (<<4>>/<<5>>).",
+  SI_ECHOEXP_ACHIEVEMENT_UPDATED   = "Achievement <<1>> progressed (<<4>>/<<5>>).",
+  SI_ECHOEXP_ACHIEVEMENT_UPDATED1  = "Achievement <<1>> completed.",
+  SI_ECHOEXP_ACHIEVEMENT_UPDATED2  = "Achievement <<1>> progressed (<<4>>/<<5>>).",
+  SI_ECHOEXP_ACHIEVEMENT_COMPLETED = "Achievement <<1>> Completed.",
+  SI_ECHOEXP_LOREBOOK_LEARNED = "Discovered book <<1>> in category <<2>> (<<3>>/<<4>>).",
   
 	------------------------------
   -- EXP

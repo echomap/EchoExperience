@@ -219,6 +219,10 @@ local localization_strings = {
   SI_ECHOEXP_ACHIEVEMENT_COMPLETED = "Achievement <<1>> Completed.",
   SI_ECHOEXP_LOREBOOK_LEARNED = "Discovered book <<1>> in category <<2>> (<<3>>/<<4>>).",
   
+  SI_ECHOEXP_BG_KILLED   = "You killed <<1>>.",
+  SI_ECHOEXP_BG_KILLEDBY = "You were killed by <<1>>.",
+  SI_ECHOEXP_DIED = "You died!",
+  
 	------------------------------
   -- EXP
 	SI_ECHOEXP_XP_GAIN         = "You gained <<1>> experience.",

@@ -20,26 +20,28 @@ function EchoExperience.LoadSettings()
     registerForDefaults = true,
   }
   LAM:RegisterAddonPanel(EchoExperience.menuName, panelData)
-
   local optionsTable = { }
+  --[[  
   optionsTable[1] = {
     type = "header",
     name = "",
     width = "full",	--or "half" (optional)
   }
+  --]]
+  optionsTable[1] = {
+    type = "button",
+    name = GetString(SI_ECHOEXP_SETTINGS_REFRESH_TEXT), --"Refresh dropdowns",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_REFRESH_TOOLTIP), --"Refresh dropdown Data. (Use in case things just don't look right, or on first use)",
+    func = function()  EchoExperience:DoRefreshDropdowns() end,
+    width = "half",	--or "half" (optional)
+  } 
+  
   optionsTable[#optionsTable+1] = {
     type = "header",
     title = nil,	--(optional)
     text = "Options",
     name = "Options",
     width = "full",	--or "half" (optional)
-  } 
-  optionsTable[#optionsTable+1] = {
-    type = "button",
-    name = GetString(SI_ECHOEXP_SETTINGS_REFRESH_TEXT), --"Refresh dropdowns",
-    tooltip = GetString(SI_ECHOEXP_SETTINGS_REFRESH_TOOLTIP), --"Refresh dropdown Data. (Use in case things just don't look right, or on first use)",
-    func = function()  EchoExperience:DoRefreshDropdowns() end,
-    width = "half",	--or "half" (optional)
   } 
   
   optionsTable[#optionsTable+1] = {

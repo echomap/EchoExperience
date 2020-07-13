@@ -605,7 +605,11 @@ function EchoExperience.SlashCommandHandler(text)
       local name, gender, level, classId, raceId, alliance, id, locationId = GetCharacterInfo(i)
       d( zo_strformat("char: name:<<1>> id:<<2>> loc:<<3>>", name, id, locationId) )
     end
-
+  elseif #options == 0 or options[1] == "iam" then  
+    d("Display Name: ".. tostring(EchoExperience.view.iamDisplayName)   )
+    d("Char Name: "   .. tostring(EchoExperience.view.iamCharacterName) )
+    
+  --
   --
 	elseif #options == 0 or options[1] == "debug" then
 		local dg = EchoExperience.savedVariables.debug
@@ -808,6 +812,7 @@ function EchoExperience.OnAbilityExperienceUpdate(eventCode, progressionIndex, l
     -- Table to keep old values of player curent exp to be able to diff
     if(nextRankXP==0 or currentXP>nextRankXP) then
       EchoExperience.savedVariables.skilltracking[tableKey] = nil
+      --TESTING
       EchoExperience.outputMsg("OnAbilityExperienceUpdate: removing skill "..name2.." per done?") --TODO
     else      
       EchoExperience.savedVariables.skilltracking[tableKey] = {}
@@ -1748,20 +1753,27 @@ end
 --EVENT_BATTLEGROUND_KILL (number eventCode, string killedPlayerCharacterName, string killedPlayerDisplayName, BattlegroundAlliance killedPlayerBattlegroundAlliance, string killingPlayerCharacterName, string killingPlayerDisplayName, BattlegroundAlliance killingPlayerBattlegroundAlliance, BattlegroundKillType battlegroundKillType, number killingAbilityId) 
 function EchoExperience.OnBattlegroundKill(eventCode, killedPlayerCharacterName, killedPlayerDisplayName, killedPlayerBattlegroundAlliance, killingPlayerCharacterName, killingPlayerDisplayName, killingPlayerBattlegroundAlliance, battlegroundKillType, killingAbilityId)
   --
-  EchoExperience.outputMsg("OnBattlegroundKill: "
+  --TESTING
+  EchoExperience.debugMsg("OnBattlegroundKill: "
     .." eventCode="      .. tostring(eventCode)
     .." killedPlayerCharacterName="   .. tostring(killedPlayerCharacterName)      
     .." killedPlayerDisplayName="     .. tostring(killedPlayerDisplayName)
     .." killingPlayerCharacterName="  .. tostring(killingPlayerCharacterName)
     .." killingPlayerDisplayName="    .. tostring(killingPlayerDisplayName)
-    .." EchoExperience.view.iamDisplayName="    .. tostring(EchoExperience.view.iamDisplayName)
+    .." EchoExperience.view.iamDisplayName=" .. tostring(EchoExperience.view.iamDisplayName)
   )
-  
+  --
   if(EchoExperience.view.iamDisplayName == killedPlayerDisplayName ) then
-    EchoExperience.outputMsg("OnBattlegroundKill: you were killed by " .. tostring(killingPlayerDisplayName) )
+    local sentence = GetString(SI_ECHOEXP_BG_KILLEDBY)
+    local strL     = zo_strformat(sentence, killingPlayerDisplayName )
+    EchoExperience.outputToChanel(strL,msgTypeQuest)
+    --EchoExperience.outputMsg("OnBattlegroundKill: you were killed by " .. tostring(killingPlayerDisplayName) )
   end
   if(EchoExperience.view.iamDisplayName == killingPlayerDisplayName ) then
-    EchoExperience.outputMsg("OnBattlegroundKill: you killed " .. tostring(killedPlayerDisplayName) )
+    local sentence = GetString(SI_ECHOEXP_BG_KILLED)
+    local strL     = zo_strformat(sentence, killingPlayerDisplayName )
+    EchoExperience.outputToChanel(strL,msgTypeQuest)
+    --EchoExperience.outputMsg("OnBattlegroundKill: you killed " .. tostring(killedPlayerDisplayName) )
   end
   --
 end
@@ -1784,17 +1796,17 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
     return
   end
   if(result==ACTION_RESULT_IN_COMBAT ) then  
-  EchoExperience.debugMsg("OnCombatSomethingDied: "
-    .." eventCode="      .. tostring(eventCode)
-    .." sourceName="     .. tostring(sourceName)      
-    .." targetName="     .. tostring(targetName)
-    .." targetType="     .. tostring(targetType)
-    .." result="         .. tostring(result)
-    .." isError="        .. tostring(isError)      
-    .." abilityName="    .. tostring(abilityName)      
-    .." sourceUnitId="    .. tostring(sourceUnitId)     
-    .." targetUnitId="    .. tostring(targetUnitId)
-  )
+    EchoExperience.debugMsg("OnCombatSomethingDied: "
+      .." eventCode="      .. tostring(eventCode)
+      .." sourceName="     .. tostring(sourceName)      
+      .." targetName="     .. tostring(targetName)
+      .." targetType="     .. tostring(targetType)
+      .." result="         .. tostring(result)
+      .." isError="        .. tostring(isError)      
+      .." abilityName="    .. tostring(abilityName)      
+      .." sourceUnitId="    .. tostring(sourceUnitId)     
+      .." targetUnitId="    .. tostring(targetUnitId)
+    )
   end
   --]]
   --ACTION_RESULT_DIED_XP ???
@@ -1857,7 +1869,10 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
   if(EchoExperience.savedVariables.showmdk) then
     --[14:28] [14:28] (EchoExp) OnCombatSomethingDied: sourceUnitId=0 targetUnitId=58426 result=2260(ACTION_RESULT_DIED)
     if(sourceUnitId==targetUnitId) then
-        EchoExperience.outputToChanel("You died!",msgTypeSYS)--TODO
+      local sentence = GetString(SI_ECHOEXP_DIED)
+      local strL     = zo_strformat(sentence )
+      EchoExperience.outputToChanel(strL,msgTypeSYS)
+      --EchoExperience.outputToChanel("You died!",msgTypeSYS)--TODO 
     else
       --TEST REMOVE TODO
       EchoExperience.debugMsg("SomethingDied: "
@@ -1881,6 +1896,7 @@ end
 --(number eventCode, number questId)
 --Note: called on success or fail?
 function EchoExperience.OnEventQuestSharedRemoved(eventCode, questId)
+  --TESTING
   EchoExperience.outputMsg("OnEventQuestSharedRemoved: "
     .." eventCode="   .. tostring(eventCode)
     .." questId="     .. tostring(questId) 
@@ -1892,6 +1908,7 @@ end
 --EVENT_QUEST_SHARE_RESULT
 --(number eventCode, number questId)
 function EchoExperience.OnEventQuestSharedStart(eventCode, questId)
+  --TESTING
   EchoExperience.outputMsg("OnEventQuestSharedStart: "
     .." eventCode="   .. tostring(eventCode)
     .." questId="     .. tostring(questId)   )
@@ -1902,6 +1919,7 @@ end
 --EVENT_QUEST_SHARE_RESULT
 --(number eventCode, string shareTargetCharacterName, string shareTargetDisplayName, string questName, number QuestShareResult result)
 function EchoExperience.OnEventQuestSharedResult(eventCode, shareTargetCharacterName, shareTargetDisplayName, questName, result)
+  --TESTING
   EchoExperience.outputMsg("OnEventQuestSharedResult: "
     .." eventCode="      .. tostring(eventCode)
     .." shareTargetCharacterName="     .. tostring(shareTargetCharacterName) 
@@ -1988,7 +2006,6 @@ end
 ------------------------------
 -- EVENT
 function EchoExperience.OnEventQuestComplete(eventCode, questName, level, previousExperience)
-  --EchoExperience.outputMsg("OnEventQuestComplete: Called")
   EchoExperience.debugMsg("OnEventQuestComplete: "
     .." questName="      .. tostring(questName)
     .." level="     .. tostring(level) 
@@ -2069,6 +2086,7 @@ end
 ------------------------------
 --   EVENT_LORE_BOOK_LEARNED_SKILL_EXPERIENCE (number eventCode, number categoryIndex, number collectionIndex, number bookIndex, number guildIndex, SkillType skillType, number skillIndex, number rank, number previousXP, number currentXP)
 function EchoExperience.OnLoreBookSkillExp(eventCode,categoryIndex, collectionIndex, bookIndex, guildIndex, skillType, skillIndex, rank, previousXP, currentXP)
+  --TESTING
   EchoExperience.outputMsg("OnLoreBookSkillExp: "
     .." eventCode="     .. tostring(eventCode) 
     .." categoryIndex="     .. tostring(categoryIndex) 
@@ -2086,6 +2104,7 @@ end
 ------------------------------
 -- EVENT_LORE_COLLECTION_COMPLETED (number eventCode, number categoryIndex, number collectionIndex, number guildIndex, boolean isMaxRank)
 function EchoExperience.OnLoreBookCollectionComplete(eventCode, categoryIndex, collectionIndex, guildIndex, isMaxRank)
+  --TESTING
   EchoExperience.outputMsg("OnLoreBookCollectionComplete: "
     .." eventCode="     .. tostring(eventCode) 
     .." categoryIndex="     .. tostring(categoryIndex) 
@@ -2098,6 +2117,7 @@ end
 ------------------------------
 -- EVENT_LORE_COLLECTION_COMPLETED_SKILL_EXPERIENCE (number eventCode, number categoryIndex, number collectionIndex, number guildIndex, SkillType skillType, number skillIndex, number rank, number previousXP, number currentXP)
 function EchoExperience.OnLoreBookCollectionCompleteSkillExp(eventCode, categoryIndex, collectionIndex, guildIndex, skillType, skillIndex, rank, previousXP, currentXP)
+  --TESTING
   EchoExperience.outputMsg("OnLoreBookCollectionCompleteSkillExp: "
     .." eventCode="     .. tostring(eventCode) 
     .." categoryIndex="     .. tostring(categoryIndex) 
@@ -2125,6 +2145,7 @@ end
 ------------------------------
 -- EVENT EVENT_ACHIEVEMENTS_UPDATED (number eventCode)
 function EchoExperience.OnAchievementsUpdated(eventCode)
+  --TESTING
   EchoExperience.outputMsg("OnAchievementsUpdated: "
     .." eventCode="     .. tostring(eventCode) 
   ) 
@@ -2146,10 +2167,10 @@ function EchoExperience.OnAchievementUpdated(eventCode, achievementID)
   local maxCnt = numCriteria
   if(EchoExperience.savedVariables.showachievementmax<10) then    
     if( numCriteria > EchoExperience.savedVariables.showachievementmax) then
-      --EchoExperience.outputMsg("OnAchievementUpdated: Achievement " .. name .. " has criteria:" .. tostring(numCriteria) )
+      --EchoExperience.debugMsg("OnAchievementUpdated: Achievement " .. name .. " has criteria:" .. tostring(numCriteria) )
       --numCriteria = EchoExperience.savedVariables.showachievementmax
       maxCnt = EchoExperience.savedVariables.showachievementmax
-     -- EchoExperience.outputMsg("OnAchievementUpdated: Going to skip criteria over:" .. tostring(maxCnt) )
+     -- EchoExperience.debugMsg("OnAchievementUpdated: Going to skip criteria over:" .. tostring(maxCnt) )
     end
   end
 
@@ -2240,7 +2261,7 @@ function EchoExperience.OnCombatEffectChanged(eventCode, changeType, effectSlot,
   --
   --local pID       = GetCurrentCharacterId()
   --if(pID ~= unitId) then return end
-  --
+  --TESTING
   EchoExperience.outputMsg("OnCombatEffectChanged: "
     .." eventCode="     .. tostring(eventCode) 
     .." pID="           .. tostring(pID)
@@ -2533,7 +2554,7 @@ function EchoExperience.SetupLootGainsEvents(reportMe)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnInventoryItemDestroyed",	EVENT_INVENTORY_ITEM_DESTROYED, EchoExperience.OnInventoryItemDestroyed)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnInventoryItemUsed",	EVENT_INVENTORY_ITEM_USED, EchoExperience.OnInventoryItemUsed)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnInventorySingleSlotUpdate",	EVENT_INVENTORY_SINGLE_SLOT_UPDATE, EchoExperience.OnInventorySingleSlotUpdate)
-      --EVENT_MANAGER:AddFilterForEvent(namespace, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, REGISTER_FILTER_INVENTORY_UPDATE_REASON, ~INVENTORY_UPDATE_REASON_DURABILITY_CHANGE)
+      --EVENT_MANAGER:AddFilterForEvent(EchoExperience.name.."OnInventorySingleSlotUpdate", EVENT_INVENTORY_SINGLE_SLOT_UPDATE, REGISTER_FILTER_INVENTORY_UPDATE_REASON, ~INVENTORY_UPDATE_REASON_DURABILITY_CHANGE)
       --INVENTORY_UPDATE_REASON_DURABILITY_CHANGE
       --
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ANTIQUITY_LEAD_ACQUIRED",	EVENT_ANTIQUITY_LEAD_ACQUIRED, EchoExperience.OnAntiquityLeadAcquired)
@@ -2598,14 +2619,14 @@ function EchoExperience.SetupAchievmentEvents(reportMe)
     EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_AWARDED",	EVENT_ACHIEVEMENT_AWARDED, EchoExperience.OnAchievementAwarded)
     EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_LEVEL_UPDATE",		    EVENT_LEVEL_UPDATE,          EchoExperience.OnExperienceLevelUpdate, REGISTER_FILTER_UNIT_TAG , "player" )
     if(EchoExperience.savedVariables.showachievementdetails) then
-      --EchoExperience.outputMsg("Showing achievement details")
+      --EchoExperience.debugMsg("Showing achievement details")
       --EVENT_ACHIEVEMENTS_SEARCH_RESULTS_READY (number eventCode)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENTS_UPDATED",	EVENT_ACHIEVEMENTS_UPDATED, EchoExperience.OnAchievementsUpdated)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_UPDATED",	EVENT_ACHIEVEMENT_UPDATED, EchoExperience.OnAchievementUpdated)    
       --EVENT_PLAYER_TITLES_UPDATE (number eventCode)
       --EVENT_TITLE_UPDATE (number eventCode, string unitTag)
     else
-      --EchoExperience.outputMsg("Not showing achievement details")
+      --EchoExperience.debugMsg("Not showing achievement details")
       --EVENT_ACHIEVEMENTS_SEARCH_RESULTS_READY (number eventCode)
       EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENTS_UPDATED",	EVENT_ACHIEVEMENTS_UPDATED)
       EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_UPDATED",	EVENT_ACHIEVEMENT_UPDATED)    
@@ -2613,7 +2634,7 @@ function EchoExperience.SetupAchievmentEvents(reportMe)
       --EVENT_TITLE_UPDATE (number eventCode, string unitTag)
     end
   else
-    --EchoExperience.outputMsg("Not showing achievement details")
+    --EchoExperience.debugMsg("Not showing achievement details")
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_AWARDED",	EVENT_ACHIEVEMENT_AWARDED)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LEVEL_UPDATE", EVENT_LEVEL_UPDATE)
     --EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENTS_SEARCH_RESULTS_READY", EVENT_ACHIEVEMENTS_SEARCH_RESULTS_READY)
@@ -2848,12 +2869,15 @@ end
 ------------------------------
 -- UI
 function EchoExperience.InitializeGui()
+  --
 	EOL_GUI_ListHolder.rowHeight = 24
 	EOL_GUI_ListHolder:SetDrawLayer(0)
   
   EOL_GUI_Litany_ListHolder.rowHeight = 24
   EOL_GUI_Litany_ListHolder:SetDrawLayer(0)
-  EchoExperience:SetupLitanyOfBlood()
+  --EchoExperience:SetupLitanyOfBlood()
+  --
+  --EchoExperience.debugMsg("Initialized!!!!")
 end
 
 ------------------------------
@@ -2973,9 +2997,8 @@ end
 
 ------------------------------
 -- SETUP  setup event handling
-function EchoExperience.DelayedStart()
-  --d("EchoExp DelayedStart Called")
-  --Setup VIEW
+function EchoExperience.SetupView()
+  --
   EchoExperience.view = {}
   EchoExperience.view.GuildEventsReg = false
   EchoExperience.view.settingstemp = {}
@@ -3000,6 +3023,19 @@ function EchoExperience.DelayedStart()
   EchoExperience.view.selected.loottab = nil
   EchoExperience.view.selected.exptab = nil
   
+  --
+  EchoExperience.view.iamDisplayName   = GetDisplayName() --GetUnitDisplayName("player")
+  EchoExperience.view.iamCharacterName = GetUnitName("player")
+  --
+end
+
+------------------------------
+-- SETUP  setup event handling
+function EchoExperience.DelayedStart()
+  --d("EchoExp DelayedStart Called")
+  --
+  --EchoExperience.SetupView()
+  --
   EchoExperience.CheckVerifyDefaults()
 
   --
@@ -3025,9 +3061,8 @@ function EchoExperience.DelayedStart()
   EchoExperience.SetupAchievmentEvents()
   EchoExperience.SetupDiscoveryEvents()
   EchoExperience.SetupAlphaEvents()
-  
   EchoExperience.SetupLitanyOfBlood()
-  
+  --
 end
 
 ------------------------------
@@ -3045,9 +3080,8 @@ function EchoExperience.Activated(e)
     --d(EchoExperience.name .. GetString(SI_ECHOEXP_MESSAGE)) -- Prints to chat.
     --ZO_AlertNoSuppression(UI_ALERT_CATEGORY_ALERT, nil,
     --    EchoExperience.name .. GetString(SI_NEW_ADDON_MESSAGE)) -- Top-right alert.
-    EchoExperience.view.iamDisplayName   = GetUnitDisplayName("player")
-    EchoExperience.view.iamCharacterName = GetUnitName("player")
     --d("EchoExperience.view.iamDisplayName = " .. tostring(EchoExperience.view.iamDisplayName) )
+    EchoExperience.SetupView()
     EchoExperience.SetupDefaultColors()
     EchoExperience.InitializeGui()
     zo_callLater(EchoExperience.DelayedStart, 2000)

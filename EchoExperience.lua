@@ -1898,10 +1898,16 @@ end
 --Note: called on success or fail?
 function EchoExperience.OnEventQuestSharedRemoved(eventCode, questId)
   --TESTING
-  EchoExperience.outputMsg("OnEventQuestSharedRemoved: "
+  EchoExperience.debugMsg("OnEventQuestSharedRemoved: "
     .." eventCode="   .. tostring(eventCode)
     .." questId="     .. tostring(questId) 
-  )
+  )  --
+  --Returns: string questName, string characterName, number millisecondsSinceRequest, string displayName  
+  --local questName, characterName, millisecondsSinceRequest, displayName = GetOfferedQuestShareInfo( questId )
+  --local sentence = GetString(SI_ECHOLOOT_QUEST_SHARED_TO_YOU)
+  --local strL = zo_strformat(sentence, questName, questId )
+  --EchoExperience.outputToChanel(strL, msgTypeQuest)
+  --  
 end
 
 ------------------------------
@@ -1911,9 +1917,17 @@ end
 --(number eventCode, number questId)
 function EchoExperience.OnEventQuestSharedStart(eventCode, questId)
   --TESTING
-  EchoExperience.outputMsg("OnEventQuestSharedStart: "
+  EchoExperience.debugMsg("OnEventQuestSharedStart: "
     .." eventCode="   .. tostring(eventCode)
-    .." questId="     .. tostring(questId)   )
+    .." questId="     .. tostring(questId)
+  )
+  --
+  --Returns: string questName, string characterName, number millisecondsSinceRequest, string displayName  
+  local questName, characterName, millisecondsSinceRequest, displayName = GetOfferedQuestShareInfo( questId )
+  local sentence = GetString(SI_ECHOLOOT_QUEST_SHARED_TO_YOU)
+  local strL = zo_strformat(sentence, questName, questId )
+  EchoExperience.outputToChanel(strL, msgTypeQuest)
+  --  
 end    
 
 ------------------------------
@@ -1923,7 +1937,7 @@ end
 --(number eventCode, string shareTargetCharacterName, string shareTargetDisplayName, string questName, number QuestShareResult result)
 function EchoExperience.OnEventQuestSharedResult(eventCode, shareTargetCharacterName, shareTargetDisplayName, questName, result)
   --TESTING
-  EchoExperience.outputMsg("OnEventQuestSharedResult: "
+  EchoExperience.debugMsg("OnEventQuestSharedResult: "
     .." eventCode="      .. tostring(eventCode)
     .." shareTargetCharacterName="     .. tostring(shareTargetCharacterName) 
     .." shareTargetDisplayName="     .. tostring(shareTargetDisplayName) 
@@ -1947,11 +1961,11 @@ function EchoExperience.OnEventQuestSharedResult(eventCode, shareTargetCharacter
   end
   local resultString = "Unknown"
   if(result==QUEST_SHARE_RESULT_ACCEPTED) then
-    resultString = "Accepted"
+    resultString = GetString(SI_ECHOEXP_QUEST_ACCEPTED) 
   elseif(result==QUEST_SHARE_RESULT_DECLINED) then
-    resultString = "Declined"
+    resultString = GetString(SI_ECHOEXP_QUEST_DECLINED)
   elseif(result==QUEST_SHARE_RESULT_FAILED_TO_SHARE) then
-    resultString = "Failed to Share"
+    resultString = GetString(SI_ECHOEXP_QUEST_FAILED)
   end
   local sentence = GetString(SI_ECHOEXP_QUEST_SHARE_RESULT)
   local strL = zo_strformat(sentence, questName, shareTargetCharacterName, shareTargetDisplayName, resultString )

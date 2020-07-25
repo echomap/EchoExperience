@@ -60,8 +60,8 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_QUEST_TOOLTIP         = "Show Quests accept/complete? on or off.",
   SI_ECHOEXP_SETTINGS_QUESTADV_TITLE        = "Quest Steps done? ",
   SI_ECHOEXP_SETTINGS_QUESTADV_TOOLTIP      = "Show Quests steps completed?",
-  SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_NAME    = "Quest Output Tabs",
-  SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_TOOLTIP = "Tab(s) for Quest output.",
+  SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_NAME    = "Quest Output Config",
+  SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_TOOLTIP = "Quest output entries for (window/tab/color).",
   SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_DELETE  = "Delete selected Quest's Data!",
   
   SI_ECHOEXP_SETTINGS_QUEST_NEWOUTPUTS_TEXT = "Add new Quest output:",
@@ -90,8 +90,8 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_EXP_SKILLLINE_TOOLTIP     = "Report on skill lines Rank Gains? (if experience is on)",
   SI_ECHOEXP_SETTINGS_EXP_VERBSKILLLINE_TITLE   = "Show Verbose Skill Experience",
   SI_ECHOEXP_SETTINGS_EXP_VERBSKILLLINE_TOOLTIP = "Report on all skill lines gains? (if experience is on)",
-  SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_NAME    = "Exp Output Tabs",
-  SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_TOOLTIP = "Tab(s) for Exp output.",
+  SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_NAME    = "Exp Output Config",
+  SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_TOOLTIP = "Experience output entries for (window/tab/color).",
   SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_DELETE  = "Delete selected Exp's Data!",
   
   SI_ECHOEXP_SETTINGS_EXP_NEWOUTPUTS_TEXT = "Add new Experience output:",
@@ -112,8 +112,8 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_LOOT_VERB_TOOLTIP    = "Show other types of item events? (researched/trashed/etc)",
   SI_ECHOEXP_SETTINGS_LOOT_GROUP_TITLE     = "Show other group member's Looted items?",
   SI_ECHOEXP_SETTINGS_LOOT_GROUP_TOOLTIP   = "Verbose reporting if Looted is on?",
-  SI_ECHOEXP_SETTINGS_LOOT_OUTPUTS_NAME    = "Loot Output Tabs",
-  SI_ECHOEXP_SETTINGS_LOOT_OUTPUTS_TOOLTIP = "Tab(s) for Loot output.",
+  SI_ECHOEXP_SETTINGS_LOOT_OUTPUTS_NAME    = "Loot Output Config",
+  SI_ECHOEXP_SETTINGS_LOOT_OUTPUTS_TOOLTIP = "Loot output entries for (window/tab/color).",
   SI_ECHOEXP_SETTINGS_LOOT_OUTPUTS_DELETE  = "Delete selected Loot's Data!",
   
   SI_ECHOEXP_SETTINGS_LOOT_NEWOUTPUTS_TEXT = "Add new Loot output:",
@@ -137,8 +137,8 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_GUILD_G3 = "G3",
   SI_ECHOEXP_SETTINGS_GUILD_G4 = "G4",
   SI_ECHOEXP_SETTINGS_GUILD_G5 = "G5",
-  SI_ECHOEXP_SETTINGS_GUILD_OUTPUTS_NAME    = "Guild Output Tabs",
-  SI_ECHOEXP_SETTINGS_GUILD_OUTPUTS_TOOLTIP = "Tab(s) for Guild output.",
+  SI_ECHOEXP_SETTINGS_GUILD_OUTPUTS_NAME    = "Guild Output Config",
+  SI_ECHOEXP_SETTINGS_GUILD_OUTPUTS_TOOLTIP = "Guild output entries for (window/tab/color).",
   SI_ECHOEXP_SETTINGS_GUILD_OUTPUTS_DELETE  = "Delete selected Guild's Data!",
   
   SI_ECHOEXP_SETTINGS_GUILD_NEWOUTPUTS_TEXT = "Add new Guild output:",
@@ -210,8 +210,7 @@ local localization_strings = {
   -- name, points, id, link)
   SI_ECHOEXP_ACHIEVEMENT_AWARDED = "You have earned the achievment [<<4>>] !!!",
   SI_ECHOEXP_LEVEL_GAIN = "*** You feel more powerful! *** You have reached the level [<<1>>] ! ***",
-  --questName, shareTargetCharacterName, shareTargetDisplayName, resultString)
-  SI_ECHOEXP_QUEST_SHARE_RESULT = "<<2>>@<<3>> <<4>> quest [<<1>>].",  
+  
   --name, achievementID, description, numCompleted, numRequired
   SI_ECHOEXP_ACHIEVEMENT_UPDATED   = "Achievement <<1>> progressed (<<4>>/<<5>>).",
   SI_ECHOEXP_ACHIEVEMENT_UPDATED1  = "Achievement <<1>> completed.",
@@ -338,6 +337,14 @@ local localization_strings = {
   --icon, itemLink, stackCountChange
   SI_ECHOLOOT_BANK_GET = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>>", 
   SI_ECHOLOOT_BANK_DEP = "You deposit [|t14:14:<<1>>|t <<2>>] x<<3>> ", 
+
+  --QUEST Output
+  SI_ECHOLOOT_QUEST_SHARED_TO_YOU = "The quest [<<1>>] was shared to you.", 
+  --questName, shareTargetCharacterName, shareTargetDisplayName, resultString)
+  SI_ECHOEXP_QUEST_SHARE_RESULT = "Quest [<<1>>] <<4>> by <<2>>@<<3>> .",  
+  SI_ECHOEXP_QUEST_ACCEPTED = "was Accepted",
+  SI_ECHOEXP_QUEST_DECLINED = "was Declined",
+  SI_ECHOEXP_QUEST_FAILED   = "Failed to Share with",
 
 }
 ------------------------------

@@ -33,10 +33,13 @@ LitanyOfBlood Gui still a mess
 
 ## [Testing branch]
 
-## [Unreleased]
+## [Versions]
+0.0.38
+-Fix guild left message
 0.0.37
+-quest shared updates
+-tooltip updates
 -misc updates
-## [Released]
 0.0.36
 -Achievement in progress reporting
 -Lorebook reporting

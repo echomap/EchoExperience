@@ -274,7 +274,7 @@ local localization_strings = {
   -- <<1>>(guildID), <<2>>GuildName, <<3>>playerName, <<4>>ZO_FormatClockTime(), <<5>>pLink )
 	SI_ECHOEXP_GUILDADD_1    = "<<5>> *Joined* (<<2>>) at <<4>>!",
   --<<1>> guildID, <<2>>guild, <<3>>characterName, <<4>>ZO_FormatClockTime() , <<5>>pLink
-	SI_ECHOEXP_GUILDREM_1    = "<<5>> *Left* (<<2>) at <<4>>!",  
+	SI_ECHOEXP_GUILDREM_1    = "<<5>> *Left* (<<2>>) at <<4>>!",  
   
 	------------------------------
   -- LOOT

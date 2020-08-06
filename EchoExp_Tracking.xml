@@ -24,12 +24,64 @@
 						<Label name="$(parent)_Label" mouseEnabled="false" font="ZoFontBookPaper" text="-EchoExp Tracking-" >
 							<Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" offsetX="0" offsetY="0"/>
 						</Label>
-
+            
+            <Control name="$(parent)_Dropdown_Sessions" inherits="ZO_ScrollableComboBox" mouseEnabled="true" tier="HIGH" verticalAlignment="CENTER" horizontalAlignment="LEFT" >
+							<Dimensions y="30" minX="100"/>
+              <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="20" offsetY="30" />
+<!-- 	
+							<OnMouseEnter>EchoExperience:GuiShowTooltip(self, "Select inventory to view")</OnMouseEnter>
+							<OnMouseExit>EchoExperience:GuiHideTooltip(self)</OnMouseExit>
+ -->
+						</Control>
+            <Button name="$(parent)_Button_Session_Start">
+									<Anchor point="TOPLEFT" relativeTo="$(parent)_Dropdown_Sessions" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+									<Dimensions x="40" y="40" />
+                  <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"Start Session") </OnMouseEnter>
+                  <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
+                  <OnMouseUp>EchoExperience:TrackingSessionStart(self)</OnMouseUp>
+									<Textures	normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
+													pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
+													mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds"
+									/>
+            </Button>
+            <Button name="$(parent)_Button_Session_Pause">
+									<Anchor point="TOPLEFT" relativeTo="$(parent)_Button_Session_Start" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+									<Dimensions x="40" y="40" />
+                  <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"Pause Session") </OnMouseEnter>
+                  <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
+                  <OnMouseUp>EchoExperience:TrackingSessionPause(self)</OnMouseUp>
+									<Textures	normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
+													pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
+													mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds"
+									/>
+            </Button>
+            <Button name="$(parent)_Button_Session_New">
+									<Anchor point="TOPLEFT" relativeTo="$(parent)_Button_Session_Pause" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+									<Dimensions x="40" y="40" />
+                  <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"New Session") </OnMouseEnter>
+                  <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
+                  <OnMouseUp>EchoExperience:TrackingSessionNew(self)</OnMouseUp>
+									<Textures	normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
+													pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
+													mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds"
+									/>
+            </Button>
+            <Button name="$(parent)_Button_Session_Clear">
+									<Anchor point="TOPLEFT" relativeTo="$(parent)_Button_Session_New" relativePoint="TOPLEFT" offsetX="10" offsetY="0"/>
+									<Dimensions x="40" y="40" />
+                  <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"Clear Session") </OnMouseEnter>
+                  <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
+                  <OnMouseUp>EchoExperience:TrackingSessionClear(self)</OnMouseUp>
+									<Textures	normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
+													pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
+													mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds"
+									/>
+            </Button>
 <!-- hide buttons _Minimize _Maximize _GoldButton _BagButton-->
 
 						<Control name="$(parent)_Dropdown_Main" inherits="ZO_ScrollableComboBox" mouseEnabled="true" tier="HIGH" verticalAlignment="CENTER" horizontalAlignment="LEFT" >
 							<Dimensions y="30" minX="100"/>
-              <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="20" offsetY="30" />
+              <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="20" offsetY="55" />
 <!-- 	
 							<OnMouseEnter>EchoExperience:GuiShowTooltip(self, "Select inventory to view")</OnMouseEnter>
 							<OnMouseExit>EchoExperience:GuiHideTooltip(self)</OnMouseExit>

@@ -123,12 +123,12 @@ end
 
 ------------------------------
 -- TRACKING User command
-function EchoExperience:ShowTracking()
+function EchoExperience:ShowTracking(trackingTableElement)
   d ( zo_strformat( "<<1>> (<<2>>) <<3>>","Session Tracked ", tostring(EchoExperience.savedVariables.sessiontracking), "Start==>") )
   --
   d ( "General:") 
-  for k, v in pairs(EchoExperience.view.tracking) do
-      for kk, vv in pairs(EchoExperience.view.tracking[k]) do
+  for k, v in pairs(trackingTableElement) do
+      for kk, vv in pairs(trackingTableElement[k]) do
         if(vv~=nil and vv.quantity~=nil)then
           d ( zo_strformat( "<<3>>=<<2>>",kk, vv.quantity, vv.itemlink) )
         end
@@ -136,12 +136,12 @@ function EchoExperience:ShowTracking()
   end
   --
    d ( "Specfic") 
-  for k, v in pairs(EchoExperience.view.tracking.items) do
+  for k, v in pairs(trackingTableElement.items) do
     if(v~=nil and v.quantity~=nil)then
       d ( zo_strformat( "<<3>>=<<2>>",k, v.quantity, v.itemlink) )
     end
   end
-  for k, v in pairs(EchoExperience.view.tracking.currency) do
+  for k, v in pairs(trackingTableElement.currency) do
     if(v~=nil and v.quantity~=nil)then
       local currname = GetCurrencyName(k, true, false)
       d ( zo_strformat( "<<1>>=<<2>>", currname, v.quantity) )
@@ -149,7 +149,7 @@ function EchoExperience:ShowTracking()
       d ( zo_strformat( "--minus=<<2>>", currname, v.minus) )
     end
   end  
-  for k, v in pairs(EchoExperience.view.tracking.mobs) do
+  for k, v in pairs(trackingTableElement.mobs) do
     if(v~=nil and v.quantity~=nil)then
       local ctype = EchoExperience:GetCombatUnitType(v.targetType)
       d ( zo_strformat( "<<1>>=<<2>> (<<4>>)", k, v.quantity, v.itemlink, ctype)  )
@@ -531,57 +531,74 @@ function EchoExperience.SlashCommandHandler(text)
 
 	if #options == 0 or options[1] == "help" then
     --
-		EchoExperience.outputMsg("user commands include: 'outputs', 'mute','unmute' ")
-		EchoExperience.outputMsg("debug commands include:'debug', 'testexp', 'testloot', 'testfull' ")
-    EchoExperience.outputMsg("Mute/Unmute: should silence/unsilence EchoExp.")
-    EchoExperience.outputMsg("The tracking module is in beta, start by using the command: 'toggletracking'")
-    EchoExperience.outputMsg("   Gui/Console commands: 'showlifetime', 'clearlifetimedata', 'litanygui',  'showtracking' ")
+		EchoExperience.outputMsg("user commands include:")
+    EchoExperience.outputMsg("-- 'outputs' to show in text what wil happen ")
+    EchoExperience.outputMsg("-- 'mute/unmute': should silence/unsilence EchoExp.")
+    EchoExperience.outputMsg("The tracking module is in beta:")
+    EchoExperience.outputMsg("-- 'showtracking' for text output, 'trackinggui' for GUI output")
+    EchoExperience.outputMsg("-- 'startsession', 'pausesession', 'deletesession', 'newsession', 'sessionsreport' " )
+    EchoExperience.outputMsg("-- 'showlifetime', 'clearlifetimedata' ")
+    EchoExperience.outputMsg("Gui/Console commands:")
+    EchoExperience.outputMsg("-- 'litanygui' to show alpha ui for litany of blood")
+		EchoExperience.outputMsg("debug commands include:")
+    EchoExperience.outputMsg("-- 'debug', 'testexp', 'testloot', 'testfull' ")
     -- MAIN
-	elseif #options == 0 or options[1] == "outputs" then
+	elseif #options == 1 and options[1] == "outputs" then
 		EchoExperience.ShowOutputs()
-	elseif #options == 0 or options[1] == "defaults" then
+	elseif #options == 1 and options[1] == "defaults" then
 		EchoExperience.ShowDefaults()
-  elseif #options == 0 or options[1] == "mute" then
+  elseif #options == 1 and options[1] == "mute" then
     EchoExperience:DoMute()
-  elseif #options == 0 or options[1] == "unmute" then
+  elseif #options == 1 and options[1] == "unmute" then
     EchoExperience:DoUnMute()
     
   -- BETA
-  elseif #options == 0 or options[1] == "litanygui" then
+  elseif #options == 1 and options[1] == "litanygui" then
     EchoExperience:ToggleLitanyFrame()
     
   --Tracking
-  elseif #options == 0 or options[1] == "trackinggui" then
+  elseif #options == 1 and options[1] == "trackinggui" then
     EchoExperience:ToggleTrackingFrame()
-	elseif #options == 0 or options[1] == "showtrackinggui" then
+  elseif #options == 1 and options[1] == "trackingui" then
+    EchoExperience:ToggleTrackingFrame()
+	elseif #options == 1 and options[1] == "showtrackinggui" then
 		EchoExperience:ToggleTrackingFrame()
-	elseif #options == 0 or options[1] == "showtracking" then
-		EchoExperience.ShowTracking()
-  elseif #options == 0 or options[1] == "showlifetime" then
+	elseif #options == 1 and options[1] == "showtracking" then
+		EchoExperience.ShowTracking(EchoExperience.view.tracking)
+  elseif #options == 1 and options[1] == "showlifetime" then
     EchoExperience.ShowLifetimeTracking()
     EchoExperience.CheckVerifyDefaults()
-  elseif #options == 0 or options[1] == "clearlifetimedata" then
+  elseif #options == 1 and options[1] == "clearlifetimedata" then
     EchoExperience.savedVariables.lifetime = {}
-	elseif #options == 0 or options[1] == "cleartracking" then
-		EchoExperience.view.tracking = {}
-    EchoExperience.view.tracking.items = {}
-    EchoExperience.view.tracking.currency = {}
-    EchoExperience.view.tracking.mobs = {}
-    EchoExperience.view.tracking.bg = {}
-    EchoExperience.outputMsg("Tracking data reset")
-	elseif #options == 0 or options[1] == "toggletracking" then
-		EchoExperience.savedVariables.sessiontracking = not EchoExperience.savedVariables.sessiontracking
-    EchoExperience.outputMsg("Showtracking = " .. tostring(EchoExperience.savedVariables.sessiontracking) )
-    EchoExperience:SetupLootGainsEvents(true)
+    
+  --TRACKING SESSIONS 
+  --'startsession', 'pausesession', 'deletesession', 'newsession' "
+  elseif #options == 1 and options[1] == "startsession" then
+    EchoExperience:TrackingSessionStart()
+  elseif #options == 1 and options[1] == "pausesession" then
+    EchoExperience:TrackingSessionPause()
+  elseif #options == 1 and options[1] == "deletesession" then
+    EchoExperience:TrackingSessionDelete()
+  elseif #options == 1 and options[1] == "newsession" then
+    EchoExperience:TrackingSessionNew()
+  elseif #options == 2 and options[1] == "showsession" then
+    local sessionNum = options[2]
+    EchoExperience:TrackingSessionShow(sessionNum)
+  elseif #options == 2 and options[1] == "sessionsreport" then  
+    EchoExperience.TrackingSessionShowSessionReport()
+  elseif #options == 1 and options[1] == "cleartracking" then
+    EchoExperience:TrackingSessionClear()
+    EchoExperience.outputMsg("Tracking data reset") 
   
+  --
   --Testing
-  elseif #options == 0 or options[1] == "testevents" then
+  elseif #options == 1 and options[1] == "testevents" then
     EchoExperience.savedVariables.showGuildMisc  = not EchoExperience.savedVariables.showGuildMisc
     EchoExperience.outputMsg("ShowGuildMisc = " .. tostring(EchoExperience.savedVariables.showGuildMisc) )
     EchoExperience.SetupGuildEvents()
-	elseif #options == 0 or options[1] == "testexp" then
+	elseif #options == 1 and options[1] == "testexp" then
 		EchoExperience.outputToChanel("Gained 0 xp in [Test] (1000/10000) need 9000xp",msgTypeEXP)
-	elseif #options == 0 or options[1] == "testloot" then
+	elseif #options == 1 and options[1] == "testloot" then
 		EchoExperience.outputToChanel("You looted TESTITEM.",msgTypeLOOT)    
     --eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,
     --isPickpocketLoot,questItemIcon,itemId,isStolen)
@@ -590,7 +607,7 @@ function EchoExperience.SlashCommandHandler(text)
     EchoExperience.OnLootReceived(1,"Player1","Deni",1,nil,1,false,false,false,45833,false)
     EchoExperience.OnLootReceived(1,"Player2","Rough Maple",1,nil,1,false,false,false,802,false)
     
-	elseif #options == 0 or options[1] == "testfull" then		--eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,isPickpocketLoot,questItemIcon,itemId,isStolen)
+	elseif #options == 1 and options[1] == "testfull" then		--eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,isPickpocketLoot,questItemIcon,itemId,isStolen)
 		EchoExperience.OnLootReceived(0,"testuser","testitem",1,nil,nil,true,false,false,0,false)
 		EchoExperience.OnLootReceived(0,"testuser","testitem",2,nil,nil,true,false,false,0,false)
 		EchoExperience.OnLootReceived(0,"testuser","testitem",2,nil,nil,false,false,false,0,false)
@@ -599,19 +616,19 @@ function EchoExperience.SlashCommandHandler(text)
       local qualName = GetString("SI_ITEMQUALITY", i)
       d("I="..tostring(i).."color=".. color:Colorize(qualName) )
     end
-  elseif #options == 0 or options[1] == "testchars" then
+  elseif #options == 1 and options[1] == "testchars" then
     d("Here's a list of your characters:")
     for i = 1, GetNumCharacters() do
       local name, gender, level, classId, raceId, alliance, id, locationId = GetCharacterInfo(i)
       d( zo_strformat("char: name:<<1>> id:<<2>> loc:<<3>>", name, id, locationId) )
     end
-  elseif #options == 0 or options[1] == "iam" then  
+  elseif #options == 1 and options[1] == "iam" then  
     d("Display Name: ".. tostring(EchoExperience.view.iamDisplayName)   )
     d("Char Name: "   .. tostring(EchoExperience.view.iamCharacterName) )
     
   --
   --
-	elseif #options == 0 or options[1] == "debug" then
+	elseif #options == 1 and options[1] == "debug" then
 		local dg = EchoExperience.savedVariables.debug
 		EchoExperience.savedVariables.debug = not dg
 		EchoExperience.outputMsg("Debug = " .. tostring(EchoExperience.savedVariables.debug) )
@@ -644,6 +661,31 @@ function EchoExperience:ToggleTrackingFrame()
   end
   --
   EEXPTooltip:SetParent(PopupTooltipTopLevel)
+  
+  --TRACKING SESSIONS
+  EOL_GUI_Header_Dropdown_Sessions.comboBox = EOL_GUI_Header_Dropdown_Sessions.comboBox or ZO_ComboBox_ObjectFromContainer(EOL_GUI_Header_Dropdown_Sessions)
+   local comboBoxS = EOL_GUI_Header_Dropdown_Sessions.comboBox
+  comboBoxS:ClearItems()  
+  comboBoxS:SetSortsItems(false)
+  local function OnItemSelect1S(_, choiceText, choice)
+    EchoExperience.view.trackingCurrentSession = choiceText
+    --EchoExperience:UpdateScrollDataLinesData()
+		--EchoExperience:GuiResizeScroll()
+		--EchoExperience:RefreshInventoryScroll()
+    PlaySound(SOUNDS.POSITIVE_CLICK)    
+  end
+  if(EchoExperience.view.trackingsessions==nil) then
+    local entry = comboBoxS:CreateItemEntry(0, OnItemSelect1S)
+    comboBoxS:AddItem(entry)
+  else
+    for k, v in pairs(EchoExperience.view.trackingsessions) do
+      local entry = comboBoxS:CreateItemEntry(k, OnItemSelect1S)
+      comboBoxS:AddItem(entry)
+    end
+  end
+  comboBoxS:SelectFirstItem()
+
+  --
   EOL_GUI_Header_Dropdown_Main.comboBox = EOL_GUI_Header_Dropdown_Main.comboBox or ZO_ComboBox_ObjectFromContainer(EOL_GUI_Header_Dropdown_Main)
   local comboBox = EOL_GUI_Header_Dropdown_Main.comboBox
   comboBox:ClearItems()  
@@ -679,6 +721,98 @@ function EchoExperience:ToggleTrackingFrame()
   comboBox:SelectFirstItem()
 	EchoExperience:SaveFrameInfo("ToggleInventoryFrame")
 end
+
+------------------------------
+-- TRACKING
+function EchoExperience:TrackingSessionStart()
+		EchoExperience.savedVariables.sessiontracking = true
+    EchoExperience.outputMsg("SessionTracking Started")
+    EchoExperience:SetupLootGainsEvents(true)
+end
+
+------------------------------
+-- TRACKING
+function EchoExperience:TrackingSessionPause()
+		EchoExperience.savedVariables.sessiontracking = false
+    EchoExperience.outputMsg("SessionTracking Paused")
+    EchoExperience:SetupLootGainsEvents(true)
+end
+
+------------------------------
+-- TRACKING
+function EchoExperience:TrackingSessionDelete(sessionnum)
+  --TODO
+  if(EchoExperience.view.trackingsessions==nil) then
+    return
+  end
+  EchoExperience.view.trackingsessions[sessionnum] = nil
+  --TODO
+end
+
+------------------------------
+-- TRACKING
+function EchoExperience:TrackingSessionShow(sessionnum)
+  --TODO
+  if(EchoExperience.view.trackingsessions==nil) then
+    return
+  end
+  local oldsession = EchoExperience.view.trackingsessions[sessionnum]
+  if(oldsession~=nil) then
+    EchoExperience.outputMsg("Old session Report for id:" .. tostring(sessionnum) )
+    EchoExperience.ShowTracking(oldsession)
+  end
+  --TODO
+end
+
+------------------------------
+-- TRACKING
+function EchoExperience:TrackingSessionShowSessionReport()
+  --TODO
+  if(EchoExperience.view.trackingsessions==nil) then
+    EchoExperience.outputMsg("There are no saved sessions")
+    return
+  end
+  for k, v in pairs(EchoExperience.view.trackingsessions) do
+     EchoExperience.outputMsg("Saved Sessions:")
+     EchoExperience.outputMsg("sessionid: " .. tostring(k) )
+  end
+  --TODO
+end
+------------------------------
+-- TRACKING
+function EchoExperience:TrackingSessionNew()
+  --TODO
+  if(EchoExperience.view.trackingsessions==nil) then
+    EchoExperience.view.trackingsessions = {}
+  end
+  if(EchoExperience.view.trackingsessionid==nil) then
+    EchoExperience.view.trackingsessionid = 1
+  end
+  if(EchoExperience.view.tracking~=nil) then
+    local oldsession = {}
+    oldsession.items    = EchoExperience.view.tracking.items
+    oldsession.currency = EchoExperience.view.tracking.currency
+    oldsession.mob      = EchoExperience.view.tracking.mobs
+    oldsession.bg       = EchoExperience.view.tracking.bg
+    oldsession.id       = EchoExperience.view.trackingsessionid
+    EchoExperience.view.trackingsessions[oldsession.id] = oldsession
+    --table.insert( inser t(EchoExperience.view.trackingsessions,oldsession)
+  end
+  EchoExperience.view.trackingsessionid = EchoExperience.view.trackingsessionid+1
+  EchoExperience.TrackingSessionClear()
+end
+  
+------------------------------
+-- TRACKING
+function EchoExperience:TrackingSessionClear()
+  EchoExperience.view.tracking = {}
+  EchoExperience.view.tracking.items = {}
+  EchoExperience.view.tracking.currency = {}
+  EchoExperience.view.tracking.mobs = {}
+  EchoExperience.view.tracking.bg = {}
+end
+
+
 
 ------------------------------
 -- EVENT
@@ -2928,6 +3062,7 @@ function EchoExperience.InitializeGui()
   EOL_GUI_Litany_ListHolder:SetDrawLayer(0)
   --EchoExperience:SetupLitanyOfBlood()
   --
+  EchoExperience.TrackingSessionClear()
   --EchoExperience.debugMsg("Initialized!!!!")
 end
 
@@ -3058,6 +3193,8 @@ function EchoExperience.CheckVerifyDefaults()
   EchoExperience.savedVariables.tracking = nil
   EchoExperience.savedVariables.lifetime = nil
   
+  -- Tracking data init
+  EchoExperience.view.trackingsessions = {}
   --
   if(madeChange) then
     zo_callLater(EchoExperience.RefreshTabs, 12000)

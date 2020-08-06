@@ -32,10 +32,12 @@ LitanyOfBlood Gui still a mess
 
 
 ## [Testing branch]
-
-## [Versions]
+-
+## EchoExp [Versions]
 0.0.38
+-Tracking updates
 -Fix guild left message
+-added binding for trackingUI
 0.0.37
 -quest shared updates
 -tooltip updates

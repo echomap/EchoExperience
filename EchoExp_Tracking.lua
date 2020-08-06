@@ -200,7 +200,13 @@ function EchoExperience:UpdateScrollDataLinesData()
   if(EchoExperience.view.trackingSelection=="Lifetime") then
     elemListP = EchoExperience.savedVariables.lifetime
   else
-    elemListP = EchoExperience.view.tracking --EchoExperience.savedVariables.tracking
+    if(EchoExperience.view.trackingCurrentSession~=nil and EchoExperience.view.trackingCurrentSession ~= "0") then
+      --TODO
+      elemListP = EchoExperience.view.trackingsessions[EchoExperience.view.trackingCurrentSession]
+      elemListP = EchoExperience.view.tracking --EchoExperience.savedVariables.tracking 
+    else    
+      elemListP = EchoExperience.view.tracking --EchoExperience.savedVariables.tracking
+    end
   end
   if(EchoExperience.view.filterType=="Items")then
     elemListS = elemListP.items

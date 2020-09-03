@@ -218,7 +218,7 @@ local localization_strings = {
   SI_ECHOEXP_ACHIEVEMENT_COMPLETED = "Achievement <<1>> Completed.",
   SI_ECHOEXP_LOREBOOK_LEARNED      = "Discovered book <<1>> in category <<2>> (<<3>>/<<4>>).",
   SI_ECHOEXP_LOREBOOK_LEARNED_SOLO = "Discovered book <<1>>.",
-  SI_ECHOEXP_LOREBOOK_CAT_COMPLETE = "Finished collection of collection <<2>> in category <<1>>!!.",
+  SI_ECHOEXP_LOREBOOK_CAT_COMPLETE = "Finished collecting the collection [<<2>>] in category [<<1>>]!!.",
   SI_ECHOEXP_LOREBOOK_EXP          = "Earned Exp <<1>> for discovering book [<<2>>] in category [<<3>>] (<<4>>/<<5>>).",
   
   SI_ECHOEXP_BG_KILLED   = "You killed <<1>>.",

@@ -38,6 +38,7 @@ LitanyOfBlood Gui still a mess
 -Tracking updates
 -Fix guild left message
 -added binding for trackingUI
+-version update
 0.0.37
 -quest shared updates
 -tooltip updates

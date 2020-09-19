@@ -32,7 +32,12 @@ LitanyOfBlood Gui still a mess
 
 
 ## [Testing branch]
--
+0.0.39
+- fixes to improve performance for debuging
+- cached guild id/names for performance
+- correctly registering combat event
+- msgs for leaving and joining a guild
+
 ## EchoExp [Versions]
 0.0.38
 -Tracking updates

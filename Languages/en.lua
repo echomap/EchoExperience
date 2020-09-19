@@ -346,6 +346,9 @@ local localization_strings = {
   SI_ECHOEXP_QUEST_DECLINED = "was Declined",
   SI_ECHOEXP_QUEST_FAILED   = "Failed to Share with",
 
+  --
+  SI_ECHOEXP_GUILD_SELFLEFT   = "You left the guild <<1>>.",
+  SI_ECHOEXP_GUILD_SELFJOIN   = "You joined the guild <<1>>.",
 }
 ------------------------------
 -- 

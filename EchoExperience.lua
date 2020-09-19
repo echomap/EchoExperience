@@ -4,8 +4,8 @@
 -- 
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.38",                   -- A nuisance to match to the Manifest.
-    versionnumeric  = 38,                         -- A nuisance to match to the Manifest.
+    version         = "0.0.39",                   -- A nuisance to match to the Manifest.
+    versionnumeric  = 39,                         -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -101,6 +101,35 @@ function EchoExperience.outputMsg(text)
     local val = zo_strformat( "[EchoExp] <<1>>",text)
     d(val)
   end
+end
+
+
+------------------------------
+-- UTIL
+function EchoExperience.debugMsg2(...)
+  if not EchoExperience.savedVariables.debug then
+    return
+  end
+  local arg={...}
+  if arg == nil then
+    return
+  end
+  local printResult = ""
+  if(arg~=nil)then
+    for i,v in ipairs(arg) do
+      if(v==nil) then 
+        printResult = printResult .. "nil"
+      else
+        printResult = printResult .. tostring(v) --.. " "
+      end
+    end
+  end
+
+  if printResult == nil then
+    return
+  end
+  local val = zo_strformat( "(EchoExp) <<1>>",printResult)
+  d(val)
 end
 
 ------------------------------
@@ -230,22 +259,41 @@ end
 ------------------------------
 -- UTIL
 function EchoExperience:GetGuildName(gnum)
-  EchoExperience.debugMsg("GetGuildName:=".. gnum.. " name='"..GetGuildName(gnum).."'")  
-  return GetGuildName(gnum)
+  if(EchoExperience.view.guildnames==nil) then
+    EchoExperience.view.guildnames = {}
+  end
+  local gname = EchoExperience.view.guildnames[gnum];
+  if(gname==nil) then
+    gname = GetGuildName(gnum)
+    EchoExperience.view.guildnames[gnum] = gname
+  else
+    EchoExperience.debugMsg2("GetGuildName: used *cache*")
+  end
+  EchoExperience.debugMsg2("GetGuildName: num=", gnum, " name='", gname, "'")  
+  return gname
 end    
 
 ------------------------------
 -- UTIL
 function EchoExperience:GetGuildId(gnum)
-  EchoExperience.debugMsg("GetGuildId:=".. gnum.. " name='"..GetGuildId(gnum).."'")  
-  return GetGuildId(gnum)
+  if(EchoExperience.view.guildids==nil) then
+    EchoExperience.view.guildids = {}
+  end
+  local gid = EchoExperience.view.guildids[gnum];
+  if(gid==nil) then
+    gid = GetGuildId(gnum)
+    EchoExperience.view.guildids[gnum] = gid
+  else
+    EchoExperience.debugMsg2("GetGuildId: used *cache*")
+  end
+  EchoExperience.debugMsg2("GetGuildId:=", gnum, " gid='", gid, "'")  
+  return gid
 end
-
 
 ------------------------------
 -- UTIL
 function EchoExperience:GetBagNameFromID(bnum)
-  EchoExperience.debugMsg("GetBagNameFromID:=".. tostring(bnum).."'")  
+  EchoExperience.debugMsg2("GetBagNameFromID:=", tostring(bnum), "'")
   if(bnum==BAG_BACKPACK) then
     return "Backpack"
   elseif(bnum==BAG_BANK) then
@@ -361,7 +409,7 @@ function EchoExperience:outputToChanelSub(text,outputSettings,filter)
       local skip = false
       --filter
       if(filter~=nil and filter.type == msgTypeGUILD and v.guilds~=nil) then
-        EchoExperience.debugMsg("filter.guildID="..filter.guildID.. " filter.guildId="..filter.guildId)
+        EchoExperience.debugMsg2("filter.guildID=", filter.guildID, " filter.guildId=", filter.guildId )
         skip = true
         --local gkey = "guild"..filter.guildID
         local gkey = filter.guildId
@@ -863,11 +911,11 @@ end
 --NOTES:  XX
 function EchoExperience.OnSkillLineAdded(eventCode, skillType, skillIndex)
 	--EchoExperience.debugMsg("OnSkillLineAdded. skillType="..tostring(skillType) .. " skillIndex="..tostring(skillIndex))
-	EchoExperience.debugMsg("echoexp test osla: skillType="..tostring(skillType) .. " skillIndex="..tostring(skillIndex))
+	EchoExperience.debugMsg2("echoexp test osla: skillType=", tostring(skillType), " skillIndex=", tostring(skillIndex) )
 	--learn clothing, skillType=3 skillIndex=false
 	if skillType ~= nil then
 		local name, rank, discovered, skillLineId, advised, unlockText = GetSkillLineInfo(skillType, skillIndex)
-		EchoExperience.debugMsg("echoexp test osla: name="..tostring(name) .. " discovered="..tostring(discovered))
+		EchoExperience.debugMsg2("echoexp test osla: name=", tostring(name), " discovered=", tostring(discovered) )
 		--GetSkillLineInfo(number SkillType skillType, number skillIndex)
         --Returns: string name, number rank, boolean discovered, number skillLineId, boolean advised, string unlockText
 		if name ~= nil then --TODO discovered and ??
@@ -904,11 +952,11 @@ function EchoExperience.OnAbilityExperienceUpdate(eventCode, progressionIndex, l
     local name, morph, rank             = GetAbilityProgressionInfo(progressionIndex)     
     local name2, texture,  abilityIndex = GetAbilityProgressionAbilityInfo(progressionIndex, morph, rank)
     local diff =  nextRankXP - currentXP
-    EchoExperience.debugMsg("OnAbilityExperienceUpdate:"
-      .. " name="..tostring(name)
-      .. " name2="..tostring(name2)
-      .. " morph="..tostring(morph)
-      .. " diff="..tostring(diff)
+    EchoExperience.debugMsg2("OnAbilityExperienceUpdate:"
+      , " name="..tostring(name)
+      , " name2="..tostring(name2)
+      , " morph="..tostring(morph)
+      , " diff="..tostring(diff)
     )
     
     --
@@ -970,12 +1018,12 @@ function EchoExperience:OnSkillProgressRankUpdate(eventCode, progressionIndex, r
     return
   end
   --
-  EchoExperience.debugMsg(EchoExperience.name .. "OnSkillProgressRankUpdate: "
-    .. " eventCode=" .. tostring(eventCode)
-    .. " progressionIndex="  .. tostring(progressionIndex)
-    .. " rank="      .. tostring(rank)
-    .. " maxRank="   .. tostring(maxRank)
-    .. " morph="     .. tostring(morph)
+  EchoExperience.debugMsg2(EchoExperience.name .. "OnSkillProgressRankUpdate: "
+    , " eventCode=" .. tostring(eventCode)
+    , " progressionIndex="  .. tostring(progressionIndex)
+    , " rank="      .. tostring(rank)
+    , " maxRank="   .. tostring(maxRank)
+    , " morph="     .. tostring(morph)
   )  
   if(maxRank==0) then
     EchoExperience.debugMsg(EchoExperience.name .. "OnSkillProgressRankUpdate: skipped per can't rank up")
@@ -1000,15 +1048,15 @@ function EchoExperience.OnRidingSkillUpdate(eventCode, ridingSkillType, previous
     return
   end
   --
-  EchoExperience.debugMsg(EchoExperience.name .. "OnSkillRankUpdate: "
-    .. " eventCode=" .. tostring(eventCode)
-    .. " ridingSkillType="  .. tostring(ridingSkillType)
-    .. " previous=" .. tostring(previous)
-    .. " current="       .. tostring(current)
-    .. " source="  .. tostring(source)
-    .. " RIDING_TRAIN_SPEED="  .. tostring(RIDING_TRAIN_SPEED)
-    .. " RIDING_TRAIN_STAMINA="  .. tostring(RIDING_TRAIN_STAMINA)
-    .. " RIDING_TRAIN_CARRYING_CAPACITY="  .. tostring(RIDING_TRAIN_CARRYING_CAPACITY)
+  EchoExperience.debugMsg2(EchoExperience.name .. "OnSkillRankUpdate: "
+    , " eventCode=" .. tostring(eventCode)
+    , " ridingSkillType="  .. tostring(ridingSkillType)
+    , " previous=" .. tostring(previous)
+    , " current="       .. tostring(current)
+    , " source="  .. tostring(source)
+    , " RIDING_TRAIN_SPEED="  .. tostring(RIDING_TRAIN_SPEED)
+    , " RIDING_TRAIN_STAMINA="  .. tostring(RIDING_TRAIN_STAMINA)
+    , " RIDING_TRAIN_CARRYING_CAPACITY="  .. tostring(RIDING_TRAIN_CARRYING_CAPACITY)
   )
   --
   local sentence = GetString(SI_ECHOEXP_RIDING_UP)
@@ -1051,13 +1099,13 @@ function EchoExperience.OnSkillRankUpdate(eventCode, skillType, skillIndex, rank
       return
     end
     --
-    EchoExperience.debugMsg(EchoExperience.name .. "OnSkillRankUpdate: "
-      .. " eventCode=" .. tostring(eventCode)
-      .. " skillType="  .. tostring(skillType)
-      .. " skillIndex=" .. tostring(skillIndex)
-      .. " rank="       .. tostring(rank)
-      .. " available="  .. tostring(available)
-      .. " skillLineName=" .. tostring(skillLineName)
+    EchoExperience.debugMsg2(EchoExperience.name .. "OnSkillRankUpdate: "
+      , " eventCode=" .. tostring(eventCode)
+      , " skillType="  .. tostring(skillType)
+      , " skillIndex=" .. tostring(skillIndex)
+      , " rank="       .. tostring(rank)
+      , " available="  .. tostring(available)
+      , " skillLineName=" .. tostring(skillLineName)
     )   
     -- 
     local sentence = GetString(SI_ECHOEXP_XP_SKILLLINE_UP)
@@ -1105,8 +1153,11 @@ end
 --NOTES:  Hopefully Skyshards are the only thing that gives partial points
 function EchoExperience.OnSkillPtChange(eventCode, pointsBefore, pointsNow, partialPointsBefore, partialPointsNow)
 	--EchoExperience.debugMsg("OnSkillPtChange Called")
-	EchoExperience.debugMsg("EE skptchange: eventCode="..tostring(eventCode) .." pointsBefore="..tostring(pointsBefore).." pointsNow="..tostring(pointsNow)
-	.." partialPointsBefore="..tostring(partialPointsBefore).." partialPointsNow="..tostring(partialPointsNow)
+	EchoExperience.debugMsg2("EE skptchange: eventCode=", tostring(eventCode)
+    , " pointsBefore=", tostring(pointsBefore)
+    , " pointsNow=", tostring(pointsNow)
+    , " partialPointsBefore=", tostring(partialPointsBefore)
+    , " partialPointsNow=", tostring(partialPointsNow)
 	)
 	local skyShardSkillUP = false
 	if partialPointsBefore~=nil and partialPointsNow~=nil and partialPointsBefore==2 and partialPointsNow==0 then
@@ -1117,14 +1168,14 @@ function EchoExperience.OnSkillPtChange(eventCode, pointsBefore, pointsNow, part
 		return
 	end
 	if partialPointsBefore~=nil and partialPointsNow~=nil and partialPointsNow > partialPointsBefore then
-		EchoExperience.debugMsg("echoexp(ospc test): eventCode="..tostring(eventCode))
+		EchoExperience.debugMsg2("echoexp(ospc test): eventCode=", tostring(eventCode))
 		local strI = GetString(SI_ECHOEXP_SKY_1)
 		--local strI = "You absorbed a skyshard! (<<1>> of <<2>>)."
 		local strL = zo_strformat(strI, partialPointsNow, 3 )
 		EchoExperience.outputToChanel(strL,msgTypeEXP)
 	end
 	if pointsBefore~=nil and partialPointsNow~=nil and pointsNow > pointsBefore then
-		EchoExperience.debugMsg("echoexp(ospc test): eventCode="..tostring(eventCode))
+		EchoExperience.debugMsg2("echoexp(ospc test): eventCode=", tostring(eventCode))
 		local diff =  pointsNow - pointsBefore
 		local strI = GetString(SI_ECHOEXP_SKY_2)
 		--local strI = "You gained a skill point! (<<1>>)."
@@ -1149,7 +1200,7 @@ end
 --RETURNS:(num eventCode, num alliancePoints, bool playSound, num difference, CurrencyChangeReason reason)
 --NOTES:  XX
 function EchoExperience.OnAlliancePtGain(eventCode, alliancePoints,  playSound,  difference,  reason)
-	EchoExperience.debugMsg("OnAlliancePtGain Called. eventCode=".. eventCode..", reason="..reason..".")
+	EchoExperience.debugMsg2("OnAlliancePtGain Called. eventCode=", eventCode, ", reason=", reason, ".")
 	if difference < 0 then
 		local Ldifference = difference*-1.0
 		--FORMAT
@@ -1203,12 +1254,12 @@ end
 --RETURNS:(xxx)
 --NOTES:  XX
 function EchoExperience.OnExperienceUpdate(eventCode, unitTag, currentExp, maxExp, reason)
-  EchoExperience.debugMsg(EchoExperience.name .. " EVENT_EXPERIENCE_UPDATE: "
-    .. " eventCode=" .. eventCode
-		.. " unitTag="  .. unitTag
-		.. " currentExp=" .. currentExp
-    .. " maxExp=" .. maxExp
-		.. " reason=" .. reason
+  EchoExperience.debugMsg2(EchoExperience.name .. " EVENT_EXPERIENCE_UPDATE: "
+    , " eventCode=" .. eventCode
+		, " unitTag="  .. unitTag
+		, " currentExp=" .. currentExp
+    , " maxExp=" .. maxExp
+		, " reason=" .. reason
   )
   -- TODO CHECKBOX TO ENABLE!
   --
@@ -1220,15 +1271,15 @@ function EchoExperience.OnExperienceUpdate(eventCode, unitTag, currentExp, maxEx
       -- Can't report on what we don't know.
     else    
       local XPgain = currentExp - EchoExperience.savedVariables.currentExp
-      EchoExperience.debugMsg(EchoExperience.name .. " EVENT_EXPERIENCE_UPDATE: "
-        .. " XPgain=" .. XPgain
-        .. " SavedExp=" .. tostring(EchoExperience.savedVariables.currentExp)
+      EchoExperience.debugMsg2(EchoExperience.name .. " EVENT_EXPERIENCE_UPDATE: "
+        , " XPgain=" .. XPgain
+        , " SavedExp=" .. tostring(EchoExperience.savedVariables.currentExp)
       )
       if(XPgain<1) then
         --TODO why get here?
-        EchoExperience.debugMsg(EchoExperience.name .. " EVENT_EXPERIENCE_UPDATE: err? "
-          .. " XPgain=" .. XPgain
-          .. " SavedExp=" .. tostring(EchoExperience.savedVariables.currentExp)
+        EchoExperience.debugMsg2(EchoExperience.name .. " EVENT_EXPERIENCE_UPDATE: err? "
+          , " XPgain=" .. XPgain
+          , " SavedExp=" .. tostring(EchoExperience.savedVariables.currentExp)
         )    
       else
         --FORMAT
@@ -1257,10 +1308,10 @@ function EchoExperience.OnExperienceUpdateCP(eventCode, unitTag, currentExp, max
       else
         local prevXPCP = EchoExperience.savedVariables.currentExp
         local XPgain   = currXPCP - prevXPCP
-        EchoExperience.debugMsg(EchoExperience.name .. " EVENT_EXPERIENCE_UPDATE: "
-          .. " currXPCP=" .. tostring(currXPCP)
-          .. " prevXPCP=" .. tostring(prevXPCP)
-          .. " XPgain="   .. tostring(XPgain)
+        EchoExperience.debugMsg2(EchoExperience.name .. " EVENT_EXPERIENCE_UPDATE: "
+          , " currXPCP=" .. tostring(currXPCP)
+          , " prevXPCP=" .. tostring(prevXPCP)
+          , " XPgain="   .. tostring(XPgain)
         )
         local doReport = true
         local sourceText1 = EchoExperience.lookupExpSourceText(reason)
@@ -1274,12 +1325,12 @@ function EchoExperience.OnExperienceUpdateCP(eventCode, unitTag, currentExp, max
             --old max to end and use curr-oldmax
             --local oldXPinCP = EchoExperience.savedVariables.currXPinCP
             local diffOldCPlvl = EchoExperience.savedVariables.currXPinCP - EchoExperience.savedVariables.currentExp
-            EchoExperience.debugMsg(EchoExperience.name .. " EVENT_EXPERIENCE_UPDATE: "
-              .. " sv.currXPinCP=" .. tostring(EchoExperience.savedVariables.currXPinCP)
-              .. " sv.currentExp=" .. tostring(EchoExperience.savedVariables.currentExp)
-              .. " diffOldCPlvl="  .. tostring(diffOldCPlvl)
-              .. " currentExp=" .. currentExp
-              .. " maxExp=" .. maxExp
+            EchoExperience.debugMsg2(EchoExperience.name .. " EVENT_EXPERIENCE_UPDATE: "
+              , " sv.currXPinCP=" , tostring(EchoExperience.savedVariables.currXPinCP)
+              , " sv.currentExp=" , tostring(EchoExperience.savedVariables.currentExp)
+              , " diffOldCPlvl="  , tostring(diffOldCPlvl)
+              , " currentExp=" , currentExp
+              , " maxExp=" , maxExp
             )
             XPgain = currXPCP - 0 + diffOldCPlvl
             XPgain = ZO_CommaDelimitNumber(XPgain)
@@ -1295,14 +1346,14 @@ function EchoExperience.OnExperienceUpdateCP(eventCode, unitTag, currentExp, max
           local strL = zo_strformat(sentence, sourceText1, sourceText2, XPgain )    
           EchoExperience.outputToChanel(strL,msgTypeEXP)
         else
-          EchoExperience.debugMsg(EchoExperience.name .. " EVENT_EXPERIENCE_UPDATE: "
-            .. " currXPCP=" .. tostring(currXPCP)
-            .. " prevXPCP=" .. tostring(prevXPCP)
-            .. " XPgain="   .. tostring(XPgain)
-            .. " currentExp=" .. currentExp
-            .. " maxExp="     .. maxExp
-            .. " currCPNow="  .. currCPNow
-            .. " sv.currCP="  .. tostring(EchoExperience.savedVariables.currCP)
+          EchoExperience.debugMsg2(EchoExperience.name .. " EVENT_EXPERIENCE_UPDATE: "
+            , " currXPCP=" , tostring(currXPCP)
+            , " prevXPCP=" , tostring(prevXPCP)
+            , " XPgain="   , tostring(XPgain)
+            , " currentExp=" , currentExp
+            , " maxExp="     , maxExp
+            , " currCPNow="  , currCPNow
+            , " sv.currCP="  , tostring(EchoExperience.savedVariables.currCP)
           )
         end
       end      
@@ -1320,12 +1371,12 @@ end
 --NOTES:  XX
 function EchoExperience.OnExperienceGain(eventCode, reason, level, previousExperience, currentExperience, championPoints)
 	--EchoExperience.debugMsg("OnExperienceGain Called")	
-	EchoExperience.debugMsg(EchoExperience.name .. " previousExperience=" .. previousExperience
-		.. " currentExperience="  .. currentExperience
-		.. " eventCode=" .. eventCode
-		.. " reason=" .. reason
-		.. " level="  .. level
-		.. " champ="  .. tostring(championPoints) --allways nil?
+	EchoExperience.debugMsg2(EchoExperience.name .. " previousExperience=" .. previousExperience
+		, " currentExperience="  .. currentExperience
+		, " eventCode=" .. eventCode
+		, " reason=" .. reason
+		, " level="  .. level
+		, " champ="  .. tostring(championPoints) --allways nil?
   )
 	-- TODO ugh need less than 50 char to test this, is it level or this is fine?
 	local XPgain = currentExperience - previousExperience
@@ -1352,10 +1403,10 @@ end
 -- EVENT
 --EVENT_LOOT_ITEM_FAILED (number eventCode, LootItemResult reason, string itemName) 
 function EchoExperience.OnLootFailed(eventCode, reason, itemName)
-		EchoExperience.debugMsg("OnLootFailed: "
-			.." eventCode="  .. tostring(eventCode)
-			.." reason="     .. tostring(reason)
-			.." itemName="   .. tostring(itemName)
+		EchoExperience.debugMsg2("OnLootFailed: "
+			," eventCode="  .. tostring(eventCode)
+			," reason="     .. tostring(reason)
+			," itemName="   .. tostring(itemName)
 		)
 end
 
@@ -1363,11 +1414,11 @@ end
 -- EVENT
 --EVENT_BANKED_CURRENCY_UPDATE (number eventCode, CurrencyType currency, number newValue, number oldValue) 
 function EchoExperience.OnBankedCurrency(eventCode, currency, newValue, oldValue) 
-  EchoExperience.debugMsg("OnBankedCurrency: "
-    .." eventCode="  .. tostring(eventCode)
-    .." currency="   .. tostring(currency)
-    .." newValue="   .. tostring(newValue)
-    .." oldValue="   .. tostring(oldValue)
+  EchoExperience.debugMsg2("OnBankedCurrency: "
+    , " eventCode="  , tostring(eventCode)
+    , " currency="   , tostring(currency)
+    , " newValue="   , tostring(newValue)
+    , " oldValue="   , tostring(oldValue)
   )
 
   --New Tracking Module
@@ -1393,13 +1444,13 @@ end
 -- EVENT
 --EVENT_CURRENCY_UPDATE (number eventCode, CurrencyType currencyType, CurrencyLocation currencyLocation, number newAmount, number oldAmount, CurrencyChangeReason reason) 
 function EchoExperience.OnCurrencyUpdate(eventCode, currencyType, currencyLocation, newAmount, oldAmount, reason) 
-  EchoExperience.debugMsg("OnCurrencyUpdate: "
-    .." eventCode="        .. tostring(eventCode)
-    .." currencyType="     .. tostring(currencyType)
-    .." currencyLocation=" .. tostring(currencyLocation)
-    .." newAmount="        .. tostring(newAmount)
-    .." oldAmount="        .. tostring(oldAmount)
-    .." reason="           .. tostring(reason)      
+  EchoExperience.debugMsg2("OnCurrencyUpdate: "
+    , " eventCode="        , tostring(eventCode)
+    , " currencyType="     , tostring(currencyType)
+    , " currencyLocation=" , tostring(currencyLocation)
+    , " newAmount="        , tostring(newAmount)
+    , " oldAmount="        , tostring(oldAmount)
+    , " reason="           , tostring(reason)      
   )
   if(reason==35) then
     return --Just a UI refresh
@@ -1459,11 +1510,11 @@ end
 -- EVENT
 --EVENT_SELL_RECEIPT (eventCode, itemName, itemQuantity, money)
 function EchoExperience.OnSellReceipt(eventCode, itemName, itemQuantity, money) 
-  EchoExperience.debugMsg("OnSellReceipt: "
-    .." eventCode="  .. tostring(eventCode)
-    .." itemName="     .. tostring(itemName)
-    .." itemQuantity=" .. tostring(itemQuantity)
-    .." money="   .. tostring(money)      
+  EchoExperience.debugMsg2("OnSellReceipt: "
+    , " eventCode="    , tostring(eventCode)
+    , " itemName="     , tostring(itemName)
+    , " itemQuantity=" , tostring(itemQuantity)
+    , " money="        , tostring(money)      
   )
   local qualifier = 1
   if(itemQuantity>1) then qualifier = 2 end
@@ -1478,12 +1529,12 @@ end
 -- EVENT
 --EVENT_BUYBACK_RECEIPT (number eventCode, string itemLink, number itemQuantity, number money, ItemUISoundCategory itemSoundCategory)
 function EchoExperience.OnBuybackReceipt(eventCode, itemLink, itemQuantity, money, itemSoundCategory) 
-  EchoExperience.debugMsg("OnBuybackReceipt: "
-    .." eventCode="  .. tostring(eventCode)
-    .." itemLink="     .. tostring(itemLink)
-    .." itemQuantity="   .. tostring(itemQuantity)
-    .." money="   .. tostring(money)      
-    .." itemSoundCategory="   .. tostring(itemSoundCategory)          
+  EchoExperience.debugMsg2("OnBuybackReceipt: "
+    , " eventCode="    , tostring(eventCode)
+    , " itemLink="     , tostring(itemLink)
+    , " itemQuantity=" , tostring(itemQuantity)
+    , " money="        , tostring(money)      
+    , " itemSoundCategory=" , tostring(itemSoundCategory)          
   )
   local qualifier = 1
   if(itemQuantity>1) then qualifier = 2 end
@@ -1499,19 +1550,19 @@ end
 -- EVENT
 --EVENT_BUY_RECEIPT (number eventCode, string entryName, StoreEntryType entryType, number entryQuantity, number money, CurrencyType specialCurrencyType1, string specialCurrencyInfo1, number specialCurrencyQuantity1, CurrencyType specialCurrencyType2, string specialCurrencyInfo2, number specialCurrencyQuantity2, ItemUISoundCategory itemSoundCategory) 
 function EchoExperience.OnBuyReceipt(eventCode, entryName, entryType, entryQuantity, money, specialCurrencyType1, specialCurrencyInfo1, specialCurrencyQuantity1, specialCurrencyType2, specialCurrencyInfo2, specialCurrencyQuantity2, itemSoundCategory) 
-		EchoExperience.debugMsg("OnBuyReceipt: "
-			.." eventCode="  .. tostring(eventCode)
-			.." entryName="  .. tostring(entryName)
-			.." entryType="  .. tostring(entryType)
-      .." entryQuantity="  .. tostring(entryQuantity)
-      .." money="  .. tostring(money)
-      .." specialCurrencyType1="  .. tostring(specialCurrencyType1)
-      .." specialCurrencyInfo1="  .. tostring(specialCurrencyInfo1)
-      .." specialCurrencyQuantity1="  .. tostring(specialCurrencyQuantity1)
-      .." specialCurrencyType2="  .. tostring(specialCurrencyType2)
-      .." specialCurrencyInfo2="  .. tostring(specialCurrencyInfo2)
-      .." specialCurrencyQuantity2="  .. tostring(specialCurrencyQuantity2)
-      .." itemSoundCategory="  .. tostring(itemSoundCategory)      
+		EchoExperience.debugMsg2("OnBuyReceipt: "
+			, " eventCode="     , tostring(eventCode)
+			, " entryName="     , tostring(entryName)
+			, " entryType="     , tostring(entryType)
+      , " entryQuantity=" , tostring(entryQuantity)
+      , " money="         , tostring(money)
+      , " specialCurrencyType1="     , tostring(specialCurrencyType1)
+      , " specialCurrencyInfo1="     , tostring(specialCurrencyInfo1)
+      , " specialCurrencyQuantity1=" , tostring(specialCurrencyQuantity1)
+      , " specialCurrencyType2="     , tostring(specialCurrencyType2)
+      , " specialCurrencyInfo2="     , tostring(specialCurrencyInfo2)
+      , " specialCurrencyQuantity2=" , tostring(specialCurrencyQuantity2)
+      , " itemSoundCategory="        , tostring(itemSoundCategory)      
 		)
   local qualifier = 1
   if(entryQuantity>1) then qualifier = 2 end
@@ -1524,12 +1575,12 @@ end
 
 -- EVENT_ALLIANCE_POINT_UPDATE (number eventCode, number alliancePoints, boolean playSound, number difference, CurrencyChangeReason reason) 
 function EchoExperience.OnAlliancePointUpdate(eventCode, alliancePoints, playSound, difference, reason) 
-		EchoExperience.debugMsg("OnAlliancePointUpdate: "
-			.." eventCode="  .. tostring(eventCode)
-			.." alliancePoints="     .. tostring(alliancePoints)
-      .." playSound="   .. tostring(playSound)            
-			.." difference=" .. tostring(difference)
-			.." reason="   .. tostring(reason)      
+		EchoExperience.debugMsg2("OnAlliancePointUpdate: "
+			, " eventCode="       , tostring(eventCode)
+			, " alliancePoints="  , tostring(alliancePoints)
+      , " playSound="       , tostring(playSound)            
+			, " difference="      , tostring(difference)
+			, " reason="          , tostring(reason)      
 		)
 end
 
@@ -1537,10 +1588,10 @@ end
 -- EVENT
 --EVENT_INVENTORY_ITEM_DESTROYED (number eventCode, ItemUISoundCategory itemSoundCategory) 
 function EchoExperience.OnInventoryItemDestroyed(eventCode, ItemUISoundCategory, itemSoundCategory) 
-		EchoExperience.debugMsg("OnInventoryItemDestroyed: "
-			.." eventCode="  .. tostring(eventCode)
-			.." ItemUISoundCategory="     .. tostring(ItemUISoundCategory)
-      .." itemSoundCategory="   .. tostring(itemSoundCategory)            
+		EchoExperience.debugMsg2("OnInventoryItemDestroyed: "
+			, " eventCode="            , tostring(eventCode)
+			, " ItemUISoundCategory="  , tostring(ItemUISoundCategory)
+      , " itemSoundCategory="    , tostring(itemSoundCategory)            
 		)
 end
 
@@ -1548,10 +1599,10 @@ end
 -- EVENT
 --EVENT_INVENTORY_ITEM_USED (number eventCode, ItemUISoundCategory itemSoundCategory) 
 function EchoExperience.OnInventoryItemUsed(eventCode, ItemUISoundCategory, itemSoundCategory) 
-		EchoExperience.debugMsg("OnInventoryItemUsed: "
-			.." eventCode="  .. tostring(eventCode)
-			.." ItemUISoundCategory="     .. tostring(ItemUISoundCategory)
-      .." itemSoundCategory="   .. tostring(itemSoundCategory)            
+		EchoExperience.debugMsg2("OnInventoryItemUsed: "
+			, " eventCode="  , tostring(eventCode)
+			, " ItemUISoundCategory=" , tostring(ItemUISoundCategory)
+      , " itemSoundCategory="   , tostring(itemSoundCategory)            
 		)
 end
 
@@ -1575,9 +1626,9 @@ end
 -- EVENT
 --EVENT_ANTIQUITY_LEAD_ACQUIRED
 function EchoExperience.OnAntiquityLeadAcquired(eventCode, antiquityId)
-  EchoExperience.debugMsg("OnAntiquityLeadAcquired: "
-      .." eventCode="  .. tostring(eventCode)    
-			.." antiquityId="  .. tostring(antiquityId)
+  EchoExperience.debugMsg2("OnAntiquityLeadAcquired: "
+      , " eventCode="   , tostring(eventCode)    
+			, " antiquityId=" , tostring(antiquityId)
 		)
   local texture, iconFileIndex = GetAntiquityIcon(antiquityId)
   local name = GetAntiquityName(antiquityId)
@@ -1616,20 +1667,20 @@ function EchoExperience.OnInventorySingleSlotUpdate(eventCode, bagId, slotId, is
   if(not isNewItem and bagId == BAG_WORN and inventoryUpdateReason==INVENTORY_UPDATE_REASON_DURABILITY_CHANGE) then
     return
   end
-  EchoExperience.debugMsg("OnInventorySingleSlotUpdate: "
-			.." eventCode="  .. tostring(eventCode)
-      .." bagId="      .. tostring(bagId)
-      .." bagName="    .. EchoExperience:GetBagNameFromID(bagId)
-      .." slotId="     .. tostring(slotId)
-      .." isNewItem="  .. tostring(isNewItem)
-			.." ItemUISoundCategory="    .. tostring(ItemUISoundCategory)
-      .." inventoryUpdateReason="  .. tostring(inventoryUpdateReason)            
-      .." stackCountChange="       .. tostring(stackCountChange)
+  EchoExperience.debugMsg2("OnInventorySingleSlotUpdate: "
+			, " eventCode="  , tostring(eventCode)
+      , " bagId="      , tostring(bagId)
+      , " bagName="    , EchoExperience:GetBagNameFromID(bagId)
+      , " slotId="     , tostring(slotId)
+      , " isNewItem="  , tostring(isNewItem)
+			, " ItemUISoundCategory="    , tostring(ItemUISoundCategory)
+      , " inventoryUpdateReason="  , tostring(inventoryUpdateReason)            
+      , " stackCountChange="       , tostring(stackCountChange)
   )   
   
     local itemLink = GetItemLink(bagId, slotId, LINK_STYLE_BRACKETS)	
-		EchoExperience.debugMsg("GetItemInfo: "
-      .." itemLink="  .. tostring(itemLink)
+		EchoExperience.debugMsg2("GetItemInfo: "
+      , " itemLink="  , tostring(itemLink)
 		)
     local icon     = GetItemLinkIcon(itemLink) 
     local itemName = GetItemLinkName(itemLink) 
@@ -1732,13 +1783,13 @@ function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,so
 		elseif( setName ~= nil) then
 			extraInfo = string.format("%s set",setName)
 		end
-		EchoExperience.debugMsg("OnLootReceived: "
-      .." itemName="  .. (itemName)
-			.." lootType="  .. tostring(lootType)
-			.." traitName=" .. tostring(traitName)
-			.." setName="   .. tostring(setName)
-			.." itemId="    .. tostring(itemId)
-      .." extraInfo=" .. tostring(extraInfo)
+		EchoExperience.debugMsg2("OnLootReceived: "
+      , " itemName="  , (itemName)
+			, " lootType="  , tostring(lootType)
+			, " traitName=" , tostring(traitName)
+			, " setName="   , tostring(setName)
+			, " itemId="    , tostring(itemId)
+      , " extraInfo=" , tostring(extraInfo)
 		)
 	end
   --[[Tracking
@@ -1772,7 +1823,7 @@ EchoExperience.view.tracking.items[itemNameR].quantity=EchoExperience.view.track
           qualifier = 2 --**2+ item, no extra info
         end
       end
-      EchoExperience.debugMsg("qualifier=" ..tostring(qualifier) )
+      EchoExperience.debugMsg2("qualifier=" , tostring(qualifier) )
 
       -- output: if isSelf and not extendedLoot
       local sentence = GetString("SI_ECHOLOOT_YOU_GAIN_",qualifier)
@@ -1803,11 +1854,11 @@ end
 -- EVENT
 --EVENT_GUILD_MEMBER_ADDED (number eventCode, number guildId, string displayName) 
 function EchoExperience.OnGuildMemberAdded(eventCode, guildID, displayName)
-  EchoExperience.debugMsg("OnGuildMemberAdded: "
-    .." eventCode="   .. tostring(eventCode)
-    .." guildID="     .. tostring(guildID)      
-    .." guild="       .. tostring(EchoExperience:GetGuildName(guildID))      
-    .." displayName=" .. tostring(displayName)
+  EchoExperience.debugMsg2("OnGuildMemberAdded: "
+    , " eventCode="   , tostring(eventCode)
+    , " guildID="     , tostring(guildID)      
+    , " guild="       , tostring(EchoExperience:GetGuildName(guildID))      
+    , " displayName=" , tostring(displayName)
   )
   local gName    = EchoExperience:GetGuildName(guildID)
   local pLink    = ZO_LinkHandler_CreatePlayerLink(displayName)
@@ -1824,13 +1875,12 @@ end
 -- EVENT
 --EVENT_GUILD_MEMBER_REMOVED (number eventCode, number guildId, string displayName, string characterName) 
 function EchoExperience.OnGuildMemberRemoved(eventCode, guildID, displayName, characterName)
-  --EchoExperience.debugMsg
-  EchoExperience.debugMsg("OnGuildMemberRemoved: "
-    .." eventCode="     .. tostring(eventCode)
-    .." guildID="       .. tostring(guildID)      
-    .." guild="         .. tostring(EchoExperience:GetGuildName(guildID))      
-    .." displayName="   .. tostring(displayName)
-    .." characterName=" .. tostring(characterName)
+  EchoExperience.debugMsg2("OnGuildMemberRemoved: "
+    , " eventCode="     , tostring(eventCode)
+    , " guildID="       , tostring(guildID)      
+    , " guild="         , tostring(EchoExperience:GetGuildName(guildID))      
+    , " displayName="   , tostring(displayName)
+    , " characterName=" , tostring(characterName)
   )
   local gName = EchoExperience:GetGuildName(guildID)
   local pLink = ZO_LinkHandler_CreatePlayerLink(displayName)
@@ -1855,7 +1905,7 @@ function EchoExperience.OnGuildMemberStatusChanged(eventCode,guildID,playerName,
   local strL = zo_strformat(sentence, eventCode, tostring(guildID), tostring(playerName), tostring(prevStatus), tostring(curStatus) )
   EchoExperience.debugMsg(strL)
   local gName = EchoExperience:GetGuildName(guildID)
-  EchoExperience.debugMsg("gName='"..gName.."'")
+  --EchoExperience.debugMsg2("gName='", gName, "'")
   local pLink = ZO_LinkHandler_CreatePlayerLink(playerName)
   if(curStatus == 1) then
     --online
@@ -1888,13 +1938,13 @@ end
 function EchoExperience.OnBattlegroundKill(eventCode, killedPlayerCharacterName, killedPlayerDisplayName, killedPlayerBattlegroundAlliance, killingPlayerCharacterName, killingPlayerDisplayName, killingPlayerBattlegroundAlliance, battlegroundKillType, killingAbilityId)
   --
   --TESTING
-  EchoExperience.debugMsg("OnBattlegroundKill: "
-    .." eventCode="      .. tostring(eventCode)
-    .." killedPlayerCharacterName="   .. tostring(killedPlayerCharacterName)      
-    .." killedPlayerDisplayName="     .. tostring(killedPlayerDisplayName)
-    .." killingPlayerCharacterName="  .. tostring(killingPlayerCharacterName)
-    .." killingPlayerDisplayName="    .. tostring(killingPlayerDisplayName)
-    .." EchoExperience.view.iamDisplayName=" .. tostring(EchoExperience.view.iamDisplayName)
+  EchoExperience.debugMsg2("OnBattlegroundKill: "
+    , " eventCode="      , tostring(eventCode)
+    , " killedPlayerCharacterName="   , tostring(killedPlayerCharacterName)      
+    , " killedPlayerDisplayName="     , tostring(killedPlayerDisplayName)
+    , " killingPlayerCharacterName="  , tostring(killingPlayerCharacterName)
+    , " killingPlayerDisplayName="    , tostring(killingPlayerDisplayName)
+    , " EchoExperience.view.iamDisplayName=" , tostring(EchoExperience.view.iamDisplayName)
   )
   --
   if(EchoExperience.view.iamDisplayName == killedPlayerDisplayName ) then
@@ -1930,16 +1980,16 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
     return
   end
   if(result==ACTION_RESULT_IN_COMBAT ) then  
-    EchoExperience.debugMsg("OnCombatSomethingDied: "
-      .." eventCode="      .. tostring(eventCode)
-      .." sourceName="     .. tostring(sourceName)      
-      .." targetName="     .. tostring(targetName)
-      .." targetType="     .. tostring(targetType)
-      .." result="         .. tostring(result)
-      .." isError="        .. tostring(isError)      
-      .." abilityName="    .. tostring(abilityName)      
-      .." sourceUnitId="    .. tostring(sourceUnitId)     
-      .." targetUnitId="    .. tostring(targetUnitId)
+    EchoExperience.debugMsg2("OnCombatSomethingDied: "
+      , " eventCode="      , tostring(eventCode)
+      , " sourceName="     , tostring(sourceName)      
+      , " targetName="     , tostring(targetName)
+      , " targetType="     , tostring(targetType)
+      , " result="         , tostring(result)
+      , " isError="        , tostring(isError)      
+      , " abilityName="    , tostring(abilityName)      
+      , " sourceUnitId="   , tostring(sourceUnitId)     
+      , " targetUnitId="   , tostring(targetUnitId)
     )
   end
   --]]
@@ -1952,24 +2002,24 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
 
   --sourceName==nil or sourceName=="" or
   if(isError or targetName==nil or targetName=="") then
-    EchoExperience.debugMsg("OnCombatSomethingDied: no good data")
-    EchoExperience.debugMsg("OnCombatSomethingDied: "
-    .." eventCode="      .. tostring(eventCode)
-    .." sourceName="     .. tostring(sourceName)      
-    .." targetName="     .. tostring(targetName)
-    .." targetType="     .. tostring(targetType)
-    .." result="         .. tostring(result)
-    .." isError="        .. tostring(isError)      
-    .." abilityName="    .. tostring(abilityName)     
-    .." sourceUnitId="    .. tostring(sourceUnitId)     
-    .." targetUnitId="    .. tostring(targetUnitId)
+    EchoExperience.debugMsg("OnCombatSomethingDied: but no good data !!!")
+    EchoExperience.debugMsg2("OnCombatSomethingDied: "
+    , " eventCode="      , tostring(eventCode)
+    , " sourceName="     , tostring(sourceName)      
+    , " targetName="     , tostring(targetName)
+    , " targetType="     , tostring(targetType)
+    , " result="         , tostring(result)
+    , " isError="        , tostring(isError)      
+    , " abilityName="    , tostring(abilityName)     
+    , " sourceUnitId="   , tostring(sourceUnitId)     
+    , " targetUnitId="   , tostring(targetUnitId)
   )
     return
   else
-    EchoExperience.debugMsg("OnCombatSomethingDied: "
-    .." sourceUnitId="      .. tostring(sourceUnitId)
-    .." targetUnitId="      .. tostring(targetUnitId) 
-    .." result="     .. tostring(result) 
+    EchoExperience.debugMsg2("OnCombatSomethingDied: "
+      , " sourceUnitId=" , tostring(sourceUnitId)
+      , " targetUnitId=" , tostring(targetUnitId) 
+      , " result="       , tostring(result) 
     )
   end
   -- Check if just got this target death notification
@@ -2009,10 +2059,10 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
       --EchoExperience.outputToChanel("You died!",msgTypeSYS)--TODO 
     else
       --TEST REMOVE TODO
-      EchoExperience.debugMsg("SomethingDied: "
-      .." sourceUnitId="      .. tostring(sourceUnitId)
-      .." targetUnitId="     .. tostring(targetUnitId) 
-      .." result="     .. tostring(result) 
+      EchoExperience.debugMsg2("SomethingDied: "
+        , " sourceUnitId=" , tostring(sourceUnitId)
+        , " targetUnitId=" , tostring(targetUnitId) 
+        , " result="       , tostring(result) 
       )
       local sentence = GetString(SI_ECHOEXP_KILL_MOB)
       local strL = zo_strformat(sentence, targetName )
@@ -2026,15 +2076,55 @@ end
 
 ------------------------------
 -- EVENT
+-- Triggers when you leave a guild (guildId / guildName)
+--EVENT_GUILD_SELF_LEFT_GUILD (integer eventCode, integer guildId, string guildName)
+function EchoExperience.OnGuildSelfLeft(eventCode, guildId, guildName)
+  --TESTING
+  EchoExperience.debugMsg2("OnGuildSelfLeft: "
+    , " eventCode="   , tostring(eventCode)
+    , " guildId="     , tostring(guildId) 
+    , " guildName="   , tostring(guildName) 
+  )
+  --Reset guild cache
+  EchoExperience.view.guildids   = nil
+  EchoExperience.view.guildnames = nil
+  --
+  local sentence = GetString(SI_ECHOEXP_GUILD_SELFJOIN)
+  local strL     = zo_strformat(sentence, guildName )
+  EchoExperience.outputToChanel(strL, msgTypeGUILD2)
+end
+
+------------------------------
+-- EVENT
+-- Triggers when you join a guild (guildId / guildName)
+--EVENT_GUILD_SELF_JOINED_GUILD (integer eventCode, integer guildId, string guildName)
+function EchoExperience.OnGuildSelfJoined(eventCode, guildId, guildName)
+  --TESTING
+  EchoExperience.debugMsg2("OnGuildSelfJoined: "
+    , " eventCode="   , tostring(eventCode)
+    , " guildId="     , tostring(guildId) 
+    , " guildName="     , tostring(guildName) 
+  )
+  --Reset guild cache
+  EchoExperience.view.guildids   = nil
+  EchoExperience.view.guildnames = nil  
+  --
+  local sentence = GetString(SI_ECHOEXP_GUILD_SELFLEFT)
+  local strL     = zo_strformat(sentence, guildName )
+  EchoExperience.outputToChanel(strL, msgTypeGUILD2)
+end
+
+------------------------------
+-- EVENT
 -- Alpha
 --EVENT_QUEST_SHARE_REMOVED 
 --(number eventCode, number questId)
 --Note: called on success or fail?
 function EchoExperience.OnEventQuestSharedRemoved(eventCode, questId)
   --TESTING
-  EchoExperience.debugMsg("OnEventQuestSharedRemoved: "
-    .." eventCode="   .. tostring(eventCode)
-    .." questId="     .. tostring(questId) 
+  EchoExperience.debugMsg2("OnEventQuestSharedRemoved: "
+    , " eventCode="   , tostring(eventCode)
+    , " questId="     , tostring(questId) 
   )  --
   --Returns: string questName, string characterName, number millisecondsSinceRequest, string displayName  
   --local questName, characterName, millisecondsSinceRequest, displayName = GetOfferedQuestShareInfo( questId )
@@ -2051,9 +2141,9 @@ end
 --(number eventCode, number questId)
 function EchoExperience.OnEventQuestSharedStart(eventCode, questId)
   --TESTING
-  EchoExperience.debugMsg("OnEventQuestSharedStart: "
-    .." eventCode="   .. tostring(eventCode)
-    .." questId="     .. tostring(questId)
+  EchoExperience.debugMsg2("OnEventQuestSharedStart: "
+    , " eventCode="   , tostring(eventCode)
+    , " questId="     , tostring(questId)
   )
   --
   --Returns: string questName, string characterName, number millisecondsSinceRequest, string displayName  
@@ -2071,12 +2161,12 @@ end
 --(number eventCode, string shareTargetCharacterName, string shareTargetDisplayName, string questName, number QuestShareResult result)
 function EchoExperience.OnEventQuestSharedResult(eventCode, shareTargetCharacterName, shareTargetDisplayName, questName, result)
   --TESTING
-  EchoExperience.debugMsg("OnEventQuestSharedResult: "
-    .." eventCode="      .. tostring(eventCode)
-    .." shareTargetCharacterName="     .. tostring(shareTargetCharacterName) 
-    .." shareTargetDisplayName="     .. tostring(shareTargetDisplayName) 
-    .." questName="     .. tostring(questName) 
-    .." result="     .. tostring(result) 
+  EchoExperience.debugMsg2("OnEventQuestSharedResult: "
+    , " eventCode="      , tostring(eventCode)
+    , " shareTargetCharacterName="   , tostring(shareTargetCharacterName) 
+    , " shareTargetDisplayName="     , tostring(shareTargetDisplayName) 
+    , " questName="     , tostring(questName) 
+    , " result="        , tostring(result) 
   )
   --QuestShareResult
   --QUEST_SHARE_RESULT_ACCEPTED
@@ -2111,13 +2201,13 @@ end
 -- EVENT
     -- EVENT_QUEST_ADVANCED (number eventCode, number journalIndex, string questName, boolean isPushed, boolean isComplete, boolean mainStepChanged)
 function EchoExperience.OnEventQuestAdvanced(eventCode, journalIndex, questName, isPushed, isComplete, mainStepChanged)
-  EchoExperience.debugMsg("OnEventQuestAdvanced: "
-    .." eventCode="       .. tostring(eventCode)
-    .." journalIndex="    .. tostring(journalIndex) 
-    .." questName="       .. tostring(questName) 
-    .." isPushed="        .. tostring(isPushed) 
-    .." isComplete="      .. tostring(isComplete)     
-    .." mainStepChanged=" .. tostring(mainStepChanged)     
+  EchoExperience.debugMsg2("OnEventQuestAdvanced: "
+    , " eventCode="       , tostring(eventCode)
+    , " journalIndex="    , tostring(journalIndex) 
+    , " questName="       , tostring(questName) 
+    , " isPushed="        , tostring(isPushed) 
+    , " isComplete="      , tostring(isComplete)     
+    , " mainStepChanged=" , tostring(mainStepChanged)     
   )
   local sentence = nil
   local status   = nil
@@ -2127,9 +2217,9 @@ function EchoExperience.OnEventQuestAdvanced(eventCode, journalIndex, questName,
       local strL = zo_strformat(sentence, questName )
       EchoExperience.outputToChanel(strL, msgTypeQuest)
     else
-      EchoExperience.debugMsg("OnEventQuestAdvanced: "
-        .." questName="      .. tostring(questName)
-        .." isComplete="     .. tostring(isComplete) 
+      EchoExperience.debugMsg2("OnEventQuestAdvanced: "
+        , " questName="      , tostring(questName)
+        , " isComplete="     , tostring(isComplete) 
       )
       local count    = GetNumJournalQuests()
       local sentence = GetString(SI_ECHOEXP_QUEST_COMPLETE)
@@ -2143,10 +2233,10 @@ end
 -- EVENT
 ----integer eventCode, string questName, integer playerLevel, integer previousXP, integer currentXP, integer playerVeteranRank, integer previousVeteranPoints, integer currentVeteranPoints)
 function EchoExperience.OnEventQuestAdded(eventCode, level, questName)
-  EchoExperience.debugMsg("OnEventQuestAdded: "
-    .." eventCode="      .. tostring(eventCode)
-    .." questName="     .. tostring(questName) 
-    .." level="     .. tostring(level) 
+  EchoExperience.debugMsg2("OnEventQuestAdded: "
+    , " eventCode="  , tostring(eventCode)
+    , " questName="  , tostring(questName) 
+    , " level="      , tostring(level) 
   )
   local count    = GetNumJournalQuests()
   local sentence = GetString(SI_ECHOEXP_QUEST_ACCEPT)
@@ -2157,9 +2247,9 @@ end
 ------------------------------
 -- EVENT
 function EchoExperience.OnEventQuestComplete(eventCode, questName, level, previousExperience)
-  EchoExperience.debugMsg("OnEventQuestComplete: "
-    .." questName="      .. tostring(questName)
-    .." level="     .. tostring(level) 
+  EchoExperience.debugMsg2("OnEventQuestComplete: "
+    , " questName=" , tostring(questName)
+    , " level="     , tostring(level) 
   )
   local count    = GetNumJournalQuests()
   local sentence = GetString(SI_ECHOEXP_QUEST_COMPLETE)
@@ -2171,9 +2261,9 @@ end
 -- EVENT
 --(number eventCode, boolean isCompleted, number journalIndex, string questName, number zoneIndex, number poiIndex, number questID)
 function EchoExperience.OnEventQuestRemoved(eventCode, isCompleted, journalIndex, questName, zoneIndex, poiIndex, questID)
-  EchoExperience.debugMsg("OnEventQuestRemoved: "
-    .." questName="     .. tostring(questName)
-    .." eventCode="     .. tostring(eventCode) 
+  EchoExperience.debugMsg2("OnEventQuestRemoved: "
+    , " questName="     , tostring(questName)
+    , " eventCode="     , tostring(eventCode) 
   )
   if(not isCompleted) then
     local count    = GetNumJournalQuests()
@@ -2189,9 +2279,9 @@ end
 ------------------------------
 -- EVENT_LORE_BOOK_ALREADY_KNOWN (number eventCode, string bookTitle)
 function EchoExperience.OnLoreBookAlreadyKnown(eventCode,bookTitle)
-  EchoExperience.debugMsg("OnLoreBookAlreadyKnown: "
-    .." eventCode="     .. tostring(eventCode) 
-    .." bookTitle="     .. tostring(bookTitle) 
+  EchoExperience.debugMsg2("OnLoreBookAlreadyKnown: "
+    , " eventCode="     , tostring(eventCode) 
+    , " bookTitle="     , tostring(bookTitle) 
   )
 end
 
@@ -2199,12 +2289,12 @@ end
 -- EVENT_LORE_BOOK_LEARNED (number eventCode, number categoryIndex, number collectionIndex, number bookIndex, number guildIndex, boolean isMaxRank)
 function EchoExperience.OnLoreBookLearned(eventCode, categoryIndex, collectionIndex, bookIndex, guildIndex, isMaxRank)
   EchoExperience.debugMsg("OnLoreBookLearned: "
-    .." eventCode="       .. tostring(eventCode) 
-    .." categoryIndex="   .. tostring(categoryIndex) 
-    .." collectionIndex=" .. tostring(collectionIndex) 
-    .." bookIndex="       .. tostring(bookIndex) 
-    .." guildIndex="      .. tostring(guildIndex) 
-    .." isMaxRank="       .. tostring(isMaxRank) 
+    , " eventCode="       , tostring(eventCode) 
+    , " categoryIndex="   , tostring(categoryIndex) 
+    , " collectionIndex=" , tostring(collectionIndex) 
+    , " bookIndex="       , tostring(bookIndex) 
+    , " guildIndex="      , tostring(guildIndex) 
+    , " isMaxRank="       , tostring(isMaxRank) 
   )
   --eventCode=131477 categoryIndex=3 collectionIndex=15 bookIndex=26 guildIndex=0 isMaxRank=false
   --eventCode=131477 categoryIndex=1 collectionIndex=24 bookIndex=7 guildIndex=8 isMaxRank=true
@@ -2220,12 +2310,12 @@ function EchoExperience.OnLoreBookLearned(eventCode, categoryIndex, collectionIn
   --Returns: string name, string description, number numKnownBooks, number totalBooks, boolean hidden, textureName gamepadIcon, number collectionId
   local nameCI, descriptionCI, numKnownBooksCI, totalBooksCI, hiddenCI, gamepadIconCI, collectionIdCI = GetLoreCollectionInfo(categoryIndex, collectionIndex)
   
-    EchoExperience.debugMsg("OnLoreBookLearned: "
-    .." nameCI="          .. tostring(nameCI) 
-    .." descriptionCI="   .. tostring(descriptionCI) 
-    .." numKnownBooksCI=" .. tostring(numKnownBooksCI) 
-    .." totalBooksCI="    .. tostring(totalBooksCI) 
-    .." link="            .. tostring(link) 
+    EchoExperience.debugMsg2("OnLoreBookLearned: "
+      , " nameCI="          , tostring(nameCI) 
+      , " descriptionCI="   , tostring(descriptionCI) 
+      , " numKnownBooksCI=" , tostring(numKnownBooksCI) 
+      , " totalBooksCI="    , tostring(totalBooksCI) 
+      , " link="            , tostring(link) 
   )
 --eventCode=131477 categoryIndex=3 collectionIndex=20 bookIndex=19 guildIndex=0 isMaxRank=false
 --nameCI=The World and Its Creatures descriptionCI=Books about the many and varied environments of Tamriel and the creatures that live in them. numKnownBooksCI=28 totalBooksCI=79 link=[]
@@ -2241,17 +2331,17 @@ end
 --   EVENT_LORE_BOOK_LEARNED_SKILL_EXPERIENCE (number eventCode, number categoryIndex, number collectionIndex, number bookIndex, number guildIndex, SkillType skillType, number skillIndex, number rank, number previousXP, number currentXP)
 function EchoExperience.OnLoreBookSkillExp(eventCode, categoryIndex, collectionIndex, bookIndex, guildIndex, skillType, skillIndex, rank, previousXP, currentXP)
   --TESTING
-  EchoExperience.debugMsg("OnLoreBookSkillExp: "
-    .." eventCode="       .. tostring(eventCode) 
-    .." categoryIndex="   .. tostring(categoryIndex) 
-    .." collectionIndex=" .. tostring(collectionIndex) 
-    .." bookIndex="       .. tostring(bookIndex) 
-    .." guildIndex="      .. tostring(guildIndex) 
-    .." skillType="       .. tostring(skillType) 
-    .." skillIndex="      .. tostring(skillIndex) 
-    .." rank="            .. tostring(rank) 
-    .." previousXP="      .. tostring(previousXP) 
-    .." currentXP="       .. tostring(currentXP) 
+  EchoExperience.debugMsg2("OnLoreBookSkillExp: "
+    , " eventCode="       , tostring(eventCode) 
+    , " categoryIndex="   , tostring(categoryIndex) 
+    , " collectionIndex=" , tostring(collectionIndex) 
+    , " bookIndex="       , tostring(bookIndex) 
+    , " guildIndex="      , tostring(guildIndex) 
+    , " skillType="       , tostring(skillType) 
+    , " skillIndex="      , tostring(skillIndex) 
+    , " rank="            , tostring(rank) 
+    , " previousXP="      , tostring(previousXP) 
+    , " currentXP="       , tostring(currentXP) 
   )
   --
   local diffexp = currentXP - previousXP
@@ -2277,12 +2367,12 @@ end
 -- EVENT_LORE_COLLECTION_COMPLETED (number eventCode, number categoryIndex, number collectionIndex, number guildIndex, boolean isMaxRank)
 function EchoExperience.OnLoreBookCollectionComplete(eventCode, categoryIndex, collectionIndex, guildIndex, isMaxRank)
   --TESTING
-  EchoExperience.debugMsg("OnLoreBookCollectionComplete: "
-    .." eventCode="       .. tostring(eventCode) 
-    .." categoryIndex="   .. tostring(categoryIndex) 
-    .." collectionIndex=" .. tostring(collectionIndex) 
-    .." guildIndex="      .. tostring(guildIndex) 
-    .." isMaxRank="       .. tostring(isMaxRank) 
+  EchoExperience.debugMsg2("OnLoreBookCollectionComplete: "
+    , " eventCode="       , tostring(eventCode) 
+    , " categoryIndex="   , tostring(categoryIndex) 
+    , " collectionIndex=" , tostring(collectionIndex) 
+    , " guildIndex="      , tostring(guildIndex) 
+    , " isMaxRank="       , tostring(isMaxRank) 
   )
   --eventCode=131479 categoryIndex=1 collectionIndex=24 guildIndex=1 isMaxRank=true
     --Returns: string name, number numCollections, number categoryId
@@ -2317,8 +2407,8 @@ end
 ------------------------------
 -- EVENT_LORE_LIBRARY_INITIALIZED (number eventCode)
 function EchoExperience.OnLoreBookLibraryInit(eventCode)
-  EchoExperience.debugMsg("OnLoreBookLibraryInit: "
-    .." eventCode="     .. tostring(eventCode) 
+  EchoExperience.debugMsg2("OnLoreBookLibraryInit: "
+    , " eventCode="     , tostring(eventCode) 
   )
 end
 
@@ -2337,9 +2427,9 @@ end
 ------------------------------
 -- EVENT EVENT_ACHIEVEMENT_UPDATED (number eventCode, number id)
 function EchoExperience.OnAchievementUpdated(eventCode, achievementID)
-  EchoExperience.debugMsg("OnAchievementUpdated: "
-    .." eventCode="     .. tostring(eventCode) 
-    .." achievementID=" .. tostring(achievementID) 
+  EchoExperience.debugMsg2("OnAchievementUpdated: "
+    , " eventCode="     , tostring(eventCode) 
+    , " achievementID=" , tostring(achievementID) 
   )   
   local name        = GetAchievementInfo(achievementID)
   local link        = GetAchievementLink(achievementID, LINK_STYLE_BRACKETS)
@@ -2362,13 +2452,13 @@ function EchoExperience.OnAchievementUpdated(eventCode, achievementID)
   local successCnt = 0
   for i = 1, numCriteria do
       local description, numCompleted, numRequired = GetAchievementCriterion(achievementID, i)
-      EchoExperience.debugMsg("OnAchievementUpdated: "
-        .." description="  .. tostring(description) 
-        .." numCompleted=" .. tostring(numCompleted) 
-        .." numRequired="  .. tostring(numRequired) 
-        .." maxCnt="  .. tostring(maxCnt) 
-        .." cnt="  .. tostring(cnt) 
-        .." progress="  .. tostring(progress) 
+      EchoExperience.debugMsg2("OnAchievementUpdated: "
+        , " description="  , tostring(description) 
+        , " numCompleted=" , tostring(numCompleted) 
+        , " numRequired="  , tostring(numRequired) 
+        , " maxCnt="       , tostring(maxCnt) 
+        , " cnt="          , tostring(cnt) 
+        , " progress="     , tostring(progress) 
       )
       if numCompleted == numRequired then
         successCnt = successCnt + 1
@@ -2403,12 +2493,12 @@ end
 -- EVENT EVENT_ACHIEVEMENT_AWARDED
 -- (number eventCode, string name, number points, number id, string link)
 function EchoExperience.OnAchievementAwarded(eventCode, name, points, id, link)
-  EchoExperience.debugMsg("OnAchievementAwarded: "
-    .." name="     .. tostring(name)
-    .." points="     .. tostring(points)
-    .." id="     .. tostring(id)
-    .." link="     .. tostring(link)
-    .." eventCode="     .. tostring(eventCode) 
+  EchoExperience.debugMsg2("OnAchievementAwarded: "
+    , " name="      , tostring(name)
+    , " points="    , tostring(points)
+    , " id="        , tostring(id)
+    , " link="      , tostring(link)
+    , " eventCode=" , tostring(eventCode) 
   )  
   local sentence = GetString(SI_ECHOEXP_ACHIEVEMENT_AWARDED)
   local strL = zo_strformat(sentence, name, points, id, link)
@@ -2468,7 +2558,7 @@ end
 function EchoExperience.OnLitanyOfBlood(targetNameL, targetUnitId)
   --name coming in might not be a string
   local targetName = zo_strformat("<<1>>", targetNameL )
-  EchoExperience.debugMsg("lob called w/targetName='"..tostring(targetName).."'")  
+  EchoExperience.debugMsg2("lob called w/targetName='", tostring(targetName), "'")
   local lob = EchoExperience.LitanyOfBlood
   if( lob == nil) then
     EchoExperience.debugMsg("lob null")
@@ -2495,20 +2585,20 @@ function EchoExperience.OnLitanyOfBlood(targetNameL, targetUnitId)
   -- found person on list 
   EchoExperience.debugMsg("Corpse may be on list for Litany")
   local elemLBZoneName = zo_strformat("<<1>>", elemLB["ZoneName"] )
-  EchoExperience.debugMsg("LitanyOfBlood1: "
-    .." elemLBZoneName='"      .. tostring(elemLBZoneName) .."'"
+  EchoExperience.debugMsg2("LitanyOfBlood1: "
+    , " elemLBZoneName='" , tostring(elemLBZoneName), "'"
   )        
   local elemLBSubzoneName = zo_strformat("<<1>>", elemLB["SubzoneName"] ) 
-  EchoExperience.debugMsg("LitanyOfBlood1: "
-    .." elemLBSubzoneName='"      .. tostring(elemLBSubzoneName).."'"
+  EchoExperience.debugMsg2("LitanyOfBlood1: "
+    , " elemLBSubzoneName='", tostring(elemLBSubzoneName), "'"
   )
   local subzoneNamePL = zo_strformat("<<1>>",  GetPlayerActiveSubzoneName() )
   local zoneNamePL    =  zo_strformat("<<1>>", GetPlayerActiveZoneName() )
-   EchoExperience.debugMsg("LitanyOfBlood1: "
-    .." zoneNamePL='"      .. tostring(zoneNamePL) .."'"
+   EchoExperience.debugMsg2("LitanyOfBlood1: "
+    , " zoneNamePL='"      , tostring(zoneNamePL) , "'"
   )
-  EchoExperience.debugMsg("LitanyOfBlood1: "
-    .." subzoneNamePL='"      .. tostring(subzoneNamePL) .."'"
+  EchoExperience.debugMsg2("LitanyOfBlood1: "
+    , " subzoneNamePL='"      , tostring(subzoneNamePL) , "'"
   )
   local lbDataHasSubzone = true
   if(elemLBSubzoneName==nil or elemLBSubzoneName=="" ) then
@@ -2518,11 +2608,11 @@ function EchoExperience.OnLitanyOfBlood(targetNameL, targetUnitId)
   if(subzoneNamePL==nil or subzoneNamePL=="" ) then
     playerHasSubzone = false
   end
-  EchoExperience.debugMsg("LitanyOfBlood1: "
-    .." lbDataHasSubzone='"      .. tostring(lbDataHasSubzone) .."'"
+  EchoExperience.debugMsg2("LitanyOfBlood1: "
+    , " lbDataHasSubzone='"      , tostring(lbDataHasSubzone) , "'"
   )
-  EchoExperience.debugMsg("LitanyOfBlood1: "
-    .." playerHasSubzone='"      .. tostring(playerHasSubzone) .."'"
+  EchoExperience.debugMsg2("LitanyOfBlood1: "
+    , " playerHasSubzone='"      , tostring(playerHasSubzone) , "'"
   )
   
   --
@@ -2589,7 +2679,7 @@ function EchoExperience:DoSaveProfileSettings()
   EchoExperience.accountVariables.defaults.guildsettings   = EchoExperience:deepcopy(EchoExperience.savedVariables.guildsettings)
   EchoExperience.accountVariables.defaults.lootsettings    = EchoExperience:deepcopy(EchoExperience.savedVariables.lootsettings)
   EchoExperience.accountVariables.defaults.expsettings     = EchoExperience:deepcopy(EchoExperience.savedVariables.expsettings)
-  EchoExperience.accountVariables.defaults.questsettings     = EchoExperience:deepcopy(EchoExperience.savedVariables.questsettings)
+  EchoExperience.accountVariables.defaults.questsettings   = EchoExperience:deepcopy(EchoExperience.savedVariables.questsettings)
 end
 
 ------------------------------
@@ -2626,7 +2716,7 @@ function EchoExperience:DoLoadProfileSettings()
     EchoExperience.savedVariables.guildsettings   = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.guildsettings)
     EchoExperience.savedVariables.lootsettings    = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.lootsettings)
     EchoExperience.savedVariables.expsettings     = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.expsettings)
-    EchoExperience.savedVariables.questsettings     = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.questsettings)
+    EchoExperience.savedVariables.questsettings   = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.questsettings)
     
     EchoExperience:RefreshTabs()
   end
@@ -2638,19 +2728,19 @@ function EchoExperience:GetExtraInfo(itemName)
 	local traitName = nil
 	local traitType, traitDescription = GetItemLinkTraitInfo(itemName)
 	--
-	EchoExperience.debugMsg(" traitType=" .. tostring(traitType)
-			.." traitDescription="  .. tostring(traitDescription)
+	EchoExperience.debugMsg2("GetExtraInfo: traitType=" , tostring(traitType)
+			, " traitDescription="  , tostring(traitDescription)
 		)
 	if (traitType ~= ITEM_TRAIT_TYPE_NONE) then
 		traitName = GetString("SI_ITEMTRAITTYPE", traitType)
 	end
 	--bool hasSet, str setName, num numBonuses, num numEquipped, num maxEquipped, num setId
 	local hasSet, setName, numBonuses, numEquipped, maxEquipped, setId = GetItemLinkSetInfo(itemName)
-	EchoExperience.debugMsg("GetExtraInfo:"
-			.." hasSet="    ..tostring(hasSet)
-			.." setName="   ..tostring(setName)
-			.." setId="     ..tostring(setId)
-      .." traitName=" ..tostring(traitName)
+	EchoExperience.debugMsg2("GetExtraInfo:"
+			, " hasSet="    , tostring(hasSet)
+			, " setName="   , tostring(setName)
+			, " setId="     , tostring(setId)
+      , " traitName=" , tostring(traitName)
 		)
 	if( hasSet and setId > 0 ) then
 		return traitName, setName
@@ -2667,49 +2757,59 @@ end
 function EchoExperience.SetupExpGainsEvents(reportMe)
 	if (EchoExperience.savedVariables.showExp) then
 		if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_EXPGAINS_SHOW),msgTypeSYS) end
-    --
-		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."SkillXPGain",	    EVENT_SKILL_XP_UPDATE,          EchoExperience.OnSkillExperienceUpdate)
-		--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnCombatState",	EVENT_PLAYER_COMBAT_STATE,      EchoExperience.OnCombatState )
-		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."SkillLineAdded",	EVENT_SKILL_LINE_ADDED,         EchoExperience.OnSkillLineAdded)
+    local eventNamespace
+    eventNamespace = EchoExperience.name.."SkillXPGain"
+		EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_SKILL_XP_UPDATE, EchoExperience.OnSkillExperienceUpdate)
+    --eventNamespace = EchoExperience.name.."OnCombatState"
+		--EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_PLAYER_COMBAT_STATE,      EchoExperience.OnCombatState )
+    eventNamespace = EchoExperience.name.."SkillLineAdded"
+		EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_SKILL_LINE_ADDED, EchoExperience.OnSkillLineAdded)
 		--TODO dont need sometimes?
-		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."ChampionUnlocked", EVENT_CHAMPION_SYSTEM_UNLOCKED, EchoExperience.OnChampionUnlocked)
+    eventNamespace = EchoExperience.name.."ChampionUnlocked"
+		EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_CHAMPION_SYSTEM_UNLOCKED, EchoExperience.OnChampionUnlocked)
+    eventNamespace = EchoExperience.name.."XPUpdate"
     if(EchoExperience.savedVariables.showExpT2) then
-      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPUpdate",		EVENT_EXPERIENCE_UPDATE,        EchoExperience.OnExperienceUpdate)
+      EVENT_MANAGER:RegisterForEvent(eventNamespace,		EVENT_EXPERIENCE_UPDATE, EchoExperience.OnExperienceUpdate)
     else
-      EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."XPUpdate",		EVENT_EXPERIENCE_UPDATE,        EchoExperience.OnExperienceUpdate)
+      EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_EXPERIENCE_UPDATE, EchoExperience.OnExperienceUpdate)
     end
+    eventNamespace = EchoExperience.name.."XPGain"
     if(EchoExperience.savedVariables.showExpT1) then
-      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."XPGain",		    EVENT_EXPERIENCE_GAIN,          EchoExperience.OnExperienceGain)
+      EVENT_MANAGER:RegisterForEvent(eventNamespace,		  EVENT_EXPERIENCE_GAIN,   EchoExperience.OnExperienceGain)
     else
-      EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."XPGain",		    EVENT_EXPERIENCE_GAIN,          EchoExperience.OnExperienceGain)
+      EVENT_MANAGER:UnregisterForEvent(eventNamespace,		EVENT_EXPERIENCE_GAIN,   EchoExperience.OnExperienceGain)
     end
-		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_CHAMPION_POINT_GAINED", EVENT_CHAMPION_POINT_GAINED,          EchoExperience.OnChampionPointGain)
-		--EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnAlliancePtGain",	EVENT_ALLIANCE_POINT_UPDATE,    EchoExperience.OnAlliancePtGain)
-		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnSkillPtChange",	EVENT_SKILL_POINTS_CHANGED,     EchoExperience.OnSkillPtChange)
+    eventNamespace = EchoExperience.name.."EVENT_CHAMPION_POINT_GAINED"
+		EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_CHAMPION_POINT_GAINED, EchoExperience.OnChampionPointGain)
+    --eventNamespace = EchoExperience.name.."OnAlliancePtGain"
+		--EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_ALLIANCE_POINT_UPDATE,    EchoExperience.OnAlliancePtGain)
+    eventNamespace = EchoExperience.name.."OnSkillPtChange"
+		EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_SKILL_POINTS_CHANGED, EchoExperience.OnSkillPtChange)
 		--not really needed
-	EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."AbilityProgression",EVENT_ABILITY_PROGRESSION_XP_UPDATE, EchoExperience.OnAbilityExperienceUpdate)
-	EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_SKILL_RANK_UPDATE",EVENT_SKILL_RANK_UPDATE, EchoExperience.OnSkillRankUpdate)
-	EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ABILITY_PROGRESSION_RANK_UPDATE",EVENT_ABILITY_PROGRESSION_RANK_UPDATE, EchoExperience.OnSkillProgressRankUpdate)
-  EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_RIDING_SKILL_IMPROVEMENT",EVENT_RIDING_SKILL_IMPROVEMENT, EchoExperience.OnRidingSkillUpdate)
-  
-		--
-	else
+    eventNamespace = EchoExperience.name.."AbilityProgression"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_ABILITY_PROGRESSION_XP_UPDATE, EchoExperience.OnAbilityExperienceUpdate)
+    eventNamespace = EchoExperience.name.."EVENT_SKILL_RANK_UPDATE"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_SKILL_RANK_UPDATE, EchoExperience.OnSkillRankUpdate)
+    eventNamespace = EchoExperience.name.."EVENT_ABILITY_PROGRESSION_RANK_UPDATE"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_ABILITY_PROGRESSION_RANK_UPDATE, EchoExperience.OnSkillProgressRankUpdate)
+    eventNamespace = EchoExperience.name.."EVENT_RIDING_SKILL_IMPROVEMENT"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_RIDING_SKILL_IMPROVEMENT, EchoExperience.OnRidingSkillUpdate)
+	else -- showExp
 		if(reportMe) then EchoExperience.outputToChanel(SI_ECHOEXP_EXPGAINS_HIDE,msgTypeSYS) end
-		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."SkillXPGain",	EVENT_SKILL_XP_UPDATE)
-		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."SkillLineAdded",	EVENT_SKILL_LINE_ADDED)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."SkillXPGain",	    EVENT_SKILL_XP_UPDATE)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."SkillLineAdded",	  EVENT_SKILL_LINE_ADDED)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."ChampionUnlocked", EVENT_CHAMPION_SYSTEM_UNLOCKED)
-		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."XPUpdate",		EVENT_EXPERIENCE_UPDATE)    
-		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."XPGain",		EVENT_EXPERIENCE_GAIN)    
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."XPUpdate",		      EVENT_EXPERIENCE_UPDATE)    
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."XPGain",		        EVENT_EXPERIENCE_GAIN)    
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_CHAMPION_POINT_GAINED", EVENT_CHAMPION_POINT_GAINED)
-		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnAlliancePtGain",		EVENT_ALLIANCE_POINT_UPDATE)
-		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnSkillPtChange",		EVENT_SKILL_POINTS_CHANGED)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnAlliancePtGain",	EVENT_ALLIANCE_POINT_UPDATE)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnSkillPtChange",	EVENT_SKILL_POINTS_CHANGED)
 
-		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnDiscoveryExp",		EVENT_DISCOVERY_EXPERIENCE)
-		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."AbilityProgression",EVENT_ABILITY_PROGRESSION_XP_UPDATE)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_SKILL_RANK_UPDATE",EVENT_SKILL_RANK_UPDATE)    
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnDiscoveryExp",		       EVENT_DISCOVERY_EXPERIENCE)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."AbilityProgression",      EVENT_ABILITY_PROGRESSION_XP_UPDATE)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_SKILL_RANK_UPDATE", EVENT_SKILL_RANK_UPDATE)    
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ABILITY_PROGRESSION_RANK_UPDATE",EVENT_ABILITY_PROGRESSION_RANK_UPDATE)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_RIDING_SKILL_IMPROVEMENT",EVENT_RIDING_SKILL_IMPROVEMENT)
-    --
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_RIDING_SKILL_IMPROVEMENT",       EVENT_RIDING_SKILL_IMPROVEMENT)
 	end
 end
 
@@ -2719,52 +2819,57 @@ function EchoExperience.SetupLootGainsEvents(reportMe)
 	if (EchoExperience.savedVariables.showLoot) then
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."LootReceived",	EVENT_LOOT_RECEIVED, EchoExperience.OnLootReceived)
 		if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINS_SHOW),msgTypeSYS) end
-    
     --TODO redundency here can fix?
-    --extendedLoot xxxxx    
     if (EchoExperience.savedVariables.extendedLoot) then
       if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINSE_SHOW),msgTypeSYS) end
       --
-      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnLootFailed",	EVENT_LOOT_ITEM_FAILED, EchoExperience.OnLootFailed)
-      
-      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnBankedCurrency",	EVENT_BANKED_CURRENCY_UPDATE, EchoExperience.OnBankedCurrency)
-      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnCurrencyUpdate",	EVENT_CURRENCY_UPDATE, EchoExperience.OnCurrencyUpdate)
-      
-      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnSellReceipt",	EVENT_SELL_RECEIPT, EchoExperience.OnSellReceipt)
-      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnBuybackReceipt",	EVENT_BUYBACK_RECEIPT, EchoExperience.OnBuybackReceipt)
-      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnBuyReceipt",	EVENT_BUY_RECEIPT, EchoExperience.OnBuyReceipt)
+      local eventNamespace
+      eventNamespace = EchoExperience.name.."OnLootFailed"
+      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_LOOT_ITEM_FAILED, EchoExperience.OnLootFailed)
+      eventNamespace = EchoExperience.name.."OnBankedCurrency"
+      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_BANKED_CURRENCY_UPDATE, EchoExperience.OnBankedCurrency)
+      eventNamespace = EchoExperience.name.."OnCurrencyUpdate"
+      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_CURRENCY_UPDATE, EchoExperience.OnCurrencyUpdate)
+      eventNamespace = EchoExperience.name.."OnSellReceipt"
+      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_SELL_RECEIPT, EchoExperience.OnSellReceipt)
+      eventNamespace = EchoExperience.name.."OnBuybackReceipt"
+      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_BUYBACK_RECEIPT, EchoExperience.OnBuybackReceipt)
+      eventNamespace = EchoExperience.name.."OnBuyReceipt"
+      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_BUY_RECEIPT, EchoExperience.OnBuyReceipt)
 
-      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnAlliancePointUpdate",	EVENT_ALLIANCE_POINT_UPDATE, EchoExperience.OnAlliancePointUpdate)
-      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnInventoryItemDestroyed",	EVENT_INVENTORY_ITEM_DESTROYED, EchoExperience.OnInventoryItemDestroyed)
-      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnInventoryItemUsed",	EVENT_INVENTORY_ITEM_USED, EchoExperience.OnInventoryItemUsed)
-      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnInventorySingleSlotUpdate",	EVENT_INVENTORY_SINGLE_SLOT_UPDATE, EchoExperience.OnInventorySingleSlotUpdate)
-      EVENT_MANAGER:AddFilterForEvent(EchoExperience.name.."OnInventorySingleSlotUpdate", EVENT_INVENTORY_SINGLE_SLOT_UPDATE, REGISTER_FILTER_INVENTORY_UPDATE_REASON, INVENTORY_UPDATE_REASON_DEFAULT)
-      --
-      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ANTIQUITY_LEAD_ACQUIRED",	EVENT_ANTIQUITY_LEAD_ACQUIRED, EchoExperience.OnAntiquityLeadAcquired)
-      
+      eventNamespace = EchoExperience.name.."OnAlliancePointUpdate"
+      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_ALLIANCE_POINT_UPDATE, EchoExperience.OnAlliancePointUpdate)
+      eventNamespace = EchoExperience.name.."OnInventoryItemDestroyed"
+      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_INVENTORY_ITEM_DESTROYED, EchoExperience.OnInventoryItemDestroyed)
+      eventNamespace = EchoExperience.name.."OnInventoryItemUsed"
+      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_INVENTORY_ITEM_USED, EchoExperience.OnInventoryItemUsed)
+      eventNamespace = EchoExperience.name.."OnInventorySingleSlotUpdate"
+      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_INVENTORY_SINGLE_SLOT_UPDATE, EchoExperience.OnInventorySingleSlotUpdate)
+      eventNamespace = EchoExperience.name.."OnInventorySingleSlotUpdate"
+      EVENT_MANAGER:AddFilterForEvent(eventNamespace, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, REGISTER_FILTER_INVENTORY_UPDATE_REASON, INVENTORY_UPDATE_REASON_DEFAULT)
+      eventNamespace = EchoExperience.name.."EVENT_ANTIQUITY_LEAD_ACQUIRED"
+      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_ANTIQUITY_LEAD_ACQUIRED, EchoExperience.OnAntiquityLeadAcquired)
       --Extended loot
     else
       if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINSE_HIDE),msgTypeSYS) end
     end
 	else
-		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."LootReceived",	EVENT_LOOT_RECEIVED, EchoExperience.OnLootReceived)
-    
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."LootReceived",	EVENT_LOOT_RECEIVED)
     if (not EchoExperience.savedVariables.extendedLoot) then
       if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINSE_HIDE),msgTypeSYS) end
     end
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnLootFailed",	EVENT_LOOT_ITEM_FAILED, EchoExperience.OnLootFailed)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnBankedCurrency",	EVENT_BANKED_CURRENCY_UPDATE, EchoExperience.OnBankedCurrency)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnCurrencyUpdate",	EVENT_CURRENCY_UPDATE, EchoExperience.OnCurrencyUpdate)
-
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnSellReceipt",	EVENT_SELL_RECEIPT, EchoExperience.OnBankedCurrency)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnBuybackReceipt",	EVENT_BUYBACK_RECEIPT, EchoExperience.OnCurrencyUpdate)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnBuyReceipt",	EVENT_BUY_RECEIPT, EchoExperience.OnCurrencyUpdate)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnLootFailed",     EVENT_LOOT_ITEM_FAILED)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnBankedCurrency",	EVENT_BANKED_CURRENCY_UPDATE)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnCurrencyUpdate",	EVENT_CURRENCY_UPDATE)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnSellReceipt",	  EVENT_SELL_RECEIPT)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnBuybackReceipt",	EVENT_BUYBACK_RECEIPT)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnBuyReceipt",	    EVENT_BUY_RECEIPT)
   
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnAlliancePointUpdate",	EVENT_ALLIANCE_POINT_UPDATE, EchoExperience.OnBankedCurrency)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventoryItemDestroyed",	EVENT_INVENTORY_ITEM_DESTROYED, EchoExperience.OnCurrencyUpdate)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventoryItemUsed",	EVENT_INVENTORY_ITEM_USED, EchoExperience.OnCurrencyUpdate)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventorySingleSlotUpdate",	EVENT_INVENTORY_SINGLE_SLOT_UPDATE, EchoExperience.OnInventorySingleSlotUpdate)
-  EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ANTIQUITY_LEAD_ACQUIRED",	EVENT_ANTIQUITY_LEAD_ACQUIRED, EchoExperience.OnAntiquityLeadAcquired)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnAlliancePointUpdate",	  EVENT_ALLIANCE_POINT_UPDATE)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventoryItemDestroyed",	EVENT_INVENTORY_ITEM_DESTROYED)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventoryItemUsed",	    EVENT_INVENTORY_ITEM_USED)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventorySingleSlotUpdate",	  EVENT_INVENTORY_SINGLE_SLOT_UPDATE)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ANTIQUITY_LEAD_ACQUIRED",	EVENT_ANTIQUITY_LEAD_ACQUIRED)
 		if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINS_HIDE),msgTypeSYS) end
 	end
 end
@@ -2793,7 +2898,6 @@ function EchoExperience.SetupGuildEvents()
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_GUILD_MEMBER_REMOVED",	EVENT_GUILD_MEMBER_REMOVED, EchoExperience.OnGuildMemberRemoved)    
   end
 end
-
 
 ------------------------------
 -- SETUP
@@ -2911,11 +3015,20 @@ function EchoExperience.SetupMiscEvents(reportMe)
     --EVENT_MANAGER:AddFilterForEvent(eventNamespace, EVENT_COMBAT_EVENT, REGISTER_FILTER_IS_ERROR, false)
      --ACTION_RESULT_TARGET_DEAD 
     --EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_UNIT_DESTROYED",	EVENT_UNIT_DESTROYED, EchoExperience.OnUnitDestroyed)
+    eventNamespace = EchoExperience.name.."EVENT_BATTLEGROUND_KILL"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_BATTLEGROUND_KILL, EchoExperience.OnBattlegroundKill)
+    --
+    -- Triggers when you leave a guild (guildId / guildName)
+    eventNamespace = EchoExperience.name.."EVENT_GUILD_SELF_LEFT_GUILD"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_GUILD_SELF_LEFT_GUILD, EchoExperience.OnGuildSelfLeft)
+    -- Triggers when you join a guild (guildId / guildName)
+    eventNamespace = EchoExperience.name.."EVENT_GUILD_SELF_JOINED_GUILD"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_GUILD_SELF_JOINED_GUILD, EchoExperience.OnGuildSelfJoined)
+    --
   else
     --if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_XXX_HIDE),msgTypeSYS) end
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_COMBAT_EVENT",	EVENT_COMBAT_EVENT, EchoExperience.OnCombatSomethingDied)
-    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_BATTLEGROUND_KILL)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_COMBAT_EVENT",	      EVENT_COMBAT_EVENT)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_BATTLEGROUND_KILL",	EVENT_BATTLEGROUND_KILL)
     --EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_UNIT_DESTROYED",	EVENT_UNIT_DESTROYED, EchoExperience.OnUnitDestroyed)
   end
   --EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_UNIT_DESTROYED",	EVENT_UNIT_DESTROYED, EchoExperience.OnUnitDestroyed)
@@ -2976,6 +3089,7 @@ function EchoExperience:UpgradeSettings()
   
   --
   if(upgraded) then
+    local oldversion = EchoExperience.savedVariables.sversion
     EchoExperience.savedVariables.oldversion  = EchoExperience.savedVariables.sversion
     EchoExperience.savedVariables.sversion    = EchoExperience.version
     EchoExperience.savedVariables.oldversion  = EchoExperience.savedVariables.sversion
@@ -2984,7 +3098,8 @@ function EchoExperience:UpgradeSettings()
     EchoExperience:UpdateUIExpTabs()
     EchoExperience:UpdateUILootTabs()
     EchoExperience:UpdateUIGuildTabs()
-    EchoExperience.outputMsg("Upgraded EchoExp Version")
+    local val = zo_strformat( "Upgraded EchoExp Version from '<<1>>' to '<<2>>'.", oldversion, EchoExperience.version )
+    EchoExperience.outputMsg(val)        
     zo_callLater(EchoExperience.RefreshTabs, 12000)
   end
 end

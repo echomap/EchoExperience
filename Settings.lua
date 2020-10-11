@@ -67,6 +67,29 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
+  --
+  if(EchoExperience.pre_view.async ~= nil) then
+    optionsTable[#optionsTable+1] = {
+      type = "checkbox",
+      name    = GetString(SI_ECHOEXP_SETTINGS_ASYNCALL_NM),
+      tooltip = GetString(SI_ECHOEXP_SETTINGS_ASYNCALL_TT), 
+      getFunc = function() return EchoExperience.savedVariables.useasyncall end,
+      setFunc = function(value)
+        EchoExperience.savedVariables.useasyncall = value
+        --EchoExperience.SetupMiscEvents(true)
+        if(EchoExperience.view.async~=nil and EchoExperience.view.task==nil ) then
+          EchoExperience.view.task = EchoExperience.view.async:Create(EchoExperience.view.asyncName)
+          EchoExperience.debugMsg("EE Created ASYNC Task (SETTINGS)")
+        else
+          EchoExperience.debugMsg("async= ".. tostring(EchoExperience.view.async) )
+          EchoExperience.debugMsg("task=  ".. tostring(EchoExperience.view.task) )
+        end
+      end,
+      width = "half",	--or "half" (optional)
+    }
+  end
+  --
+  
   -- Save/Load Settings
   optionsTable[#optionsTable+1] = {
     type = "button",
@@ -310,6 +333,7 @@ function EchoExperience.LoadSettings()
     getFunc = function() return EchoExperience.savedVariables.showExpT1 end,
     setFunc = function(value)
       EchoExperience.savedVariables.showExpT1 = value
+      EchoExperience.savedVariables.showExp = true
       EchoExperience.SetupExpGainsEvents(true)
     end,
     width = "half",	--or "half" (optional)
@@ -321,6 +345,7 @@ function EchoExperience.LoadSettings()
     getFunc = function() return EchoExperience.savedVariables.showExpT2 end,
     setFunc = function(value)
       EchoExperience.savedVariables.showExpT2 = value
+      EchoExperience.savedVariables.showExp = true
       EchoExperience.SetupExpGainsEvents(true)
     end,
     width = "half",	--or "half" (optional)

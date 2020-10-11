@@ -1,12 +1,12 @@
 ## Title: EchoExperience
-## Version: 0.0.39
-## AddOnVersion: 0039
-## APIVersion: 100031 100032
+## Version: 0.0.40
+## AddOnVersion: 0040
+## APIVersion: 100032 100033
 ## Author: Echomap
 ## Description: EchoExperience will show experience gains in chat.
 ## SavedVariables: EchoExperienceSavedVariables EchoExperienceAccountSavedVariables
 ## DependsOn: LibAddonMenu-2.0
-## OptionalDependsOn: EchoTracking 
+## OptionalDependsOn: EchoTracking LibAsync
 ## IsLibrary: false
 
 ## This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. 

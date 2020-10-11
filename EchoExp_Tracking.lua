@@ -161,11 +161,13 @@ function EchoExperience:fillLine(curLine, curItem)
 		--	color = GetItemQualityColor(curItem.quality)
 		--	r, g, b, a = color:UnpackRGBA()
 		--end
+    if(curItem.icon==nil) then
+        local icon = GetItemLinkIcon(curItem.link)
+        curItem.icon = icon
+    end
+    --  
 		curLine.itemLink = curItem.link
-    --d("curLine.icon = " ..tostring(curLine.icon))
-    --if(curLine.icon:SetTexture(_
 		curLine.icon:SetTexture(curItem.icon)
-    --curLine.icon = curItem.icon
     curLine.icon:SetAlpha(1)
 		local text = zo_strformat(SI_TOOLTIP_ITEM_NAME, curItem.name)
 		curLine.text:SetText(text)
@@ -200,12 +202,11 @@ function EchoExperience:UpdateScrollDataLinesData()
   if(EchoExperience.view.trackingSelection=="Lifetime") then
     elemListP = EchoExperience.savedVariables.lifetime
   else
+    EchoExperience.debugMsg2("Tracking: trackingCurrentSession: '", EchoExperience.view.trackingCurrentSession, "'" )
+    elemListP = EchoExperience.view.tracking --EchoExperience.savedVariables.tracking 
     if(EchoExperience.view.trackingCurrentSession~=nil and EchoExperience.view.trackingCurrentSession ~= "0") then
-      --TODO
       elemListP = EchoExperience.view.trackingsessions[EchoExperience.view.trackingCurrentSession]
-      elemListP = EchoExperience.view.tracking --EchoExperience.savedVariables.tracking 
-    else    
-      elemListP = EchoExperience.view.tracking --EchoExperience.savedVariables.tracking
+      EchoExperience.debugMsg2("Tracking: trackingCurrentSession: using session data ")
     end
   end
   if(EchoExperience.view.filterType=="Items")then
@@ -226,11 +227,19 @@ function EchoExperience:UpdateScrollDataLinesData()
       local iName = itemKey
       if(EchoExperience.view.filterType=="Currency") then
         iName = GetCurrencyName(itemKey, true, false)
+        if(dbItem.icon==nil) then
+          dbItem.icon = GetCurrencyKeyboardIcon(iName)--currencyType
+          EchoExperience.debugMsg2("Tracking: icon: ",dbItem.icon)
+        end
+      end
+      if(dbItem.icon==nil) then
+        dbItem.icon = GetItemLinkIcon(dbItem.itemLink)
+        EchoExperience.debugMsg2("Tracking: nullicon: ",dbItem.icon)
       end
       tempDataLine = {
         link = dbItem.itemLink,
         qty  = dbItem.quantity,
-        icon = GetItemLinkIcon(dbItem.itemLink),
+        icon = dbItem.icon,
         name = iName,
         --quality = dbItem.itemQuality,
         --filter = itemTypeFilter,
@@ -246,11 +255,21 @@ function EchoExperience:UpdateScrollDataLinesData()
     else
       for itemKey, dbItem in pairs(elemListP.currency) do
         --k, v.quantity, v.itemlink
+        EchoExperience.debugMsg2("Tracking: currKey: ", itemKey)
+        if(dbItem.name==nil) then
+          dbItem.name = GetCurrencyName(itemKey, true, false)
+          EchoExperience.debugMsg2("Tracking: name: ", dbItem.name)
+        end        
+        if(dbItem.icon==nil) then
+          dbItem.icon = GetCurrencyKeyboardIcon(itemKey)--currencyType
+          EchoExperience.debugMsg2("Tracking: icon: ", dbItem.icon)
+        end
+        --
         tempDataLine = {
           link = dbItem.itemLink,
           qty  = dbItem.quantity,
-          icon = GetItemLinkIcon(dbItem.itemLink),
-          name = GetCurrencyName(itemKey, true, false),
+          icon = dbItem.icon,
+          name = dbItem.name,
           --quality = dbItem.itemQuality,
           --filter = itemTypeFilter,
           --worn = bWorn
@@ -267,10 +286,20 @@ function EchoExperience:UpdateScrollDataLinesData()
     else
       for itemKey, dbItem in pairs(elemListP.items) do
         --k, v.quantity, v.itemlink
+        EchoExperience.debugMsg2("Tracking: itemKey: ", itemKey)
+        if(dbItem.name==nil) then
+          dbItem.name = itemKey
+          EchoExperience.debugMsg2("Tracking: name: ", dbItem.name)
+        end  
+        if(dbItem.icon==nil) then
+          dbItem.icon = GetItemLinkIcon(dbItem.itemLink)
+          EchoExperience.debugMsg2("Tracking: icon: ", dbItem.icon)
+        end
+        --
         tempDataLine = {
           link = dbItem.itemLink,
           qty  = dbItem.quantity,
-          icon = GetItemLinkIcon(dbItem.itemLink),
+          icon = dbItem.icon,
           name = itemKey,
           --quality = dbItem.itemQuality,
           --filter = itemTypeFilter,

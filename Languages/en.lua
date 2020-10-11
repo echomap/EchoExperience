@@ -10,6 +10,8 @@ local localization_strings = {
 	SI_ECHOEXP_LOOTGAINS_HIDE  = "EchoExp is not showing Loot Gains",
 	SI_ECHOEXP_LOOTGAINSE_SHOW = "EchoExp is showing Extended Loot Gains",
 	SI_ECHOEXP_LOOTGAINSE_HIDE = "EchoExp is not showing Extended Loot Gains",
+	SI_ECHOEXP_QUEST_SHOW      = "EchoExp is showing Quest related things",
+	SI_ECHOEXP_QUEST_HIDE      = "EchoExp is not showing Quest related things",
 
   ------------------------------
   -- 
@@ -38,15 +40,16 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_ACHIEVEMENT_SHOW    = "Show Achievments?",
   SI_ECHOEXP_SETTINGS_ACHIEVEMENT_SHOW_TT = "Show Achievments?",
   SI_ECHOEXP_SETTINGS_ACHIEVEMENTDETAIL_SHOW    = "Detailed Achievments?",
-  SI_ECHOEXP_SETTINGS_ACHIEVEMENTDETAIL_SHOW_TT = "Show detailed Achievment messages?",
+  SI_ECHOEXP_SETTINGS_ACHIEVEMENTDETAIL_SHOW_TT = "Show in-progress Achievment messages?",
   SI_ECHOEXP_SETTINGS_ACHIEVEMENTDETAIL_SLIDER    = "Criteria Max #",
   SI_ECHOEXP_SETTINGS_ACHIEVEMENTDETAIL_SLIDER_TT = "How many lines to show max for achievements that have multiple criteria (10=all)",
-  SI_ECHOEXP_SETTINGS_LOREOBOOK_SHOW            = "Show Lorebooks?",
-  SI_ECHOEXP_SETTINGS_LOREOBOOK_SHOW_TT         = "Show Lorebook events found/learned/collected",
-  
+  SI_ECHOEXP_SETTINGS_LOREOBOOK_SHOW        = "Show Lorebooks?",
+  SI_ECHOEXP_SETTINGS_LOREOBOOK_SHOW_TT     = "Show Lorebook events found/learned/collected",
+  SI_ECHOEXP_SETTINGS_ASYNCALL_NM = "Use ASYNC Library for all",
+  SI_ECHOEXP_SETTINGS_ASYNCALL_TT = "Async might help with disconnects, but will show events slower",
   
   SI_ECHOEXP_SETTINGS_ALPHA_NAME    = "Show Alpha events?",
-  SI_ECHOEXP_SETTINGS_ALPHA_TT = "Dev Alpha?",
+  SI_ECHOEXP_SETTINGS_ALPHA_TT      = "Dev Alpha?",
   
   SI_ECHOEXP_SETTINGS_SESSIONTRACK_NAME = "Keep track of data in session?",
   SI_ECHOEXP_SETTINGS_SESSIONTRACK_TT   = "Keep track of looted/kills data in session?",
@@ -84,12 +87,12 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_EXP_TY1_TOOLTIP       = "Use the reporting where it just prints the experience earned without source",
   SI_ECHOEXP_SETTINGS_EXP_TY2_TITLE         = "b) Use Combined View?",
   SI_ECHOEXP_SETTINGS_EXP_TY2_TOOLTIP       = "Use the reporting where it says the type of the action it is reporting on? (ie: You killed something - 10 exp.) instead of the general way: (ie: You gained 10 experience.)",
-  SI_ECHOEXP_SETTINGS_EXP_VERB_NAME             = "Verbose Experience",
+  SI_ECHOEXP_SETTINGS_EXP_VERB_NAME             = "Show Have/need?",
   SI_ECHOEXP_SETTINGS_EXP_VERB_TOOLTIP          = "Show more Verbose reporting, if experience is on? (Show % have and need)",
   SI_ECHOEXP_SETTINGS_EXP_SKILLLINE_TITLE       = "Show Skill Experience",
   SI_ECHOEXP_SETTINGS_EXP_SKILLLINE_TOOLTIP     = "Report on skill lines Rank Gains? (if experience is on)",
   SI_ECHOEXP_SETTINGS_EXP_VERBSKILLLINE_TITLE   = "Show Verbose Skill Experience",
-  SI_ECHOEXP_SETTINGS_EXP_VERBSKILLLINE_TOOLTIP = "Report on all skill lines gains? (if experience is on)",
+  SI_ECHOEXP_SETTINGS_EXP_VERBSKILLLINE_TOOLTIP = "Report on all exp gains for skill lines? (if experience is on)",
   SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_NAME    = "Exp Output Config",
   SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_TOOLTIP = "Experience output entries for (window/tab/color).",
   SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_DELETE  = "Delete selected Exp's Data!",
@@ -220,6 +223,7 @@ local localization_strings = {
   SI_ECHOEXP_LOREBOOK_LEARNED_SOLO = "Discovered book <<1>>.",
   SI_ECHOEXP_LOREBOOK_CAT_COMPLETE = "Finished collecting the collection [<<2>>] in category [<<1>>]!!.",
   SI_ECHOEXP_LOREBOOK_EXP          = "Earned Exp <<1>> for discovering book [<<2>>] in category [<<3>>] (<<4>>/<<5>>).",
+  SI_ECHOEXP_LOREBOOK_CATCOMPLETE_EXP = "Earned Exp <<3>> for finished the collection [<<2>>] in category [<<1>>]!!.",
   
   SI_ECHOEXP_BG_KILLED   = "You killed <<1>>.",
   SI_ECHOEXP_BG_KILLEDBY = "You were killed by <<1>>.",
@@ -272,9 +276,9 @@ local localization_strings = {
 	SI_ECHOEXP_GUILD_3       = "<<4>> Logout at <<2>> (<<3>>)",
     
   -- <<1>>(guildID), <<2>>GuildName, <<3>>playerName, <<4>>ZO_FormatClockTime(), <<5>>pLink )
-	SI_ECHOEXP_GUILDADD_1    = "<<5>> *Joined* (<<2>>) at <<4>>!",
+	SI_ECHOEXP_GUILDADD_1    = "<<5>> *JOINED* (<<2>>) at <<4>>",
   --<<1>> guildID, <<2>>guild, <<3>>characterName, <<4>>ZO_FormatClockTime() , <<5>>pLink
-	SI_ECHOEXP_GUILDREM_1    = "<<5>> *Left* (<<2>>) at <<4>>!",  
+	SI_ECHOEXP_GUILDREM_1    = "<<5>> *LEFT* (<<2>>) at <<4>>",  
   
 	------------------------------
   -- LOOT
@@ -314,19 +318,18 @@ local localization_strings = {
 	SI_ECHOLOOT_BUY_1      = "You buy [|t14:14:<<1>>|t <<2>>]",
 	SI_ECHOLOOT_BUY_2      = "You buy [|t14:14:<<1>>|t <<2>>] x<<3>>",
   --icon, entryName, (entryQuantity), (totalAmount) )
-	SI_ECHOLOOT_CURRENCY_1 = "You spend <<3>> |t14:14:<<1>>|t <<2>> (Total: <<4>>)", 
-	SI_ECHOLOOT_CURRENCY_2 = "You gain <<3>> |t14:14:<<1>>|t <<2>> (Total: <<4>>)", 
-  SI_ECHOLOOT_CURRENCY_BANK_1 = "Bank withdrawl: <<3>> |t14:14:<<1>>|t <<2>>", 
-  SI_ECHOLOOT_CURRENCY_BANK_2 = "You banked: <<3>> |t14:14:<<1>>|t <<2>>", 
+	SI_ECHOLOOT_CURRENCY_1 = "You spent <<3>> [|t14:14:<<1>>|t <<2>>] (Total: <<4>>)", 
+	SI_ECHOLOOT_CURRENCY_2 = "You gain <<3>> [|t14:14:<<1>>|t <<2>>] (Total: <<4>>)", 
+  SI_ECHOLOOT_CURRENCY_BANK_1 = "Bank withdrawl: <<3>> [|t14:14:<<1>>|t <<2>>]", 
+  SI_ECHOLOOT_CURRENCY_BANK_2 = "You banked: <<3>> [|t14:14:<<1>>|t <<2>>]", 
 
   --1 icon, 2 itemLink, 3 stackCountChange, 4 traitName )
-	SI_ECHOLOOT_RECEIVE_1 = "You receive |t14:14:<<1>>|t <<2>>",
-	SI_ECHOLOOT_RECEIVE_2 = "You receive |t14:14:<<1>>|t <<2>> x<<3>>",
-	SI_ECHOLOOT_RECEIVE_3 = "You receive |t14:14:<<1>>|t <<2>> (<<4>>)",
-	SI_ECHOLOOT_RECEIVE_4 = "You receive |t14:14:<<1>>|t <<2>> x<<3>> (<<4>>)",
-  
-  SI_ECHOLOOT_RECEIVE_5 = "You receive |t14:14:<<1>>|t <<2>>  (Total: <<5>>)",
-	SI_ECHOLOOT_RECEIVE_6 = "You receive |t14:14:<<1>>|t <<2>> x<<3>>   (Total: <<5>>)",
+	SI_ECHOLOOT_RECEIVE_1 = "You receive [|t14:14:<<1>>|t <<2>>]",
+	SI_ECHOLOOT_RECEIVE_2 = "You receive [|t14:14:<<1>>|t <<2>>] x<<3>>",
+	SI_ECHOLOOT_RECEIVE_3 = "You receive [|t14:14:<<1>>|t <<2>>] (<<4>>)",
+	SI_ECHOLOOT_RECEIVE_4 = "You receive [|t14:14:<<1>>|t <<2>>] x<<3>> (<<4>>)",  
+  SI_ECHOLOOT_RECEIVE_5 = "You receive [|t14:14:<<1>>|t <<2>>]  (Total: <<5>>)",
+	SI_ECHOLOOT_RECEIVE_6 = "You receive [|t14:14:<<1>>|t <<2>>] x<<3>>   (Total: <<5>>)",
 
   --
 	SI_ECHOLOOT_LOSE_1    = "You lose |t14:14:<<1>>|t <<2>>",
@@ -335,8 +338,13 @@ local localization_strings = {
   SI_ECHOANTIQ_RECEIVE  = "You found the lead [|t14:14:<<1>>|t <<3>>] !!",  
   
   --icon, itemLink, stackCountChange
-  SI_ECHOLOOT_BANK_GET = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>>", 
-  SI_ECHOLOOT_BANK_DEP = "You deposit [|t14:14:<<1>>|t <<2>>] x<<3>> ", 
+  SI_ECHOLOOT_BANK_DEP   = "You deposit [|t14:14:<<1>>|t <<2>>] x<<3>> ", 
+	SI_ECHOLOOT_BANK_GET_1 = "You withdrawl [|t14:14:<<1>>|t <<2>>]",
+	SI_ECHOLOOT_BANK_GET_2 = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>>",
+	SI_ECHOLOOT_BANK_GET_3 = "You withdrawl [|t14:14:<<1>>|t <<2>>] (<<4>>)",
+	SI_ECHOLOOT_BANK_GET_4 = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>> (<<4>>)",
+  SI_ECHOLOOT_BANK_GET_5 = "You withdrawl [|t14:14:<<1>>|t <<2>>]  (Total: <<5>>)",
+	SI_ECHOLOOT_BANK_GET_6 = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>>   (Total: <<5>>)",
 
   --QUEST Output
   SI_ECHOLOOT_QUEST_SHARED_TO_YOU = "The quest [<<1>>] was shared to you.", 

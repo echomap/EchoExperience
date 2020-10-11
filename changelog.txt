@@ -32,13 +32,21 @@ LitanyOfBlood Gui still a mess
 
 
 ## [Testing branch]
+0.0.41
+- 
+
+## EchoExp [Versions]
+0.0.40 -- Check your settings for this release
+- update settings to actually unhook events if exp if set off
+- upper case JOINED/LEFT
+- trying to use LibAsync, to see if it helps with messages, so make sure its installed if you wnat to try this
+- Markath, 100033
+- Changed meaning of verbose for skills, so it will only output 'rank increases' if NOT checked.
 0.0.39
 - fixes to improve performance for debuging
 - cached guild id/names for performance
 - correctly registering combat event
 - msgs for leaving and joining a guild
-
-## EchoExp [Versions]
 0.0.38
 -Tracking updates
 -Fix guild left message

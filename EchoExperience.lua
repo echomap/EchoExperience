@@ -4,8 +4,8 @@
 -- 
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.39",                   -- A nuisance to match to the Manifest.
-    versionnumeric  = 39,                         -- A nuisance to match to the Manifest.
+    version         = "0.0.40",                   -- A nuisance to match to the Manifest.
+    versionnumeric  = 40,                         -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -103,6 +103,30 @@ function EchoExperience.outputMsg(text)
   end
 end
 
+------------------------------
+-- UTIL
+function EchoExperience.outputMsg2(...)
+  local arg={...}
+  if arg == nil then
+    return
+  end
+  local printResult = ""
+  if(arg~=nil)then
+    for i,v in ipairs(arg) do
+      if(v==nil) then 
+        printResult = printResult .. "nil"
+      else
+        printResult = printResult .. tostring(v) --.. " "
+      end
+    end
+  end
+
+  if printResult == nil then
+    return
+  end
+  local val = zo_strformat( "(EchoExp) <<1>>",printResult)
+  d(val)
+end
 
 ------------------------------
 -- UTIL
@@ -293,7 +317,7 @@ end
 ------------------------------
 -- UTIL
 function EchoExperience:GetBagNameFromID(bnum)
-  EchoExperience.debugMsg2("GetBagNameFromID:=", tostring(bnum), "'")
+  EchoExperience.debugMsg2("GetBagNameFromID: id: ", tostring(bnum), "'")
   if(bnum==BAG_BACKPACK) then
     return "Backpack"
   elseif(bnum==BAG_BANK) then
@@ -580,7 +604,7 @@ function EchoExperience.SlashCommandHandler(text)
 	if #options == 0 or options[1] == "help" then
     --
 		EchoExperience.outputMsg("user commands include:")
-    EchoExperience.outputMsg("-- 'outputs' to show in text what wil happen ")
+    EchoExperience.outputMsg("-- 'outputs' to show in text what will happen ")
     EchoExperience.outputMsg("-- 'mute/unmute': should silence/unsilence EchoExp.")
     EchoExperience.outputMsg("The tracking module is in beta:")
     EchoExperience.outputMsg("-- 'showtracking' for text output, 'trackinggui' for GUI output")
@@ -722,9 +746,9 @@ function EchoExperience:ToggleTrackingFrame()
 		--EchoExperience:RefreshInventoryScroll()
     PlaySound(SOUNDS.POSITIVE_CLICK)    
   end
+  local entry = comboBoxS:CreateItemEntry(0, OnItemSelect1S)
+  comboBoxS:AddItem(entry)
   if(EchoExperience.view.trackingsessions==nil) then
-    local entry = comboBoxS:CreateItemEntry(0, OnItemSelect1S)
-    comboBoxS:AddItem(entry)
   else
     for k, v in pairs(EchoExperience.view.trackingsessions) do
       local entry = comboBoxS:CreateItemEntry(k, OnItemSelect1S)
@@ -751,7 +775,7 @@ function EchoExperience:ToggleTrackingFrame()
   end
   local validChoices = {}  
   table.insert(validChoices, "Session")
-  table.insert(validChoices, "Lifetime")
+  --table.insert(validChoices, "Lifetime")
   for i = 1, #validChoices do
     local entry = comboBox:CreateItemEntry(validChoices[i], OnItemSelect1)
     comboBox:AddItem(entry)
@@ -869,6 +893,19 @@ end
 --RETURNS:(num eventCode, SkillType skillType, num skillIndex, num reason, num rank, num previousXP, num currentXP)
 --NOTES:  XX
 function EchoExperience.OnSkillExperienceUpdate(eventCode, skillType, skillIndex, reason, rank, previousXP, currentXPIn)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnSkillExperienceUpdateWork(eventCode, skillType, skillIndex, reason, rank, previousXP, currentXPIn)
+      end
+    )
+  else
+    EchoExperience.OnSkillExperienceUpdateWork(eventCode, skillType, skillIndex, reason, rank, previousXP, currentXPIn)
+  end
+end
+
+--
+function EchoExperience.OnSkillExperienceUpdateWork(eventCode, skillType, skillIndex, reason, rank, previousXP, currentXPIn)
 	local skillLineName, currentSkillRank, available = GetSkillLineInfo(skillType, skillIndex)
 	local lastRankXP, nextRankXP, currentXP          = GetSkillLineXPInfo(skillType, skillIndex)
 	
@@ -910,6 +947,19 @@ end
 --RETURNS: (number eventCode, SkillType skillType, number skillIndex, boolean advised)
 --NOTES:  XX
 function EchoExperience.OnSkillLineAdded(eventCode, skillType, skillIndex)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnSkillLineAddedWork(eventCode, skillType, skillIndex)
+      end
+    )
+  else
+    EchoExperience.OnSkillLineAddedWork(eventCode, skillType, skillIndex)
+  end
+end
+
+--
+function EchoExperience.OnSkillLineAddedWork(eventCode, skillType, skillIndex)
 	--EchoExperience.debugMsg("OnSkillLineAdded. skillType="..tostring(skillType) .. " skillIndex="..tostring(skillIndex))
 	EchoExperience.debugMsg2("echoexp test osla: skillType=", tostring(skillType), " skillIndex=", tostring(skillIndex) )
 	--learn clothing, skillType=3 skillIndex=false
@@ -947,8 +997,21 @@ end
 --RETURNS:(number eventCode, number progressionIndex, number lastRankXP, number nextRankXP, number currentXP, boolean atMorph)
 --NOTES:  currentXP is new total xp, last is all the way back. (this used to be unnecessary as i used expgains, but that stopped working?)
 function EchoExperience.OnAbilityExperienceUpdate(eventCode, progressionIndex, lastRankXP, nextRankXP, currentXP, atMorph)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnAbilityExperienceUpdateWork(eventCode, progressionIndex, lastRankXP, nextRankXP, currentXP, atMorph)
+      end
+    )
+  else
+    EchoExperience.OnAbilityExperienceUpdateWork(eventCode, progressionIndex, lastRankXP, nextRankXP, currentXP, atMorph)
+  end
+end
+
+--
+function EchoExperience.OnAbilityExperienceUpdateWork(eventCode, progressionIndex, lastRankXP, nextRankXP, currentXP, atMorph)
   --Only do this if want to show skillExp and skill has some to gain
-  if( EchoExperience.savedVariables.showSkillExp and nextRankXP>0 ) then
+  if( EchoExperience.savedVariables.showSkillExp and nextRankXP>0 and EchoExperience.savedVariables.showAllSkillExp ) then
     local name, morph, rank             = GetAbilityProgressionInfo(progressionIndex)     
     local name2, texture,  abilityIndex = GetAbilityProgressionAbilityInfo(progressionIndex, morph, rank)
     local diff =  nextRankXP - currentXP
@@ -1012,29 +1075,79 @@ end
 --ONEvent  on skill update ??
 --EVENT:   EVENT_ABILITY_PROGRESSION_RANK_UPDATE
 --RETURNS:(evebtCode, number progressionIndex, number rank, number maxRank, number morph)
---NOTES:  XXuuuiii
-function EchoExperience:OnSkillProgressRankUpdate(eventCode, progressionIndex, rank, maxRank, morph)
+--NOTES:  What is this for??? skillline gains are another method, as are exp gains
+function EchoExperience.OnSkillProgressRankUpdate(eventCode, progressionIndex, rank, maxRank, morph)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnSkillProgressRankUpdateWork(eventCode, progressionIndex, rank, maxRank, morph)  
+      end
+    )
+  else
+    EchoExperience.OnSkillProgressRankUpdateWork(eventCode, progressionIndex, rank, maxRank, morph)  
+  end
+end
+  
+--
+function EchoExperience.OnSkillProgressRankUpdateWork(eventCode, progressionIndex, rank, maxRank, morph)  
   if( not EchoExperience.savedVariables.showSkillExp ) then 
     return
   end
+  if(rank==maxRank) then
+    return
+  end
+  
+  return
+  --CANT FIGURE OUT WHAT THIS FUNCTION SHOULD BE DOING! Everything seems to be reported elsewhere,
+  -- and this seems to report weird skill upgrades?
+  --[[
   --
-  EchoExperience.debugMsg2(EchoExperience.name .. "OnSkillProgressRankUpdate: "
-    , " eventCode=" .. tostring(eventCode)
-    , " progressionIndex="  .. tostring(progressionIndex)
-    , " rank="      .. tostring(rank)
-    , " maxRank="   .. tostring(maxRank)
-    , " morph="     .. tostring(morph)
+  EchoExperience.outputMsg2(EchoExperience.name , " OnSkillProgressRankUpdate: "
+    , " eventCode=" , tostring(eventCode)
+    , " progressionIndex="  , tostring(progressionIndex)
+    , " rank="      , tostring(rank)
+    , " maxRank="   , tostring(maxRank)
+    , " morph="     , tostring(morph)
   )  
+  local skillType,skillLineIndex,abilityIndex = GetSkillAbilityIndicesFromProgressionIndex(progressionIndex)
+  local skillLineName, currentSkillRank = GetSkillLineInfo(skillType, skillLineIndex)
+  EchoExperience.outputMsg2("OnSkillProgressRankUpdate: "
+    , " skillLineName=" , tostring(skillLineName)
+    , " currentSkillRank="  , tostring(currentSkillRank)
+    , " skillType="      , tostring(skillType)
+    , " maxRank="   , tostring(maxRank)
+  )       
   if(maxRank==0) then
-    EchoExperience.debugMsg(EchoExperience.name .. "OnSkillProgressRankUpdate: skipped per can't rank up")
-  else  
+    EchoExperience.outputMsg2("OnSkillProgressRankUpdate: skipped per can't rank up")
+  elseif(rank==maxRank) then
+    EchoExperience.outputMsg2("OnSkillProgressRankUpdate: rank==maxrank and i dont know why its reported!")
+  else
+    
+    --maxRank==0 == shortcircuit?
+    --currentSkillRank> maxRank == shortcircuit?
+    
+    EchoExperience.outputMsg2("OnSkillProgressRankUpdate: "
+      , "eventCode=" , tostring(eventCode)
+      , " progressionIndex="  , tostring(progressionIndex)
+      , " rank="      , tostring(rank)
+      , " maxRank="   , tostring(maxRank)
+      , " morph="     , tostring(morph)
+    )   
+    
     local skillType,skillLineIndex,abilityIndex = GetSkillAbilityIndicesFromProgressionIndex(progressionIndex)
     local skillLineName, currentSkillRank = GetSkillLineInfo(skillType, skillLineIndex)
+    EchoExperience.outputMsg2("OnSkillProgressRankUpdate: "
+      , " skillLineName=" , tostring(skillLineName)
+      , " currentSkillRank="  , tostring(currentSkillRank)
+      , " skillType="      , tostring(skillType)
+      , " maxRank="   , tostring(maxRank)
+    )       
     --
     local sentence = GetString(SI_ECHOEXP_XP_SKILLLINE_GAIN)  
     local strL = zo_strformat(sentence, skillLineName,currentSkillRank, skillType )
     EchoExperience.outputToChanel(strL,msgTypeEXP) 
   end
+  --]]
 end
 
 ------------------------------
@@ -1044,6 +1157,19 @@ end
 --RETURNS:(number eventCode, RidingTrainType ridingSkillType, number previous, number current, RidingTrainSource source))
 --NOTES:  XX
 function EchoExperience.OnRidingSkillUpdate(eventCode, ridingSkillType, previous, current, source)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnRidingSkillUpdateWork(eventCode, ridingSkillType, previous, current, source)
+      end
+    )
+  else
+    EchoExperience.OnRidingSkillUpdateWork(eventCode, ridingSkillType, previous, current, source)
+  end
+end
+  
+--
+function EchoExperience.OnRidingSkillUpdateWork(eventCode, ridingSkillType, previous, current, source)
   if( not EchoExperience.savedVariables.showSkillExp ) then 
     return
   end
@@ -1091,6 +1217,19 @@ end
 --RETURNS:(number eventCode, SkillType skillType, number skillIndex, number rank)
 --NOTES:  XX
 function EchoExperience.OnSkillRankUpdate(eventCode, skillType, skillIndex, rank)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnSkillRankUpdateWork(eventCode, skillType, skillIndex, rank)
+      end
+    )
+  else
+    EchoExperience.OnSkillRankUpdateWork(eventCode, skillType, skillIndex, rank)
+  end
+end
+  
+--
+function EchoExperience.OnSkillRankUpdateWork(eventCode, skillType, skillIndex, rank)
 	local skillLineName, currentSkillRank, available = GetSkillLineInfo(skillType, skillIndex)
 	--local lastRankXP, nextRankXP, currentXP        = GetSkillLineXPInfo(skillType, skillIndex)
 	local pressed, normal, mouseOver, announce = ZO_Skills_GetIconsForSkillType(skillType)
@@ -1125,6 +1264,19 @@ end
 --RETURNS:(num eventCode, str areaName, num level, num previousExperience, num currentExperience, num championPoints)
 --NOTES:  XX
 function EchoExperience.OnDiscoveryExperienceGain(event, eventCode, areaName, level, previousExperience, currentExperience, championPoints)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnDiscoveryExperienceGainWork(event, eventCode, areaName, level, previousExperience, currentExperience, championPoints)
+      end
+    )
+  else
+    EchoExperience.OnDiscoveryExperienceGainWork(event, eventCode, areaName, level, previousExperience, currentExperience, championPoints)
+  end
+end
+  
+--
+function EchoExperience.OnDiscoveryExperienceGainWork(event, eventCode, areaName, level, previousExperience, currentExperience, championPoints)
 	--[[
 	if EchoExperience.savedVariables.debug then
 		d(EchoExperience.name .. " OnDiscovery: "
@@ -1152,7 +1304,20 @@ end
 --RETURNS:(num eventCode, num pointsBefore, num pointsNow, num partialPointsBefore, num partialPointsNow)
 --NOTES:  Hopefully Skyshards are the only thing that gives partial points
 function EchoExperience.OnSkillPtChange(eventCode, pointsBefore, pointsNow, partialPointsBefore, partialPointsNow)
-	--EchoExperience.debugMsg("OnSkillPtChange Called")
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnSkillPtChangeWork(eventCode, pointsBefore, pointsNow, partialPointsBefore, partialPointsNow)
+      end
+    )
+  else
+    EchoExperience.OnSkillPtChangeWork(eventCode, pointsBefore, pointsNow, partialPointsBefore, partialPointsNow)
+  end
+end
+  
+--
+function EchoExperience.OnSkillPtChangeWork(eventCode, pointsBefore, pointsNow, partialPointsBefore, partialPointsNow)
+  --EchoExperience.debugMsg("OnSkillPtChange Called")
 	EchoExperience.debugMsg2("EE skptchange: eventCode=", tostring(eventCode)
     , " pointsBefore=", tostring(pointsBefore)
     , " pointsNow=", tostring(pointsNow)
@@ -1200,6 +1365,19 @@ end
 --RETURNS:(num eventCode, num alliancePoints, bool playSound, num difference, CurrencyChangeReason reason)
 --NOTES:  XX
 function EchoExperience.OnAlliancePtGain(eventCode, alliancePoints,  playSound,  difference,  reason)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnAlliancePtGainWork(eventCode, alliancePoints,  playSound,  difference,  reason)
+      end
+    )
+  else
+    EchoExperience.OnAlliancePtGainWork(eventCode, alliancePoints,  playSound,  difference,  reason)
+  end
+end
+  
+--
+function EchoExperience.OnAlliancePtGainWork(eventCode, alliancePoints,  playSound,  difference,  reason)
 	EchoExperience.debugMsg2("OnAlliancePtGain Called. eventCode=", eventCode, ", reason=", reason, ".")
 	if difference < 0 then
 		local Ldifference = difference*-1.0
@@ -1233,6 +1411,19 @@ end
 --RETURNS:
 --NOTES:  XX
 function EchoExperience.OnExperienceLevelUpdate(eventCode, unitTag, level)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnExperienceLevelUpdateWork(eventCode, unitTag, level)
+      end
+    )
+  else
+    EchoExperience.OnExperienceLevelUpdateWork(eventCode, unitTag, level)
+  end
+end
+  
+--
+function EchoExperience.OnExperienceLevelUpdateWork(eventCode, unitTag, level)
 	--[[EchoExperience.outputMsg(EchoExperience.name .. " OnExperienceLevelUpdate: "
     .. " eventCode=" .. tostring(eventCode)
 		.. " unitTag="  .. tostring(unitTag)
@@ -1254,6 +1445,19 @@ end
 --RETURNS:(xxx)
 --NOTES:  XX
 function EchoExperience.OnExperienceUpdate(eventCode, unitTag, currentExp, maxExp, reason)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnExperienceUpdateWork(eventCode, unitTag, currentExp, maxExp, reason)  
+      end
+    )
+  else
+    EchoExperience.OnExperienceUpdateWork(eventCode, unitTag, currentExp, maxExp, reason)  
+  end
+end
+  
+--
+function EchoExperience.OnExperienceUpdateWork(eventCode, unitTag, currentExp, maxExp, reason)  
   EchoExperience.debugMsg2(EchoExperience.name .. " EVENT_EXPERIENCE_UPDATE: "
     , " eventCode=" .. eventCode
 		, " unitTag="  .. unitTag
@@ -1300,6 +1504,19 @@ function EchoExperience.OnExperienceUpdate(eventCode, unitTag, currentExp, maxEx
 end
 
 function EchoExperience.OnExperienceUpdateCP(eventCode, unitTag, currentExp, maxExp, reason)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnExperienceUpdateCPWork(eventCode, unitTag, currentExp, maxExp, reason)
+      end
+    )
+  else
+    EchoExperience.OnExperienceUpdateCPWork(eventCode, unitTag, currentExp, maxExp, reason)
+  end
+end
+  
+--
+function EchoExperience.OnExperienceUpdateCPWork(eventCode, unitTag, currentExp, maxExp, reason)
       local currXPCP   = GetPlayerChampionXP()      
       local currCPNow  = GetPlayerChampionPointsEarned()
       local currXPinCP = GetNumChampionXPInChampionPoint(currCPNow)
@@ -1370,6 +1587,19 @@ end
 --RETURNS:(num eventCode, ProgressReason reason, num level, num previousExperience, num currentExperience, num championPoints)
 --NOTES:  XX
 function EchoExperience.OnExperienceGain(eventCode, reason, level, previousExperience, currentExperience, championPoints)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnExperienceGainWork(eventCode, reason, level, previousExperience, currentExperience, championPoints)
+      end
+    )
+  else
+    EchoExperience.OnExperienceGainWork(eventCode, reason, level, previousExperience, currentExperience, championPoints)
+  end
+end
+  
+--
+function EchoExperience.OnExperienceGainWork(eventCode, reason, level, previousExperience, currentExperience, championPoints)
 	--EchoExperience.debugMsg("OnExperienceGain Called")	
 	EchoExperience.debugMsg2(EchoExperience.name .. " previousExperience=" .. previousExperience
 		, " currentExperience="  .. currentExperience
@@ -1414,6 +1644,19 @@ end
 -- EVENT
 --EVENT_BANKED_CURRENCY_UPDATE (number eventCode, CurrencyType currency, number newValue, number oldValue) 
 function EchoExperience.OnBankedCurrency(eventCode, currency, newValue, oldValue) 
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnBankedCurrencyWork(eventCode, currency, newValue, oldValue) 
+      end
+    )
+  else
+    EchoExperience.OnBankedCurrencyWork(eventCode, currency, newValue, oldValue) 
+  end
+end
+  
+--
+function EchoExperience.OnBankedCurrencyWork(eventCode, currency, newValue, oldValue) 
   EchoExperience.debugMsg2("OnBankedCurrency: "
     , " eventCode="  , tostring(eventCode)
     , " currency="   , tostring(currency)
@@ -1431,8 +1674,8 @@ function EchoExperience.OnBankedCurrency(eventCode, currency, newValue, oldValue
       EchoExperience.view.tracking.currency = {}
     end
     if(EchoExperience.view.tracking.currency[currency]==nil)then
-      EchoExperience.view.tracking.currency[currency] = {}
-      EchoExperience.view.tracking.currency[currency].quantity=0
+      EchoExperience.view.tracking.currency[currency]          = {}
+      EchoExperience.view.tracking.currency[currency].quantity = 0
     end
     EchoExperience.view.tracking.currency[currency].quantity=EchoExperience.view.tracking.currency[currency].quantity+ (oldValue - newValue)
 
@@ -1444,6 +1687,19 @@ end
 -- EVENT
 --EVENT_CURRENCY_UPDATE (number eventCode, CurrencyType currencyType, CurrencyLocation currencyLocation, number newAmount, number oldAmount, CurrencyChangeReason reason) 
 function EchoExperience.OnCurrencyUpdate(eventCode, currencyType, currencyLocation, newAmount, oldAmount, reason) 
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnCurrencyUpdateWork(eventCode, currencyType, currencyLocation, newAmount, oldAmount, reason) 
+      end
+    )
+  else
+    EchoExperience.OnCurrencyUpdateWork(eventCode, currencyType, currencyLocation, newAmount, oldAmount, reason) 
+  end
+end
+  
+--
+function EchoExperience.OnCurrencyUpdateWork(eventCode, currencyType, currencyLocation, newAmount, oldAmount, reason) 
   EchoExperience.debugMsg2("OnCurrencyUpdate: "
     , " eventCode="        , tostring(eventCode)
     , " currencyType="     , tostring(currencyType)
@@ -1469,17 +1725,31 @@ function EchoExperience.OnCurrencyUpdate(eventCode, currencyType, currencyLocati
   if(EchoTracking~=nil and EchoExperience.savedVariables.lifetimetracking )then
     EchoTracking.saveCurrency(currencyType, oldAmount, newAmount, GetTimeStamp() )
   end
+  
+  -- ----------
   --Tracking
   if(EchoExperience.savedVariables.sessiontracking) then
+    --local icon2 = GetCurrencyKeyboardIcon(currencyType) 
     if(EchoExperience.view.tracking.currency==nil)then
       EchoExperience.view.tracking.currency = {}
     end
     if(EchoExperience.view.tracking.currency[currencyType]==nil)then
       EchoExperience.view.tracking.currency[currencyType] = {}
-      EchoExperience.view.tracking.currency[currencyType].quantity=0
-      EchoExperience.view.tracking.currency[currencyType].plus=0
-      EchoExperience.view.tracking.currency[currencyType].minus=0
+      EchoExperience.view.tracking.currency[currencyType].quantity = 0
+      EchoExperience.view.tracking.currency[currencyType].plus     = 0
+      EchoExperience.view.tracking.currency[currencyType].minus    = 0
     end
+    --Something odd going on that i need to do this..?
+    if(EchoExperience.view.tracking.currency[currencyType].plus==nil) then
+      EchoExperience.view.tracking.currency[currencyType].plus = 0
+    end
+    if(EchoExperience.view.tracking.currency[currencyType].minus==nil) then
+      EchoExperience.view.tracking.currency[currencyType].minus = 0
+    end
+    if(EchoExperience.view.tracking.currency[currencyType].quantity==nil) then
+      EchoExperience.view.tracking.currency[currencyType].quantity = 0
+    end
+    --
     EchoExperience.view.tracking.currency[currencyType].quantity=EchoExperience.view.tracking.currency[currencyType].quantity+ (newAmount - oldAmount)
     if( qualifier == 2 ) then
       EchoExperience.view.tracking.currency[currencyType].plus=EchoExperience.view.tracking.currency[currencyType].plus+ (newAmount - oldAmount)
@@ -1487,6 +1757,10 @@ function EchoExperience.OnCurrencyUpdate(eventCode, currencyType, currencyLocati
       EchoExperience.view.tracking.currency[currencyType].minus=EchoExperience.view.tracking.currency[currencyType].minus+ (newAmount - oldAmount)
     end
   end--Tracking
+  -- ----------
+  if( IsBankOpen() or IsGuildBankOpen() ) then
+    --Don't report as should be in another method
+  end
   
   -- TODO IsCurrencyCapped(number CurrencyType currencyType, number CurrencyLocation currencyLocation) Returns: boolean isCapped
 
@@ -1510,6 +1784,19 @@ end
 -- EVENT
 --EVENT_SELL_RECEIPT (eventCode, itemName, itemQuantity, money)
 function EchoExperience.OnSellReceipt(eventCode, itemName, itemQuantity, money) 
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnSellReceiptWork(eventCode, itemName, itemQuantity, money) 
+      end
+    )
+  else
+    EchoExperience.OnSellReceiptWork(eventCode, itemName, itemQuantity, money) 
+  end
+end
+  
+--
+function EchoExperience.OnSellReceiptWork(eventCode, itemName, itemQuantity, money) 
   EchoExperience.debugMsg2("OnSellReceipt: "
     , " eventCode="    , tostring(eventCode)
     , " itemName="     , tostring(itemName)
@@ -1528,7 +1815,20 @@ end
 ------------------------------
 -- EVENT
 --EVENT_BUYBACK_RECEIPT (number eventCode, string itemLink, number itemQuantity, number money, ItemUISoundCategory itemSoundCategory)
-function EchoExperience.OnBuybackReceipt(eventCode, itemLink, itemQuantity, money, itemSoundCategory) 
+function EchoExperience.OnBuybackReceipt(eventCode, itemLink, itemQuantity, money, itemSoundCategory)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnBuybackReceiptWork(eventCode, itemLink, itemQuantity, money, itemSoundCategory)
+      end
+    )
+  else
+    EchoExperience.OnBuybackReceiptWork(eventCode, itemLink, itemQuantity, money, itemSoundCategory)
+  end
+end
+  
+--
+function EchoExperience.OnBuybackReceiptWork(eventCode, itemLink, itemQuantity, money, itemSoundCategory)
   EchoExperience.debugMsg2("OnBuybackReceipt: "
     , " eventCode="    , tostring(eventCode)
     , " itemLink="     , tostring(itemLink)
@@ -1549,7 +1849,20 @@ end
 ------------------------------
 -- EVENT
 --EVENT_BUY_RECEIPT (number eventCode, string entryName, StoreEntryType entryType, number entryQuantity, number money, CurrencyType specialCurrencyType1, string specialCurrencyInfo1, number specialCurrencyQuantity1, CurrencyType specialCurrencyType2, string specialCurrencyInfo2, number specialCurrencyQuantity2, ItemUISoundCategory itemSoundCategory) 
-function EchoExperience.OnBuyReceipt(eventCode, entryName, entryType, entryQuantity, money, specialCurrencyType1, specialCurrencyInfo1, specialCurrencyQuantity1, specialCurrencyType2, specialCurrencyInfo2, specialCurrencyQuantity2, itemSoundCategory) 
+function EchoExperience.OnBuyReceipt(eventCode, entryName, entryType, entryQuantity, money, specialCurrencyType1, specialCurrencyInfo1, specialCurrencyQuantity1, specialCurrencyType2, specialCurrencyInfo2, specialCurrencyQuantity2, itemSoundCategory)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnBuyReceiptWork(eventCode, entryName, entryType, entryQuantity, money, specialCurrencyType1, specialCurrencyInfo1, specialCurrencyQuantity1, specialCurrencyType2, specialCurrencyInfo2, specialCurrencyQuantity2, itemSoundCategory)
+      end
+    )
+  else
+    EchoExperience.OnBuyReceiptWork(eventCode, entryName, entryType, entryQuantity, money, specialCurrencyType1, specialCurrencyInfo1, specialCurrencyQuantity1, specialCurrencyType2, specialCurrencyInfo2, specialCurrencyQuantity2, itemSoundCategory)
+  end
+end
+  
+--
+function EchoExperience.OnBuyReceiptWork(eventCode, entryName, entryType, entryQuantity, money, specialCurrencyType1, specialCurrencyInfo1, specialCurrencyQuantity1, specialCurrencyType2, specialCurrencyInfo2, specialCurrencyQuantity2, itemSoundCategory)
 		EchoExperience.debugMsg2("OnBuyReceipt: "
 			, " eventCode="     , tostring(eventCode)
 			, " entryName="     , tostring(entryName)
@@ -1626,6 +1939,19 @@ end
 -- EVENT
 --EVENT_ANTIQUITY_LEAD_ACQUIRED
 function EchoExperience.OnAntiquityLeadAcquired(eventCode, antiquityId)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnAntiquityLeadAcquiredWork(eventCode, antiquityId)
+      end
+    )
+  else
+    EchoExperience.OnAntiquityLeadAcquiredWork(eventCode, antiquityId)
+  end
+end
+  
+--
+function EchoExperience.OnAntiquityLeadAcquiredWork(eventCode, antiquityId)
   EchoExperience.debugMsg2("OnAntiquityLeadAcquired: "
       , " eventCode="   , tostring(eventCode)    
 			, " antiquityId=" , tostring(antiquityId)
@@ -1663,10 +1989,24 @@ end
 -- EVENT
 --EVENT_INVENTORY_SINGLE_SLOT_UPDATE (number eventCode, Bag bagId, number slotId, boolean isNewItem, ItemUISoundCategory itemSoundCategory, number inventoryUpdateReason, number stackCountChange) 
 function EchoExperience.OnInventorySingleSlotUpdate(eventCode, bagId, slotId, isNewItem, itemSoundCategory, inventoryUpdateReason, stackCountChange)
-  -- Short circuit for damaged items,  TODO filter at event register?
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnInventorySingleSlotUpdateWork(eventCode, bagId, slotId, isNewItem, itemSoundCategory, inventoryUpdateReason, stackCountChange)
+      end
+    )
+  else
+    EchoExperience.OnInventorySingleSlotUpdateWork(eventCode, bagId, slotId, isNewItem, itemSoundCategory, inventoryUpdateReason, stackCountChange)
+  end
+end
+  
+--
+function EchoExperience.OnInventorySingleSlotUpdateWork(eventCode, bagId, slotId, isNewItem, itemSoundCategory, inventoryUpdateReason, stackCountChange)
+  -- Short circuit: for damaged items,  TODO filter at event register?
   if(not isNewItem and bagId == BAG_WORN and inventoryUpdateReason==INVENTORY_UPDATE_REASON_DURABILITY_CHANGE) then
     return
   end
+  
   EchoExperience.debugMsg2("OnInventorySingleSlotUpdate: "
 			, " eventCode="  , tostring(eventCode)
       , " bagId="      , tostring(bagId)
@@ -1677,87 +2017,80 @@ function EchoExperience.OnInventorySingleSlotUpdate(eventCode, bagId, slotId, is
       , " inventoryUpdateReason="  , tostring(inventoryUpdateReason)            
       , " stackCountChange="       , tostring(stackCountChange)
   )   
-  
-    local itemLink = GetItemLink(bagId, slotId, LINK_STYLE_BRACKETS)	
-		EchoExperience.debugMsg2("GetItemInfo: "
-      , " itemLink="  , tostring(itemLink)
-		)
-    local icon     = GetItemLinkIcon(itemLink) 
-    local itemName = GetItemLinkName(itemLink) 
-    if(not isNewItem) then
-      if(bagId==BAG_BANK and itemLink~=nil and stackCountChange>0) then
-        local sentence = GetString(SI_ECHOLOOT_BANK_DEP)
-        local strL = zo_strformat(sentence, icon, itemLink, stackCountChange )
-        EchoExperience.outputToChanel(strL,msgTypeLOOT) 
-        --[[
-        if(stackCountChange>0) then
-          local sentence = GetString(SI_ECHOLOOT_BANK_DEP)
-          local strL = zo_strformat(sentence, icon, itemLink, stackCountChange )
-          EchoExperience.outputToChanel(strL,msgTypeLOOT) 
-        else
-        --Get itemlink doesnt come out right if from bank...
-        --if(bagId==BAG_BACKPACK and itemLink~=nil and stackCountChange>0) then
-          local sentence = GetString(SI_ECHOLOOT_BANK_GET)
-          local strL = zo_strformat(sentence, icon, itemLink, stackCountChange )
-          EchoExperience.outputToChanel(strL,msgTypeLOOT) 
-        end
-        --]]
-      end
+  --
+  local itemLink = GetItemLink(bagId, slotId)	
+  EchoExperience.debugMsg2("GetItemInfo: " , " itemLink='"  , tostring(itemLink), "'"  )
+  -- Short circuit: If cant get item link, just return
+  if(itemLink == nil or itemLink == "" ) then
+    EchoExperience.debugMsg2("Short circuit: If cant get item link, just return" )
+    return
+  end
+  --
+  local icon = GetItemLinkIcon(itemLink)
+  if(not isNewItem) then
+    if( (bagId==BAG_BANK or bagId==BAG_SUBSCRIBER_BANK or bagId==BAG_GUILDBANK) and stackCountChange>0) then
+      local sentence = GetString(SI_ECHOLOOT_BANK_DEP)
+      local strL = zo_strformat(sentence, icon, itemLink, stackCountChange )
+      EchoExperience.outputToChanel(strL,msgTypeLOOT)
       return
     end
-    --[[
-    local icon, stack, sellPrice, meetsUsageRequirement, locked, equipType, itemStyleId, quality = GetItemInfo(bagId, slotId)
-    131219 mail? from?
-    queue up messages?
-    -]]
-    
-    local qualifier = 1
-    if(stackCountChange>1) then qualifier = 2 end
-    local hasTraitInfo = false
-    if(isNewItem and itemLink~=nil) then
-      --local curricon = GetCurrencyKeyboardIcon(currencyType) 
-      local traitName, setName = EchoExperience:GetExtraInfo(itemLink)
-      if( traitName == nil) then
-        traitName = ""
-      else
-        qualifier = qualifier + 2
-        hasTraitInfo = true
-      end
-      local totalBagCount = GetItemTotalCount(bagId, slotId)
-      --textureName icon, number stack, number sellPrice, boolean meetsUsageRequirement, boolean locked, number EquipType equipType, number itemStyleId, number ItemQuality quality = GetItemInfo(number Bag bagId, number slotIndex)
-      --For some reason these bags do NOT report count
-      --TODO to show count? use verbose setting or EchoExperience.savedVariables.extendedLoot ?
-      if(not hasTraitInfo and EchoExperience.savedVariables.extendedLoot and bagId ~= BAG_SUBSCRIBER_BANK and bagId ~= BAG_VIRTUAL) then
-        qualifier = qualifier + 4
-      end
-
-      --
-      local sentence = GetString("SI_ECHOLOOT_RECEIVE_", qualifier)
-      local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName, totalBagCount )
-      EchoExperience.outputToChanel(strL,msgTypeLOOT) 
-      --
-      --New Tracking Module
-      if(EchoTracking~=nil and EchoExperience.savedVariables.lifetimetracking )then
-        EchoTracking.saveLoot(itemName,itemLink,stackCountChange, GetTimeStamp() )
-      end
-      --Tracking
-      if(EchoExperience.savedVariables.sessiontracking) then
-        if(EchoExperience.view.tracking.items==nil)then
-          EchoExperience.view.tracking.items = {}
-        end
-        if(EchoExperience.view.tracking.items[itemName]==nil)then
-          EchoExperience.view.tracking.items[itemName] = {}
-          EchoExperience.view.tracking.items[itemName].quantity=0
-        end
-        EchoExperience.view.tracking.items[itemName].quantity=EchoExperience.view.tracking.items[itemName].quantity+ (stackCountChange)
-        --if(itemLink==nil) then itemLink = itemName
-        EchoExperience.view.tracking.items[itemName].itemlink=itemLink
-      end--Tracking
-      --
-    else
-      --TODO notnew or no itemlink
+    --withdrawls from the bank have no itemlink, but throw another event with the backpack... caught below
+  end
+  --[[
+  local icon, stack, sellPrice, meetsUsageRequirement, locked, equipType, itemStyleId, quality = GetItemInfo(bagId, slotId)
+  131219 mail? from?
+    TODO queue up messages?
+  -]]
+  --
+  local qualifier = 1
+  if(stackCountChange>1) then qualifier = 2 end
+  local hasTraitInfo = false
+  local traitName, setName = EchoExperience:GetExtraInfo(itemLink)
+  if( traitName == nil) then
+    traitName = ""
+  else
+    qualifier = qualifier + 2
+    hasTraitInfo = true
+  end
+  local totalBagCount = GetItemTotalCount(bagId, slotId)
+  --textureName icon, number stack, number sellPrice, boolean meetsUsageRequirement, boolean locked, number EquipType equipType, number itemStyleId, number ItemQuality quality = GetItemInfo(number Bag bagId, number slotIndex)
+  --For some reason these bags do NOT report count
+  --TODO to show count? use verbose setting or EchoExperience.savedVariables.extendedLoot ?
+  if(not hasTraitInfo and EchoExperience.savedVariables.extendedLoot and bagId ~= BAG_SUBSCRIBER_BANK and bagId ~= BAG_VIRTUAL) then
+    qualifier = qualifier + 4
+  end
+  -- Output
+  if(isNewItem) then
+    local sentence = GetString("SI_ECHOLOOT_RECEIVE_", qualifier)
+    local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName, totalBagCount )
+    EchoExperience.outputToChanel(strL,msgTypeLOOT)
+  elseif( IsBankOpen() or IsGuildBankOpen() ) then
+    local sentence = GetString("SI_ECHOLOOT_BANK_GET_", qualifier)
+    local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName, totalBagCount )
+    EchoExperience.outputToChanel(strL,msgTypeLOOT)
+  end
+  --New Tracking Module
+  if(isNewItem) then
+    local itemName = GetItemLinkName(itemLink) 
+    if(EchoTracking~=nil and EchoExperience.savedVariables.lifetimetracking )then
+      EchoTracking.saveLoot(itemName,itemLink,stackCountChange, GetTimeStamp() )
     end
-    --
+    --Tracking
+    if(EchoExperience.savedVariables.sessiontracking) then
+      if(EchoExperience.view.tracking.items==nil)then
+        EchoExperience.view.tracking.items = {}
+      end
+      if(EchoExperience.view.tracking.items[itemName]==nil)then
+        EchoExperience.view.tracking.items[itemName] = {}
+        EchoExperience.view.tracking.items[itemName].quantity=0
+      end
+      EchoExperience.view.tracking.items[itemName].quantity=EchoExperience.view.tracking.items[itemName].quantity+ (stackCountChange)
+      --if(itemLink==nil) then itemLink = itemName
+      EchoExperience.view.tracking.items[itemName].itemlink = itemLink
+      EchoExperience.view.tracking.items[itemName].icon     = icon
+    end--Tracking
+  end
+  --
 end
 
 ------------------------------
@@ -1771,6 +2104,19 @@ end
 --LOOTTPE=LOOT_TYPE_ANY,LOOT_TYPE_CHAOTIC_CREATIA, LOOT_TYPE_COLLECTIBLE, LOOT_TYPE_ITEM, LOOT_TYPE_MONEY,
 --				LOOT_TYPE_QUEST_ITEM, LOOT_TYPE_STYLE_STONES, LOOT_TYPE_TELVAR_STONES,LOOT_TYPE_WRIT_VOUCHERS
 function EchoExperience.OnLootReceived(eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,isPickpocketLoot,questItemIcon,itemId,isStolen)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnLootReceivedWork(eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,isPickpocketLoot,questItemIcon,itemId,isStolen)
+      end
+    )
+  else
+    EchoExperience.OnLootReceivedWork(eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,isPickpocketLoot,questItemIcon,itemId,isStolen)
+  end
+end
+  
+--
+function EchoExperience.OnLootReceivedWork(eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,isPickpocketLoot,questItemIcon,itemId,isStolen)
   -- Get Extra Info for types that have it
 	local extraInfo = nill  
 	if lootType ~= nil and lootType ~= LOOT_TYPE_MONEY and lootType ~= LOOT_TYPE_QUEST_ITEM then
@@ -1854,6 +2200,19 @@ end
 -- EVENT
 --EVENT_GUILD_MEMBER_ADDED (number eventCode, number guildId, string displayName) 
 function EchoExperience.OnGuildMemberAdded(eventCode, guildID, displayName)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnGuildMemberAddedWork(eventCode, guildID, displayName)
+      end
+    )
+  else
+    EchoExperience.OnGuildMemberAddedWork(eventCode, guildID, displayName)
+  end
+end
+  
+--
+function EchoExperience.OnGuildMemberAddedWork(eventCode, guildID, displayName)
   EchoExperience.debugMsg2("OnGuildMemberAdded: "
     , " eventCode="   , tostring(eventCode)
     , " guildID="     , tostring(guildID)      
@@ -1875,6 +2234,19 @@ end
 -- EVENT
 --EVENT_GUILD_MEMBER_REMOVED (number eventCode, number guildId, string displayName, string characterName) 
 function EchoExperience.OnGuildMemberRemoved(eventCode, guildID, displayName, characterName)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnGuildMemberRemovedWork(eventCode, guildID, displayName, characterName)
+      end
+    )
+  else
+    EchoExperience.OnGuildMemberRemovedWork(eventCode, guildID, displayName, characterName)
+  end
+end
+  
+--  
+function EchoExperience.OnGuildMemberRemovedWork(eventCode, guildID, displayName, characterName)
   EchoExperience.debugMsg2("OnGuildMemberRemoved: "
     , " eventCode="     , tostring(eventCode)
     , " guildID="       , tostring(guildID)      
@@ -1899,6 +2271,19 @@ end
 --["PLAYER_STATUS_AWAY"] = 2 ["PLAYER_STATUS_DO_NOT_DISTURB"] = 3
 --["PLAYER_STATUS_OFFLINE"] = 4 ["PLAYER_STATUS_ONLINE"] = 1 
 function EchoExperience.OnGuildMemberStatusChanged(eventCode,guildID,playerName,prevStatus,curStatus)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnGuildMemberStatusChangedWork(eventCode,guildID,playerName,prevStatus,curStatus)
+      end
+    )
+  else
+    EchoExperience.OnGuildMemberStatusChangedWork(eventCode,guildID,playerName,prevStatus,curStatus)
+  end
+end
+  
+--
+function EchoExperience.OnGuildMemberStatusChangedWork(eventCode,guildID,playerName,prevStatus,curStatus)
   EchoExperience.debugMsg("OnGuildMemberStatusChanged called") -- Prints to chat.    
   local sentence = GetString("SI_ECHOEXP_GUILD_",1)
   --"eventCode: <<1>>, guildID: <<2>>, playerName: <<3>>, prevStatus: <<4>>, curStatus: <<5>> ."    
@@ -1936,6 +2321,19 @@ end
 -- EVENT
 --EVENT_BATTLEGROUND_KILL (number eventCode, string killedPlayerCharacterName, string killedPlayerDisplayName, BattlegroundAlliance killedPlayerBattlegroundAlliance, string killingPlayerCharacterName, string killingPlayerDisplayName, BattlegroundAlliance killingPlayerBattlegroundAlliance, BattlegroundKillType battlegroundKillType, number killingAbilityId) 
 function EchoExperience.OnBattlegroundKill(eventCode, killedPlayerCharacterName, killedPlayerDisplayName, killedPlayerBattlegroundAlliance, killingPlayerCharacterName, killingPlayerDisplayName, killingPlayerBattlegroundAlliance, battlegroundKillType, killingAbilityId)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnBattlegroundKillWork(eventCode, killedPlayerCharacterName, killedPlayerDisplayName, killedPlayerBattlegroundAlliance, killingPlayerCharacterName, killingPlayerDisplayName, killingPlayerBattlegroundAlliance, battlegroundKillType, killingAbilityId)
+      end
+    )
+  else
+    EchoExperience.OnBattlegroundKillWork(eventCode, killedPlayerCharacterName, killedPlayerDisplayName, killedPlayerBattlegroundAlliance, killingPlayerCharacterName, killingPlayerDisplayName, killingPlayerBattlegroundAlliance, battlegroundKillType, killingAbilityId)
+  end
+end
+  
+--
+function EchoExperience.OnBattlegroundKillWork(eventCode, killedPlayerCharacterName, killedPlayerDisplayName, killedPlayerBattlegroundAlliance, killingPlayerCharacterName, killingPlayerDisplayName, killingPlayerBattlegroundAlliance, battlegroundKillType, killingAbilityId)
   --
   --TESTING
   EchoExperience.debugMsg2("OnBattlegroundKill: "
@@ -1979,6 +2377,23 @@ function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilit
   if(isError)then
     return
   end
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnCombatSomethingDiedWork(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
+      end
+    )
+  else
+    EchoExperience.OnCombatSomethingDiedWork(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
+  end
+end
+  
+--
+function EchoExperience.OnCombatSomethingDiedWork(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
+  if(isError)then
+    return
+  end
+
   if(result==ACTION_RESULT_IN_COMBAT ) then  
     EchoExperience.debugMsg2("OnCombatSomethingDied: "
       , " eventCode="      , tostring(eventCode)
@@ -2201,6 +2616,19 @@ end
 -- EVENT
     -- EVENT_QUEST_ADVANCED (number eventCode, number journalIndex, string questName, boolean isPushed, boolean isComplete, boolean mainStepChanged)
 function EchoExperience.OnEventQuestAdvanced(eventCode, journalIndex, questName, isPushed, isComplete, mainStepChanged)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnEventQuestAdvancedWork(eventCode, journalIndex, questName, isPushed, isComplete, mainStepChanged)
+      end
+    )
+  else
+    EchoExperience.OnEventQuestAdvancedWork(eventCode, journalIndex, questName, isPushed, isComplete, mainStepChanged)
+  end
+end
+  
+--
+function EchoExperience.OnEventQuestAdvancedWork(eventCode, journalIndex, questName, isPushed, isComplete, mainStepChanged)
   EchoExperience.debugMsg2("OnEventQuestAdvanced: "
     , " eventCode="       , tostring(eventCode)
     , " journalIndex="    , tostring(journalIndex) 
@@ -2247,6 +2675,19 @@ end
 ------------------------------
 -- EVENT
 function EchoExperience.OnEventQuestComplete(eventCode, questName, level, previousExperience)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnEventQuestCompleteWork(eventCode, questName, level, previousExperience)
+      end
+    )
+  else
+    EchoExperience.OnEventQuestCompleteWork(eventCode, questName, level, previousExperience)
+  end
+end
+  
+--
+function EchoExperience.OnEventQuestCompleteWork(eventCode, questName, level, previousExperience)
   EchoExperience.debugMsg2("OnEventQuestComplete: "
     , " questName=" , tostring(questName)
     , " level="     , tostring(level) 
@@ -2288,6 +2729,19 @@ end
 ------------------------------
 -- EVENT_LORE_BOOK_LEARNED (number eventCode, number categoryIndex, number collectionIndex, number bookIndex, number guildIndex, boolean isMaxRank)
 function EchoExperience.OnLoreBookLearned(eventCode, categoryIndex, collectionIndex, bookIndex, guildIndex, isMaxRank)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnLoreBookLearnedWork(eventCode, categoryIndex, collectionIndex, bookIndex, guildIndex, isMaxRank)
+      end
+    )
+  else
+    EchoExperience.OnLoreBookLearnedWork(eventCode, categoryIndex, collectionIndex, bookIndex, guildIndex, isMaxRank)
+  end
+end
+  
+--
+function EchoExperience.OnLoreBookLearnedWork(eventCode, categoryIndex, collectionIndex, bookIndex, guildIndex, isMaxRank)
   EchoExperience.debugMsg("OnLoreBookLearned: "
     , " eventCode="       , tostring(eventCode) 
     , " categoryIndex="   , tostring(categoryIndex) 
@@ -2330,6 +2784,19 @@ end
 ------------------------------
 --   EVENT_LORE_BOOK_LEARNED_SKILL_EXPERIENCE (number eventCode, number categoryIndex, number collectionIndex, number bookIndex, number guildIndex, SkillType skillType, number skillIndex, number rank, number previousXP, number currentXP)
 function EchoExperience.OnLoreBookSkillExp(eventCode, categoryIndex, collectionIndex, bookIndex, guildIndex, skillType, skillIndex, rank, previousXP, currentXP)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnLoreBookSkillExpWork(eventCode, categoryIndex, collectionIndex, bookIndex, guildIndex, skillType, skillIndex, rank, previousXP, currentXP)
+      end
+    )
+  else
+    EchoExperience.OnLoreBookSkillExpWork(eventCode, categoryIndex, collectionIndex, bookIndex, guildIndex, skillType, skillIndex, rank, previousXP, currentXP)
+  end
+end
+  
+--
+function EchoExperience.OnLoreBookSkillExpWork(eventCode, categoryIndex, collectionIndex, bookIndex, guildIndex, skillType, skillIndex, rank, previousXP, currentXP)
   --TESTING
   EchoExperience.debugMsg2("OnLoreBookSkillExp: "
     , " eventCode="       , tostring(eventCode) 
@@ -2366,6 +2833,19 @@ end
 ------------------------------
 -- EVENT_LORE_COLLECTION_COMPLETED (number eventCode, number categoryIndex, number collectionIndex, number guildIndex, boolean isMaxRank)
 function EchoExperience.OnLoreBookCollectionComplete(eventCode, categoryIndex, collectionIndex, guildIndex, isMaxRank)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnLoreBookCollectionCompleteWork(eventCode, categoryIndex, collectionIndex, guildIndex, isMaxRank)
+      end
+    )
+  else
+    EchoExperience.OnLoreBookCollectionCompleteWork(eventCode, categoryIndex, collectionIndex, guildIndex, isMaxRank)
+  end
+end
+  
+--
+function EchoExperience.OnLoreBookCollectionCompleteWork(eventCode, categoryIndex, collectionIndex, guildIndex, isMaxRank)
   --TESTING
   EchoExperience.debugMsg2("OnLoreBookCollectionComplete: "
     , " eventCode="       , tostring(eventCode) 
@@ -2390,18 +2870,46 @@ end
 ------------------------------
 -- EVENT_LORE_COLLECTION_COMPLETED_SKILL_EXPERIENCE (number eventCode, number categoryIndex, number collectionIndex, number guildIndex, SkillType skillType, number skillIndex, number rank, number previousXP, number currentXP)
 function EchoExperience.OnLoreBookCollectionCompleteSkillExp(eventCode, categoryIndex, collectionIndex, guildIndex, skillType, skillIndex, rank, previousXP, currentXP)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnLoreBookCollectionCompleteSkillExpWork(eventCode, categoryIndex, collectionIndex, guildIndex, skillType, skillIndex, rank, previousXP, currentXP)
+      end
+    )
+  else
+    EchoExperience.OnLoreBookCollectionCompleteSkillExpWork(eventCode, categoryIndex, collectionIndex, guildIndex, skillType, skillIndex, rank, previousXP, currentXP)
+  end
+end
+  
+--  
+function EchoExperience.OnLoreBookCollectionCompleteSkillExpWork(eventCode, categoryIndex, collectionIndex, guildIndex, skillType, skillIndex, rank, previousXP, currentXP)
   --TESTING
-  EchoExperience.outputMsg("OnLoreBookCollectionCompleteSkillExp: "
-    .." eventCode="     .. tostring(eventCode) 
-    .." categoryIndex="     .. tostring(categoryIndex) 
-    .." collectionIndex="     .. tostring(collectionIndex) 
-    .." guildIndex="     .. tostring(guildIndex) 
-    .." skillType="     .. tostring(skillType) 
-    .." skillIndex="     .. tostring(skillIndex) 
-    .." rank="     .. tostring(rank) 
-    .." previousXP="     .. tostring(previousXP) 
-    .." currentXP="     .. tostring(currentXP)
+  EchoExperience.debugMsg2("OnLoreBookCollectionCompleteSkillExp: "
+    , " eventCode="       , tostring(eventCode) 
+    , " categoryIndex="   , tostring(categoryIndex) 
+    , " collectionIndex=" , tostring(collectionIndex) 
+    , " guildIndex="      , tostring(guildIndex) 
+    , " skillType="       , tostring(skillType) 
+    , " skillIndex="      , tostring(skillIndex) 
+    , " rank="            , tostring(rank) 
+    , " previousXP="      , tostring(previousXP) 
+    , " currentXP="       , tostring(currentXP)
   )
+  
+  local diffexp = currentXP - previousXP
+  local nameC, numCollectionsC, categoryIdC = GetLoreCategoryInfo(categoryIndex)
+  --Returns: string name, string description, number numKnownBooks, number totalBooks, boolean hidden, textureName gamepadIcon, number collectionId
+  local nameCI, descriptionCI, numKnownBooksCI, totalBooksCI, hiddenCI, gamepadIconCI, collectionIdCI = GetLoreCollectionInfo(categoryIndex, collectionIndex)
+
+  --local sourceText1 = EchoExperience.lookupExpSourceText(reason)
+  --local sourceText2 = ""
+  --local sentence = GetString(SI_ECHOEXP_XP_GAIN_SOURCE)
+  diffexp = ZO_CommaDelimitNumber(diffexp)
+  
+  ----"Earned Exp <<3>> for finished the collection [<<2>>] in category [<<1>>]!!.",
+  local sentence = GetString(SI_ECHOEXP_LOREBOOK_CATCOMPLETE_EXP)
+  local strL     = zo_strformat(sentence, nameC, nameCI, diffexp)
+  EchoExperience.outputToChanel(strL, msgTypeQuest)
 end
 
 ------------------------------
@@ -2430,12 +2938,28 @@ function EchoExperience.OnAchievementUpdated(eventCode, achievementID)
   EchoExperience.debugMsg2("OnAchievementUpdated: "
     , " eventCode="     , tostring(eventCode) 
     , " achievementID=" , tostring(achievementID) 
-  )   
+  )
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    --Does this help at all??? is this how it is supposed to work? no idea!
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnAchievementUpdatedWork(achievementID)
+      end
+    )
+  else
+    EchoExperience.OnAchievementUpdatedWork(achievementID)
+  end
+end
+
+------------------------------
+-- HELPER for
+-- EVENT EVENT_ACHIEVEMENT_UPDATED (number eventCode, number id)
+function EchoExperience.OnAchievementUpdatedWork(achievementID)
+  --d("OnAchievementUpdatedWork: achievementID="..achievementID)
   local name        = GetAchievementInfo(achievementID)
   local link        = GetAchievementLink(achievementID, LINK_STYLE_BRACKETS)
   local numCriteria = GetAchievementNumCriteria(achievementID)
-  local progress    = GetAchievementProgress(achievementID)
-  
+  --local progress    = GetAchievementProgress(achievementID)
   --
   local maxCnt = numCriteria
   if(EchoExperience.savedVariables.showachievementmax<10) then    
@@ -2446,11 +2970,10 @@ function EchoExperience.OnAchievementUpdated(eventCode, achievementID)
      -- EchoExperience.debugMsg("OnAchievementUpdated: Going to skip criteria over:" .. tostring(maxCnt) )
     end
   end
-
   --
   local cnt = 0
   local successCnt = 0
-  for i = 1, numCriteria do
+  for i = 1, maxCnt do
       local description, numCompleted, numRequired = GetAchievementCriterion(achievementID, i)
       EchoExperience.debugMsg2("OnAchievementUpdated: "
         , " description="  , tostring(description) 
@@ -2458,7 +2981,7 @@ function EchoExperience.OnAchievementUpdated(eventCode, achievementID)
         , " numRequired="  , tostring(numRequired) 
         , " maxCnt="       , tostring(maxCnt) 
         , " cnt="          , tostring(cnt) 
-        , " progress="     , tostring(progress) 
+        --, " progress="     , tostring(progress) 
       )
       if numCompleted == numRequired then
         successCnt = successCnt + 1
@@ -2466,7 +2989,7 @@ function EchoExperience.OnAchievementUpdated(eventCode, achievementID)
       if( numRequired > 1 and numCompleted > 0 ) then
         if( cnt <= maxCnt) then
           local sentence = GetString(SI_ECHOEXP_ACHIEVEMENT_UPDATED)
-          local strL = zo_strformat(sentence, link, achievementID, description, numCompleted, numRequired)
+          local strL     = zo_strformat(sentence, link, achievementID, description, numCompleted, numRequired)
           EchoExperience.outputToChanel(strL, msgTypeQuest)
         end
         cnt = cnt + 1
@@ -2493,6 +3016,19 @@ end
 -- EVENT EVENT_ACHIEVEMENT_AWARDED
 -- (number eventCode, string name, number points, number id, string link)
 function EchoExperience.OnAchievementAwarded(eventCode, name, points, id, link)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnAchievementAwardedWork(eventCode, name, points, id, link)
+      end
+    )
+  else
+    EchoExperience.OnAchievementAwardedWork(eventCode, name, points, id, link)
+  end
+end
+  
+-- 
+function EchoExperience.OnAchievementAwardedWork(eventCode, name, points, id, link)
   EchoExperience.debugMsg2("OnAchievementAwarded: "
     , " name="      , tostring(name)
     , " points="    , tostring(points)
@@ -2755,6 +3291,11 @@ end
 --EVENT_DISCOVERY_EXPERIENCE (
 --EVENT_LEVEL_UPDATE
 function EchoExperience.SetupExpGainsEvents(reportMe)
+  --
+  if( EchoExperience.savedVariables.showExpT1 ==false and EchoExperience.savedVariables.showExpT2 == false) then
+    EchoExperience.savedVariables.showExp = false
+  end
+  --
 	if (EchoExperience.savedVariables.showExp) then
 		if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_EXPGAINS_SHOW),msgTypeSYS) end
     local eventNamespace
@@ -2795,7 +3336,7 @@ function EchoExperience.SetupExpGainsEvents(reportMe)
     eventNamespace = EchoExperience.name.."EVENT_RIDING_SKILL_IMPROVEMENT"
     EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_RIDING_SKILL_IMPROVEMENT, EchoExperience.OnRidingSkillUpdate)
 	else -- showExp
-		if(reportMe) then EchoExperience.outputToChanel(SI_ECHOEXP_EXPGAINS_HIDE,msgTypeSYS) end
+    if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_EXPGAINS_HIDE),msgTypeSYS) end    
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."SkillXPGain",	    EVENT_SKILL_XP_UPDATE)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."SkillLineAdded",	  EVENT_SKILL_LINE_ADDED)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."ChampionUnlocked", EVENT_CHAMPION_SYSTEM_UNLOCKED)
@@ -3038,7 +3579,7 @@ end
 -- SETUP
 function EchoExperience.SetupEventsQuest(reportMe)
   if( EchoExperience.savedVariables.showquests ) then
-    --if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_XXX_HIDE),msgTypeSYS) end
+    if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_QUEST_SHOW),msgTypeSYS) end
     local eventNamespace = nil
     eventNamespace = EchoExperience.name.."EVENT_QUEST_ADDED"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_QUEST_ADDED, EchoExperience.OnEventQuestAdded)
@@ -3052,7 +3593,7 @@ function EchoExperience.SetupEventsQuest(reportMe)
       EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_QUEST_ADVANCED, EchoExperience.OnEventQuestAdvanced)
     end
   else
-    --if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_XXX_HIDE),msgTypeSYS) end
+    if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_QUEST_HIDE),msgTypeSYS) end
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_ADDED",	EVENT_QUEST_ADDED)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_COMPLETE",	EVENT_QUEST_COMPLETE)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_REMOVED",	EVENT_QUEST_REMOVED)    
@@ -3348,14 +3889,16 @@ function EchoExperience.SetupView()
   EchoExperience.view.iamDisplayName   = GetDisplayName() --GetUnitDisplayName("player")
   EchoExperience.view.iamCharacterName = GetUnitName("player")
   --
+  EchoExperience.view.asyncName = EchoExperience.pre_view.asyncName
+  EchoExperience.view.async     = EchoExperience.pre_view.async
+  EchoExperience.view.task      = EchoExperience.pre_view.task
+  --
 end
 
 ------------------------------
 -- SETUP  setup event handling
 function EchoExperience.DelayedStart()
   --d("EchoExp DelayedStart Called")
-  --
-  --EchoExperience.SetupView()
   --
   EchoExperience.CheckVerifyDefaults()
 
@@ -3403,6 +3946,7 @@ function EchoExperience.Activated(e)
     --    EchoExperience.name .. GetString(SI_NEW_ADDON_MESSAGE)) -- Top-right alert.
     --d("EchoExperience.view.iamDisplayName = " .. tostring(EchoExperience.view.iamDisplayName) )
     EchoExperience.SetupView()
+    --
     EchoExperience.SetupDefaultColors()
     EchoExperience.InitializeGui()
     zo_callLater(EchoExperience.DelayedStart, 2000)
@@ -3411,27 +3955,38 @@ end
 ------------------------------
 -- SETUP
 function EchoExperience.OnAddOnLoaded(event, addonName)
-    if addonName ~= EchoExperience.name then return end
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name, EVENT_ADD_ON_LOADED)
+  if addonName ~= EchoExperience.name then return end
+  EVENT_MANAGER:UnregisterForEvent(EchoExperience.name, EVENT_ADD_ON_LOADED)
 
-    EchoExperience.savedVariables   = ZO_SavedVars:New("EchoExperienceSavedVariables", 1, nil, defaultSettings)
-    EchoExperience.accountVariables = ZO_SavedVars:NewAccountWide("EchoExperienceAccountSavedVariables", 1, nil, nil)
+  EchoExperience.savedVariables   = ZO_SavedVars:New("EchoExperienceSavedVariables", 1, nil, defaultSettings)
+  EchoExperience.accountVariables = ZO_SavedVars:NewAccountWide("EchoExperienceAccountSavedVariables", 1, nil, nil)
 
-    -- Settings menu in Settings.lua.
-    --EchoExperience:RestoreSettings()
-    EchoExperience.LoadSettings() --Setup Addon Settings MENU
-    
-    --[[
-    if( EchoExperience.savedVariables.sversion == "0.0.6" ) then
-      --EchoExperience:UpgradeSettings()
-    end
-    --sversion = EchoExperience.version
-    ]]
+  --
+  EchoExperience.pre_view = {}
+  EchoExperience.pre_view.asyncName = "EchoExperienceAchieveAsync"
+  EchoExperience.pre_view.async = LibAsync
+  if(EchoExperience.pre_view.async ~= nil) then
+    EchoExperience.pre_view.task = EchoExperience.pre_view.async:Create(EchoExperience.pre_view.asyncName)
+    --d("EE Created ASYNC Task")
+  else
+    --d("EE Created NOT !!! ASYNC Task")
+  end
 
-    -- Slash commands must be lowercase. Set to nil to disable.
-    SLASH_COMMANDS["/echoexp"] = EchoExperience.SlashCommandHandler
-    -- Reset autocomplete cache to update it.
-    --SLASH_COMMAND_AUTO_COMPLETE:InvalidateSlashCommandCache()
+  -- Settings menu in Settings.lua.
+  --EchoExperience:RestoreSettings()
+  EchoExperience.LoadSettings() --Setup Addon Settings MENU
+
+  --[[
+  if( EchoExperience.savedVariables.sversion == "0.0.6" ) then
+    --EchoExperience:UpgradeSettings()
+  end
+  --sversion = EchoExperience.version
+  ]]
+
+  -- Slash commands must be lowercase. Set to nil to disable.
+  SLASH_COMMANDS["/echoexp"] = EchoExperience.SlashCommandHandler
+  -- Reset autocomplete cache to update it.
+  --SLASH_COMMAND_AUTO_COMPLETE:InvalidateSlashCommandCache()
 end
 
 -- SETUP When player is ready, after everything has been loaded.

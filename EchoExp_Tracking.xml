@@ -44,9 +44,9 @@
                       <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"Start Session") </OnMouseEnter>
                       <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
                       <OnMouseUp>EchoExperience:TrackingSessionStart(self)</OnMouseUp>
-                      <Textures	normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
-                              pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
-                              mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds"
+                      <Textures	normal="esoui\art\buttons\accept_up.dds"
+                              pressed="esoui\art\buttons\accept_down.dds"
+                              mouseOver="esoui\art\buttons\accept_over.dds"
                       />
                 </Button>
                 <Button name="$(parent)_Button_Session_Pause">
@@ -55,9 +55,9 @@
                       <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"Pause Session") </OnMouseEnter>
                       <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
                       <OnMouseUp>EchoExperience:TrackingSessionPause(self)</OnMouseUp>
-                      <Textures	normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
-                              pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
-                              mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds"
+                      <Textures	normal="/esoui/art/buttons/swatchframe_up.dds"
+                              pressed="/esoui/art/buttons/swatchframe_down.dds"
+                              mouseOver="/esoui/art/buttons/swatchframe_over.dds"
                       />
                 </Button>
                 <Button name="$(parent)_Button_Session_New">
@@ -66,9 +66,9 @@
                       <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"New Session") </OnMouseEnter>
                       <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
                       <OnMouseUp>EchoExperience:TrackingSessionNew(self)</OnMouseUp>
-                      <Textures	normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
-                              pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
-                              mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds"
+                      <Textures	normal="/esoui/art/buttons/plus_up.dds"
+                              pressed="/esoui/art/buttons/plus_down.dds"
+                              mouseOver="/esoui/art/buttons/plus_over.dds"
                       />
                 </Button>
                 <Button name="$(parent)_Button_Session_Clear">
@@ -77,9 +77,9 @@
                       <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"Clear Session") </OnMouseEnter>
                       <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
                       <OnMouseUp>EchoExperience:TrackingSessionClear(self)</OnMouseUp>
-                      <Textures	normal="EsoUI/art/inventory/inventory_tabicon_all_up.dds"
-                              pressed="EsoUI/art/inventory/inventory_tabicon_all_down.dds"
-                              mouseOver="EsoUI/art/inventory/inventory_tabicon_all_over.dds"
+                      <Textures	normal="esoui\art\buttons\cancelbutton_normal.dds"
+                              pressed="esoui\art\buttons\cancelbutton_mousedown.dds"
+                              mouseOver="esoui\art\buttons\cancel_over.dds"
                       />
                 </Button>
               </Controls>
@@ -87,7 +87,7 @@
             
 <!-- hide buttons _Minimize _Maximize _GoldButton _BagButton-->
 
-						<Control name="$(parent)_Dropdown_Main" inherits="ZO_ScrollableComboBox" mouseEnabled="true" tier="HIGH" verticalAlignment="CENTER" horizontalAlignment="LEFT" >
+						<Control name="$(parent)_Dropdown_Main" inherits="ZO_ScrollableComboBox" mouseEnabled="true" tier="HIGH" verticalAlignment="CENTER" horizontalAlignment="LEFT" hidden="true">
 							<Dimensions y="30" minX="100"/>
               <Anchor point="TOPLEFT" relativeTo="$(parent)_Dropdown_Sessions" relativePoint="TOPLEFT" offsetX="0" offsetY="35" />
 <!-- 	
@@ -182,30 +182,17 @@
               <OnMouseUp>EchoExperience:CloseUI(self)</OnMouseUp>
             </Button>
             
-            
-<!--_Dropdown_Quality-->
-<!-- Filter Group -->
-<!-- Filter Group -->
-<!-- SubFilter Groups -->
-<!-- End SubFilter Group 1 - Weapons -->
-<!-- SubFilter Group 2 - Armor/Clothing -->
-<!-- End SubFilter Group 2 - Armor/Clothing -->
-<!-- SubFilter Group 3 - Jewelry -->
-<!-- SubFilter Group 4 - Consumables -->
-<!-- End SubFilter Group 4 - Consumables -->
-<!-- SubFilter Group 5 - Crafting Materials -->
-<!-- End SubFilter Group 5 - Crafting Materials -->
-<!-- SubFilter Group 6 - Furniture -->
-<!-- End SubFilter Group 6 - Furniture -->
-<!-- SubFilter Group 7 - Miscellaneous -->
-<!-- End SubFilter Group 7 - Miscellaneous -->
-<!-- End SubFilter Groups -->
-<!-- _SortBar _Subfilter_Dropdown -->
+            <Label name="$(parent)_LabelStatus1" mouseEnabled="false" font="ZoFontBookPaper" text="Session: 0" >
+              <Anchor point="TOPLEFT" relativeTo="$(parent)_Dropdown_Main" relativePoint="BOTTOMLEFT" offsetX="10" offsetY="0" />
+						</Label>
+            <Label name="$(parent)_LabelStatus2" mouseEnabled="false" font="ZoFontBookPaper" text="Tracker not started" >
+							<Anchor point="LEFT" relativeTo="$(parent)_LabelStatus1" relativePoint="RIGHT" offsetX="10" offsetY="0"/>
+						</Label>
 
 						<Control name="$(parent)_SortBar" mouseEnabled="true">
 							<Dimensions y="30"/>
-							<Anchor point="TOPLEFT"  relativeTo="$(parent)_Dropdown_Main" relativePoint="BOTTOMLEFT" offsetX="-20"  offsetY="2" />
-							<Anchor point="TOPRIGHT" relativeTo="$(parent)_Dropdown_Main" relativePoint="BOTTOMRIGHT" offsetX="0"  offsetY="2" />
+							<Anchor point="TOPLEFT"  relativeTo="$(parent)_Dropdown_Main" relativePoint="BOTTOMLEFT" offsetX="-20"  offsetY="20" />
+							<Anchor point="TOPRIGHT" relativeTo="$(parent)_Dropdown_Main" relativePoint="BOTTOMRIGHT" offsetX="0"  offsetY="20" />
 							<Controls>
 								<Control name="$(parent)_Sort" verticalAlignment="LEFT">
 									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" />

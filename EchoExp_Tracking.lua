@@ -204,9 +204,21 @@ function EchoExperience:UpdateScrollDataLinesData()
   else
     EchoExperience.debugMsg2("Tracking: trackingCurrentSession: '", EchoExperience.view.trackingCurrentSession, "'" )
     elemListP = EchoExperience.view.tracking --EchoExperience.savedVariables.tracking 
-    if(EchoExperience.view.trackingCurrentSession~=nil and EchoExperience.view.trackingCurrentSession ~= "0") then
+    if(EchoExperience.view.trackingCurrentSession~=nil and 
+        (EchoExperience.view.trackingCurrentSession ~= "0" or EchoExperience.view.trackingCurrentSession ~= 0) 
+    ) then
+      EchoExperience.debugMsg2("Tracking: set to session: ", EchoExperience.view.trackingCurrentSession)
       elemListP = EchoExperience.view.trackingsessions[EchoExperience.view.trackingCurrentSession]
       EchoExperience.debugMsg2("Tracking: trackingCurrentSession: using session data ")
+    end
+    local thisSession =  EchoExperience:GetTrackingSession(EchoExperience.view.trackingCurrentSession)
+    elemListP = thisSession
+    if(elemListP==nil) then
+       EchoExperience.debugMsg2("Tracking: Sessions: dbkey2= table all NIL!")
+    else
+      for dbkey2, dbItem2 in pairs(elemListP) do
+        EchoExperience.debugMsg2("Tracking: Sessions: dbkey2='", dbkey2, "'" )
+      end
     end
   end
   if(EchoExperience.view.filterType=="Items")then
@@ -333,43 +345,32 @@ function EchoExperience:UpdateScrollDataLinesData()
         totItems = totItems + (itemCount or 0)
       end
     end
-  end--sort or all
-  
-  --
-  if(EchoExperience.view.trackingSelection=="Lifetime2") then
-    for itemKey, dbItem in pairs(EchoExperience.savedVariables.lifetime.items) do
-      --k, v.quantity, v.itemlink
-      tempDataLine = {
-        link = dbItem.itemLink,
-        qty  = dbItem.quantity,
-        icon = GetItemLinkIcon(dbItem.itemLink),
-        name = itemKey,
-        --quality = dbItem.itemQuality,
-        --filter = itemTypeFilter,
-        --worn = bWorn
-      }
-      --d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
-      table.insert(dataLines, tempDataLine)
-      totItems = totItems + (itemCount or 0)
+    --
+    if(elemListP.achievements==nil) then
+      -- 
+    else
+      for itemKey, dbItem in pairs(elemListP.achievements) do
+        --k, v.quantity, v.itemlink
+        --[name] = { earned(date), link, id, points
+        tempDataLine = {
+          link = dbItem.link,
+          qty  = dbItem.points,
+          --icon = GetItemLinkIcon(dbItem.itemLink),
+          name = itemKey,
+          --quality = dbItem.itemQuality,
+          --filter = itemTypeFilter,
+          --worn = bWorn
+        }
+        if(dbItem.link~=nil)then
+          --d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
+        end
+        table.insert(dataLines, tempDataLine)
+        totItems = totItems + (itemCount or 0)
+      end
     end
-  elseif(EchoExperience.view.trackingSelection=="Session2") then
-    for itemKey, dbItem in pairs(EchoExperience.view.tracking.items) do
-      --k, v.quantity, v.itemlink
-      tempDataLine = {
-        link = dbItem.itemLink,
-        qty  = dbItem.quantity,
-        icon = GetItemLinkIcon(dbItem.itemLink),
-        name = itemKey,
-        --quality = dbItem.itemQuality,
-        --filter = itemTypeFilter,
-        --worn = bWorn
-      }
-      --d("iName="..iName.." icon: " .. GetItemLinkIcon(dbItem.itemLink) )
-      table.insert(dataLines, tempDataLine)
-      totItems = totItems + (itemCount or 0)
-    end 
-  end
-  
+    
+  end--sort or all
+  --  
 	EOL_GUI_ListHolder.dataLines = dataLines
 	EchoExperience:sort(EOL_GUI_ListHolder.dataLines)
 	EOL_GUI_ListHolder.dataOffset = 0

@@ -636,7 +636,7 @@ function EchoExperience.SlashCommandHandler(text)
 	elseif #options == 1 and options[1] == "showtrackinggui" then
 		EchoExperience:ToggleTrackingFrame()
 	elseif #options == 1 and options[1] == "showtracking" then
-		EchoExperience.ShowTracking(EchoExperience.view.tracking)
+		EchoExperience.ShowTracking(EchoExperience:GetCurrentTrackingSession())
   elseif #options == 1 and options[1] == "showlifetime" then
     EchoExperience.ShowLifetimeTracking()
     EchoExperience.CheckVerifyDefaults()
@@ -724,13 +724,30 @@ end
 
 ------------------------------
 -- UI
+function EchoExperience:RefreshTrackingUIData()
+  --
+  EOL_GUI_Header_Dropdown_Sessions.comboBox = EOL_GUI_Header_Dropdown_Sessions.comboBox or ZO_ComboBox_ObjectFromContainer(EOL_GUI_Header_Dropdown_Sessions)
+   local comboBoxS = EOL_GUI_Header_Dropdown_Sessions.comboBox
+  --local entry = comboBoxS:CreateItemEntry(0, OnItemSelect1S)
+  --comboBoxS:AddItem(entry)
+  if(EchoExperience.view.trackingsessions==nil) then
+  else
+    for k, v in pairs(EchoExperience.view.trackingsessions) do
+      local entry = comboBoxS:CreateItemEntry(k, OnItemSelect1S)
+      comboBoxS:AddItem(entry)
+    end
+  end
+  comboBoxS:SetSelectedItem(k)
+  --comboBoxS:SelectFirstItem()
+  --
+  --
+end
+
+------------------------------
+-- UI
 function EchoExperience:ToggleTrackingFrame()
 	EOL_GUI:SetHidden(not EOL_GUI:IsControlHidden())
   --EOL_GUI:SetHidden( not EOL_GUI:IsHidden() )
-  --
-  if(EchoExperience.view.tracking==nil) then
-    EchoExperience.view.tracking = {}
-  end
   --
   EEXPTooltip:SetParent(PopupTooltipTopLevel)
   
@@ -745,17 +762,14 @@ function EchoExperience:ToggleTrackingFrame()
 		--EchoExperience:GuiResizeScroll()
 		--EchoExperience:RefreshInventoryScroll()
     PlaySound(SOUNDS.POSITIVE_CLICK)    
-  end
-  local entry = comboBoxS:CreateItemEntry(0, OnItemSelect1S)
-  comboBoxS:AddItem(entry)
-  if(EchoExperience.view.trackingsessions==nil) then
-  else
-    for k, v in pairs(EchoExperience.view.trackingsessions) do
-      local entry = comboBoxS:CreateItemEntry(k, OnItemSelect1S)
-      comboBoxS:AddItem(entry)
+    EOL_GUI_Header_LabelStatus1:SetText("Session: ".. choiceText)--EchoExperience.view.trackingsessionid
+    if(EchoExperience.savedVariables.sessiontracking)then
+      EOL_GUI_Header_LabelStatus2:SetText("Tracker IS started")
+    else
+      EOL_GUI_Header_LabelStatus2:SetText("Tracker NOT started")
     end
   end
-  comboBoxS:SelectFirstItem()
+  EchoExperience:RefreshTrackingUIData()
 
   --
   EOL_GUI_Header_Dropdown_Main.comboBox = EOL_GUI_Header_Dropdown_Main.comboBox or ZO_ComboBox_ObjectFromContainer(EOL_GUI_Header_Dropdown_Main)
@@ -780,6 +794,7 @@ function EchoExperience:ToggleTrackingFrame()
     local entry = comboBox:CreateItemEntry(validChoices[i], OnItemSelect1)
     comboBox:AddItem(entry)
   end
+  --comboBox:SetHidden(true)
   --
 	if not EOL_GUI:IsControlHidden() then
 		--SetGameCameraUIMode(true)
@@ -797,9 +812,12 @@ end
 ------------------------------
 -- TRACKING
 function EchoExperience:TrackingSessionStart()
-		EchoExperience.savedVariables.sessiontracking = true
-    EchoExperience.outputMsg("SessionTracking Started")
-    EchoExperience:SetupLootGainsEvents(true)
+  EchoExperience.savedVariables.sessiontracking = true
+  EchoExperience:GetCurrentTrackingSession()
+  EchoExperience.outputMsg("SessionTracking Started")
+  EchoExperience:SetupLootGainsEvents(true)
+  EOL_GUI_Header_LabelStatus1:SetText("Session: ".. EchoExperience.view.trackingsessionid)
+  EOL_GUI_Header_LabelStatus2:SetText("Tracker IS started")
 end
 
 ------------------------------
@@ -808,6 +826,7 @@ function EchoExperience:TrackingSessionPause()
 		EchoExperience.savedVariables.sessiontracking = false
     EchoExperience.outputMsg("SessionTracking Paused")
     EchoExperience:SetupLootGainsEvents(true)
+    EOL_GUI_Header_LabelStatus2:SetText("Tracker NOT started")
 end
 
 ------------------------------
@@ -850,9 +869,10 @@ function EchoExperience:TrackingSessionShowSessionReport()
   end
   --TODO
 end
+
 ------------------------------
 -- TRACKING
-function EchoExperience:TrackingSessionNew()
+function EchoExperience:TrackingSessionNew(newid)
   --TODO
   if(EchoExperience.view.trackingsessions==nil) then
     EchoExperience.view.trackingsessions = {}
@@ -860,32 +880,85 @@ function EchoExperience:TrackingSessionNew()
   if(EchoExperience.view.trackingsessionid==nil) then
     EchoExperience.view.trackingsessionid = 1
   end
-  if(EchoExperience.view.tracking~=nil) then
-    local oldsession = {}
-    oldsession.items    = EchoExperience.view.tracking.items
-    oldsession.currency = EchoExperience.view.tracking.currency
-    oldsession.mob      = EchoExperience.view.tracking.mobs
-    oldsession.bg       = EchoExperience.view.tracking.bg
-    oldsession.id       = EchoExperience.view.trackingsessionid
-    EchoExperience.view.trackingsessions[oldsession.id] = oldsession
-    --table.insert( inser t(EchoExperience.view.trackingsessions,oldsession)
+  if(newid==nil) then
+    newid = EchoExperience.view.trackingsessionid
   end
-  EchoExperience.view.trackingsessionid = EchoExperience.view.trackingsessionid+1
-  EchoExperience.TrackingSessionClear()
+  EchoExperience.view.trackingsessionid = newid
+  local newsession = {}
+    newsession.items    = {}
+    newsession.currency = {}
+    newsession.mobs     = {}
+    newsession.mob      = {} --??
+    newsession.bg       = {}
+    newsession.id       = EchoExperience.view.trackingsessionid
+  EchoExperience.view.trackingsessions[EchoExperience.view.trackingsessionid] = newsession
 end
-  
+
 ------------------------------
 -- TRACKING
 function EchoExperience:TrackingSessionClear()
-  EchoExperience.view.tracking = {}
-  EchoExperience.view.tracking.items = {}
-  EchoExperience.view.tracking.currency = {}
-  EchoExperience.view.tracking.mobs = {}
-  EchoExperience.view.tracking.bg = {}
+  local currentSession = EchoExperience:GetCurrentTrackingSession()
+  currentSession = {}
+  EchoExperience:TrackingBlankEntry(currentSession)
 end
 
+------------------------------
+-- TRACKING
+function EchoExperience:TrackingBlankEntry(currentSession, currentId)
+  currentSession.items = {}
+  currentSession.currency = {}
+  currentSession.mobs = {}
+  currentSession.bg = {}
+  currentSession.achievements = {}
+  if(currentId~=nil) then
+    currentSession.id = currentId
+  end
+  return currentSession
+end
 
+------------------------------
+-- TRACKING
+function EchoExperience:GetCurrentTrackingSession()
+  if(EchoExperience.view.trackingCurrentSession==nil) then
+    EchoExperience.view.trackingCurrentSession = 1
+  end
+  if(EchoExperience.view.trackingsessionid==nil) then
+    EchoExperience.view.trackingsessionid = 1
+  end
+  if(EchoExperience.view.trackingsessions==nil) then
+    EchoExperience.view.trackingsessions = {}
+  end
+  
+  local currentSession = EchoExperience.view.trackingsessions[EchoExperience.view.trackingsessionid]
+  if(currentSession==nil) then
+    if(EchoExperience.view.trackingsessionid==nil) then
+      EchoExperience.view.trackingsessionid = 1
+    end
+    EchoExperience.debugMsg2("GetCurrentTrackingSession: "
+      , " trackingsessionid="..tostring(EchoExperience.view.trackingsessionid)
+      , " trackingCurrentSession="..tostring(EchoExperience.view.trackingCurrentSession)
+    )
+    currentSession = {}
+    EchoExperience:TrackingBlankEntry(currentSession, EchoExperience.view.trackingsessionid )
+    --currentSession.id = EchoExperience.view.trackingsessionid
+    EchoExperience.view.trackingsessions[EchoExperience.view.trackingsessionid] = currentSession
+  end
+  return currentSession
+end
 
+------------------------------
+-- TRACKING
+function EchoExperience:GetTrackingSession(trackingid)
+  local currentSession = EchoExperience.view.trackingsessions[trackingid]
+  if(currentSession==nil) then
+    if(EchoExperience.view.trackingsessionid==nil) then
+      EchoExperience.view.trackingsessionid = 0
+    end
+    currentSession = {}
+    EchoExperience:TrackingBlankEntry(currentSession, EchoExperience.view.trackingsessionid)
+  end
+  return currentSession
+end
 ------------------------------
 -- EVENT
 --ONEvent  shows skill exp gains
@@ -1670,15 +1743,12 @@ function EchoExperience.OnBankedCurrencyWork(eventCode, currency, newValue, oldV
   end
   --Tracking
   if(EchoExperience.savedVariables.sessiontracking) then
-    if(EchoExperience.view.tracking.currency==nil)then
-      EchoExperience.view.tracking.currency = {}
+    local currentSession = EchoExperience:GetCurrentTrackingSession()
+    if(currentSession.currency[currency]==nil) then
+      currentSession.currency[currency]          = {}
+      currentSession.currency[currency].quantity = 0
     end
-    if(EchoExperience.view.tracking.currency[currency]==nil)then
-      EchoExperience.view.tracking.currency[currency]          = {}
-      EchoExperience.view.tracking.currency[currency].quantity = 0
-    end
-    EchoExperience.view.tracking.currency[currency].quantity=EchoExperience.view.tracking.currency[currency].quantity+ (oldValue - newValue)
-
+    currentSession.currency[currency].quantity = currentSession.currency[currency].quantity + (oldValue - newValue)
     --
   end--Tracking
 end
@@ -1729,33 +1799,30 @@ function EchoExperience.OnCurrencyUpdateWork(eventCode, currencyType, currencyLo
   -- ----------
   --Tracking
   if(EchoExperience.savedVariables.sessiontracking) then
-    --local icon2 = GetCurrencyKeyboardIcon(currencyType) 
-    if(EchoExperience.view.tracking.currency==nil)then
-      EchoExperience.view.tracking.currency = {}
-    end
-    if(EchoExperience.view.tracking.currency[currencyType]==nil)then
-      EchoExperience.view.tracking.currency[currencyType] = {}
-      EchoExperience.view.tracking.currency[currencyType].quantity = 0
-      EchoExperience.view.tracking.currency[currencyType].plus     = 0
-      EchoExperience.view.tracking.currency[currencyType].minus    = 0
+    local currentSession = EchoExperience:GetCurrentTrackingSession()
+    if(currentSession.currency[currencyType]==nil) then
+      currentSession.currency[currencyType] = {}
+      currentSession.currency[currencyType].quantity = 0
+      currentSession.currency[currencyType].plus     = 0
+      currentSession.currency[currencyType].minus    = 0
     end
     --Something odd going on that i need to do this..?
-    if(EchoExperience.view.tracking.currency[currencyType].plus==nil) then
-      EchoExperience.view.tracking.currency[currencyType].plus = 0
+    if(currentSession.currency[currencyType].plus==nil) then
+      currentSession.currency[currencyType].plus = 0
     end
-    if(EchoExperience.view.tracking.currency[currencyType].minus==nil) then
-      EchoExperience.view.tracking.currency[currencyType].minus = 0
+    if(currentSession.currency[currencyType].minus==nil) then
+      currentSession.currency[currencyType].minus = 0
     end
-    if(EchoExperience.view.tracking.currency[currencyType].quantity==nil) then
-      EchoExperience.view.tracking.currency[currencyType].quantity = 0
+    if(currentSession.currency[currencyType].quantity==nil) then
+      currentSession.currency[currencyType].quantity = 0
+    end
+    currentSession.currency[currencyType].quantity = currentSession.currency[currencyType].quantity+ (newAmount - oldAmount)
+    if( qualifier == 2 ) then
+      currentSession.currency[currencyType].plus = currentSession.currency[currencyType].plus+ (newAmount - oldAmount)
+    else
+      currentSession.currency[currencyType].minus = currentSession.currency[currencyType].minus+ (newAmount - oldAmount)
     end
     --
-    EchoExperience.view.tracking.currency[currencyType].quantity=EchoExperience.view.tracking.currency[currencyType].quantity+ (newAmount - oldAmount)
-    if( qualifier == 2 ) then
-      EchoExperience.view.tracking.currency[currencyType].plus=EchoExperience.view.tracking.currency[currencyType].plus+ (newAmount - oldAmount)
-    else
-      EchoExperience.view.tracking.currency[currencyType].minus=EchoExperience.view.tracking.currency[currencyType].minus+ (newAmount - oldAmount)
-    end
   end--Tracking
   -- ----------
   if( IsBankOpen() or IsGuildBankOpen() ) then
@@ -2077,17 +2144,16 @@ function EchoExperience.OnInventorySingleSlotUpdateWork(eventCode, bagId, slotId
     end
     --Tracking
     if(EchoExperience.savedVariables.sessiontracking) then
-      if(EchoExperience.view.tracking.items==nil)then
-        EchoExperience.view.tracking.items = {}
+      local currentSession = EchoExperience:GetCurrentTrackingSession()
+      if(currentSession.items[itemName]==nil)then
+        currentSession.items[itemName] = {}
+        currentSession.items[itemName].quantity=0
       end
-      if(EchoExperience.view.tracking.items[itemName]==nil)then
-        EchoExperience.view.tracking.items[itemName] = {}
-        EchoExperience.view.tracking.items[itemName].quantity=0
-      end
-      EchoExperience.view.tracking.items[itemName].quantity=EchoExperience.view.tracking.items[itemName].quantity+ (stackCountChange)
+      currentSession.items[itemName].quantity = currentSession.items[itemName].quantity+ (stackCountChange)
       --if(itemLink==nil) then itemLink = itemName
-      EchoExperience.view.tracking.items[itemName].itemlink = itemLink
-      EchoExperience.view.tracking.items[itemName].icon     = icon
+      currentSession.items[itemName].itemlink = itemLink
+      currentSession.items[itemName].icon     = icon
+      --
     end--Tracking
   end
   --
@@ -2140,13 +2206,7 @@ function EchoExperience.OnLootReceivedWork(eventCode,receivedBy,itemName,quantit
 	end
   --[[Tracking
   if(EchoExperience.savedVariables.XXXtracking) then
-    local itemNameR = GetItemLinkName(itemLink) 
-    if(EchoExperience.view.tracking.items[itemNameR]==nil)then
-      EchoExperience.view.tracking.items[itemNameR] = {}
-      EchoExperience.view.tracking.items[itemNameR].quantity=0
-    end
-EchoExperience.view.tracking.items[itemNameR].quantity=EchoExperience.view.tracking.items[itemNameR].quantity+1
-  end--Tracking
+
   --]]
   
   local icon      = GetItemLinkIcon(itemName)
@@ -2453,15 +2513,15 @@ function EchoExperience.OnCombatSomethingDiedWork(eventCode, result, isError, ab
   end
   --Tracking
   if(EchoExperience.savedVariables.sessiontracking) then
-    if(EchoExperience.view.tracking.mobs==nil)then
-      EchoExperience.view.tracking.mobs = {}
-    end
-    if(EchoExperience.view.tracking.mobs[targetName]==nil)then
-      EchoExperience.view.tracking.mobs[targetName] = {}
-      EchoExperience.view.tracking.mobs[targetName].quantity=0
+    --
+    local currentSession = EchoExperience:GetCurrentTrackingSession()
+    if(currentSession.mobs[targetName]==nil)then
+      currentSession.mobs[targetName] = {}
+      currentSession.mobs[targetName].quantity=0
     end    
-    EchoExperience.view.tracking.mobs[targetName].quantity=EchoExperience.view.tracking.mobs[targetName].quantity+ 1
-    EchoExperience.view.tracking.mobs[targetName].targetType=targetType
+    currentSession.mobs[targetName].quantity   = currentSession.mobs[targetName].quantity+ 1
+    currentSession.mobs[targetName].targetType = targetType
+    --
   end--Tracking
   --TODO localize etc  
   
@@ -3044,19 +3104,14 @@ function EchoExperience.OnAchievementAwardedWork(eventCode, name, points, id, li
   if(EchoTracking~=nil and EchoExperience.savedVariables.lifetimetracking )then
     EchoTracking.saveAchievement(name, points, id, link, GetTimeStamp() )
   end
-  if(EchoExperience.view.tracking==nil) then
-    EchoExperience.view.tracking = {}
-  end
   --Tracking
   if(EchoExperience.savedVariables.sessiontracking) then
-    if(EchoExperience.view.tracking.achievements==nil) then
-      EchoExperience.view.tracking.achievements = {}
-    end
-    EchoExperience.view.tracking.achievements[name] = {}
-    EchoExperience.view.tracking.achievements[name].earned = GetTimeStamp() -- id64
-    EchoExperience.view.tracking.achievements[name].link   = link
-    EchoExperience.view.tracking.achievements[name].id     = id
-    EchoExperience.view.tracking.achievements[name].points = points
+    local currentSession = EchoExperience:GetCurrentTrackingSession()
+    currentSession.achievements[name] = {}
+    currentSession.achievements[name].earned = GetTimeStamp() -- id64
+    currentSession.achievements[name].link   = link
+    currentSession.achievements[name].id     = id
+    currentSession.achievements[name].points = points
   end
 end
 
@@ -3810,12 +3865,6 @@ function EchoExperience.CheckVerifyDefaults()
   EchoExperience.savedVariables.rgba = nil
   EchoExperience.savedVariables.rgba2 = nil
   
-  --
-  if(EchoExperience.view.tracking==nil)then
-    EchoExperience.view.tracking = {}
-    madeChange = true
-  end 
-  
   if( EchoExperience.savedVariables.skilltracking == nil ) then
     EchoExperience.savedVariables.skilltracking = {}
     madeChange = true
@@ -3850,7 +3899,7 @@ function EchoExperience.CheckVerifyDefaults()
   EchoExperience.savedVariables.lifetime = nil
   
   -- Tracking data init
-  EchoExperience.view.trackingsessions = {}
+  --EchoExperience.view.trackingsessions = {}
   --
   if(madeChange) then
     zo_callLater(EchoExperience.RefreshTabs, 12000)
@@ -3911,6 +3960,13 @@ function EchoExperience.DelayedStart()
   end
   if(EchoExperience.savedVariables.immersive==nil)then
     EchoExperience.savedVariables.immersive = false
+  end
+  --Tracking data init
+  if(EchoExperience.view.trackingsessions==nil) then
+    EchoExperience:TrackingSessionNew()
+  end
+  if(EchoExperience.view.trackingsessionid==nil) then
+    EchoExperience.view.trackingsessionid = 1
   end
 
   EchoExperience:UpgradeSettings()

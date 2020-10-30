@@ -1,7 +1,7 @@
 <GuiXml>
 	<Controls>
   
-		<TopLevelControl name="EOL_GUI" clampedToScreen="true" mouseEnabled="true" movable="true" moveable="true" hidden="true" resizeHandleSize="10">
+		<TopLevelControl name="EOL_GUI" clampedToScreen="true" mouseEnabled="true" movable="true" moveable="true" hidden="true" resizeHandleSize="10" >
 			<DimensionConstraints minX="410" minY="300" maxY="1400"/>
 			<Anchor point="TOPRIGHT" relativeTo="GUI_ROOT" relativePoint="TOPRIGHT" offsetX="-250" offsetY="400" />
       <OnMoveStop>EchoExperience:SaveFramePosition("onMoveStop")</OnMoveStop>
@@ -10,34 +10,40 @@
 
 			<Controls>
 				<Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" > <AnchorFill/> </Backdrop>
-
-				<Control name="$(parent)_Header" hidden="false" resizeToFitDescendents="false" >
+        
+<!--  HEADER -->
+				<Control name="$(parent)_Header" hidden="false" resizeToFitDescendents="true" >
 					<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="10" offsetX="10"/>
 					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-10" offsetY="10" />
-
 					<Controls>
-<!-- Lock/Unlock buttons -->
-<!-- end of Lock/Unlock buttons -->
-<!-- Dock/Undock buttons -->
-<!-- end of Dock/Undock buttons -->
 
 						<Label name="$(parent)_Label" mouseEnabled="false" font="ZoFontBookPaper" text="-EchoExp Tracking-" >
 							<Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" offsetX="0" offsetY="0"/>
 						</Label>
             
+            <Button name="$(parent)_BtnClose" verticalAlignment="CENTER" horizontalAlignment="CENTER" mouseEnabled="true">
+              <Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-10" offsetY="0" />
+              <Dimensions x="40" y="40" />
+              <Textures normal="EsoUI/art/buttons/decline_up.dds"
+                    pressed="EsoUI/art/buttons/decline_down.dds"
+                    mouseOver="EsoUI/art/buttons/decline_over.dds"
+              />
+              <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"Close") </OnMouseEnter>
+              <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
+              <OnMouseUp>EchoExperience:CloseUI(self)</OnMouseUp>
+            </Button>
+          
             <Control name="$(parent)_Dropdown_Sessions" inherits="ZO_ScrollableComboBox" mouseEnabled="true" tier="HIGH" verticalAlignment="CENTER" horizontalAlignment="LEFT" >
 							<Dimensions y="30" minX="100"/>
-              <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="20" offsetY="30" />
-<!-- 	
-							<OnMouseEnter>EchoExperience:GuiShowTooltip(self, "Select inventory to view")</OnMouseEnter>
-							<OnMouseExit>EchoExperience:GuiHideTooltip(self)</OnMouseExit>
- -->
+              <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="20" offsetY="35" />
 						</Control>
  
+ <!--  start/pause sessions -->
 						<Control name="$(parent)_Filter1" mouseEnabled="true" resizeToFitDescendents="true" verticalAlignment="TOP" horizontalAlignment="CENTER" >
 							<Dimensions y="30" />
               <Anchor point="TOPLEFT" relativeTo="$(parent)_Dropdown_Sessions" relativePoint="TOPRIGHT" offsetX="10" offsetY="0" />
 							<Controls>
+                <Backdrop name="$(parent)_bg" inherits="ZO_ThinBackdrop" centerColor="591141" > <AnchorFill /> </Backdrop>
                 <Button name="$(parent)_Button_Session_Start">
                       <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
                       <Dimensions x="40" y="40" />
@@ -84,22 +90,28 @@
                 </Button>
               </Controls>
             </Control>
-            
-<!-- hide buttons _Minimize _Maximize _GoldButton _BagButton-->
+<!--  HEADER -->
 
+<!--  Text -->
+            <Label name="$(parent)_LabelStatus1" mouseEnabled="false" font="ZoFontBookPaper" text="Session: 0" >
+              <Anchor point="TOPLEFT" relativeTo="$(parent)_Dropdown_Sessions" relativePoint="BOTTOMLEFT" offsetX="10" offsetY="12" />
+						</Label>
+            <Label name="$(parent)_LabelStatus2" mouseEnabled="false" font="ZoFontBookPaper" text="Tracker not started" >
+							<Anchor point="LEFT" relativeTo="$(parent)_LabelStatus1" relativePoint="RIGHT" offsetX="10" offsetY="0"/>
+						</Label>
+
+<!--  DROPDOWN -->
 						<Control name="$(parent)_Dropdown_Main" inherits="ZO_ScrollableComboBox" mouseEnabled="true" tier="HIGH" verticalAlignment="CENTER" horizontalAlignment="LEFT" hidden="true">
 							<Dimensions y="30" minX="100"/>
-              <Anchor point="TOPLEFT" relativeTo="$(parent)_Dropdown_Sessions" relativePoint="TOPLEFT" offsetX="0" offsetY="35" />
-<!-- 	
-							<OnMouseEnter>EchoExperience:GuiShowTooltip(self, "Select inventory to view")</OnMouseEnter>
-							<OnMouseExit>EchoExperience:GuiHideTooltip(self)</OnMouseExit>
- -->
+              <Anchor point="TOPLEFT" relativeTo="$(parent)_LabelStatus1" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="5" />
 						</Control>
-            
+
+<!--  filters -->
 						<Control name="$(parent)_Filter" mouseEnabled="true" resizeToFitDescendents="true" verticalAlignment="TOP" horizontalAlignment="CENTER" >
 							<Dimensions y="30" />
               <Anchor point="TOPLEFT" relativeTo="$(parent)_Dropdown_Main" relativePoint="TOPRIGHT" offsetX="10" offsetY="0" />
 							<Controls>
+                <Backdrop name="$(parent)_bg" inherits="ZO_ThinBackdrop" centerColor="591141" > <AnchorFill /> </Backdrop>
 								<Button name="$(parent)_Button0">
 									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
 									<Dimensions x="40" y="40" />
@@ -166,29 +178,9 @@
 													mouseOver="esoui\art\inventory\inventory_currencytab_accountwide_over.dds"
 									/>
 								</Button>
-                
               </Controls>
             </Control>
-            
-            <Button name="$(parent)_BtnClose" verticalAlignment="CENTER" horizontalAlignment="CENTER" mouseEnabled="true">
-              <Anchor point="TOPLEFT" relativeTo="$(parent)_Filter" relativePoint="TOPRIGHT" offsetX="10" offsetY="0" />
-              <Dimensions x="40" y="40" />
-              <Textures normal="EsoUI/art/buttons/decline_up.dds"
-                    pressed="EsoUI/art/buttons/decline_down.dds"
-                    mouseOver="EsoUI/art/buttons/decline_over.dds"
-              />
-              <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"Close") </OnMouseEnter>
-              <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
-              <OnMouseUp>EchoExperience:CloseUI(self)</OnMouseUp>
-            </Button>
-            
-            <Label name="$(parent)_LabelStatus1" mouseEnabled="false" font="ZoFontBookPaper" text="Session: 0" >
-              <Anchor point="TOPLEFT" relativeTo="$(parent)_Dropdown_Main" relativePoint="BOTTOMLEFT" offsetX="10" offsetY="0" />
-						</Label>
-            <Label name="$(parent)_LabelStatus2" mouseEnabled="false" font="ZoFontBookPaper" text="Tracker not started" >
-							<Anchor point="LEFT" relativeTo="$(parent)_LabelStatus1" relativePoint="RIGHT" offsetX="10" offsetY="0"/>
-						</Label>
-
+          
 						<Control name="$(parent)_SortBar" mouseEnabled="true">
 							<Dimensions y="30"/>
 							<Anchor point="TOPLEFT"  relativeTo="$(parent)_Dropdown_Main" relativePoint="BOTTOMLEFT" offsetX="-20"  offsetY="20" />
@@ -230,11 +222,12 @@
 
 				<Control name="$(parent)_ListHolder" mouseEnabled="true" resizeToFitDescendents="false">
 					<DimensionConstraints  minY="52"/>
-					<Anchor point="TOPLEFT" relativeTo="$(parent)_Header_SortBar" relativePoint="BOTTOMLEFT" offsetX="10" offsetY="0"/>
-					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-35" offsetY="-60"/>
+					<Anchor point="TOPLEFT" relativeTo="$(parent)_Header_SortBar" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0"/>
+					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-35" offsetY="-10"/>
 					<OnMouseWheel>EchoExperience:GuiOnScroll(self, delta)</OnMouseWheel>
 
 					<Controls>
+            <Backdrop name="$(parent)_bg" inherits="ZO_ThinBackdrop" centerColor="591141" ></Backdrop>
 						<Slider name="$(parent)_Slider" mouseEnabled="true" step="1" inherits="ZO_VerticalScrollbarBase">
 							<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="16" offsetY="14"/>
 							<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="23" offsetY="-14"/>

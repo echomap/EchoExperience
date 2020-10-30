@@ -357,6 +357,8 @@ local localization_strings = {
   --
   SI_ECHOEXP_GUILD_SELFLEFT   = "You left the guild <<1>>.",
   SI_ECHOEXP_GUILD_SELFJOIN   = "You joined the guild <<1>>.",
+  
+  SI_ECHOEXP_LITANY_SCANFOUND = "Scan added <<1>> to the litany DONE list",
 }
 ------------------------------
 -- 

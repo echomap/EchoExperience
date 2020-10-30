@@ -4,8 +4,8 @@
 -- 
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.40",                   -- A nuisance to match to the Manifest.
-    versionnumeric  = 40,                         -- A nuisance to match to the Manifest.
+    version         = "0.0.41",                   -- A nuisance to match to the Manifest.
+    versionnumeric  =  41,                        -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -24,25 +24,22 @@ EchoExperience = {
     LitanyOfBlood = {
       version = 1,
       list = {
-        ["Cimalire"] = { done=false, ZoneName="Skywatch",  },
-        ["Dirdelas"] = { done=false, ZoneName="Elden Root",  },
-        ["Calareth"] = { done=false, ZoneName="Marbruk",  },
-        ["Sihada"]   = { done=false, ZoneName="Vulkwasten",  },
-        ["Dablir"]   = { done=false, ZoneName="Rawl'Kha",  },
-        ["Dinor Girano"]  = { done=false, ZoneName="Davon's Watch",  },
-        ["Cindiri Malas"] = { done=false, ZoneName="Mournhold",  },
-        ["Gideelar"] = { done=false, ZoneName="Stormhold",  },
-        ["Hakida"] = { done=false, ZoneName="Windhelm",  },
-        ["Eldfyr"] = { done=false, ZoneName="Riften",  },
-        ["Cesarel Hedier"] = { done=false, ZoneName="Dagerfall",  },
-        ["Alix Edette"] = { done=false, ZoneName="Wayrest",  },
-        ["Bulag"] = { done=false, ZoneName="Shornhelm",  },
-        ["Ebrayd"] = { done=false, ZoneName="Sentinel",  },
-        ["Berea"] = { done=false, ZoneName="Evermore",  },
-        
-        --["Eilam"] = { done=false, ZoneName="Sentinel",  },
-        --["Juwan"] = { done=false, ZoneName="Sentinel",  },
-        },
+        ["Cimalire"] = { done=false, ZoneName="Skywatch",   SubZoneName2="Auridon",      tooltip="", id=1 },
+        ["Dirdelas"] = { done=false, ZoneName="Elden Root", SubZoneName2="Grahtwood",    tooltip="", id=2  },
+        ["Calareth"] = { done=false, ZoneName="Marbruk",    SubZoneName2="Greenshade",       tooltip="",id=3  },
+        ["Sihada"]   = { done=false, ZoneName="Vulkwasten", SubZoneName2="Malabal Tor",    tooltip="",id=4 },
+        ["Dablir"]   = { done=false, ZoneName="Rawl'Kha",   SubZoneName2="Reaper's March",      tooltip="", id=5  },
+        ["Dinor Girano"]  = { done=false, ZoneName="Davon's Watch", SubZoneName2="Stonefalls",  tooltip="",id=6  },
+        ["Cindiri Malas"] = { done=false, ZoneName="Mournhold", SubZoneName2="Deshaan", tooltip="", id=7  },
+        ["Gideelar"] = { done=false, ZoneName="Stormhold",  SubZoneName2="Shadowfen",     tooltip="",id=8  },
+        ["Hakida"] = { done=false, ZoneName="Windhelm",     SubZoneName2="Eastmarch",      tooltip="",id=9  },
+        ["Eldfyr"] = { done=false, ZoneName="Riften",       SubZoneName2="The Rift",        tooltip="Found fishing on the western docks, walking around the artisans hall, praying at the stones east of Fighters Guild, or inside the Fighters Guild.", id=10  },
+        ["Cesarel Hedier"] = { done=false, ZoneName="Dagerfall", SubZoneName2="Glenumbra",tooltip="",id=11  },
+        ["Alix Edette"] = { done=false, ZoneName="Wayrest Docks", SubZoneName2="Stormhaven",    tooltip="Found wandering the docks by the Dock Warehouse", id=12 },
+        ["Bolaag"] = { done=false, ZoneName="Shornhelm",     SubZoneName2="Rivenspire",     tooltip="",id=13  },
+        ["Ebrayd"] = { done=false, ZoneName="Sentinel",     SubZoneName2="Alik'r Desert",      tooltip="Found near the crafting stations",id=14 },
+        ["Berea"] = { done=false, ZoneName="Evermore",      SubZoneName2="Bangkorai",      tooltip="Found walking between Evermore Wayshrine graveyard, the Stalls, and the road to Tordrak's Eldritch Emporium.",id=15  },
+      },
      }
 }
 local msgTypeSYS     = 1
@@ -713,11 +710,17 @@ function EchoExperience:ToggleLitanyFrame()
   EOL_GUI_Litany:SetHidden(not EOL_GUI_Litany:IsControlHidden())
   EEXPLitanyTooltip:SetParent(PopupTooltipTopLevel)
   --
+  if(LibShifterBox==nil) then
+    EchoExperience.outputMsg("LItany Gui needs the lib LibShifterBox to function.")
+    return
+  end
+  
   --
  	if not EOL_GUI_Litany:IsControlHidden() then
 		--SetGameCameraUIMode(true)
-		EchoExperience:Litany_GuiResizeScroll()
-		EchoExperience:Litany_RefreshInventoryScroll()
+    EchoExperience:Litany_SetupUI()
+		--EchoExperience:Litany_GuiResizeScroll()
+		--EchoExperience:Litany_RefreshInventoryScroll()
 	end
 	EchoExperience:SaveFrameInfo("ToggleLitanyFrame")
 end
@@ -3184,7 +3187,7 @@ function EchoExperience.OnLitanyOfBlood(targetNameL, targetUnitId)
     , " elemLBSubzoneName='", tostring(elemLBSubzoneName), "'"
   )
   local subzoneNamePL = zo_strformat("<<1>>",  GetPlayerActiveSubzoneName() )
-  local zoneNamePL    =  zo_strformat("<<1>>", GetPlayerActiveZoneName() )
+  local zoneNamePL    = zo_strformat("<<1>>", GetPlayerActiveZoneName() )
    EchoExperience.debugMsg2("LitanyOfBlood1: "
     , " zoneNamePL='"      , tostring(zoneNamePL) , "'"
   )
@@ -3223,7 +3226,13 @@ function EchoExperience.OnLitanyOfBlood(targetNameL, targetUnitId)
   if(lbMatch) then
     local sentence = GetString(SI_ECHOEXP_KILL_LB1)
     EchoExperience.outputMsg(sentence)
-    EchoExperience.savedVariables.LitanyOfBloodDone[targetName] = GetTimeStamp()
+    EchoExperience.savedVariables.LitanyOfBloodDone[targetName] = {}
+    EchoExperience.savedVariables.LitanyOfBloodDone[targetName].time = GetTimeStamp()
+    EchoExperience.savedVariables.LitanyOfBloodDone[targetName].id   = targetData.id
+    EchoExperience.savedVariables.LitanyOfBloodDone[targetName].zonename     = targetData.ZoneName
+    EchoExperience.savedVariables.LitanyOfBloodDone[targetName].subzonename  = targetData.SubZoneName
+    EchoExperience.savedVariables.LitanyOfBloodDone[targetName].subzonename2 = targetData.SubZoneName2
+    EchoExperience.savedVariables.LitanyOfBloodDone[targetName].tooltip      = targetData.tooltip
   else
     local sentence = GetString(SI_ECHOEXP_KILL_LB0)
     EchoExperience.outputMsg(sentence)
@@ -3769,7 +3778,7 @@ function EchoExperience.InitializeGui()
 	EOL_GUI_ListHolder.rowHeight = 24
 	EOL_GUI_ListHolder:SetDrawLayer(0)
   
-  EOL_GUI_Litany_ListHolder.rowHeight = 24
+  --EOL_GUI_Litany_ListHolder.rowHeight = 24
   EOL_GUI_Litany_ListHolder:SetDrawLayer(0)
   --EchoExperience:SetupLitanyOfBlood()
   --

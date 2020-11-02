@@ -4,8 +4,8 @@
 -- 
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.41",                   -- A nuisance to match to the Manifest.
-    versionnumeric  =  41,                        -- A nuisance to match to the Manifest.
+    version         = "0.0.42",                   -- A nuisance to match to the Manifest.
+    versionnumeric  =  42,                        -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -24,21 +24,21 @@ EchoExperience = {
     LitanyOfBlood = {
       version = 1,
       list = {
-        ["Cimalire"] = { done=false, ZoneName="Skywatch",   SubZoneName2="Auridon",      tooltip="", id=1 },
-        ["Dirdelas"] = { done=false, ZoneName="Elden Root", SubZoneName2="Grahtwood",    tooltip="", id=2  },
-        ["Calareth"] = { done=false, ZoneName="Marbruk",    SubZoneName2="Greenshade",       tooltip="",id=3  },
-        ["Sihada"]   = { done=false, ZoneName="Vulkwasten", SubZoneName2="Malabal Tor",    tooltip="",id=4 },
-        ["Dablir"]   = { done=false, ZoneName="Rawl'Kha",   SubZoneName2="Reaper's March",      tooltip="", id=5  },
-        ["Dinor Girano"]  = { done=false, ZoneName="Davon's Watch", SubZoneName2="Stonefalls",  tooltip="",id=6  },
-        ["Cindiri Malas"] = { done=false, ZoneName="Mournhold", SubZoneName2="Deshaan", tooltip="", id=7  },
-        ["Gideelar"] = { done=false, ZoneName="Stormhold",  SubZoneName2="Shadowfen",     tooltip="",id=8  },
-        ["Hakida"] = { done=false, ZoneName="Windhelm",     SubZoneName2="Eastmarch",      tooltip="",id=9  },
+        ["Cimalire"] = { done=false, ZoneName="Skywatch",   SubZoneName2="Auridon",      tooltip="She has two paths, one from the Mage's guild or out of Ingamircil's house .. look it up.", id=1 },
+        ["Dirdelas"] = { done=false, ZoneName="Elden Root", SubZoneName2="Grahtwood",    tooltip="Found wandering between the Outside Inn and the Tree's Defense shop near the Elden Root wayshrine, as well as fishing near the stables", id=2  },
+        ["Calareth"] = { done=false, ZoneName="Marbruk",    SubZoneName2="Greenshade",       tooltip="Found in or walking between in the Merchant's Plaza and Fighters Guild or found inside the Fighters Guild. She can occasionally follow another patrol path, which takes her from the wayshrine to the cemetery northeast of the furnishing merchants",id=3  },
+        ["Sihada"]   = { done=false, ZoneName="Vulkwasten", SubZoneName2="Malabal Tor",    tooltip="Found in the center of the town. She wanders around the center of town.",id=4 },
+        ["Dablir"]   = { done=false, ZoneName="Rawl'Kha",   SubZoneName2="Reaper's March",      tooltip="Found wandering the marketplace in Rawl'kha.", id=5  },
+        ["Dinor Girano"]  = { done=false, ZoneName="Davon's Watch", SubZoneName2="Stonefalls",  tooltip="TODO",id=6  },
+        ["Cindiri Malas"] = { done=false, ZoneName="Mournhold", SubZoneName2="Deshaan",     tooltip="Found patrolling the west side of the Mournhold bank all the way to the bridge out of town", id=7  },
+        ["Gideelar"] = { done=false, ZoneName="Stormhold",  SubZoneName2="Shadowfen",       tooltip="Found in several places around the city",id=8  },
+        ["Hakida"] = { done=false, ZoneName="Windhelm",     SubZoneName2="Eastmarch",       tooltip="Found walking around the Mages Guild or a circuit of the Konunleikar festivities,",id=9  },
         ["Eldfyr"] = { done=false, ZoneName="Riften",       SubZoneName2="The Rift",        tooltip="Found fishing on the western docks, walking around the artisans hall, praying at the stones east of Fighters Guild, or inside the Fighters Guild.", id=10  },
         ["Cesarel Hedier"] = { done=false, ZoneName="Dagerfall", SubZoneName2="Glenumbra",tooltip="",id=11  },
         ["Alix Edette"] = { done=false, ZoneName="Wayrest Docks", SubZoneName2="Stormhaven",    tooltip="Found wandering the docks by the Dock Warehouse", id=12 },
-        ["Bolaag"] = { done=false, ZoneName="Shornhelm",     SubZoneName2="Rivenspire",     tooltip="",id=13  },
-        ["Ebrayd"] = { done=false, ZoneName="Sentinel",     SubZoneName2="Alik'r Desert",      tooltip="Found near the crafting stations",id=14 },
-        ["Berea"] = { done=false, ZoneName="Evermore",      SubZoneName2="Bangkorai",      tooltip="Found walking between Evermore Wayshrine graveyard, the Stalls, and the road to Tordrak's Eldritch Emporium.",id=15  },
+        ["Bolaag"] = { done=false, ZoneName="Shornhelm",     SubZoneName2="Rivenspire",     tooltip="TODO",id=13  },
+        ["Ebrayd"] = { done=false, ZoneName="Sentinel",     SubZoneName2="Alik'r Desert",   tooltip="Found near the crafting stations",id=14 },
+        ["Berea"] = { done=false, ZoneName="Evermore",      SubZoneName2="Bangkorai",       tooltip="Found walking between Evermore Wayshrine graveyard, the Stalls, and the road to Tordrak's Eldritch Emporium.",id=15  },
       },
      }
 }
@@ -603,7 +603,7 @@ function EchoExperience.SlashCommandHandler(text)
 		EchoExperience.outputMsg("user commands include:")
     EchoExperience.outputMsg("-- 'outputs' to show in text what will happen ")
     EchoExperience.outputMsg("-- 'mute/unmute': should silence/unsilence EchoExp.")
-    EchoExperience.outputMsg("The tracking module is in beta:")
+    EchoExperience.outputMsg("The tracking module is in alpha:")
     EchoExperience.outputMsg("-- 'showtracking' for text output, 'trackinggui' for GUI output")
     EchoExperience.outputMsg("-- 'startsession', 'pausesession', 'deletesession', 'newsession', 'sessionsreport' " )
     EchoExperience.outputMsg("-- 'showlifetime', 'clearlifetimedata' ")
@@ -733,9 +733,9 @@ function EchoExperience:RefreshTrackingUIData()
    local comboBoxS = EOL_GUI_Header_Dropdown_Sessions.comboBox
   --local entry = comboBoxS:CreateItemEntry(0, OnItemSelect1S)
   --comboBoxS:AddItem(entry)
-  if(EchoExperience.view.trackingsessions==nil) then
+  if(EchoExperience.view.tracking.sessions==nil) then
   else
-    for k, v in pairs(EchoExperience.view.trackingsessions) do
+    for k, v in pairs(EchoExperience.view.tracking.sessions) do
       local entry = comboBoxS:CreateItemEntry(k, OnItemSelect1S)
       comboBoxS:AddItem(entry)
     end
@@ -760,12 +760,12 @@ function EchoExperience:ToggleTrackingFrame()
   comboBoxS:ClearItems()  
   comboBoxS:SetSortsItems(false)
   local function OnItemSelect1S(_, choiceText, choice)
-    EchoExperience.view.trackingCurrentSession = choiceText
+    EchoExperience.view.tracking.currentsessionid = choiceText
     --EchoExperience:UpdateScrollDataLinesData()
 		--EchoExperience:GuiResizeScroll()
 		--EchoExperience:RefreshInventoryScroll()
     PlaySound(SOUNDS.POSITIVE_CLICK)    
-    EOL_GUI_Header_LabelStatus1:SetText("Session: ".. choiceText)--EchoExperience.view.trackingsessionid
+    EOL_GUI_Header_LabelStatus1:SetText("Session: ".. choiceText)
     if(EchoExperience.savedVariables.sessiontracking)then
       EOL_GUI_Header_LabelStatus2:SetText("Tracker IS started")
     else
@@ -783,7 +783,7 @@ function EchoExperience:ToggleTrackingFrame()
     --TODO
     --EchoesOfLore:debugMsg(" choiceText=" .. choiceText .. " choice=" .. tostring(choice) )  
     --EchoesOfLore:clearView()
-    EchoExperience.view.trackingSelection = choiceText
+    EchoExperience.view.tracking.viewsessionid = choiceText
     --EchoesOfLore:showViewTips2(choiceText)
     EchoExperience:UpdateScrollDataLinesData()
 		EchoExperience:GuiResizeScroll()
@@ -819,7 +819,7 @@ function EchoExperience:TrackingSessionStart()
   EchoExperience:GetCurrentTrackingSession()
   EchoExperience.outputMsg("SessionTracking Started")
   EchoExperience:SetupLootGainsEvents(true)
-  EOL_GUI_Header_LabelStatus1:SetText("Session: ".. EchoExperience.view.trackingsessionid)
+  EOL_GUI_Header_LabelStatus1:SetText("Session: ".. EchoExperience.view.tracking.currentsessionid)
   EOL_GUI_Header_LabelStatus2:SetText("Tracker IS started")
 end
 
@@ -836,10 +836,10 @@ end
 -- TRACKING
 function EchoExperience:TrackingSessionDelete(sessionnum)
   --TODO
-  if(EchoExperience.view.trackingsessions==nil) then
+  if(EchoExperience.view.tracking.viewsessionid==nil) then
     return
   end
-  EchoExperience.view.trackingsessions[sessionnum] = nil
+  EchoExperience.view.tracking.sessions[sessionnum] = nil
   --TODO
 end
 
@@ -847,10 +847,10 @@ end
 -- TRACKING
 function EchoExperience:TrackingSessionShow(sessionnum)
   --TODO
-  if(EchoExperience.view.trackingsessions==nil) then
+  if(EchoExperience.view.tracking.sessions==nil) then
     return
   end
-  local oldsession = EchoExperience.view.trackingsessions[sessionnum]
+  local oldsession = EchoExperience.view.tracking.sessions[sessionnum]
   if(oldsession~=nil) then
     EchoExperience.outputMsg("Old session Report for id:" .. tostring(sessionnum) )
     EchoExperience.ShowTracking(oldsession)
@@ -862,11 +862,11 @@ end
 -- TRACKING
 function EchoExperience:TrackingSessionShowSessionReport()
   --TODO
-  if(EchoExperience.view.trackingsessions==nil) then
+  if(EchoExperience.view.tracking.sessions==nil) then
     EchoExperience.outputMsg("There are no saved sessions")
     return
   end
-  for k, v in pairs(EchoExperience.view.trackingsessions) do
+  for k, v in pairs(EchoExperience.view.tracking.sessions) do
      EchoExperience.outputMsg("Saved Sessions:")
      EchoExperience.outputMsg("sessionid: " .. tostring(k) )
   end
@@ -875,26 +875,39 @@ end
 
 ------------------------------
 -- TRACKING
+-- If called with new, makes a new id at the end of the list
+-- If called with an id, and it exists.... TODO
 function EchoExperience:TrackingSessionNew(newid)
-  --TODO
-  if(EchoExperience.view.trackingsessions==nil) then
-    EchoExperience.view.trackingsessions = {}
+  if(EchoExperience.view.tracking==nil) then
+    EchoExperience.view.tracking = {}
   end
-  if(EchoExperience.view.trackingsessionid==nil) then
-    EchoExperience.view.trackingsessionid = 1
+  if(EchoExperience.view.tracking.sessions==nil) then
+    EchoExperience.view.tracking.sessions = {}
+    EchoExperience.view.tracking.sessionidlast = 0
+  end
+  if(EchoExperience.view.tracking.sessionidlast==nil) then
+    EchoExperience.view.tracking.sessionidlast = 0
   end
   if(newid==nil) then
-    newid = EchoExperience.view.trackingsessionid
+    newid = EchoExperience.view.tracking.sessionidlast + 1
   end
-  EchoExperience.view.trackingsessionid = newid
+  --stop last session, move to this one?
+  EchoExperience.view.tracking.currentsessionid = newid
+  EchoExperience.view.tracking.viewsessionid    = newid  
+  EchoExperience.view.tracking.sessionidlast    = newid
+  EchoExperience.debugMsg2("TrackingSessionNew: "
+      , " newid="..tostring(newid)
+    )
+  --
   local newsession = {}
     newsession.items    = {}
     newsession.currency = {}
     newsession.mobs     = {}
     newsession.mob      = {} --??
     newsession.bg       = {}
-    newsession.id       = EchoExperience.view.trackingsessionid
-  EchoExperience.view.trackingsessions[EchoExperience.view.trackingsessionid] = newsession
+    newsession.achievements = {}
+    newsession.id       = EchoExperience.view.tracking.currentsessionid
+  EchoExperience.view.tracking.sessions[EchoExperience.view.tracking.currentsessionid] = newsession
 end
 
 ------------------------------
@@ -922,29 +935,28 @@ end
 ------------------------------
 -- TRACKING
 function EchoExperience:GetCurrentTrackingSession()
-  if(EchoExperience.view.trackingCurrentSession==nil) then
-    EchoExperience.view.trackingCurrentSession = 1
+  if(EchoExperience.view.tracking==nil) then
+    EchoExperience.view.tracking = {}
   end
-  if(EchoExperience.view.trackingsessionid==nil) then
-    EchoExperience.view.trackingsessionid = 1
+  if(EchoExperience.view.tracking.currentsessionid==nil) then
+    EchoExperience.view.tracking.currentsessionid = 1
   end
-  if(EchoExperience.view.trackingsessions==nil) then
-    EchoExperience.view.trackingsessions = {}
+  if(EchoExperience.view.tracking.sessionid==nil) then
+    EchoExperience.view.tracking.sessionid = 1
+  end
+  if(EchoExperience.view.tracking.sessions==nil) then
+    EchoExperience.view.tracking.sessions = {}
   end
   
-  local currentSession = EchoExperience.view.trackingsessions[EchoExperience.view.trackingsessionid]
+  local currentSession = EchoExperience.view.tracking.sessions[EchoExperience.view.tracking.currentsessionid]
   if(currentSession==nil) then
-    if(EchoExperience.view.trackingsessionid==nil) then
-      EchoExperience.view.trackingsessionid = 1
-    end
+    --EchoExperience.view.tracking.sessions[EchoExperience.view.tracking.currentsessionid] = newsession
+    EchoExperience:TrackingSessionNew()
     EchoExperience.debugMsg2("GetCurrentTrackingSession: "
-      , " trackingsessionid="..tostring(EchoExperience.view.trackingsessionid)
-      , " trackingCurrentSession="..tostring(EchoExperience.view.trackingCurrentSession)
+      , " trackingsessionid="..tostring(EchoExperience.view.tracking.viewsessionid)
+      , " trackingCurrentSession="..tostring(EchoExperience.view.tracking.currentsessionid)
     )
-    currentSession = {}
-    EchoExperience:TrackingBlankEntry(currentSession, EchoExperience.view.trackingsessionid )
-    --currentSession.id = EchoExperience.view.trackingsessionid
-    EchoExperience.view.trackingsessions[EchoExperience.view.trackingsessionid] = currentSession
+    currentSession = EchoExperience.view.tracking.sessions[EchoExperience.view.tracking.currentsessionid]
   end
   return currentSession
 end
@@ -952,7 +964,7 @@ end
 ------------------------------
 -- TRACKING
 function EchoExperience:GetTrackingSession(trackingid)
-  local currentSession = EchoExperience.view.trackingsessions[trackingid]
+  local currentSession = EchoExperience.view.tracking.sessions[trackingid]
   if(currentSession==nil) then
     if(EchoExperience.view.trackingsessionid==nil) then
       EchoExperience.view.trackingsessionid = 0
@@ -3782,7 +3794,7 @@ function EchoExperience.InitializeGui()
   EOL_GUI_Litany_ListHolder:SetDrawLayer(0)
   --EchoExperience:SetupLitanyOfBlood()
   --
-  EchoExperience.TrackingSessionClear()
+  EchoExperience:TrackingSessionNew()
   --EchoExperience.debugMsg("Initialized!!!!")
 end
 
@@ -3971,13 +3983,8 @@ function EchoExperience.DelayedStart()
     EchoExperience.savedVariables.immersive = false
   end
   --Tracking data init
-  if(EchoExperience.view.trackingsessions==nil) then
-    EchoExperience:TrackingSessionNew()
-  end
-  if(EchoExperience.view.trackingsessionid==nil) then
-    EchoExperience.view.trackingsessionid = 1
-  end
-
+  EchoExperience:TrackingSessionNew()
+  --
   EchoExperience:UpgradeSettings()
   
 	--Setup Events Related

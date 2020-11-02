@@ -1,7 +1,8 @@
 -- Every variable must start with this addon's unique ID, as each is a global.
 local localization_strings = {
   SI_ECHOEXP_MESSAGE = " is active!",
-  SI_BINDING_NAME_EE_DISPLAY     = "Show EchoExp TrackingGui",
+  SI_BINDING_NAME_EE_DISPLAY1    = "Show EchoExp TrackingGui",
+  SI_BINDING_NAME_EE_DISPLAY2    = "Show EchoExp LitanyGui",
   ------------------------------
   -- 
 	SI_ECHOEXP_EXPGAINS_SHOW   = "EchoExp is showing Experience Gains",

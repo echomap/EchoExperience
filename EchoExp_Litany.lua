@@ -142,7 +142,7 @@ end
 ------------------------------
 -- LitanyUI
 function EchoExperience:Litany_ScanAchievements(btn)
-  EchoExperience.debugMsg("Litany_ScanAchievements: btn="..tostring(btn) .. "idx:"..tostring(idx)  )  
+  EchoExperience.outputMsg("Starting scan of achieves for Litany of Blood")
   for topLevelIndex = 1, GetNumAchievementCategories() do
     local cname, numSubCatgories, numAchievements, earnedPoints, totalPoints, hidesPoints = GetAchievementCategoryInfo(topLevelIndex)
     if("Dark Brotherhood" == cname) then
@@ -188,6 +188,7 @@ function EchoExperience:Litany_ScanAchievements(btn)
     end--darkbrothers
   end--top
   EchoExperience:Litany_SetupUI()
+  EchoExperience.outputMsg("Done scan of achieves for Litany of Blood")
 end
 
 -- @param control object referencing the entry/row that has been highlighted

@@ -71,7 +71,7 @@
                       <Dimensions x="40" y="40" />
                       <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"New Session") </OnMouseEnter>
                       <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
-                      <OnMouseUp>EchoExperience:TrackingSessionNew(self)</OnMouseUp>
+                      <OnMouseUp>EchoExperience.TrackingSessionNew()</OnMouseUp>
                       <Textures	normal="/esoui/art/buttons/plus_up.dds"
                               pressed="/esoui/art/buttons/plus_down.dds"
                               mouseOver="/esoui/art/buttons/plus_over.dds"

@@ -32,11 +32,14 @@ LitanyOfBlood Gui still a mess
 
 
 ## [Testing branch]
-0.0.41
-- session and tracking stuff
-- litanygui stuff
+0.0.42
+- LitanyGUI keybinding
 
 ## EchoExp [Versions]
+0.0.41
+- Greymoor, 10032. Markath, 100033
+- session and tracking stuff
+- litanygui stuff
 0.0.40 -- Check your settings for this release
 - update settings to actually unhook events if exp if set off
 - upper case JOINED/LEFT

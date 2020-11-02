@@ -2,6 +2,18 @@
 --[[ Tracking GUI ]]-- 
 --[[ ------------ ]]--
 
+-- TODO
+--EchoExperience.view.tracking.currentsessionid -- currently recording session ID
+--EchoExperience.view.tracking.viewsessionid    -- currently viewed session ID
+--EchoExperience.view.tracking.sessions
+--EchoExperience.view.tracking.sessionidlast
+---OLD
+--EchoExperience.view.trackingSelection
+--EchoExperience.view.trackingCurrentSession
+--EchoExperience.view.trackingsessions
+--EchoExperience.view.trackingsessionid
+--EchoExperience.view.trackingsessionidlast
+
 ------
 ---GUI
 
@@ -202,16 +214,16 @@ function EchoExperience:UpdateScrollDataLinesData()
   if(EchoExperience.view.trackingSelection=="Lifetime") then
     elemListP = EchoExperience.savedVariables.lifetime
   else
-    EchoExperience.debugMsg2("Tracking: trackingCurrentSession: '", EchoExperience.view.trackingCurrentSession, "'" )
+    EchoExperience.debugMsg2("Tracking: trackingCurrentSession: '", EchoExperience.view.tracking.currentsessionid, "'" )
     elemListP = EchoExperience.view.tracking --EchoExperience.savedVariables.tracking 
-    if(EchoExperience.view.trackingCurrentSession~=nil and 
-        (EchoExperience.view.trackingCurrentSession ~= "0" or EchoExperience.view.trackingCurrentSession ~= 0) 
+    if(EchoExperience.view.tracking.currentsessionid~=nil and 
+        (EchoExperience.view.tracking.currentsessionid ~= "0" or EchoExperience.view.tracking.currentsessionid ~= 0) 
     ) then
-      EchoExperience.debugMsg2("Tracking: set to session: ", EchoExperience.view.trackingCurrentSession)
-      elemListP = EchoExperience.view.trackingsessions[EchoExperience.view.trackingCurrentSession]
+      EchoExperience.debugMsg2("Tracking: set to session: ", EchoExperience.view.tracking.currentsessionid)
+      elemListP = EchoExperience.view.tracking.sessions[EchoExperience.view.tracking.currentsessionid]
       EchoExperience.debugMsg2("Tracking: trackingCurrentSession: using session data ")
     end
-    local thisSession =  EchoExperience:GetTrackingSession(EchoExperience.view.trackingCurrentSession)
+    local thisSession =  EchoExperience:GetTrackingSession(EchoExperience.view.tracking.currentsessionid)
     elemListP = thisSession
     if(elemListP==nil) then
        EchoExperience.debugMsg2("Tracking: Sessions: dbkey2= table all NIL!")

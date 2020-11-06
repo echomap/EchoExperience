@@ -4,8 +4,8 @@
 -- 
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.42",                   -- A nuisance to match to the Manifest.
-    versionnumeric  =  42,                        -- A nuisance to match to the Manifest.
+    version         = "0.0.43",                   -- A nuisance to match to the Manifest.
+    versionnumeric  =  43,                        -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -2118,6 +2118,21 @@ function EchoExperience.OnInventorySingleSlotUpdateWork(eventCode, bagId, slotId
     end
     --withdrawls from the bank have no itemlink, but throw another event with the backpack... caught below
   end
+  
+  --
+  local collectionString = ""
+  local itemId = GetItemLinkItemId(itemLink)
+	local hasSet = GetItemLinkSetInfo(itemLink)	
+	local isCollected = false
+  if(hasSet) then
+    isCollected = IsItemSetCollectionPieceUnlocked(itemId)
+    if(isCollected) then
+      collectionString = ""
+    else
+      collectionString = "-Not Collected-"
+    end
+  end
+  
   --[[
   local icon, stack, sellPrice, meetsUsageRequirement, locked, equipType, itemStyleId, quality = GetItemInfo(bagId, slotId)
   131219 mail? from?
@@ -2144,11 +2159,11 @@ function EchoExperience.OnInventorySingleSlotUpdateWork(eventCode, bagId, slotId
   -- Output
   if(isNewItem) then
     local sentence = GetString("SI_ECHOLOOT_RECEIVE_", qualifier)
-    local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName, totalBagCount )
+    local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName, totalBagCount, collectionString )
     EchoExperience.outputToChanel(strL,msgTypeLOOT)
-  elseif( IsBankOpen() or IsGuildBankOpen() ) then
+  elseif( stackCountChange~=0 and( IsBankOpen() or IsGuildBankOpen()) )then
     local sentence = GetString("SI_ECHOLOOT_BANK_GET_", qualifier)
-    local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName, totalBagCount )
+    local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName, totalBagCount, collectionString )
     EchoExperience.outputToChanel(strL,msgTypeLOOT)
   end
   --New Tracking Module
@@ -2995,9 +3010,58 @@ function EchoExperience.OnLoreBookLibraryInit(eventCode)
   )
 end
 
-----
+------------------------------
+-- EVENT EVENT_ITEM_SET_COLLECTION_UPDATED ( )
+function EchoExperience.OnSetCollectionUpdated(eventCode, itemSetId, slotsJustUnlockedMask)
+  --TESTING
+  EchoExperience.debugMsg2("OnSetCollectionUpdated: "
+    , " eventCode="     .. tostring(eventCode) 
+    , " itemSetId="     .. tostring(itemSetId) 
+    , " itemSetCollectionSlot="     .. tostring(itemSetCollectionSlot) 
+  )
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    --Does this help at all??? is this how it is supposed to work? no idea!
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnSetCollectionUpdatedWork(itemSetId, itemSetCollectionSlot)
+      end
+    )
+  else
+    EchoExperience.OnSetCollectionUpdatedWork(itemSetId, itemSetCollectionSlot)
+  end
+end
 
-
+function EchoExperience.OnSetCollectionUpdatedWork(itemSetId, itemSetCollectionSlot)
+  local catId = GetItemSetCollectionCategoryId(itemSetId)
+  local isname = GetItemSetName(itemSetId)
+  EchoExperience.debugMsg2("OnSetCollectionUpdated: "
+    , " catId="     .. tostring(catId) 
+    , " isname="    .. tostring(isname) 
+  )
+  --
+  local numPieces        = GetNumItemSetCollectionPieces(itemSetId)
+  local numSlotsUnlocked = GetNumItemSetCollectionSlotsUnlocked(itemSetId)  
+  
+  --
+  local itemId = GetItemLinkItemId(itemLink)
+	local hasSet = GetItemLinkSetInfo(itemLink)	
+  local isCollected = IsItemSetCollectionPieceUnlocked(itemId)
+  --TODO get a link to the item!!!set!!!
+  --local pieceId, slot = GetItemSetCollectionPieceInfo(_itemSetId_, _index_)
+  --local itemId           = GetItemLinkItemId(itemLink)
+  --local itemLink2         = GetItemSetCollectionPieceItemLink(itemId, LINK_STYLE_DEFAULT, ITEM_TRAIT_TYPE_NONE)
+  --local isUnlocked = IsItemSetCollectionSlotUnlocked(itemSetId, slot)
+  EchoExperience.debugMsg2("OnSetCollectionUpdated: "
+    , " numPieces="        .. tostring(numPieces) 
+    , " numSlotsUnlocked=" .. tostring(numSlotsUnlocked) 
+    --, " itemId=" .. tostring(itemId) 
+    --, " itemLink2=" .. tostring(itemLink2) 
+  )
+  --
+  local sentence = GetString(SI_ECHOEXP_SETCOLLECTION_UPDATED2)
+  local strL = zo_strformat(sentence, isname, itemSetId, numPieces, numSlotsUnlocked, isname)
+  EchoExperience.outputToChanel(strL, msgTypeLOOT)
+end
 ------------------------------
 -- EVENT EVENT_ACHIEVEMENTS_UPDATED (number eventCode)
 function EchoExperience.OnAchievementsUpdated(eventCode)
@@ -3522,11 +3586,12 @@ function EchoExperience.SetupAchievmentEvents(reportMe)
   if( EchoExperience.savedVariables.showachievements) then
     EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_AWARDED",	EVENT_ACHIEVEMENT_AWARDED, EchoExperience.OnAchievementAwarded)
     EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_LEVEL_UPDATE",		    EVENT_LEVEL_UPDATE,          EchoExperience.OnExperienceLevelUpdate, REGISTER_FILTER_UNIT_TAG , "player" )
+    EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ITEM_SET_COLLECTION_UPDATED",	EVENT_ITEM_SET_COLLECTION_UPDATED, EchoExperience.OnSetCollectionUpdated)
     if(EchoExperience.savedVariables.showachievementdetails) then
       --EchoExperience.debugMsg("Showing achievement details")
       --EVENT_ACHIEVEMENTS_SEARCH_RESULTS_READY (number eventCode)
       EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENTS_UPDATED",	EVENT_ACHIEVEMENTS_UPDATED, EchoExperience.OnAchievementsUpdated)
-      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_UPDATED",	EVENT_ACHIEVEMENT_UPDATED, EchoExperience.OnAchievementUpdated)    
+      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_UPDATED",	EVENT_ACHIEVEMENT_UPDATED, EchoExperience.OnAchievementUpdated)
       --EVENT_PLAYER_TITLES_UPDATE (number eventCode)
       --EVENT_TITLE_UPDATE (number eventCode, string unitTag)
     else
@@ -3541,6 +3606,7 @@ function EchoExperience.SetupAchievmentEvents(reportMe)
     --EchoExperience.debugMsg("Not showing achievement details")
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_AWARDED",	EVENT_ACHIEVEMENT_AWARDED)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LEVEL_UPDATE", EVENT_LEVEL_UPDATE)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ITEM_SET_COLLECTION_UPDATED",	EVENT_ITEM_SET_COLLECTION_UPDATED)
     --EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENTS_SEARCH_RESULTS_READY", EVENT_ACHIEVEMENTS_SEARCH_RESULTS_READY)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENTS_UPDATED", EVENT_ACHIEVEMENTS_UPDATED)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_UPDATED", EVENT_ACHIEVEMENT_UPDATED)

@@ -2,7 +2,7 @@
 	<Controls>
   
 		<TopLevelControl name="EOL_GUI" clampedToScreen="true" mouseEnabled="true" movable="true" moveable="true" hidden="true" resizeHandleSize="10" >
-			<DimensionConstraints minX="410" minY="300" maxY="1400"/>
+			<DimensionConstraints minX="310" minY="300" maxY="1400"/>
 			<Anchor point="TOPRIGHT" relativeTo="GUI_ROOT" relativePoint="TOPRIGHT" offsetX="-250" offsetY="400" />
       <OnMoveStop>EchoExperience:SaveFramePosition("onMoveStop")</OnMoveStop>
 			<OnResizeStart>EchoExperience:onResizeStart()</OnResizeStart>

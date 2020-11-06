@@ -32,10 +32,15 @@ LitanyOfBlood Gui still a mess
 
 
 ## [Testing branch]
-0.0.42
-- LitanyGUI keybinding
+0.0.43
+- Added text when receiving an item that is not-collected
 
 ## EchoExp [Versions]
+0.0.42
+- LitanyGUI keybinding
+- tracking gui fixes
+- Added message to (achievement) listing for Set's collected
+- Bind command was causing things to be 'withdrawn' when they weren't
 0.0.41
 - Greymoor, 10032. Markath, 100033
 - session and tracking stuff

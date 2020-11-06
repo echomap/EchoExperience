@@ -214,6 +214,8 @@ local localization_strings = {
   -- name, points, id, link)
   SI_ECHOEXP_ACHIEVEMENT_AWARDED = "You have earned the achievment [<<4>>] !!!",
   SI_ECHOEXP_LEVEL_GAIN = "*** You feel more powerful! *** You have reached the level [<<1>>] ! ***",
+  --isname, itemSetId, numPieces, numSlotsUnlocked, itemLink
+  SI_ECHOEXP_SETCOLLECTION_UPDATED2 = "You collected a piece in the [<<5>>] set [<<4>>/<<3>>].",
   
   --name, achievementID, description, numCompleted, numRequired
   SI_ECHOEXP_ACHIEVEMENT_UPDATED   = "Achievement <<1>> progressed (<<4>>/<<5>>).",
@@ -326,11 +328,11 @@ local localization_strings = {
 
   --1 icon, 2 itemLink, 3 stackCountChange, 4 traitName )
 	SI_ECHOLOOT_RECEIVE_1 = "You receive [|t14:14:<<1>>|t <<2>>]",
-	SI_ECHOLOOT_RECEIVE_2 = "You receive [|t14:14:<<1>>|t <<2>>] x<<3>>",
-	SI_ECHOLOOT_RECEIVE_3 = "You receive [|t14:14:<<1>>|t <<2>>] (<<4>>)",
-	SI_ECHOLOOT_RECEIVE_4 = "You receive [|t14:14:<<1>>|t <<2>>] x<<3>> (<<4>>)",  
-  SI_ECHOLOOT_RECEIVE_5 = "You receive [|t14:14:<<1>>|t <<2>>]  (Total: <<5>>)",
-	SI_ECHOLOOT_RECEIVE_6 = "You receive [|t14:14:<<1>>|t <<2>>] x<<3>>   (Total: <<5>>)",
+	SI_ECHOLOOT_RECEIVE_2 = "You receive [|t14:14:<<1>>|t <<2>>] x<<3>> <<6>>",
+	SI_ECHOLOOT_RECEIVE_3 = "You receive [|t14:14:<<1>>|t <<2>>] (<<4>>) <<6>>",
+	SI_ECHOLOOT_RECEIVE_4 = "You receive [|t14:14:<<1>>|t <<2>>] x<<3>> (<<4>>) <<6>>",  
+  SI_ECHOLOOT_RECEIVE_5 = "You receive [|t14:14:<<1>>|t <<2>>] <<6>> (Total: <<5>>)",
+	SI_ECHOLOOT_RECEIVE_6 = "You receive [|t14:14:<<1>>|t <<2>>] x<<3>>  <<6>> (Total: <<5>>)",
 
   --
 	SI_ECHOLOOT_LOSE_1    = "You lose |t14:14:<<1>>|t <<2>>",
@@ -340,12 +342,12 @@ local localization_strings = {
   
   --icon, itemLink, stackCountChange
   SI_ECHOLOOT_BANK_DEP   = "You deposit [|t14:14:<<1>>|t <<2>>] x<<3>> ", 
-	SI_ECHOLOOT_BANK_GET_1 = "You withdrawl [|t14:14:<<1>>|t <<2>>]",
-	SI_ECHOLOOT_BANK_GET_2 = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>>",
-	SI_ECHOLOOT_BANK_GET_3 = "You withdrawl [|t14:14:<<1>>|t <<2>>] (<<4>>)",
-	SI_ECHOLOOT_BANK_GET_4 = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>> (<<4>>)",
-  SI_ECHOLOOT_BANK_GET_5 = "You withdrawl [|t14:14:<<1>>|t <<2>>]  (Total: <<5>>)",
-	SI_ECHOLOOT_BANK_GET_6 = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>>   (Total: <<5>>)",
+	SI_ECHOLOOT_BANK_GET_1 = "You withdrawl [|t14:14:<<1>>|t <<2>>] <<6>>",
+	SI_ECHOLOOT_BANK_GET_2 = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>> <<6>>",
+	SI_ECHOLOOT_BANK_GET_3 = "You withdrawl [|t14:14:<<1>>|t <<2>>] (<<4>>) <<6>>",
+	SI_ECHOLOOT_BANK_GET_4 = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>> (<<4>>) <<6>>",
+  SI_ECHOLOOT_BANK_GET_5 = "You withdrawl [|t14:14:<<1>>|t <<2>>] <<6>> (Total: <<5>>)",
+	SI_ECHOLOOT_BANK_GET_6 = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>>  <<6>> (Total: <<5>>)",
 
   --QUEST Output
   SI_ECHOLOOT_QUEST_SHARED_TO_YOU = "The quest [<<1>>] was shared to you.", 

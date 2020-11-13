@@ -2,11 +2,11 @@
 	<Controls>
   
 		<TopLevelControl name="EOL_GUI" clampedToScreen="true" mouseEnabled="true" movable="true" moveable="true" hidden="true" resizeHandleSize="10" >
-			<DimensionConstraints minX="310" minY="300" maxY="1400"/>
-			<Anchor point="TOPRIGHT" relativeTo="GUI_ROOT" relativePoint="TOPRIGHT" offsetX="-250" offsetY="400" />
-      <OnMoveStop>EchoExperience:SaveFramePosition("onMoveStop")</OnMoveStop>
-			<OnResizeStart>EchoExperience:onResizeStart()</OnResizeStart>
-			<OnResizeStop>EchoExperience:onResizeStop()</OnResizeStop>
+			<DimensionConstraints minX="360" minY="300" maxY="1400"/>
+			<Anchor point="TOPRIGHT" relativeTo="GUI_ROOT" relativePoint="TOPRIGHT" offsetX="-200" offsetY="450" />
+      <OnMoveStop>EchoExperience:TrackSaveFramePosition("onMoveStop")</OnMoveStop>
+			<OnResizeStart>EchoExperience:TrackonResizeStart()</OnResizeStart>
+			<OnResizeStop>EchoExperience:TrackonResizeStop()</OnResizeStop>
 
 			<Controls>
 				<Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" > <AnchorFill/> </Backdrop>
@@ -28,9 +28,9 @@
                     pressed="EsoUI/art/buttons/decline_down.dds"
                     mouseOver="EsoUI/art/buttons/decline_over.dds"
               />
-              <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"Close") </OnMouseEnter>
-              <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
-              <OnMouseUp>EchoExperience:CloseUI(self)</OnMouseUp>
+              <OnMouseEnter> EchoExperience:TrackMisc2HeaderTipEnter(self,"Close") </OnMouseEnter>
+              <OnMouseExit>  EchoExperience:TrackMisc2HeaderTipExit(self)  </OnMouseExit>
+              <OnMouseUp>EchoExperience:TrackCloseUI(self)</OnMouseUp>
             </Button>
           
             <Control name="$(parent)_Dropdown_Sessions" inherits="ZO_ScrollableComboBox" mouseEnabled="true" tier="HIGH" verticalAlignment="CENTER" horizontalAlignment="LEFT" >
@@ -47,8 +47,8 @@
                 <Button name="$(parent)_Button_Session_Start">
                       <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
                       <Dimensions x="40" y="40" />
-                      <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"Start Session") </OnMouseEnter>
-                      <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
+                      <OnMouseEnter> EchoExperience:TrackMisc2HeaderTipEnter(self,"Start Session") </OnMouseEnter>
+                      <OnMouseExit>  EchoExperience:TrackMisc2HeaderTipExit(self)  </OnMouseExit>
                       <OnMouseUp>EchoExperience:TrackingSessionStart(self)</OnMouseUp>
                       <Textures	normal="esoui\art\buttons\accept_up.dds"
                               pressed="esoui\art\buttons\accept_down.dds"
@@ -58,8 +58,8 @@
                 <Button name="$(parent)_Button_Session_Pause">
                       <Anchor point="TOPLEFT" relativeTo="$(parent)_Button_Session_Start" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
                       <Dimensions x="40" y="40" />
-                      <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"Pause Session") </OnMouseEnter>
-                      <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
+                      <OnMouseEnter> EchoExperience:TrackMisc2HeaderTipEnter(self,"Pause Session") </OnMouseEnter>
+                      <OnMouseExit>  EchoExperience:TrackMisc2HeaderTipExit(self)  </OnMouseExit>
                       <OnMouseUp>EchoExperience:TrackingSessionPause(self)</OnMouseUp>
                       <Textures	normal="/esoui/art/buttons/swatchframe_up.dds"
                               pressed="/esoui/art/buttons/swatchframe_down.dds"
@@ -69,8 +69,8 @@
                 <Button name="$(parent)_Button_Session_New">
                       <Anchor point="TOPLEFT" relativeTo="$(parent)_Button_Session_Pause" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
                       <Dimensions x="40" y="40" />
-                      <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"New Session") </OnMouseEnter>
-                      <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
+                      <OnMouseEnter> EchoExperience:TrackMisc2HeaderTipEnter(self,"New Session") </OnMouseEnter>
+                      <OnMouseExit>  EchoExperience:TrackMisc2HeaderTipExit(self)  </OnMouseExit>
                       <OnMouseUp>EchoExperience.TrackingSessionNew()</OnMouseUp>
                       <Textures	normal="/esoui/art/buttons/plus_up.dds"
                               pressed="/esoui/art/buttons/plus_down.dds"
@@ -80,8 +80,8 @@
                 <Button name="$(parent)_Button_Session_Clear">
                       <Anchor point="TOPLEFT" relativeTo="$(parent)_Button_Session_New" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
                       <Dimensions x="40" y="40" />
-                      <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"Clear Session") </OnMouseEnter>
-                      <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
+                      <OnMouseEnter> EchoExperience:TrackMisc2HeaderTipEnter(self,"Clear Session") </OnMouseEnter>
+                      <OnMouseExit>  EchoExperience:TrackMisc2HeaderTipExit(self)  </OnMouseExit>
                       <OnMouseUp>EchoExperience:TrackingSessionClear(self)</OnMouseUp>
                       <Textures	normal="esoui\art\buttons\cancelbutton_normal.dds"
                               pressed="esoui\art\buttons\cancelbutton_mousedown.dds"
@@ -115,9 +115,9 @@
 								<Button name="$(parent)_Button0">
 									<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
 									<Dimensions x="40" y="40" />
-                  <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"All") </OnMouseEnter>
-                  <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
-                  <OnMouseUp>EchoExperience:SetGuiFilter(self, button, "All", nil)</OnMouseUp>
+                  <OnMouseEnter> EchoExperience:TrackMisc2HeaderTipEnter(self,"All") </OnMouseEnter>
+                  <OnMouseExit>  EchoExperience:TrackMisc2HeaderTipExit(self)  </OnMouseExit>
+                  <OnMouseUp>EchoExperience:TrackSetGuiFilter(self, button, "All", nil)</OnMouseUp>
                   <!--
 									<OnMouseEnter>EchoExperience:GuiShowFilterTooltip(self, "All Items")</OnMouseEnter>
 									<OnMouseExit>EchoExperience:GuiHideTooltip(self)</OnMouseExit>
@@ -132,9 +132,9 @@
 								<Button name="$(parent)_Button1">
 									<Anchor point="TOPLEFT" relativeTo="$(parent)_Button0" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
 									<Dimensions x="40" y="40" />
-                  <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"Items") </OnMouseEnter>
-                  <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
-                  <OnMouseUp>EchoExperience:SetGuiFilter(self, button, "Items", nil)</OnMouseUp>
+                  <OnMouseEnter> EchoExperience:TrackMisc2HeaderTipEnter(self,"Items") </OnMouseEnter>
+                  <OnMouseExit>  EchoExperience:TrackMisc2HeaderTipExit(self)  </OnMouseExit>
+                  <OnMouseUp>EchoExperience:TrackSetGuiFilter(self, button, "Items", nil)</OnMouseUp>
                   <!--
 									<OnMouseEnter>EchoExperience:GuiShowFilterTooltip(self, "Weapons")</OnMouseEnter>
 									<OnMouseExit>EchoExperience:GuiHideTooltip(self)</OnMouseExit>
@@ -149,9 +149,9 @@
                 <Button name="$(parent)_Button2">
 									<Anchor point="TOPLEFT" relativeTo="$(parent)_Button1" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
 									<Dimensions x="40" y="40" />
-                  <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"Mobs") </OnMouseEnter>
-                  <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
-                  <OnMouseUp>EchoExperience:SetGuiFilter(self, button, "Mobs", nil)</OnMouseUp>
+                  <OnMouseEnter> EchoExperience:TrackMisc2HeaderTipEnter(self,"Mobs") </OnMouseEnter>
+                  <OnMouseExit>  EchoExperience:TrackMisc2HeaderTipExit(self)  </OnMouseExit>
+                  <OnMouseUp>EchoExperience:TrackSetGuiFilter(self, button, "Mobs", nil)</OnMouseUp>
 									 <!--
                    <OnMouseEnter>EchoExperience:GuiShowFilterTooltip(self, "Mobs")</OnMouseEnter>
 									<OnMouseExit>EchoExperience:GuiHideTooltip(self)</OnMouseExit>
@@ -165,9 +165,9 @@
 								<Button name="$(parent)_Button3">
 									<Anchor point="TOPLEFT" relativeTo="$(parent)_Button2" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>
 									<Dimensions x="40" y="40" />
-                  <OnMouseEnter> EchoExperience:Misc2HeaderTipEnter(self,"Currency") </OnMouseEnter>
-                  <OnMouseExit>  EchoExperience:Misc2HeaderTipExit(self)  </OnMouseExit>
-                  <OnMouseUp>EchoExperience:SetGuiFilter(self, button, "Currency", nil)</OnMouseUp>
+                  <OnMouseEnter> EchoExperience:TrackMisc2HeaderTipEnter(self,"Currency") </OnMouseEnter>
+                  <OnMouseExit>  EchoExperience:TrackMisc2HeaderTipExit(self)  </OnMouseExit>
+                  <OnMouseUp>EchoExperience:TrackSetGuiFilter(self, button, "Currency", nil)</OnMouseUp>
                    <!--
 									<OnMouseEnter>EchoExperience:GuiShowFilterTooltip(self, "Currency")</OnMouseEnter>
 									<OnMouseExit>EchoExperience:GuiHideTooltip(self)</OnMouseExit>
@@ -224,7 +224,7 @@
 					<DimensionConstraints  minY="52"/>
 					<Anchor point="TOPLEFT" relativeTo="$(parent)_Header_SortBar" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0"/>
 					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-35" offsetY="-10"/>
-					<OnMouseWheel>EchoExperience:GuiOnScroll(self, delta)</OnMouseWheel>
+					<OnMouseWheel>EchoExperience:TrackGuiOnScroll(self, delta)</OnMouseWheel>
 
 					<Controls>
             <Backdrop name="$(parent)_bg" inherits="ZO_ThinBackdrop" centerColor="591141" ></Backdrop>
@@ -234,7 +234,7 @@
 
 							<OnMouseDown>self.locked=false</OnMouseDown>
 							<OnMouseUp>self.locked=true</OnMouseUp>
-							<OnValueChanged>EchoExperience:GuiOnSliderUpdate(self, value)</OnValueChanged>
+							<OnValueChanged>EchoExperience:TrackGuiOnSliderUpdate(self, value)</OnValueChanged>
 						</Slider>
 <!--
 						<Control name="$(parent)_Counts" verticalAlignment="LEFT">

@@ -23,10 +23,12 @@ Bindings.xml
 EchoExperience.xml
 EchoExp_Tracking.xml
 EchoExp_Litany.xml
+EchoExp_LootHistory.xml
 
 EchoExperience.lua
 EchoExp_Settings.lua
 EchoExp_Tracking.lua
+EchoExp_LootHistory.lua
 EchoExp_Litany.lua
 ##EchoExp_Events.lua
 Settings.lua

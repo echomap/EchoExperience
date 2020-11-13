@@ -18,38 +18,38 @@
 ---GUI
 
 --TOOLTIP
-function EchoExperience:Misc2HeaderTipEnter(sender,key)
+function EchoExperience:TrackMisc2HeaderTipEnter(sender,key)
   InitializeTooltip(EEXPTooltip, sender, TOPLEFT, 5, -56, TOPRIGHT)
   EEXPTooltip:AddLine(key, "ZoFontHeader3")
 end
-function EchoExperience:Misc2HeaderTipExit(sender)
+function EchoExperience:TrackMisc2HeaderTipExit(sender)
   --ClearTooltip(InformationTooltip)
   ClearTooltip(EEXPTooltip)
 end
 
-function EchoExperience:SetGuiFilter(self, button, filterType, subFilter)
+function EchoExperience:TrackSetGuiFilter(self, button, filterType, subFilter)
   EchoExperience.view.filterType = filterType
   --if(filterType=="All")then
   --end
-  EchoExperience:UpdateScrollDataLinesData()
-  EchoExperience:GuiResizeScroll()
-  EchoExperience:RefreshInventoryScroll()
+  EchoExperience:TrackUpdateScrollDataLinesData()
+  EchoExperience:TrackGuiResizeScroll()
+  EchoExperience:TrackRefreshInventoryScroll()
 end
 
-function EchoExperience:CloseUI()
+function EchoExperience:TrackCloseUI()
   EOL_GUI:SetHidden( not EOL_GUI:IsHidden() )
 end
 
-function EchoExperience:onResizeStart()
-	EVENT_MANAGER:RegisterForUpdate(EchoExperience.name.."OnWindowResize", 50, 
+function EchoExperience:TrackonResizeStart()
+	EVENT_MANAGER:RegisterForUpdate(EchoExperience.name.."TrackOnWindowResize", 50, 
     function()
-      EchoExperience:UpdateScrollDataLinesData()
-      EchoExperience:GuiResizeScroll()
-      EchoExperience:UpdateDataScroll()
+      EchoExperience:TrackUpdateScrollDataLinesData()
+      EchoExperience:TrackGuiResizeScroll()
+      EchoExperience:TrackUpdateDataScroll()
     end)
 end
 
-function EchoExperience:SaveFrameInfo(calledFrom)
+function EchoExperience:TrackSaveFrameInfo(calledFrom)
 	if (calledFrom == "onHide") then return end
   if(EchoExperience.savedVariables.frame2==null)then
     EchoExperience.savedVariables.frame2 = {}
@@ -72,7 +72,7 @@ function EchoExperience:SaveFrameInfo(calledFrom)
 	--end
 end
 
-function EchoExperience:SaveFramePosition(calledFrom)
+function EchoExperience:TrackSaveFramePosition(calledFrom)
   if(EchoExperience.savedVariables.frame2==null)then
     EchoExperience.savedVariables.frame2 = {}
   end
@@ -80,24 +80,24 @@ function EchoExperience:SaveFramePosition(calledFrom)
   EchoExperience.savedVariables.frame2.lastY	= EOL_GUI:GetTop()
 end
 
-function EchoExperience:onResizeStop()
-	EVENT_MANAGER:UnregisterForUpdate(EchoExperience.name.."OnWindowResize")
-	EchoExperience:SaveFrameInfo("onResizeStop")
-	EchoExperience:GuiResizeScroll()	
-  EchoExperience:UpdateDataScroll()
+function EchoExperience:TrackonResizeStop()
+	EVENT_MANAGER:UnregisterForUpdate(EchoExperience.name.."TrackOnWindowResize")
+	EchoExperience:TrackSaveFrameInfo("onResizeStop")
+	EchoExperience:TrackGuiResizeScroll()	
+  EchoExperience:TrackUpdateDataScroll()
 end
 
 --
-function EchoExperience:GuiOnSliderUpdate(slider, value)
+function EchoExperience:TrackGuiOnSliderUpdate(slider, value)
   EchoExperience.debugMsg("GuiOnSliderUpdate: Called, w/value="..tostring(value)  )
 	--if not value or slider.locked then return end
 	local relativeValue = math.floor(EOL_GUI_ListHolder.dataOffset - value)
   EchoExperience.debugMsg("GuiOnSliderUpdate: relativeValue=" ..tostring(relativeValue) .. " value="..tostring(value) .. " offset="..tostring(EOL_GUI_ListHolder.dataOffset)  )
-	EchoExperience:GuiOnScroll(slider, relativeValue)
+	EchoExperience:TrackGuiOnScroll(slider, relativeValue)
 end
 
 --
-function EchoExperience:GuiOnScroll(control, delta)  
+function EchoExperience:TrackGuiOnScroll(control, delta)  
 	if not delta then return end
   EchoExperience.debugMsg("GuiOnScroll: delta="..tostring(delta) )
 	if delta == 0 then return end
@@ -113,31 +113,31 @@ function EchoExperience:GuiOnScroll(control, delta)
   EchoExperience.debugMsg("GuiOnScroll: set dataOffset="..tostring(value) )
 
   ----Setup max lines, and slider (calls RefreshViewableTable: create show lines based on offset)
-	EchoExperience:UpdateDataScroll()
+	EchoExperience:TrackUpdateDataScroll()
   
   --Set max, and Hide lines out of the max display
-  EchoExperience:GuiResizeScroll()
+  EchoExperience:TrackGuiResizeScroll()
 
 	slider:SetValue(EOL_GUI_ListHolder.dataOffset)
 
 	--EchoExperience:GuiLineOnMouseEnter(moc())
 end
 
-function EchoExperience:UpdateDataScroll()
+function EchoExperience:TrackUpdateDataScroll()
 	local index = 0
 	if EOL_GUI_ListHolder.dataOffset < 0 then EOL_GUI_ListHolder.dataOffset = 0 end
 	if EOL_GUI_ListHolder.maxLines == nil then
 		EOL_GUI_ListHolder.maxLines = EchoExperience.defaultMaxLines
 	end
   --d("UpdateDataScroll: offset="..EOL_GUI_ListHolder.dataOffset.." maxLines="..EOL_GUI_ListHolder.maxLines )  
-	EchoExperience:SetDataLinesData()
+	EchoExperience:TrackSetDataLinesData()
 
 	local total = #EOL_GUI_ListHolder.dataLines - EOL_GUI_ListHolder.maxLines
 	EOL_GUI_ListHolder_Slider:SetMinMax(0, total)
 end
 
 --??
-function EchoExperience:SetDataLinesData()
+function EchoExperience:TrackSetDataLinesData()
 	local curLine, curData
 	for i = 1, EOL_GUI_ListHolder.maxLines do
 		curLine = EOL_GUI_ListHolder.lines[i]
@@ -145,14 +145,14 @@ function EchoExperience:SetDataLinesData()
 		EOL_GUI_ListHolder.lines[i] = curLine
 
 		if( curData ~= nil) then
-			EchoExperience:fillLine(curLine, curData)
+			EchoExperience:TrackfillLine(curLine, curData)
 		else
-			EchoExperience:fillLine(curLine, nil)
+			EchoExperience:TrackfillLine(curLine, nil)
 		end
 	end
 end
 
-function EchoExperience:fillLine(curLine, curItem)
+function EchoExperience:TrackfillLine(curLine, curItem)
   if(curLine==nil) then return end--??????? TODO
 	local color
 	if curItem == nil then
@@ -196,12 +196,12 @@ function EchoExperience:fillLine(curLine, curItem)
 end
 
 
-function EchoExperience:RefreshInventoryScroll()
-	EchoExperience:UpdateScrollDataLinesData()
-	EchoExperience:UpdateDataScroll()
+function EchoExperience:TrackRefreshInventoryScroll()
+	EchoExperience:TrackUpdateScrollDataLinesData()
+	EchoExperience:TrackUpdateDataScroll()
 end
 
-function EchoExperience:UpdateScrollDataLinesData()
+function EchoExperience:TrackUpdateScrollDataLinesData()
   --
   --TODO mode, tracking vs lifetime
   local tempDataLine = nil
@@ -384,14 +384,14 @@ function EchoExperience:UpdateScrollDataLinesData()
   end--sort or all
   --  
 	EOL_GUI_ListHolder.dataLines = dataLines
-	EchoExperience:sort(EOL_GUI_ListHolder.dataLines)
+	EchoExperience:Tracksort(EOL_GUI_ListHolder.dataLines)
 	EOL_GUI_ListHolder.dataOffset = 0
 
 	--EOL_GUI_ListHolder_Counts_Items:SetText("Item Count: " .. totItems)
 	--EOL_GUI_ListHolder_Counts_Slots:SetText("Appx. Slots Used: " .. #dataLines)
 end
 
-function EchoExperience:sort(dataLines)
+function EchoExperience:Tracksort(dataLines)
 	if dataLines == nil then dataLines = EOL_GUI_ListHolder.dataLines end
 
 	--if (ScrollSortUp) then
@@ -401,21 +401,21 @@ function EchoExperience:sort(dataLines)
 end
 
 -- returns true if it had to be resized, otherwise false
-function EchoExperience:GuiResizeScroll()
+function EchoExperience:TrackGuiResizeScroll()
 	local regionHeight = EOL_GUI_ListHolder:GetHeight()
   local rowHeight    = EOL_GUI_ListHolder.rowHeight
 	local newLines = math.floor(regionHeight / rowHeight)
 	if EOL_GUI_ListHolder.maxLines == nil or EOL_GUI_ListHolder.maxLines ~= newLines then
 		EOL_GUI_ListHolder.maxLines = newLines
-		EchoExperience:GuiResizeLines()
+		EchoExperience:TrackGuiResizeLines()
 	end
 end
 
-function EchoExperience:GuiResizeLines()
+function EchoExperience:TrackGuiResizeLines()
 	local lines
 
 	if not EOL_GUI_ListHolder.lines then
-		lines = EchoExperience:CreateInventoryScroll()
+		lines = EchoExperience:TrackCreateInventoryScroll()
 	end
 	if EOL_GUI_ListHolder.lines ~= {} then
 		lines = EOL_GUI_ListHolder.lines
@@ -428,7 +428,7 @@ function EchoExperience:GuiResizeLines()
 	end
 end
 
-function EchoExperience:CreateInventoryScroll()
+function EchoExperience:TrackCreateInventoryScroll()
 	EOL_GUI_ListHolder.dataOffset = 0
 
 	EOL_GUI_ListHolder.dataLines = {}
@@ -438,19 +438,19 @@ function EchoExperience:CreateInventoryScroll()
 	EOL_GUI_ListHolder.maxLines = EchoExperience.defaultMaxLines
 	local predecessor = nil
 	for i=1, EOL_GUI_ListHolder.maxLines do
-		EOL_GUI_ListHolder.lines[i] = EchoExperience:CreateLine(i, predecessor, EOL_GUI_ListHolder)
+		EOL_GUI_ListHolder.lines[i] = EchoExperience:TrackCreateLine(i, predecessor, EOL_GUI_ListHolder)
 		predecessor = EOL_GUI_ListHolder.lines[i]
 	end
 
   --
-	EchoExperience:SetItemCountPosition()
+	EchoExperience:TrackSetItemCountPosition()
 	-- setup slider
 	EOL_GUI_ListHolder_Slider:SetMinMax(0, #EOL_GUI_ListHolder.dataLines - EOL_GUI_ListHolder.maxLines)
   --
 	return EOL_GUI_ListHolder.lines
 end
 
-function EchoExperience:CreateLine(i, predecessor, parent)
+function EchoExperience:TrackCreateLine(i, predecessor, parent)
 	local line = WINDOW_MANAGER:CreateControlFromVirtual("EOL_ListItem_".. i, parent, "EOL_SlotTemplate")
 
 	line.icon = line:GetNamedChild("Button"):GetNamedChild("Icon")
@@ -478,7 +478,7 @@ function EchoExperience:CreateLine(i, predecessor, parent)
 	return line
 end
 
-function EchoExperience:SetItemCountPosition()
+function EchoExperience:TrackSetItemCountPosition()
 	for i=1, EOL_GUI_ListHolder.maxLines do
 		local line = EOL_GUI_ListHolder.lines[i]
 		line.text:ClearAnchors()

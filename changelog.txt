@@ -24,6 +24,7 @@ EVENT_STYLE_LEARNED (number eventCode, number itemStyleId, number chapterIndex, 
 EVENT_TRAIT_LEARNED (number eventCode, string itemName, string itemTrait)
 craft deconstruct event?
 fanfare option?
+filter loot color/rarity for others
 
 ## TODO: Bugs
 bug: update lifetime on close?
@@ -32,10 +33,14 @@ LitanyOfBlood Gui still a mess
 
 
 ## [Testing branch]
-0.0.43
-- Added text when receiving an item that is not-collected
+0.0.44
+- options to not show collected and trait info
+- options to not show others loot by quality
+- loot history gui
 
 ## EchoExp [Versions]
+0.0.43
+- Added text when receiving an item that is not-collected
 0.0.42
 - LitanyGUI keybinding
 - tracking gui fixes

@@ -503,6 +503,30 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
+  --[[
+  optionsTable[#optionsTable+1] = {		
+    type = "checkbox",
+    name    = GetString(SI_ECHOEXP_SETTINGS_LOOT_TRAIT_NAME), -- "Show other types of item events? (researched/trashed/etc)",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LOOT_TRAIT_TOOLTIP), -- "Verbose reporting of Looted items?",
+    getFunc = function() return EchoExperience.savedVariables.lootshowtrait end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.lootshowtrait = value
+      EchoExperience.SetupLootGainsEvents(false)
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  --]]  
+  optionsTable[#optionsTable+1] = {		
+    type = "checkbox",
+    name    = GetString(SI_ECHOEXP_SETTINGS_LOOT_SETCOLLECTION_NAME), -- "Show other types of item events? (researched/trashed/etc)",
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LOOT_SETCOLLECTION_TOOLTIP), -- "Verbose reporting of Looted items?",
+    getFunc = function() return EchoExperience.savedVariables.lootshowsetcollection end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.lootshowsetcollection = value
+      EchoExperience.SetupLootGainsEvents(false)
+    end,
+    width = "half",	--or "half" (optional)
+  }
   optionsTable[#optionsTable+1] = {		
     type = "checkbox",
     name    = GetString(SI_ECHOEXP_SETTINGS_LOOT_GROUP_TITLE), -- "Show other group member's Looted items?",
@@ -514,6 +538,20 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
+  optionsTable[#optionsTable+1] = {
+    type = "dropdown",
+    name    = GetString(SI_ECHOEXP_SETTINGS_LOOT_GROUP_QUALITY_TITLE),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LOOT_GROUP_QUALITY_TOOLTIP),
+    choices = EchoExperience:ListOfItemQualitySettings(),
+    getFunc = function() return EchoExperience.savedVariables.lootgroupqualityname end,
+    setFunc = function(var) 
+      EchoExperience.savedVariables.lootgroupqualityname = var 
+      EchoExperience.savedVariables.lootgroupqualityid   = EchoExperience:ListOfItemQualitySettingsXalte(var)
+    end,
+    width = "half",	--or "half" (optional)
+    reference = "EchoExpGroupLootQOutput", -- unique global reference to control (optional)
+  }
+  --
   optionsTable[#optionsTable+1] = {
     type = "description",
     text = "",

@@ -119,6 +119,12 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_LOOT_OUTPUTS_NAME    = "Loot Output Config",
   SI_ECHOEXP_SETTINGS_LOOT_OUTPUTS_TOOLTIP = "Loot output entries for (window/tab/color).",
   SI_ECHOEXP_SETTINGS_LOOT_OUTPUTS_DELETE  = "Delete selected Loot's Data!",
+  SI_ECHOEXP_SETTINGS_LOOT_TRAIT_NAME            = "On Loot, show Trait",
+  SI_ECHOEXP_SETTINGS_LOOT_TRAIT_TOOLTIP         = "On Loot, show Trait",
+  SI_ECHOEXP_SETTINGS_LOOT_SETCOLLECTION_NAME    = "On Loot, show if collected",
+  SI_ECHOEXP_SETTINGS_LOOT_SETCOLLECTION_TOOLTIP = "On Loot, show if collected",
+  SI_ECHOEXP_SETTINGS_LOOT_GROUP_QUALITY_TITLE   = "Select the item to report on or above",
+  SI_ECHOEXP_SETTINGS_LOOT_GROUP_QUALITY_TOOLTIP = "The selection here is the lowest loot type reported to chat, ie if arcane, then only arcane, if magic, then magic, legendary, artifact and arcane are returned.",
   
   SI_ECHOEXP_SETTINGS_LOOT_NEWOUTPUTS_TEXT = "Add new Loot output:",
   SI_ECHOEXP_SETTINGS_LOOT_NEWOUTPUTS_NAME = "Add Loot Output",
@@ -155,6 +161,11 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_GUILD_COLOR_TOOLTIP   = "What Color to use for Guild text.",
   SI_ECHOEXP_SETTINGS_GUILD_NEWOUTPUTS_SAVE = "Save selected Guild chat Data!",
   --
+  SI_ECHOEXP_HEADER_TIME = "Time",
+  SI_ECHOEXP_HEADER_ITEM = "Item",
+  SI_ECHOEXP_HEADER_COUNT = "Count",
+  SI_ECHOEXP_HEADER_RECIPIENT = "Recipient",
+  SI_ECHOEXP_FILTER_LABEL = "Filters",
   
   ------------------------------
   -- 

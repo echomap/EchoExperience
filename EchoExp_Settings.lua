@@ -88,6 +88,47 @@ end
 
 ------------------------------
 --
+function EchoExperience:ListOfItemQualitySettings()
+  local validChoices =  {}
+  --local c = ZO_ColorDef:New(0, 1, v.color.b, v.color.a)
+  local red   = ZO_ColorDef:New(1, 0, 0, 1)
+  local green = ZO_ColorDef:New(0, 1, 0, 1)
+  local blue  = ZO_ColorDef:New(0, 1, 1, 1)
+  table.insert(validChoices, "Trash")
+  table.insert(validChoices, "Normal")
+  table.insert(validChoices, green:Colorize("Magic") )
+  table.insert(validChoices, blue:Colorize("Legendary") )
+  table.insert(validChoices, "Artifact")
+  table.insert(validChoices, "Arcane")
+  return validChoices 
+end
+
+------------------------------
+--
+function EchoExperience:ListOfItemQualitySettingsXalte(qualityname)
+  qualityname = tostring(qualityname)
+  EchoExperience.outputMsg2("ListOfItemQualitySettingsXalte: "
+    , "qualityname=" , tostring(qualityname)
+  )  
+  if(qualityname==nil) then 
+    return ITEM_QUALITY_TRASH 
+  elseif(qualityname=="Trash") then 
+    return ITEM_QUALITY_TRASH
+  elseif(qualityname=="Normal") then 
+    return ITEM_QUALITY_NORMAL
+  elseif(qualityname=="Magic") then 
+    return ITEM_QUALITY_MAGIC
+  elseif(qualityname=="Legendary") then 
+    return ITEM_QUALITY_LEGENDARY
+  elseif(qualityname=="Artifact") then 
+    return ITEM_QUALITY_ARTIFACT
+  elseif(qualityname=="Arcane") then 
+    return ITEM_QUALITY_ARCANE
+  end
+end
+
+------------------------------
+--
 function EchoExperience:SelectLootTab(choiceText)
   EchoExperience.view.selected.loottab = choiceText
 end

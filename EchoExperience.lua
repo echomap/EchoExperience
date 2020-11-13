@@ -80,6 +80,8 @@ local defaultSettings = {
   sessiontracking  = false,
   lifetimetracking = false,
   immersive = false,
+  lootshowsetcollection = true,
+  lootshowtrait         = true,
 }
 
 ------------------------------
@@ -599,7 +601,6 @@ function EchoExperience.SlashCommandHandler(text)
 	end
 
 	if #options == 0 or options[1] == "help" then
-    --
 		EchoExperience.outputMsg("user commands include:")
     EchoExperience.outputMsg("-- 'outputs' to show in text what will happen ")
     EchoExperience.outputMsg("-- 'mute/unmute': should silence/unsilence EchoExp.")
@@ -612,96 +613,96 @@ function EchoExperience.SlashCommandHandler(text)
 		EchoExperience.outputMsg("debug commands include:")
     EchoExperience.outputMsg("-- 'debug', 'testexp', 'testloot', 'testfull' ")
     -- MAIN
-	elseif #options == 1 and options[1] == "outputs" then
-		EchoExperience.ShowOutputs()
-	elseif #options == 1 and options[1] == "defaults" then
-		EchoExperience.ShowDefaults()
-  elseif #options == 1 and options[1] == "mute" then
-    EchoExperience:DoMute()
-  elseif #options == 1 and options[1] == "unmute" then
-    EchoExperience:DoUnMute()
-    
-  -- BETA
-  elseif #options == 1 and options[1] == "litanygui" then
-    EchoExperience:ToggleLitanyFrame()
-    
-  --Tracking
-  elseif #options == 1 and options[1] == "trackinggui" then
-    EchoExperience:ToggleTrackingFrame()
-  elseif #options == 1 and options[1] == "trackingui" then
-    EchoExperience:ToggleTrackingFrame()
-	elseif #options == 1 and options[1] == "showtrackinggui" then
-		EchoExperience:ToggleTrackingFrame()
-	elseif #options == 1 and options[1] == "showtracking" then
-		EchoExperience.ShowTracking(EchoExperience:GetCurrentTrackingSession())
-  elseif #options == 1 and options[1] == "showlifetime" then
-    EchoExperience.ShowLifetimeTracking()
-    EchoExperience.CheckVerifyDefaults()
-  elseif #options == 1 and options[1] == "clearlifetimedata" then
-    EchoExperience.savedVariables.lifetime = {}
-    
-  --TRACKING SESSIONS 
-  --'startsession', 'pausesession', 'deletesession', 'newsession' "
-  elseif #options == 1 and options[1] == "startsession" then
-    EchoExperience:TrackingSessionStart()
-  elseif #options == 1 and options[1] == "pausesession" then
-    EchoExperience:TrackingSessionPause()
-  elseif #options == 1 and options[1] == "deletesession" then
-    EchoExperience:TrackingSessionDelete()
-  elseif #options == 1 and options[1] == "newsession" then
-    EchoExperience:TrackingSessionNew()
-  elseif #options == 2 and options[1] == "showsession" then
-    local sessionNum = options[2]
-    EchoExperience:TrackingSessionShow(sessionNum)
-  elseif #options == 2 and options[1] == "sessionsreport" then  
-    EchoExperience.TrackingSessionShowSessionReport()
-  elseif #options == 1 and options[1] == "cleartracking" then
-    EchoExperience:TrackingSessionClear()
-    EchoExperience.outputMsg("Tracking data reset") 
-  
-  --
-  --Testing
-  elseif #options == 1 and options[1] == "testevents" then
-    EchoExperience.savedVariables.showGuildMisc  = not EchoExperience.savedVariables.showGuildMisc
-    EchoExperience.outputMsg("ShowGuildMisc = " .. tostring(EchoExperience.savedVariables.showGuildMisc) )
-    EchoExperience.SetupGuildEvents()
-	elseif #options == 1 and options[1] == "testexp" then
-		EchoExperience.outputToChanel("Gained 0 xp in [Test] (1000/10000) need 9000xp",msgTypeEXP)
-	elseif #options == 1 and options[1] == "testloot" then
-		EchoExperience.outputToChanel("You looted TESTITEM.",msgTypeLOOT)    
-    --eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,
-    --isPickpocketLoot,questItemIcon,itemId,isStolen)
-    local pName = GetUnitName("player")
-    EchoExperience.OnLootReceived(1, pName,   "Rough Maple",1,nil,1,true,false,false,802,false)
-    EchoExperience.OnLootReceived(1,"Player1","Deni",1,nil,1,false,false,false,45833,false)
-    EchoExperience.OnLootReceived(1,"Player2","Rough Maple",1,nil,1,false,false,false,802,false)
-    
-	elseif #options == 1 and options[1] == "testfull" then		--eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,isPickpocketLoot,questItemIcon,itemId,isStolen)
-		EchoExperience.OnLootReceived(0,"testuser","testitem",1,nil,nil,true,false,false,0,false)
-		EchoExperience.OnLootReceived(0,"testuser","testitem",2,nil,nil,true,false,false,0,false)
-		EchoExperience.OnLootReceived(0,"testuser","testitem",2,nil,nil,false,false,false,0,false)
-    for i = ITEM_QUALITY_TRASH, ITEM_QUALITY_LEGENDARY do --for i = 0, 5 do
-      local color = GetItemQualityColor(i)
-      local qualName = GetString("SI_ITEMQUALITY", i)
-      d("I="..tostring(i).."color=".. color:Colorize(qualName) )
+  elseif #options == 1 and options[1] then
+    if options[1] == "debug" or options[1] == "d" then
+      local dg = EchoExperience.savedVariables.debug
+      EchoExperience.savedVariables.debug = not dg
+      EchoExperience.outputMsg("Debug = " .. tostring(EchoExperience.savedVariables.debug) )
+    --
+    elseif options[1] == "history" or options[1] == "h" then
+      EchoExperience:ToggleLootHistoryFrame()    
+    elseif options[1] == "lhclear" or options[1] == "lhc" then
+      EchoExperience:LH_ClearLootHistory()
+    --
+    elseif options[1] == "outputs" then
+      EchoExperience.ShowOutputs()
+    elseif options[1] == "defaults" then
+      EchoExperience.ShowDefaults()
+    elseif options[1] == "mute" then
+      EchoExperience:DoMute()
+    elseif options[1] == "unmute" then
+      EchoExperience:DoUnMute()  
+    -- BETA
+    elseif options[1] == "litanygui" then
+      EchoExperience:ToggleLitanyFrame()
+    --
+    elseif options[1] == "showtracking" then
+      EchoExperience.ShowTracking(EchoExperience:GetCurrentTrackingSession())
+    elseif options[1] == "showlifetime" then
+      EchoExperience.ShowLifetimeTracking()
+      EchoExperience.CheckVerifyDefaults()
+    elseif options[1] == "clearlifetimedata" then
+      EchoExperience.savedVariables.lifetime = {}
+    --TRACKING SESSIONS 
+    --'startsession', 'pausesession', 'deletesession', 'newsession' "
+    elseif options[1] == "trackinggui" or options[1] == "tg" or options[1] == "trackingui" or options[1] == "showtrackinggui" then
+      EchoExperience:ToggleTrackingFrame()
+    elseif options[1] == "startsession" then
+      EchoExperience:TrackingSessionStart()
+    elseif options[1] == "pausesession" then
+      EchoExperience:TrackingSessionPause()
+    elseif options[1] == "deletesession" then
+      EchoExperience:TrackingSessionDelete()
+    elseif options[1] == "newsession" then
+      EchoExperience:TrackingSessionNew()
+    elseif #options == 2 and options[1] == "showsession" then
+      local sessionNum = options[2]
+      EchoExperience:TrackingSessionShow(sessionNum)
+    elseif #options == 2 and options[1] == "sessionsreport" then  
+      EchoExperience.TrackingSessionShowSessionReport()
+    elseif options[1] == "cleartracking" then
+      EchoExperience:TrackingSessionClear()
+      EchoExperience.outputMsg("Tracking data reset") 
+    --
+    --Testing
+    elseif options[1] == "testevents" then
+      EchoExperience.savedVariables.showGuildMisc  = not EchoExperience.savedVariables.showGuildMisc
+      EchoExperience.outputMsg("ShowGuildMisc = " .. tostring(EchoExperience.savedVariables.showGuildMisc) )
+      EchoExperience.SetupGuildEvents()
+    elseif options[1] == "testexp" then
+      EchoExperience.outputToChanel("Gained 0 xp in [Test] (1000/10000) need 9000xp",msgTypeEXP)
+    elseif options[1] == "testloot" then
+      EchoExperience.outputToChanel("You looted TESTITEM.",msgTypeLOOT)    
+      --eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,
+      --isPickpocketLoot,questItemIcon,itemId,isStolen)
+      local pName = GetUnitName("player")
+      EchoExperience.OnLootReceived(1, pName,   "Rough Maple",1,nil,1,true,false,false,802,false)
+      EchoExperience.OnLootReceived(1,"Player1","Deni",1,nil,1,false,false,false,45833,false)
+      EchoExperience.OnLootReceived(1,"Player2","Rough Maple",1,nil,1,false,false,false,802,false)
+      
+    elseif options[1] == "testfull" then		--eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,isPickpocketLoot,questItemIcon,itemId,isStolen)
+      EchoExperience.OnLootReceived(0,"testuser","testitem",1,nil,nil,true,false,false,0,false)
+      EchoExperience.OnLootReceived(0,"testuser","testitem",2,nil,nil,true,false,false,0,false)
+      EchoExperience.OnLootReceived(0,"testuser","testitem",2,nil,nil,false,false,false,0,false)
+      for i = ITEM_QUALITY_TRASH, ITEM_QUALITY_LEGENDARY do --for i = 0, 5 do
+        local color = GetItemQualityColor(i)
+        local qualName = GetString("SI_ITEMQUALITY", i)
+        d("I="..tostring(i).."color=".. color:Colorize(qualName) )
+      end
+    elseif options[1] == "testchars" then
+      d("Here's a list of your characters:")
+      for i = 1, GetNumCharacters() do
+        local name, gender, level, classId, raceId, alliance, id, locationId = GetCharacterInfo(i)
+        d( zo_strformat("char: name:<<1>> id:<<2>> loc:<<3>>", name, id, locationId) )
+      end
+    elseif options[1] == "iam" then  
+      d("Display Name: ".. tostring(EchoExperience.view.iamDisplayName)   )
+      d("Char Name: "   .. tostring(EchoExperience.view.iamCharacterName) )
     end
-  elseif #options == 1 and options[1] == "testchars" then
-    d("Here's a list of your characters:")
-    for i = 1, GetNumCharacters() do
-      local name, gender, level, classId, raceId, alliance, id, locationId = GetCharacterInfo(i)
-      d( zo_strformat("char: name:<<1>> id:<<2>> loc:<<3>>", name, id, locationId) )
-    end
-  elseif #options == 1 and options[1] == "iam" then  
-    d("Display Name: ".. tostring(EchoExperience.view.iamDisplayName)   )
-    d("Char Name: "   .. tostring(EchoExperience.view.iamCharacterName) )
-    
+  elseif #options == 2 and options[1] then  
+    --
+  end
   --
-  --
-	elseif #options == 1 and options[1] == "debug" then
-		local dg = EchoExperience.savedVariables.debug
-		EchoExperience.savedVariables.debug = not dg
-		EchoExperience.outputMsg("Debug = " .. tostring(EchoExperience.savedVariables.debug) )
-	end
 end
 
 ------------------------------
@@ -722,7 +723,7 @@ function EchoExperience:ToggleLitanyFrame()
 		--EchoExperience:Litany_GuiResizeScroll()
 		--EchoExperience:Litany_RefreshInventoryScroll()
 	end
-	EchoExperience:SaveFrameInfo("ToggleLitanyFrame")
+	EchoExperience:Litany_SaveFrameInfo("ToggleLitanyFrame")
 end
 
 ------------------------------
@@ -744,6 +745,18 @@ function EchoExperience:RefreshTrackingUIData()
   --comboBoxS:SelectFirstItem()
   --
   --
+end
+
+------------------------------
+-- UI
+function EchoExperience:ToggleLootHistoryFrame()
+  EchoExperience.outputMsg2("Show Loot history")
+	EOL_LOOTHISTORY_Frame:SetHidden(not EOL_LOOTHISTORY_Frame:IsControlHidden())
+  if( EOL_LOOTHISTORY_Frame.setup == nil) then
+    EchoExperience:LH_Setup()
+    EOL_LOOTHISTORY_Frame.setup = true
+  end
+  EchoExperience:LH_Show()
 end
 
 ------------------------------
@@ -785,9 +798,9 @@ function EchoExperience:ToggleTrackingFrame()
     --EchoesOfLore:clearView()
     EchoExperience.view.tracking.viewsessionid = choiceText
     --EchoesOfLore:showViewTips2(choiceText)
-    EchoExperience:UpdateScrollDataLinesData()
-		EchoExperience:GuiResizeScroll()
-		EchoExperience:RefreshInventoryScroll()
+    EchoExperience:TrackUpdateScrollDataLinesData()
+		EchoExperience:TrackGuiResizeScroll()
+		EchoExperience:TrackRefreshInventoryScroll()
     PlaySound(SOUNDS.POSITIVE_CLICK)    
   end
   local validChoices = {}  
@@ -801,15 +814,15 @@ function EchoExperience:ToggleTrackingFrame()
   --
 	if not EOL_GUI:IsControlHidden() then
 		--SetGameCameraUIMode(true)
-		EchoExperience:GuiResizeScroll()
-		EchoExperience:RefreshInventoryScroll()
+		EchoExperience:TrackGuiResizeScroll()
+		EchoExperience:TrackRefreshInventoryScroll()
 	end
 	--if not EchoExperience.data.dontFocusSearch then
 		--EOL_GUI_SearchBox:TakeFocus()
 	--end
   --EOL_GUI_Header_Dropdown_Main:TakeFocus()
   comboBox:SelectFirstItem()
-	EchoExperience:SaveFrameInfo("ToggleInventoryFrame")
+	EchoExperience:TrackSaveFrameInfo("ToggleInventoryFrame")
 end
 
 ------------------------------
@@ -908,6 +921,9 @@ function EchoExperience:TrackingSessionNew(newid)
     newsession.achievements = {}
     newsession.id       = EchoExperience.view.tracking.currentsessionid
   EchoExperience.view.tracking.sessions[EchoExperience.view.tracking.currentsessionid] = newsession
+  
+  --Refresh DROPDOWN
+  EchoExperience:RefreshTrackingUIData()  
 end
 
 ------------------------------
@@ -2119,17 +2135,19 @@ function EchoExperience.OnInventorySingleSlotUpdateWork(eventCode, bagId, slotId
     --withdrawls from the bank have no itemlink, but throw another event with the backpack... caught below
   end
   
-  --
+  -- New Set Collections 1000033
   local collectionString = ""
-  local itemId = GetItemLinkItemId(itemLink)
-	local hasSet = GetItemLinkSetInfo(itemLink)	
-	local isCollected = false
-  if(hasSet) then
-    isCollected = IsItemSetCollectionPieceUnlocked(itemId)
-    if(isCollected) then
-      collectionString = ""
-    else
-      collectionString = "-Not Collected-"
+  if(EchoExperience.savedVariables.lootshowsetcollection) then
+    local itemId = GetItemLinkItemId(itemLink)
+    local hasSet = GetItemLinkSetInfo(itemLink)	
+    local isCollected = false
+    if(hasSet) then
+      isCollected = IsItemSetCollectionPieceUnlocked(itemId)
+      if(isCollected) then
+        collectionString = ""
+      else
+        collectionString = "-Not Collected-"
+      end
     end
   end
   
@@ -2149,6 +2167,10 @@ function EchoExperience.OnInventorySingleSlotUpdateWork(eventCode, bagId, slotId
     qualifier = qualifier + 2
     hasTraitInfo = true
   end
+  --TODO if(EchoExperience.savedVariables.lootshowtrait) then
+    
+  --end  
+
   local totalBagCount = GetItemTotalCount(bagId, slotId)
   --textureName icon, number stack, number sellPrice, boolean meetsUsageRequirement, boolean locked, number EquipType equipType, number itemStyleId, number ItemQuality quality = GetItemInfo(number Bag bagId, number slotIndex)
   --For some reason these bags do NOT report count
@@ -2161,6 +2183,7 @@ function EchoExperience.OnInventorySingleSlotUpdateWork(eventCode, bagId, slotId
     local sentence = GetString("SI_ECHOLOOT_RECEIVE_", qualifier)
     local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName, totalBagCount, collectionString )
     EchoExperience.outputToChanel(strL,msgTypeLOOT)
+    --EchoExperience:LootHistory(itemLink,stackCountChange)
   elseif( stackCountChange~=0 and( IsBankOpen() or IsGuildBankOpen()) )then
     local sentence = GetString("SI_ECHOLOOT_BANK_GET_", qualifier)
     local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName, totalBagCount, collectionString )
@@ -2183,7 +2206,7 @@ function EchoExperience.OnInventorySingleSlotUpdateWork(eventCode, bagId, slotId
       --if(itemLink==nil) then itemLink = itemName
       currentSession.items[itemName].itemlink = itemLink
       currentSession.items[itemName].icon     = icon
-      --
+      --      
     end--Tracking
   end
   --
@@ -2234,10 +2257,12 @@ function EchoExperience.OnLootReceivedWork(eventCode,receivedBy,itemName,quantit
       , " extraInfo=" , tostring(extraInfo)
 		)
 	end
-  --[[Tracking
-  if(EchoExperience.savedVariables.XXXtracking) then
-
-  --]]
+  --Tracking
+  if(isSelf) then
+    EchoExperience:LootHistory(itemName,quantity)
+  else
+    EchoExperience:LootHistory(itemName,quantity,receivedBy)
+  end
   
   local icon      = GetItemLinkIcon(itemName)
   --local itemLink  = GetItemLink(bagId, slotId, LINK_STYLE_BRACKETS)
@@ -2272,17 +2297,33 @@ function EchoExperience.OnLootReceivedWork(eventCode,receivedBy,itemName,quantit
       EchoExperience.outputToChanel(strL,msgTypeLOOT)
     end --isSelf and not extendedLoot
   elseif (EchoExperience.savedVariables.groupLoot and receivedBy~=nil) then
-    --if NOT self and IS groupLoot and has a receievedby value
-    local qualifier = 1
-    if(quantity>1) then qualifier = 2 end
-    local sentence = GetString("SI_ECHOLOOT_OTHER_GAIN_", qualifier)
-    if(isPickpocketLoot) then
-      sentence = GetString("SI_ECHOLOOT_OTHER_PICK_", qualifier)
-    elseif(lootType==LOOT_TYPE_QUEST_ITEM) then
-      sentence = GetString("SI_ECHOLOOT_OTHER_QUEST_", qualifier)
+    --ItemQuality
+    local showGL = true
+    if(EchoExperience.view.selected.lootgroupqualityid~=nil) then
+      local itemQuality = GetItemLinkQuality(itemLink)
+      showGL = false
+      if(EchoExperience.view.selected.lootgroupqualityid>=itemQuality) then
+        showGL = true
+      end
+      EchoExperience.outputMsg2("OnLootReceived: "
+        , " lootgroupqualityid="   , tostring(EchoExperience.view.selected.lootgroupqualityid)
+        , " itemQuality="     , tostring(itemQuality)      
+        , " showGL="   , tostring(showGL)
+      )
     end
-    local strL = zo_strformat(sentence, receivedBy, icon, itemName, quantity, extraInfo)
-    EchoExperience.outputToChanel(strL,msgTypeLOOT)
+    if(showGL) then
+      --if NOT self and IS groupLoot and has a receievedby value
+      local qualifier = 1
+      if(quantity>1) then qualifier = 2 end
+      local sentence = GetString("SI_ECHOLOOT_OTHER_GAIN_", qualifier)
+      if(isPickpocketLoot) then
+        sentence = GetString("SI_ECHOLOOT_OTHER_PICK_", qualifier)
+      elseif(lootType==LOOT_TYPE_QUEST_ITEM) then
+        sentence = GetString("SI_ECHOLOOT_OTHER_QUEST_", qualifier)
+      end
+      local strL = zo_strformat(sentence, receivedBy, icon, itemName, quantity, extraInfo)
+      EchoExperience.outputToChanel(strL,msgTypeLOOT)
+    end
   end--self check
 end
 
@@ -3031,6 +3072,7 @@ function EchoExperience.OnSetCollectionUpdated(eventCode, itemSetId, slotsJustUn
   end
 end
 
+--
 function EchoExperience.OnSetCollectionUpdatedWork(itemSetId, itemSetCollectionSlot)
   local catId = GetItemSetCollectionCategoryId(itemSetId)
   local isname = GetItemSetName(itemSetId)
@@ -3042,9 +3084,9 @@ function EchoExperience.OnSetCollectionUpdatedWork(itemSetId, itemSetCollectionS
   local numPieces        = GetNumItemSetCollectionPieces(itemSetId)
   local numSlotsUnlocked = GetNumItemSetCollectionSlotsUnlocked(itemSetId)  
   
-  --
-  local itemId = GetItemLinkItemId(itemLink)
-	local hasSet = GetItemLinkSetInfo(itemLink)	
+  -- New Set Collections 1000033
+  local itemId      = GetItemLinkItemId(itemLink)
+	local hasSet      = GetItemLinkSetInfo(itemLink)	
   local isCollected = IsItemSetCollectionPieceUnlocked(itemId)
   --TODO get a link to the item!!!set!!!
   --local pieceId, slot = GetItemSetCollectionPieceInfo(_itemSetId_, _index_)
@@ -3062,6 +3104,7 @@ function EchoExperience.OnSetCollectionUpdatedWork(itemSetId, itemSetCollectionS
   local strL = zo_strformat(sentence, isname, itemSetId, numPieces, numSlotsUnlocked, isname)
   EchoExperience.outputToChanel(strL, msgTypeLOOT)
 end
+
 ------------------------------
 -- EVENT EVENT_ACHIEVEMENTS_UPDATED (number eventCode)
 function EchoExperience.OnAchievementsUpdated(eventCode)
@@ -3422,6 +3465,42 @@ function EchoExperience:GetExtraInfo(itemName)
 		return traitName, setName
 	end
 	return traitName, nil
+end
+
+------------------------------
+-- Tracking
+function EchoExperience:LootHistory(itemLink,quantity,receivedBy)
+  if(EchoExperience.savedVariables.sessiontracking) then
+    if(EchoExperience.view.loothistory == nil) then
+      EchoExperience.view.loothistory = {}
+      EchoExperience.view.loothistoryminidx = 1
+    end
+    if(receivedBy==nil) then
+      receivedBy = "Me"
+    end
+    --
+    local elem = {}
+    elem.time       = GetTimeString()
+    elem.itemLink   = itemLink
+    elem.quantity   = quantity
+    elem.user       = receivedBy
+    --
+    table.insert(EchoExperience.view.loothistory, elem)  
+    EchoExperience.debugMsg2("LootHistory", tostring(itemLink) )
+    --check max length and remove old? TODO
+    local cnt = #EchoExperience.view.loothistory
+    if(cnt>100) then
+      EchoExperience.outputMsg2("LootHistory table is getting large, consider clearing it with /echoexp lhclear")  
+    --else if(cnt>110) then
+    --remove up to 10 at once?
+      --EchoExperience.view.loothistory[EchoExperience.view.loothistoryminidx] = nil
+      table.remove(EchoExperience.view.loothistory, EchoExperience.view.loothistoryminidx)
+      EchoExperience.view.loothistoryminidx = EchoExperience.view.loothistoryminidx +1
+      EchoExperience.outputMsg2("LootHistory table auto deleted: "
+        , tostring(EchoExperience.view.loothistoryminidx), ", new size is: "
+        , tostring(#EchoExperience.view.loothistory) )
+    end
+  end
 end
 
 ------------------------------
@@ -3987,6 +4066,21 @@ function EchoExperience.CheckVerifyDefaults()
   
   -- Tracking data init
   --EchoExperience.view.trackingsessions = {}
+  
+  --Set collections 100033
+  if( EchoExperience.savedVariables.lootshowsetcollection==nil ) then
+    EchoExperience.savedVariables.lootshowsetcollection = true
+  end
+  if( EchoExperience.savedVariables.lootshowtrait==nil ) then
+    EchoExperience.savedVariables.lootshowtrait = true
+  end
+  
+  if(EchoExperience.savedVariables.lootgroupqualityname==nil) then
+    EchoExperience.savedVariables.lootgroupqualityname = "Trash"
+    EchoExperience.savedVariables.lootgroupqualityid   = ITEM_QUALITY_TRASH
+  end
+  
+  --
   --
   if(madeChange) then
     zo_callLater(EchoExperience.RefreshTabs, 12000)

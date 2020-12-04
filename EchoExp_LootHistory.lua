@@ -5,31 +5,41 @@
 ------------
 ---GUI
 function EchoExperience:LH_Setup()  
+  EchoExperience.debugMsg2( "LH_Setup: called" )
   EchoExperience.view.lh = {}
   EchoExperience.view.lh.frame      = EOL_LOOTHISTORY_Frame
   EchoExperience.view.lh.list       = EOL_LOOTHISTORY_FrameList
   EchoExperience.view.lh.listholder = EOL_LOOTHISTORY_FrameList_ListHolder
   EchoExperience.view.lh.sortbar    = EOL_LOOTHISTORY_FrameListHeaders
   EchoExperience.view.lh.slider     = EOL_LOOTHISTORY_FrameList_ListHolder_Slider
-  --EchoExperience.view.list = EOL_LOOTHISTORY_FrameListList
   
 	EchoExperience.view.lh.listholder.rowHeight = 24
 	EchoExperience.view.lh.listholder:SetDrawLayer(0)
   EchoExperience.view.lh.listholder.dataOffset = 0
   --
   EchoExperience.view.lh.sort = {}
-  EchoExperience.view.lh.sort.key = "name"
+  EchoExperience.view.lh.sort.key = "time"
   EchoExperience.view.lh.sort.dir = true
+  
+  --EOL_LOOTHISTORY_Frame.setup
+  EchoExperience.view.lh.frame.setup = true  
+  EchoExperience.debugMsg2( "LH_Setup: done" )
 end
 
 ------------
 ---GUI
-function EchoExperience:LH_Show() 
-  if(EchoExperience.view.lh.listholder~=nil and EchoExperience.view.lh.listholder.dataLines ~=nil ) then
+function EchoExperience:LH_Show()
+  if(EchoExperience.view.lh.listholder ~=nil and EchoExperience.view.lh.listholder.dataLines ~=nil ) then
     EchoExperience:LH_UpdateDataScroll()
   end
+  EchoExperience:LH_RestoreFrameInfo("onShow")
 end
 
+------------
+---GUI
+function EchoExperience:LH_UpdateViewData()
+  EchoExperience:LH_UpdateScrollDataLinesData()
+end
 ------------
 --- GUI
 function EchoExperience:LH_CloseUI()
@@ -37,23 +47,15 @@ function EchoExperience:LH_CloseUI()
 end
 
 ------------
---- GUI: Save
-function EchoExperience:LH_SaveFramePosition(calledFrom)
-  if(EchoExperience.savedVariables.frame_LH==null)then
-    EchoExperience.savedVariables.frame_LH = {}
-  end
-  EchoExperience.savedVariables.frame_LH.lastX	= EchoExperience.view.lh.frame:GetLeft()
-  EchoExperience.savedVariables.frame_LH.lastY	= EchoExperience.view.lh.frame:GetTop()
-end
-
-------------
 --- GUI
 function EchoExperience:LH_onResizeStop()
 	EVENT_MANAGER:UnregisterForUpdate(EchoExperience.name.."LH_OnWindowResize")
 	EchoExperience:LH_SaveFrameInfo("onResizeStop")
-  --<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-35" offsetY="-10"/>
-  --EchoExperience.view.lh.listholder:SetAnchor(BOTTOMRIGHT, EchoExperience.view.lh.list, BOTTOMRIGHT, 0, ElderScrollsOfAlts.altData.fieldYOffset)
+  --<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)"    relativePoint="BOTTOMRIGHT" offsetX="-35" offsetY="-10"/>
+  --EchoExperience.view.lh.listholder:SetAnchor(BOTTOMRIGHT, EchoExperience.view.lh.list, BOTTOMRIGHT, 0, ElderScrollsOfAlts.altData.fieldYOffset )
+
   --
+  EchoExperience:LH_UpdateScrollDataLinesData()
 	EchoExperience:LH_GuiResizeScroll()	
   EchoExperience:LH_UpdateDataScroll()
 end
@@ -63,7 +65,8 @@ end
 function EchoExperience:LH_onResizeStart()
 	EVENT_MANAGER:RegisterForUpdate(EchoExperience.name.."LH_OnWindowResize", 50, 
     function()
-      EchoExperience:LH_UpdateScrollDataLinesData()
+      EchoExperience.debugMsg2( "LH_onResizeStart: called" )
+      --EchoExperience:LH_UpdateScrollDataLinesData()
       EchoExperience:LH_GuiResizeScroll()
       EchoExperience:LH_UpdateDataScroll()
     end)
@@ -84,6 +87,25 @@ function EchoExperience:LH_SaveFrameInfo(calledFrom)
 end
 
 ------------
+--- GUI
+function EchoExperience:LH_RestoreFrameInfo(calledFrom)
+	if (calledFrom == "onHide") then return end
+  if( EchoExperience.savedVariables.frame_LH==nil )then
+    return
+  end
+  
+  EchoExperience.view.lh.frame:ClearAnchors()
+  --EchoExperience.view.lh.frame:SetLeft(  EchoExperience.savedVariables.frame_LH.lastX )
+  --EchoExperience.view.lh.frame:SetTop(   EchoExperience.savedVariables.frame_LH.lastY	)
+  EchoExperience.view.lh.frame:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, EchoExperience.savedVariables.frame_LH.lastX, EchoExperience.savedVariables.frame_LH.lastY)
+  EchoExperience.view.lh.frame:SetWidth( EchoExperience.savedVariables.frame_LH.width )
+  EchoExperience.view.lh.frame:SetHeight(EchoExperience.savedVariables.frame_LH.height)
+  
+  
+  --EchoExperience.view.lh.frame:SetAnchor(BOTTOMRIGHT, GuiRoot, TOPLEFT, EchoExperience.savedVariables.frame_LH.lastY, EchoExperience.savedVariables.frame_LH.lastX+EchoExperience.savedVariables.frame_LH.width)
+end
+
+------------
 --- TOOLTIP
 function EchoExperience:LH_Misc2HeaderTipEnter(sender,key)
   InitializeTooltip(EEXPTooltip, sender, TOPLEFT, 5, -56, TOPRIGHT)
@@ -99,12 +121,15 @@ end
 
 ------------
 --- GUI
+--- Update number of lines in the listholder area
 function EchoExperience:LH_GuiResizeScroll()
 	local regionHeight = EchoExperience.view.lh.listholder:GetHeight()
   local rowHeight    = EchoExperience.view.lh.listholder.rowHeight
   EchoExperience.debugMsg2("LH_GuiResizeScroll: regionHeight: ", regionHeight, " rowHeight: ", rowHeight )
 	local newLines = math.floor(regionHeight / rowHeight)
+  EchoExperience.debugMsg2("LH_GuiResizeScroll: newLines:", newLines, " maxlines: ", EchoExperience.view.lh.listholder.maxLines)
 	if EchoExperience.view.lh.listholder.maxLines == nil or EchoExperience.view.lh.listholder.maxLines ~= newLines then
+    EchoExperience.debugMsg2("LH_GuiResizeScroll: resizing ") 
 		EchoExperience.view.lh.listholder.maxLines = newLines
 		EchoExperience:LH_GuiResizeLines()
 	end
@@ -117,6 +142,19 @@ function EchoExperience:LH_GuiResizeLines()
 
 	if not EchoExperience.view.lh.listholder.lines then
 		lines = EchoExperience:LH_CreateInventoryScroll()
+  else
+    local predecessor = EchoExperience.view.lh.listholder
+    EchoExperience.debugMsg2("CreatedLinesCount: ", EchoExperience.view.lh.listholder.createdLinesCount , " maxLines: " , EchoExperience.view.lh.listholder.maxLines)
+    if(EchoExperience.view.lh.listholder.createdLinesCount < EchoExperience.view.lh.listholder.maxLines) then
+      for i=1, EchoExperience.view.lh.listholder.maxLines do
+        EchoExperience.view.lh.listholder.lines[i] = EchoExperience:LH_CreateLine(i, predecessor, EchoExperience.view.lh.listholder)
+        predecessor = EchoExperience.view.lh.listholder.lines[i]
+      end
+      EchoExperience.view.lh.listholder.createdLinesCount = EchoExperience.view.lh.listholder.maxLines
+    end
+    --EchoExperience:LH_SetItemCountPosition()
+    -- setup slider
+    --EOL_GUI_ListHolder_Slider:SetMinMax(0, #EchoExperience.view.lh.listholder.dataLines - EchoExperience.view.lh.listholder.maxLines)
 	end
 	if EchoExperience.view.lh.listholder.lines ~= {} then
 		lines = EchoExperience.view.lh.listholder.lines
@@ -139,11 +177,13 @@ function EchoExperience:LH_CreateInventoryScroll()
 	EchoExperience.view.lh.sortbar.Icon = EchoExperience.view.lh.sortbar:GetNamedChild("_Sort_Name"):GetNamedChild("_Icon")
 	
 	EchoExperience.view.lh.listholder.maxLines = EchoExperience.defaultMaxLines
-	local predecessor = nil
+	local predecessor = EchoExperience.view.lh.listholder
+  EchoExperience.debugMsg2("Creating ", EchoExperience.view.lh.listholder.maxLines , " lines")
 	for i=1, EchoExperience.view.lh.listholder.maxLines do
-		EchoExperience.view.lh.listholder.lines[i] = EchoExperience:LH_CreateLine(i, predecessor, EchoExperience.view.lh.listholder)
-		predecessor = EchoExperience.view.lh.listholder.lines[i]
+    EchoExperience.view.lh.listholder.lines[i] = EchoExperience:LH_CreateLine(i, predecessor, EchoExperience.view.lh.listholder)
+    predecessor = EchoExperience.view.lh.listholder.lines[i]
 	end
+  EchoExperience.view.lh.listholder.createdLinesCount = EchoExperience.view.lh.listholder.maxLines
   --
 	EchoExperience:LH_SetItemCountPosition()
 	-- setup slider
@@ -258,6 +298,7 @@ function EchoExperience:LH_UpdateScrollDataLinesData()
       EchoExperience.debugMsg2("Tracking: itemKey: ", itemKey)
       dbItem.name = GetItemLinkName(dbItem.itemLink) 
       dbItem.icon = GetItemLinkIcon(dbItem.itemLink)
+      dbItem.link = dbItem.itemLink
       --
       local itemQuality = GetItemLinkQuality(dbItem.link)
       local itemId      = GetItemLinkItemId(dbItem.link)
@@ -287,6 +328,8 @@ function EchoExperience:LH_UpdateScrollDataLinesData()
       table.insert(dataLines, tempDataLine)
       totItems = totItems + (itemCount or 0)
     end
+  else
+    EchoExperience.debugMsg2("Tracking: loot history is null!")
   end
   --  
 	EchoExperience.view.lh.listholder.dataLines = dataLines
@@ -311,33 +354,38 @@ end
 ------------
 --- GUI: Create gui row
 function EchoExperience:LH_CreateLine(i, predecessor, parent)
-	local line = WINDOW_MANAGER:CreateControlFromVirtual("EchoExp_LH_ListItem_".. i, parent, "EchoExp_LH_SlotTemplate")
+  local name = "EchoExp_LH_ListItem_".. i
+	--local line = parent:GetNamedChild(name)
+  --EchoExperience.debugMsg2("LH_CreateLine: name: ", name, " parent: ", parent:GetName() )
+  --local line = WINDOW_MANAGER:GetControlByName(name, parent:GetName() )
+  local line  = EchoExperience.view.lh.listholder.lines[i]
+  if(line==nil) then
+    EchoExperience.debugMsg2("LH_CreateLine: creating new line!!")
+    line = WINDOW_MANAGER:CreateControlFromVirtual("EchoExp_LH_ListItem_".. i, parent, "EchoExp_LH_SlotTemplate")
+    line.icon = line:GetNamedChild("Button"):GetNamedChild("Icon")
+    line.time = line:GetNamedChild("Time")
+    line.name = line:GetNamedChild("Name")
+    line.qty  = line:GetNamedChild("Qty")
+    line.user = line:GetNamedChild("User")
+    line.div = line:GetNamedChild("Indicator")
+    --line.worn = line:GetNamedChild("IconWorn")
+    --line.stolen = line:GetNamedChild("IconStolen")
+    line:SetHidden(false)
+    line:SetMouseEnabled(true)
+    line:SetHeight(EchoExperience.view.lh.listholder.rowHeight)
 
-	line.icon = line:GetNamedChild("Button"):GetNamedChild("Icon")
-  line.time = line:GetNamedChild("Time")
-	line.name = line:GetNamedChild("Name")
-	line.qty  = line:GetNamedChild("Qty")
-  line.user = line:GetNamedChild("User")
-  line.div = line:GetNamedChild("Indicator")
-	--line.worn = line:GetNamedChild("IconWorn")
-	--line.stolen = line:GetNamedChild("IconStolen")
-
-	line:SetHidden(false)
-	line:SetMouseEnabled(true)
-	line:SetHeight(EchoExperience.view.lh.listholder.rowHeight)
-
-	if i == 1 then
-		line:SetAnchor(TOPLEFT,  EchoExperience.view.lh.listholder, TOPLEFT, 0, 0)
-		line:SetAnchor(TOPRIGHT, EchoExperience.view.lh.listholder, TOPRIGHT, 0, 0)
-	else
-		line:SetAnchor(TOPLEFT, predecessor, BOTTOMLEFT, 0, 0)
-		line:SetAnchor(TOPRIGHT, predecessor, BOTTOMRIGHT, 0, 0)
-	end
-
-	--line:SetHandler("OnMouseEnter", function(self) IIfA:GuiLineOnMouseEnter(self) end )
-	--line:SetHandler("OnMouseExit", function(self) IIfA:GuiLineOnMouseExit(self) end )
-	--line:SetHandler("OnMouseDoubleClick", function(...) IIfA:GUIDoubleClick(...) end )
-
+    if i == 1 then
+      line:SetAnchor(TOPLEFT,  EchoExperience.view.lh.listholder, TOPLEFT, 0, 0)
+      line:SetAnchor(TOPRIGHT, EchoExperience.view.lh.listholder, TOPRIGHT, 0, 0)
+    else
+      line:SetAnchor(TOPLEFT, predecessor, BOTTOMLEFT, 0, 0)
+      line:SetAnchor(TOPRIGHT, predecessor, BOTTOMRIGHT, 0, 0)
+    end
+    --line:SetHandler("OnMouseEnter", function(self) IIfA:GuiLineOnMouseEnter(self) end )
+    --line:SetHandler("OnMouseExit", function(self) IIfA:GuiLineOnMouseExit(self) end )
+    --line:SetHandler("OnMouseDoubleClick", function(...) IIfA:GUIDoubleClick(...) end )
+  end
+  EchoExperience.debugMsg2("Created line ", i , ".")
 	return line
 end
 
@@ -401,6 +449,7 @@ function EchoExperience:LH_DoGuiSort(control,newSort,sortText)
   EchoExperience.debugMsg2("DoGuiSort: called w/sortText='", tostring(sortText), "' newSort: ", tostring(newSort) )
   if(sortText==nil) then
     EchoExperience.debugMsg("DoGuiSort: reset sort?")
+    newSort = true
     if(EchoExperience.view.lh.sort.key==nil) then
       sortText = "time"
     else
@@ -410,7 +459,7 @@ function EchoExperience:LH_DoGuiSort(control,newSort,sortText)
   if(newSort or sortText ~= EchoExperience.view.lh.sort.key ) then
     EchoExperience.view.lh.sort = {}
     EchoExperience.view.lh.sort.key = sortText
-    EchoExperience.view.lh.sort.dir = true
+    EchoExperience.view.lh.sort.dir = false
   else 
     EchoExperience.view.lh.sort.dir = not EchoExperience.view.lh.sort.dir
   end

@@ -37,6 +37,8 @@ LitanyOfBlood Gui still a mess
 - options to not show collected and trait info
 - options to not show others loot by quality
 - loot history gui
+- crafted not flagged for -not collected--
+- banditui buttons for sidepanel
 
 ## EchoExp [Versions]
 0.0.43

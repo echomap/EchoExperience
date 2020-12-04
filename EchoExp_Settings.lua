@@ -107,7 +107,7 @@ end
 --
 function EchoExperience:ListOfItemQualitySettingsXalte(qualityname)
   qualityname = tostring(qualityname)
-  EchoExperience.outputMsg2("ListOfItemQualitySettingsXalte: "
+  EchoExperience.debugMsg2("ListOfItemQualitySettingsXalte: "
     , "qualityname=" , tostring(qualityname)
   )  
   if(qualityname==nil) then 

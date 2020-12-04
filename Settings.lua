@@ -88,6 +88,19 @@ function EchoExperience.LoadSettings()
       width = "half",	--or "half" (optional)
     }
   end
+  --[[	Bandits User Interface Side Panel ]]--
+  if(BUI~=nil) then
+    optionsTable[#optionsTable+1] = {
+      type = "checkbox",
+      name    = GetString(SI_ECHOEXP_SETTINGS_BANDITSIDEPANEL_NM),
+      tooltip = GetString(SI_ECHOEXP_SETTINGS_BANDITSIDEPANEL_TT), 
+      getFunc = function() return EchoExperience.savedVariables.banditsidepanel end,
+      setFunc = function(value)
+        EchoExperience.savedVariables.banditsidepanel = value
+      end,
+      width = "half",	--or "half" (optional)
+    }
+  end
   --
   
   -- Save/Load Settings

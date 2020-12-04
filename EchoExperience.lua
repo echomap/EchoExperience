@@ -82,6 +82,7 @@ local defaultSettings = {
   immersive = false,
   lootshowsetcollection = true,
   lootshowtrait         = true,
+  loothistorymaxsize    = 110,
 }
 
 ------------------------------
@@ -754,7 +755,6 @@ function EchoExperience:ToggleLootHistoryFrame()
 	EOL_LOOTHISTORY_Frame:SetHidden(not EOL_LOOTHISTORY_Frame:IsControlHidden())
   if( EOL_LOOTHISTORY_Frame.setup == nil) then
     EchoExperience:LH_Setup()
-    EOL_LOOTHISTORY_Frame.setup = true
   end
   EchoExperience:LH_Show()
 end
@@ -2139,14 +2139,16 @@ function EchoExperience.OnInventorySingleSlotUpdateWork(eventCode, bagId, slotId
   local collectionString = ""
   if(EchoExperience.savedVariables.lootshowsetcollection) then
     local itemId = GetItemLinkItemId(itemLink)
-    local hasSet = GetItemLinkSetInfo(itemLink)	
+    local hasSet = GetItemLinkSetInfo(itemLink)
+    --Check if crafted TODO
+    local isCrafted = IsItemLinkCrafted(itemLink)
     local isCollected = false
-    if(hasSet) then
+    if(hasSet and not isCrafted) then
       isCollected = IsItemSetCollectionPieceUnlocked(itemId)
       if(isCollected) then
-        collectionString = ""
+        collectionString = GetString(SI_ECHOEXP_SETCOLLECTION_COLLECTED)
       else
-        collectionString = "-Not Collected-"
+        collectionString = GetString(SI_ECHOEXP_SETCOLLECTION_NOTCOLLECTED)
       end
     end
   end
@@ -3487,18 +3489,29 @@ function EchoExperience:LootHistory(itemLink,quantity,receivedBy)
     --
     table.insert(EchoExperience.view.loothistory, elem)  
     EchoExperience.debugMsg2("LootHistory", tostring(itemLink) )
+    --
     --check max length and remove old? TODO
     local cnt = #EchoExperience.view.loothistory
-    if(cnt>100) then
-      EchoExperience.outputMsg2("LootHistory table is getting large, consider clearing it with /echoexp lhclear")  
+    if(cnt>110) then
+      --EchoExperience.outputMsg2("LootHistory table is getting large, consider clearing it with /echoexp lhclear")  
     --else if(cnt>110) then
     --remove up to 10 at once?
       --EchoExperience.view.loothistory[EchoExperience.view.loothistoryminidx] = nil
-      table.remove(EchoExperience.view.loothistory, EchoExperience.view.loothistoryminidx)
-      EchoExperience.view.loothistoryminidx = EchoExperience.view.loothistoryminidx +1
-      EchoExperience.outputMsg2("LootHistory table auto deleted: "
+      local numtoremove = 9
+      for ii = EchoExperience.view.loothistoryminidx, EchoExperience.view.loothistoryminidx + numtoremove do
+        if(EchoExperience.view.loothistory[ii]~=nil) then
+          EchoExperience.debugMsg2("LootHistory removed: " , EchoExperience.view.loothistory[ii].itemLink )
+        end
+        table.remove(EchoExperience.view.loothistory, ii)
+      end
+      EchoExperience.debugMsg2("LootHistory table auto deleted idx: "
         , tostring(EchoExperience.view.loothistoryminidx), ", new size is: "
         , tostring(#EchoExperience.view.loothistory) )
+      EchoExperience.view.loothistoryminidx = EchoExperience.view.loothistoryminidx + numtoremove
+    end
+    --Update gui?
+    if( not EOL_LOOTHISTORY_Frame:IsControlHidden() ) then
+      EchoExperience:LH_UpdateViewData()
     end
   end
 end
@@ -4080,6 +4093,38 @@ function EchoExperience.CheckVerifyDefaults()
     EchoExperience.savedVariables.lootgroupqualityid   = ITEM_QUALITY_TRASH
   end
   
+  if(EchoExperience.savedVariables.banditsidepanel==nil) then
+    EchoExperience.savedVariables.banditsidepanel = true
+  end
+  --[[	Bandits User Interface Side Panel ]]--
+  if(BUI~=nil and not EchoExperience.view.buisetup and EchoExperience.savedVariables.banditsidepanel) then
+    EchoExperience.view.buisetup = true
+    local content = {
+        {--TrackingGui
+          icon		= "/esoui/art/tutorial/pc_costumedye.dds",
+          tooltip	=  GetString(SI_BINDING_NAME_EE_DISPLAY1),
+          --context	= Context menu function (optional),
+          func		= function() EchoExperience:ToggleTrackingFrame() end,
+          enabled	= function() return not EchoExperience end,
+        },
+        {--LitanyGui
+          icon		= "/esoui/art/tutorial/poi_cave_complete.dds",
+          tooltip	=  GetString(SI_BINDING_NAME_EE_DISPLAY2),
+          --context	= Context menu function (optional),
+          func		= function() EchoExperience:ToggleLitanyFrame() end,
+          enabled	= function() return not EchoExperience end,
+        },
+        {--Loot History
+          icon		= "/esoui/art/tutorial/poi_areaofinterest_complete.dds",
+          tooltip	=  GetString(SI_BINDING_NAME_EE_DISPLAY3),
+          --context	= Context menu function (optional),
+          func		= function() EchoExperience:ToggleLootHistoryFrame() end,
+          enabled	= function() return not EchoExperience end,
+        },
+    }
+    BUI.PanelAdd(content)
+  end
+  
   --
   --
   if(madeChange) then
@@ -4127,6 +4172,7 @@ end
 
 ------------------------------
 -- SETUP  setup event handling
+-- Called from method "Activated"
 function EchoExperience.DelayedStart()
   --d("EchoExp DelayedStart Called")
   --

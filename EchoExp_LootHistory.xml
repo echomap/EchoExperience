@@ -2,11 +2,12 @@
 	<Controls>
   
 		<TopLevelControl name="EOL_LOOTHISTORY_Frame" clampedToScreen="true" mouseEnabled="true" movable="true" moveable="true" hidden="true" resizeHandleSize="10" >
-			<DimensionConstraints minX="620" minY="300" x="700" />
-			<Anchor point="TOPRIGHT" relativeTo="GUI_ROOT" relativePoint="TOPRIGHT" offsetX="-200" offsetY="450" />
-      <OnMoveStop>EchoExperience:LH_SaveFramePosition("onMoveStop")</OnMoveStop>
+			<DimensionConstraints minX="220" minY="250" x="700" y="300" />
+			<Anchor point="TOPRIGHT"   relativeTo="GUI_ROOT" relativePoint="TOPRIGHT" offsetX="-200" offsetY="450" />
+      <Anchor point="BOTTOMLEFT" relativeTo="GUI_ROOT" relativePoint="TOPRIGHT" offsetX="-700" offsetY="850" />
+      <OnMoveStop>EchoExperience:LH_SaveFrameInfo("onMoveStop")</OnMoveStop>
 			<OnResizeStart>EchoExperience:LH_onResizeStart()</OnResizeStart>
-			<OnResizeStop>EchoExperience:LH_onResizeStop()</OnResizeStop>
+			<OnResizeStop> EchoExperience:LH_onResizeStop() </OnResizeStop>
 
 			<Controls>
        
@@ -14,7 +15,7 @@
 					<Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT" offsetX="-27" offsetY="-12" />
 				</Control>
 
-				<Control name="$(parent)List" >
+				<Control name="$(parent)List" resizeToFitDescendents="false">
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" />
 					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" offsetX="-10" />
 					<Controls>
@@ -54,7 +55,7 @@
 							<Dimensions y="32" />
 							<Controls>
                 <Button name="$(parent)_Sort_Icon" text="Icon" font="ZoFontGameLargeBold" verticalAlignment="CENTER" horizontalAlignment="LEFT" mouseEnabled="true" >
-                  <Dimensions x="40" y="20"/>
+                  <Dimensions x="35" y="20"/>
                   <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="10" offsetY="0"/>      
                   <OnMouseEnter> EchoExperience:LH_Misc2HeaderTipEnter(self,"Sort by Time") </OnMouseEnter>
                   <OnMouseExit>  EchoExperience:LH_Misc2HeaderTipExit(self)  </OnMouseExit>    
@@ -68,7 +69,7 @@
                   <OnMouseUp> EchoExperience:LH_DoGuiSort(self, false, "div")</OnMouseUp>
                 </Button>      
                 <Button name="$(parent)_Sort_Time" text="Time" font="ZoFontGameLargeBold" verticalAlignment="CENTER" horizontalAlignment="LEFT" mouseEnabled="true" >
-                  <Dimensions x="65" y="20"/>
+                  <Dimensions x="55" y="20"/>
                   <Anchor point="TOPLEFT" relativeTo="$(parent)_Sort_Div" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>      
                   <OnMouseEnter> EchoExperience:LH_Misc2HeaderTipEnter(self,"Sort by Time") </OnMouseEnter>
                   <OnMouseExit>  EchoExperience:LH_Misc2HeaderTipExit(self)  </OnMouseExit>    
@@ -99,18 +100,18 @@
 							</Controls>
 						</Control>
 
-            <Control name="$(parent)_ListHolder" mouseEnabled="true" resizeToFitDescendents="true">
+            <Control name="$(parent)_ListHolder" mouseEnabled="true" resizeToFitDescendents="false">
               <DimensionConstraints  minY="52"/>
-              <Anchor point="TOPLEFT" relativeTo="$(parent)Headers" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0"/>
-              <Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-35" offsetY="-10"/>
+              <Anchor point="TOPLEFT" relativeTo="$(parent)Headers" relativePoint="BOTTOMLEFT"  offsetX="0"   offsetY="10"/>
+              <Anchor point="BOTTOMRIGHT" relativeTo="$(parent)"    relativePoint="BOTTOMRIGHT" offsetX="-35" offsetY="-10"/>
               <OnMouseWheel>EchoExperience:LH_GuiOnScroll(self, delta)</OnMouseWheel>
 
               <Controls>
-                <Backdrop name="$(parent)_bg" inherits="ZO_ThinBackdrop" centerColor="591141" ></Backdrop>
+                <Backdrop name="$(parent)_bg" inherits="ZO_ThinBackdrop" centerColor="591141"></Backdrop>
+                <!--Backdrop name="$(parent)_bg" alpha="0" centerColor="40FF0000" edgeColor="60FF0000"></Backdrop-->
                 <Slider name="$(parent)_Slider" mouseEnabled="true" step="1" inherits="ZO_VerticalScrollbarBase">
-                  <Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="16" offsetY="14"/>
+                  <Anchor point="TOPRIGHT"    relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="16" offsetY="14"/>
                   <Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="23" offsetY="-14"/>
-
                   <OnMouseDown>self.locked=false</OnMouseDown>
                   <OnMouseUp>self.locked=true</OnMouseUp>
                   <OnValueChanged>EchoExperience:LH_GuiOnSliderUpdate(self, value)</OnValueChanged>
@@ -154,7 +155,7 @@
 				</Texture>
         
 				<Label name="$(parent)Time" font="ZoFontGameShadow" horizontalAlignment="RIGHT" verticalAlignment="CENTER">
-					<Dimensions x="55" y="30"/>
+					<Dimensions x="50" y="30"/>
 					<Anchor point="TOPLEFT" relativeTo="$(parent)Indicator" relativePoint="TOPRIGHT" offsetX="6" offsetY="0" />
 				</Label>
 

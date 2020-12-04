@@ -1,8 +1,9 @@
 -- Every variable must start with this addon's unique ID, as each is a global.
 local localization_strings = {
   SI_ECHOEXP_MESSAGE = " is active!",
-  SI_BINDING_NAME_EE_DISPLAY1    = "Show EchoExp TrackingGui",
-  SI_BINDING_NAME_EE_DISPLAY2    = "Show EchoExp LitanyGui",
+  SI_BINDING_NAME_EE_DISPLAY1    = "Show EchoExp Tracking UI",
+  SI_BINDING_NAME_EE_DISPLAY2    = "Show EchoExp Litany UI",
+  SI_BINDING_NAME_EE_DISPLAY3    = "Show EchoExp Loot History UI",
   ------------------------------
   -- 
 	SI_ECHOEXP_EXPGAINS_SHOW   = "EchoExp is showing Experience Gains",
@@ -98,6 +99,9 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_TOOLTIP = "Experience output entries for (window/tab/color).",
   SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_DELETE  = "Delete selected Exp's Data!",
   
+  SI_ECHOEXP_SETTINGS_BANDITSIDEPANEL_NM = "Show EchoExp in Bandit's sidepanel",
+  SI_ECHOEXP_SETTINGS_BANDITSIDEPANEL_TT = "Show EchoExp in Bandit's sidepanel",
+  
   SI_ECHOEXP_SETTINGS_EXP_NEWOUTPUTS_TEXT = "Add new Experience output:",
   SI_ECHOEXP_SETTINGS_EXP_NEWOUTPUTS_NAME = "Add Experience Output",
   SI_ECHOEXP_SETTINGS_EXP_WINDOW_NAME     = "Exp Output to Window",
@@ -160,6 +164,10 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_GUILD_COLOR_TEXT      = "Guild Output Color",
   SI_ECHOEXP_SETTINGS_GUILD_COLOR_TOOLTIP   = "What Color to use for Guild text.",
   SI_ECHOEXP_SETTINGS_GUILD_NEWOUTPUTS_SAVE = "Save selected Guild chat Data!",
+  
+  SI_ECHOEXP_SETTINGS_LOOTHISTORY_NM = "LootHistory Max Size",
+  SI_ECHOEXP_SETTINGS_LOOTHISTORY_TT = "The limit of entries to save for loot history",
+  
   --
   SI_ECHOEXP_HEADER_TIME = "Time",
   SI_ECHOEXP_HEADER_ITEM = "Item",
@@ -227,6 +235,8 @@ local localization_strings = {
   SI_ECHOEXP_LEVEL_GAIN = "*** You feel more powerful! *** You have reached the level [<<1>>] ! ***",
   --isname, itemSetId, numPieces, numSlotsUnlocked, itemLink
   SI_ECHOEXP_SETCOLLECTION_UPDATED2 = "You collected a piece in the [<<5>>] set [<<4>>/<<3>>].",
+  SI_ECHOEXP_SETCOLLECTION_COLLECTED = "",
+  SI_ECHOEXP_SETCOLLECTION_NOTCOLLECTED = "-Not Collected-",
   
   --name, achievementID, description, numCompleted, numRequired
   SI_ECHOEXP_ACHIEVEMENT_UPDATED   = "Achievement <<1>> progressed (<<4>>/<<5>>).",

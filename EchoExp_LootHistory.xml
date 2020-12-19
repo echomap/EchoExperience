@@ -20,21 +20,21 @@
 					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" offsetX="-10" />
 					<Controls>
             <Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" > <AnchorFill/> </Backdrop>
-						<Control name="$(parent)FilterDrop" inherits="ZO_ComboBox">
+						<Control name="$(parent)_FilterDrop" inherits="ZO_ComboBox">
 							<Dimensions x="120" />
 							<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" offsetX="-46" offsetY="14" />
 						</Control>
 
-						<Backdrop name="$(parent)Search" tier="HIGH" inherits="ZO_SingleLineEditBackdrop_Keyboard">
-							<Anchor point="RIGHT" relativeTo="$(parent)FilterDrop" relativePoint="LEFT" offsetX="-12" offsetY="-1" />
+						<Backdrop name="$(parent)_Search" tier="HIGH" inherits="ZO_SingleLineEditBackdrop_Keyboard">
+							<Anchor point="RIGHT" relativeTo="$(parent)_FilterDrop" relativePoint="LEFT" offsetX="-12" offsetY="-1" />
 							<Dimensions x="250" />
 							<Controls>
-								<EditBox name="$(parent)Box" inherits="ZO_DefaultEditForBackdrop ZO_EditDefaultText" />
+								<EditBox name="$(parent)_Box" inherits="ZO_DefaultEditForBackdrop ZO_EditDefaultText" />
 							</Controls>
 						</Backdrop>
       
 						<Label name="$(parent)SearchLabel" text="SI_ECHOEXP_FILTER_LABEL" font="ZoFontGameLargeBold" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_NORMAL">
-							<Anchor point="RIGHT" relativePoint="LEFT" relativeTo="$(parent)Search" offsetX="-8" />
+							<Anchor point="RIGHT" relativePoint="LEFT" relativeTo="$(parent)_Search" offsetX="-8" />
 						</Label>
             
             <Button name="$(parent)_BtnClose" verticalAlignment="CENTER" horizontalAlignment="CENTER" mouseEnabled="true">
@@ -50,7 +50,7 @@
             </Button>
 
 						<Control name="$(parent)Headers">
-							<Anchor point="TOPLEFT" offsetX="30" offsetY="51" />
+							<Anchor point="TOPLEFT" offsetX="15" offsetY="51" />
 							<Anchor point="TOPRIGHT" offsetY="51" />
 							<Dimensions y="32" />
 							<Controls>
@@ -136,7 +136,7 @@
 			</Controls>
 		</TopLevelControl>
 
-		<Control name="EchoExp_LH_SlotTemplate" inherits="ZO_ListInventorySlotBehavior" virtual="true" mouseEnabled="true">
+		<Control name="EchoExp_LH_SlotTemplate" inherits="ZO_ListInventorySlotBehavior" virtual="true">
 			<Dimensions x="300" y="30" />
 			<Controls>
 				<Texture name="$(parent)Bg" textureFile="EsoUI/Art/Miscellaneous/listItem_backdrop.dds" alpha="0.4">
@@ -160,14 +160,16 @@
 				</Label>
 
 				<Label name="$(parent)Qty" font="ZoFontGameShadow" horizontalAlignment="RIGHT" verticalAlignment="CENTER">
-					<Dimensions x="50" y="30"/>
+					<Dimensions x="40" y="30"/>
 					<Anchor point="TOPLEFT" relativeTo="$(parent)Time" relativePoint="TOPRIGHT" offsetX="6" offsetY="0" />
 				</Label>
 
-				<Label name="$(parent)Name" font="ZoFontGameShadow" wrapMode="ELLIPSIS" verticalAlignment="CENTER" linkEnabled="true">
-					<Dimensions x="250" y="30" />
-					<Anchor point="TOPLEFT" relativeTo="$(parent)Qty" relativePoint="TOPRIGHT" offsetX="6" offsetY="0"/>
-				</Label>
+        <Button name="$(parent)Name" text="*" font="ZoFontGameShadow" verticalAlignment="CENTER" horizontalAlignment="LEFT" mouseEnabled="true" wrapMode="ELLIPSIS" linkEnabled="true" >
+          <Dimensions x="250" y="30" />
+          <Anchor point="TOPLEFT" relativeTo="$(parent)Qty" relativePoint="TOPRIGHT" offsetX="6" offsetY="0"/>
+          <OnMouseEnter> EchoExperience:LH_Misc2HeaderTipEnter(self,"Link") </OnMouseEnter>
+          <OnMouseExit>  EchoExperience:LH_Misc2HeaderTipExit(self)  </OnMouseExit>
+        </Button>  
         				
         <Label name="$(parent)User" font="ZoFontGameShadow" wrapMode="ELLIPSIS" verticalAlignment="CENTER">
 					<Dimensions y="30"/>
@@ -177,7 +179,11 @@
         
 			</Controls>
 		</Control>
-
+ 
+  <Tooltip name="EELHTooltip" inherits="ZO_ItemIconTooltip" mouseEnabled="true" movable="true" hidden="true">
+    <ResizeToFitPadding   width="40" height="30"/>
+    <DimensionConstraints minX="30" maxX="200" />
+  </Tooltip>
 
 	</Controls>
 </GuiXml>

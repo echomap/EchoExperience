@@ -4,8 +4,8 @@
 -- 
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.43",                   -- A nuisance to match to the Manifest.
-    versionnumeric  =  43,                        -- A nuisance to match to the Manifest.
+    version         = "0.0.44",                   -- A nuisance to match to the Manifest.
+    versionnumeric  =  44,                        -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -751,7 +751,7 @@ end
 ------------------------------
 -- UI
 function EchoExperience:ToggleLootHistoryFrame()
-  EchoExperience.outputMsg2("Show Loot history")
+  --EchoExperience.outputMsg2("Show Loot history")
 	EOL_LOOTHISTORY_Frame:SetHidden(not EOL_LOOTHISTORY_Frame:IsControlHidden())
   if( EOL_LOOTHISTORY_Frame.setup == nil) then
     EchoExperience:LH_Setup()
@@ -2020,18 +2020,64 @@ end
 ------------------------------
 -- EVENT
 --EVENT_MAIL_TAKE_ATTACHED_ITEM_SUCCESS (number eventCode, id64 mailId)
-function EchoExperience.OnMailItemRecieved(eventCode,mailId)
---        ZO_MailInboxShared_PopulateMailData(self:GetMailData(self.mailId), mailId)
---GetAttachedItemLink(id64 mailId, number attachIndex, number LinkStyle linkStyle)
-  --  Returns: string link 
+function EchoExperience.OnMailTakeAttachedItemOk(eventCode,mailId)
+  EchoExperience.debugMsg2("OnMailTakeAttachedItemOk: "
+			, " eventCode="  , tostring(eventCode)
+			, " mailId=" , tostring(mailId)
+		)
+  -- ZO_MailInboxShared_PopulateMailData(self:GetMailData(self.mailId), mailId)
+  --GetAttachedItemLink(id64 mailId, number attachIndex, number LinkStyle linkStyle)
+  --  Returns: string link   
+  --GetMailAttachmentInfo
+  --GetMailItemInfo
+  --GetMailSender
+  --GetAttachedItemInfo
 end
 
 ------------------------------
 -- EVENT
 --EVENT_MAIL_TAKE_ATTACHED_MONEY_SUCCESS (number eventCode, id64 mailId) 
-function EchoExperience.OnMailMoneyRecieved(eventCode,mailId)
-  --
+function EchoExperience.OnMailTakeAttachedMoneyOk(eventCode,mailId)
+  EchoExperience.debugMsg2("OnMailTakeAttachedMoneyOk: "
+			, " eventCode="  , tostring(eventCode)
+			, " mailId=" , tostring(mailId)
+		)
 end
+
+------------------------------
+-- EVENT
+--EVENT_MAIL_ATTACHMENT_ADDED (number eventCode, number attachmentSlot)
+function EchoExperience.OnMailCreateAttachAdd(eventCode,attachmentSlot)
+  EchoExperience.debugMsg2("OnMailCreateAttachAdd: "
+    , " eventCode="  , tostring(eventCode)
+    , " attachmentSlot=" , tostring(attachmentSlot)
+  )
+  
+  -- Returns: number bagId, number slotIndex, textureName icon, number stack
+  local bagId, slotIndex, icon, stack = GetQueuedItemAttachmentInfo(attachmentSlot)
+  -- Returns: string link
+  local link = GetMailQueuedAttachmentLink(attachmentSlot)--, linkStyle)
+  EchoExperience.debugMsg2("OnMailCreateAttachAdd: "
+    , " link="  , link
+  )
+
+end
+
+------------------------------
+-- EVENT
+--EVENT_MAIL_ATTACHMENT_REMOVED (number eventCode, number attachmentSlot)
+function EchoExperience.OnMailCreateAttachRem(eventCode,attachmentSlot)
+  EchoExperience.debugMsg2("OnMailCreateAttachRem: "
+			, " eventCode="  , tostring(eventCode)
+			, " attachmentSlot=" , tostring(attachmentSlot)
+		)
+    local link = GetMailQueuedAttachmentLink(attachmentSlot)--, linkStyle)
+  EchoExperience.debugMsg2("OnMailCreateAttachRem: "
+    , " link="  , link
+  )
+end
+
+
 
 ------------------------------
 -- EVENT
@@ -2181,16 +2227,37 @@ function EchoExperience.OnInventorySingleSlotUpdateWork(eventCode, bagId, slotId
     qualifier = qualifier + 4
   end
   -- Output
-  if(isNewItem) then
-    local sentence = GetString("SI_ECHOLOOT_RECEIVE_", qualifier)
-    local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName, totalBagCount, collectionString )
-    EchoExperience.outputToChanel(strL,msgTypeLOOT)
-    --EchoExperience:LootHistory(itemLink,stackCountChange)
-  elseif( stackCountChange~=0 and( IsBankOpen() or IsGuildBankOpen()) )then
-    local sentence = GetString("SI_ECHOLOOT_BANK_GET_", qualifier)
-    local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName, totalBagCount, collectionString )
-    EchoExperience.outputToChanel(strL,msgTypeLOOT)
+  
+ --ItemQuality
+  local showSL = true
+  EchoExperience.debugMsg2("CHECK self: quality setting A:=" , EchoExperience.savedVariables.lootselfqualityid )
+  EchoExperience.debugMsg2("CHECK self: quality setting B:=" , EchoExperience.savedVariables.lootselfqualityname )
+  if(EchoExperience.savedVariables.lootselfqualityid~=nil) then
+    local itemQuality = GetItemLinkQuality(itemLink)
+    EchoExperience.debugMsg2("CHECK self: itemQuality:=" , itemQuality  )
+    showSL = false
+    if(itemQuality>=EchoExperience.savedVariables.lootselfqualityid) then
+      showSL = true
+    end
+    EchoExperience.debugMsg2("OnInventorySingleSlotUpdate: "
+      , " lootselfqualityid="   , tostring(EchoExperience.savedVariables.lootselfqualityid)
+      , " itemQuality="     , tostring(itemQuality)      
+      , " showSL="   , tostring(showSL)
+    )
   end
+  if(showSL) then
+    if(isNewItem) then
+      local sentence = GetString("SI_ECHOLOOT_RECEIVE_", qualifier)
+      local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName, totalBagCount, collectionString )
+      EchoExperience.outputToChanel(strL,msgTypeLOOT)
+      --EchoExperience:LootHistory(itemLink,stackCountChange)
+    elseif( stackCountChange~=0 and( IsBankOpen() or IsGuildBankOpen()) )then
+      local sentence = GetString("SI_ECHOLOOT_BANK_GET_", qualifier)
+      local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName, totalBagCount, collectionString )
+      EchoExperience.outputToChanel(strL,msgTypeLOOT)
+    end
+  end  
+  
   --New Tracking Module
   if(isNewItem) then
     local itemName = GetItemLinkName(itemLink) 
@@ -2240,7 +2307,7 @@ end
 function EchoExperience.OnLootReceivedWork(eventCode,receivedBy,itemName,quantity,soundCategory,lootType,isSelf,isPickpocketLoot,questItemIcon,itemId,isStolen)
   -- Get Extra Info for types that have it
 	local extraInfo = nill  
-	if lootType ~= nil and lootType ~= LOOT_TYPE_MONEY and lootType ~= LOOT_TYPE_QUEST_ITEM then
+	if lootType ~= nil and lootType ~= LOOT_TYPE_MONEY and lootType ~= LOOT_TYPE_QUEST_ITEM and lootType ~= LOOT_TYPE_ANTIQUITY_LEAD then
 		--if itemType ~= ITEMTYPE_ARMOR_TRAIT and itemType ~= ITEMTYPE_WEAPON_TRAIT -- lootType ~= LOOT_TYPE_COLLECTIBLE
 		local traitName, setName = EchoExperience:GetExtraInfo(itemName)
 		if( traitName ~= nil and setName ~= nil and traitName ~= "" and setName ~= "") then
@@ -2266,12 +2333,15 @@ function EchoExperience.OnLootReceivedWork(eventCode,receivedBy,itemName,quantit
     EchoExperience:LootHistory(itemName,quantity,receivedBy)
   end
   
-  local icon      = GetItemLinkIcon(itemName)
+  local icon = GetItemLinkIcon(itemName)
   --local itemLink  = GetItemLink(bagId, slotId, LINK_STYLE_BRACKETS)
   --
   if(isSelf) then
-    --I can't remember why this...
-    if( not EchoExperience.savedVariables.extendedLoot) then
+ 
+    --I can't remember why this... TODO derp
+    if( not EchoExperience.savedVariables.extendedLoot and quantity>0 ) then
+      
+      --
       local qualifier = 1
       if(quantity==1) then
         if(extraInfo ~= nil) then
@@ -2288,32 +2358,73 @@ function EchoExperience.OnLootReceivedWork(eventCode,receivedBy,itemName,quantit
       end
       EchoExperience.debugMsg2("qualifier=" , tostring(qualifier) )
 
-      -- output: if isSelf and not extendedLoot
-      local sentence = GetString("SI_ECHOLOOT_YOU_GAIN_",qualifier)
-      if(isPickpocketLoot) then
-        sentence = GetString("SI_ECHOLOOT_YOU_PICK_",qualifier)
-      elseif(lootType==LOOT_TYPE_QUEST_ITEM)then
-        sentence = GetString("SI_ECHOLOOT_YOU_QUEST_",qualifier)
+     --ItemQuality
+      local showSL = true
+      EchoExperience.debugMsg2("CHECK self: quality setting A:=" , EchoExperience.savedVariables.lootselfqualityid )
+      EchoExperience.debugMsg2("CHECK self: quality setting B:=" , EchoExperience.savedVariables.lootselfqualityname )
+      if(EchoExperience.savedVariables.lootselfqualityid~=nil) then
+        local itemQuality = GetItemLinkQuality(itemName)
+        EchoExperience.debugMsg2("CHECK self: itemQuality:=" , itemQuality  )
+        showSL = false
+        if(itemQuality>=EchoExperience.savedVariables.lootselfqualityid) then
+          showSL = true
+        end
+        EchoExperience.debugMsg2("OnLootReceived: "
+          , " lootselfqualityid="   , tostring(EchoExperience.savedVariables.lootselfqualityid)
+          , " itemQuality="     , tostring(itemQuality)      
+          , " showSL="   , tostring(showSL)
+        )
       end
-      local strL = zo_strformat(sentence, icon, itemName, quantity, extraInfo)
-      EchoExperience.outputToChanel(strL,msgTypeLOOT)
+      if(showSL) then
+        -- output: if isSelf and not extendedLoot
+        local sentence = GetString("SI_ECHOLOOT_YOU_GAIN_",qualifier)
+        if(isPickpocketLoot) then
+          sentence = GetString("SI_ECHOLOOT_YOU_PICK_",qualifier)
+        elseif(lootType==LOOT_TYPE_QUEST_ITEM)then
+          sentence = GetString("SI_ECHOLOOT_YOU_QUEST_",qualifier)
+        end
+        local strL = zo_strformat(sentence, icon, itemName, quantity, extraInfo)
+        EchoExperience.outputToChanel(strL,msgTypeLOOT)
+            
+      end--show quality
     end --isSelf and not extendedLoot
   elseif (EchoExperience.savedVariables.groupLoot and receivedBy~=nil) then
     --ItemQuality
     local showGL = true
-    if(EchoExperience.view.selected.lootgroupqualityid~=nil) then
-      local itemQuality = GetItemLinkQuality(itemLink)
+    EchoExperience.debugMsg2("CHECK OTHER: quality setting A:=" , EchoExperience.savedVariables.lootgroupqualityid )
+    EchoExperience.debugMsg2("CHECK OTHER: quality setting B:=" , EchoExperience.savedVariables.lootgroupqualityname )
+    if(EchoExperience.savedVariables.lootgroupqualityid~=nil) then
+      local itemQuality = GetItemLinkQuality(itemName)
+      EchoExperience.debugMsg2("CHECK OTHER: itemQuality:=" , itemQuality  )
       showGL = false
-      if(EchoExperience.view.selected.lootgroupqualityid>=itemQuality) then
+      if(itemQuality>=EchoExperience.savedVariables.lootgroupqualityid) then
         showGL = true
       end
-      EchoExperience.outputMsg2("OnLootReceived: "
-        , " lootgroupqualityid="   , tostring(EchoExperience.view.selected.lootgroupqualityid)
+      EchoExperience.debugMsg2("OnLootReceived: "
+        , " lootgroupqualityid="   , tostring(EchoExperience.savedVariables.lootgroupqualityid)
         , " itemQuality="     , tostring(itemQuality)      
         , " showGL="   , tostring(showGL)
       )
     end
     if(showGL) then
+      -- New Set Collections 1000033
+      local collectionString = ""
+      if(EchoExperience.savedVariables.lootshowsetcollection) then
+        local itemId = GetItemLinkItemId(itemName)
+        local hasSet = GetItemLinkSetInfo(itemName)
+        --Check if crafted TODO
+        local isCrafted = IsItemLinkCrafted(itemName)
+        local isCollected = false
+        if(hasSet and not isCrafted) then
+          isCollected = IsItemSetCollectionPieceUnlocked(itemId)
+          if(isCollected) then
+            collectionString = GetString(SI_ECHOEXP_SETCOLLECTION_COLLECTED)
+          else
+            collectionString = GetString(SI_ECHOEXP_SETCOLLECTION_NOTCOLLECTED)
+          end
+        end
+      end
+      
       --if NOT self and IS groupLoot and has a receievedby value
       local qualifier = 1
       if(quantity>1) then qualifier = 2 end
@@ -2323,7 +2434,7 @@ function EchoExperience.OnLootReceivedWork(eventCode,receivedBy,itemName,quantit
       elseif(lootType==LOOT_TYPE_QUEST_ITEM) then
         sentence = GetString("SI_ECHOLOOT_OTHER_QUEST_", qualifier)
       end
-      local strL = zo_strformat(sentence, receivedBy, icon, itemName, quantity, extraInfo)
+      local strL = zo_strformat(sentence, receivedBy, icon, itemName, quantity, extraInfo, collectionString)
       EchoExperience.outputToChanel(strL,msgTypeLOOT)
     end
   end--self check
@@ -3482,8 +3593,12 @@ function EchoExperience:LootHistory(itemLink,quantity,receivedBy)
     end
     --
     local elem = {}
-    elem.time       = GetTimeString()
+    -- seconds in UTC based on the player's OS time.
+    elem.timestr    = GetTimeString()
+    elem.time       = GetTimeStamp()
+    elem.frame      = GetFrameTimeSeconds()
     elem.itemLink   = itemLink
+    elem.link       = itemLink
     elem.quantity   = quantity
     elem.user       = receivedBy
     --
@@ -3715,6 +3830,32 @@ function EchoExperience.SetupDiscoveryEvents(reportMe)
   else
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_DISCOVERY_EXPERIENCE",	EVENT_DISCOVERY_EXPERIENCE)
   end
+end
+
+------------------------------
+-- SETUP
+  --EVENT_MAIL_ATTACHED_MONEY_CHANGED (number eventCode, number moneyAmount)
+  --EVENT_MAIL_COD_CHANGED (number eventCode, number codAmount)
+  --EVENT_MAIL_SEND_FAILED (number eventCode, SendMailResult reason)
+  --EVENT_MAIL_SEND_SUCCESS (number eventCode)
+  --EVENT_MAIL_OPEN_MAILBOX (number eventCode)
+  --EVENT_MAIL_CLOSE_MAILBOX (number eventCode)
+  --EVENT_MAIL_INBOX_UPDATE (number eventCode)
+  --EVENT_MAIL_NUM_UNREAD_CHANGED (number eventCode, number numUnread)
+  --EVENT_MAIL_READABLE (number eventCode, id64 mailId)
+  --EVENT_MAIL_REMOVED (number eventCode, id64 mailId)
+function EchoExperience.SetupMailEvents(reportMe)
+  --if( EchoExperience.savedVariables.showdiscovery) then
+  		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnMailTakeAttachedItemOk",	EVENT_MAIL_TAKE_ATTACHED_ITEM_SUCCESS,     EchoExperience.OnMailTakeAttachedItemOk )
+  		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnMailTakeAttachedMoneyOk",	EVENT_MAIL_TAKE_ATTACHED_MONEY_SUCCESS,     EchoExperience.OnMailTakeAttachedMoneyOk )
+      
+      EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnMailCreateAttachAdd",	EVENT_MAIL_ATTACHMENT_ADDED,     EchoExperience.OnMailCreateAttachAdd )
+  		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."OnMailCreateAttachRem",	EVENT_MAIL_ATTACHMENT_REMOVED,     EchoExperience.OnMailCreateAttachRem )
+
+      
+  --else
+    --EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_DISCOVERY_EXPERIENCE",	EVENT_DISCOVERY_EXPERIENCE)
+  --end
 end
 
 ------------------------------
@@ -4092,6 +4233,10 @@ function EchoExperience.CheckVerifyDefaults()
     EchoExperience.savedVariables.lootgroupqualityname = "Trash"
     EchoExperience.savedVariables.lootgroupqualityid   = ITEM_QUALITY_TRASH
   end
+  if(EchoExperience.savedVariables.lootselfqualityname==nil) then
+    EchoExperience.savedVariables.lootselfqualityname = "Trash"
+    EchoExperience.savedVariables.lootselfqualityid   = ITEM_QUALITY_TRASH
+  end
   
   if(EchoExperience.savedVariables.banditsidepanel==nil) then
     EchoExperience.savedVariables.banditsidepanel = true
@@ -4204,6 +4349,8 @@ function EchoExperience.DelayedStart()
   EchoExperience.SetupDiscoveryEvents()
   EchoExperience.SetupAlphaEvents()
   EchoExperience.SetupLitanyOfBlood()
+  --
+  EchoExperience.SetupMailEvents()
   --
 end
 

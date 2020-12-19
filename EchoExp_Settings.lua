@@ -87,17 +87,19 @@ function EchoExperience:ListOfLootTabs()
 end
 
 ------------------------------
---
+--TODO: Colors causing troubles with translating to ID
 function EchoExperience:ListOfItemQualitySettings()
   local validChoices =  {}
   --local c = ZO_ColorDef:New(0, 1, v.color.b, v.color.a)
-  local red   = ZO_ColorDef:New(1, 0, 0, 1)
-  local green = ZO_ColorDef:New(0, 1, 0, 1)
-  local blue  = ZO_ColorDef:New(0, 1, 1, 1)
+  --local red   = ZO_ColorDef:New(1, 0, 0, 1)
+  --local green = ZO_ColorDef:New(0, 1, 0, 1)
+  --local blue  = ZO_ColorDef:New(0, 1, 1, 1)
   table.insert(validChoices, "Trash")
   table.insert(validChoices, "Normal")
-  table.insert(validChoices, green:Colorize("Magic") )
-  table.insert(validChoices, blue:Colorize("Legendary") )
+  table.insert(validChoices, "Magic" )
+  table.insert(validChoices, "Legendary" )
+  --table.insert(validChoices, green:Colorize("Magic") )
+  --table.insert(validChoices, blue:Colorize("Legendary") )
   table.insert(validChoices, "Artifact")
   table.insert(validChoices, "Arcane")
   return validChoices 
@@ -105,10 +107,10 @@ end
 
 ------------------------------
 --
-function EchoExperience:ListOfItemQualitySettingsXalte(qualityname)
-  qualityname = tostring(qualityname)
+function EchoExperience:ListOfItemQualitySettingsXalte(qualitynameIn)
+  local qualityname = tostring(qualitynameIn)
   EchoExperience.debugMsg2("ListOfItemQualitySettingsXalte: "
-    , "qualityname=" , tostring(qualityname)
+    , "qualityname=" , qualityname
   )  
   if(qualityname==nil) then 
     return ITEM_QUALITY_TRASH 

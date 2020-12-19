@@ -33,14 +33,18 @@ LitanyOfBlood Gui still a mess
 
 
 ## [Testing branch]
+0.0.45
+- Mail tracking alpha?
+- Update Loot History View
+- Added settings to limit reporting on loot by quality
+
+## EchoExp [Versions]
 0.0.44
 - options to not show collected and trait info
 - options to not show others loot by quality
-- loot history gui
+- loot history gui (alpha)
 - crafted not flagged for -not collected--
 - banditui buttons for sidepanel
-
-## EchoExp [Versions]
 0.0.43
 - Added text when receiving an item that is not-collected
 0.0.42

@@ -9,6 +9,8 @@ function EchoExperience:LH_Setup()
   EchoExperience.view.lh = {}
   EchoExperience.view.lh.frame      = EOL_LOOTHISTORY_Frame
   EchoExperience.view.lh.list       = EOL_LOOTHISTORY_FrameList
+  EchoExperience.view.lh.filter     = EOL_LOOTHISTORY_FrameList_FilterDrop
+  EchoExperience.view.lh.search     = EOL_LOOTHISTORY_FrameList_Search_Box
   EchoExperience.view.lh.listholder = EOL_LOOTHISTORY_FrameList_ListHolder
   EchoExperience.view.lh.sortbar    = EOL_LOOTHISTORY_FrameListHeaders
   EchoExperience.view.lh.slider     = EOL_LOOTHISTORY_FrameList_ListHolder_Slider
@@ -16,6 +18,12 @@ function EchoExperience:LH_Setup()
 	EchoExperience.view.lh.listholder.rowHeight = 24
 	EchoExperience.view.lh.listholder:SetDrawLayer(0)
   EchoExperience.view.lh.listholder.dataOffset = 0
+  EchoExperience.view.lh.frame.updating = false
+  EchoExperience.view.lh.viewnamelength = 250
+  if(EchoExperience.savedVariables.lhviewnamelength~=nil) then
+    EchoExperience.view.lh.viewnamelength = EchoExperience.savedVariables.lhviewnamelength  
+  end
+  
   --
   EchoExperience.view.lh.sort = {}
   EchoExperience.view.lh.sort.key = "time"
@@ -23,6 +31,47 @@ function EchoExperience:LH_Setup()
   
   --EOL_LOOTHISTORY_Frame.setup
   EchoExperience.view.lh.frame.setup = true  
+  -- Tooltip
+  --EELHTooltip:SetParent(PopupTooltipTopLevel)
+  EchoExperience.view.lh.tooltip = ItemTooltip
+  
+  
+  --EchoExperience.view.lh.filter   
+  EchoExperience.view.lh.filter.comboBox = EchoExperience.view.lh.filter.comboBox or ZO_ComboBox_ObjectFromContainer(EchoExperience.view.lh.filter)
+  local comboBox = EchoExperience.view.lh.filter.comboBox
+  comboBox:ClearItems()  
+  comboBox:SetSortsItems(false)
+  local function OnItemSelect1(_, choiceText, choice)
+    EchoExperience:debugMsg(" choiceText=" .. choiceText .. " choice=" .. tostring(choice) )    
+    --local viewIdx = EchoExperience.view.viewLookupIdxFromName[choiceText]
+    --EchoExperience:ShowAndSetView(choiceText,viewIdx,nil)
+    EchoExperience.view.lh.listholder.filtered = true
+    PlaySound(SOUNDS.POSITIVE_CLICK)
+  end
+  local validChoices = EchoExperience:ListOfItemQualitySettings()
+  for i = 1, #validChoices do
+    local entry = comboBox:CreateItemEntry(validChoices[i], OnItemSelect1)
+    comboBox:AddItem(entry)
+  end
+  
+  --EchoExperience.view.lh.search
+  --TODO Causing issues with too many updates!
+  --OnTextChanged
+  --[[
+  EchoExperience.view.lh.search:SetHandler("OnTextChanged", function(self)
+      EVENT_MANAGER:RegisterForUpdate(EchoExperience.name.."OTTOnTextChanged", 50,
+        function() 
+          EchoExperience.debugMsg2( "OnTextChanged: called" )
+          --Setup max lines, and slider (calls RefreshViewableTable)
+          EchoExperience.view.lh.listholder.filtered = true
+          EchoExperience:LH_UpdateDataScroll()
+          --Set max, and Hide lines out of the max display
+          --EchoExperience:GuiResizeScroll() 
+        end
+      )
+    end )
+ --]]
+
   EchoExperience.debugMsg2( "LH_Setup: done" )
 end
 
@@ -33,12 +82,35 @@ function EchoExperience:LH_Show()
     EchoExperience:LH_UpdateDataScroll()
   end
   EchoExperience:LH_RestoreFrameInfo("onShow")
+  --
+  EchoExperience.view.lh.search:SetText("")
+  EchoExperience.view.lh.listholder.filtered = false
+  
+  --name bar size?
+  local sortName = EchoExperience.view.lh.sortbar:GetNamedChild("_Sort_Name")
+  sortName:SetWidth(EchoExperience.view.lh.viewnamelength)
+  
+  --
+  EchoExperience:LH_UpdateScrollDataLinesData()
+	EchoExperience:LH_GuiResizeScroll()	
+  EchoExperience:LH_UpdateDataScroll()
+  --
 end
 
 ------------
 ---GUI
 function EchoExperience:LH_UpdateViewData()
-  EchoExperience:LH_UpdateScrollDataLinesData()
+  if( not EchoExperience.view.lh.frame.updating ) then
+    if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+      EchoExperience.view.task:Call(
+        function()
+          EchoExperience:LH_UpdateScrollDataLinesData()
+        end
+      )
+    else
+      EchoExperience:LH_UpdateScrollDataLinesData()
+    end  
+  end
 end
 ------------
 --- GUI
@@ -52,7 +124,7 @@ function EchoExperience:LH_onResizeStop()
 	EVENT_MANAGER:UnregisterForUpdate(EchoExperience.name.."LH_OnWindowResize")
 	EchoExperience:LH_SaveFrameInfo("onResizeStop")
   --<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)"    relativePoint="BOTTOMRIGHT" offsetX="-35" offsetY="-10"/>
-  --EchoExperience.view.lh.listholder:SetAnchor(BOTTOMRIGHT, EchoExperience.view.lh.list, BOTTOMRIGHT, 0, ElderScrollsOfAlts.altData.fieldYOffset )
+  --EchoExperience.view.lh.listholder:SetAnchor(BOTTOMRIGHT, EchoExperience.view.lh.list, BOTTOMRIGHT, 0, EchoExperience.altData.fieldYOffset )
 
   --
   EchoExperience:LH_UpdateScrollDataLinesData()
@@ -79,7 +151,7 @@ function EchoExperience:LH_SaveFrameInfo(calledFrom)
   if(EchoExperience.savedVariables.frame_LH==null)then
     EchoExperience.savedVariables.frame_LH = {}
   end
-
+  --
   EchoExperience.savedVariables.frame_LH.lastX	= EchoExperience.view.lh.frame:GetLeft()
   EchoExperience.savedVariables.frame_LH.lastY	= EchoExperience.view.lh.frame:GetTop()
   EchoExperience.savedVariables.frame_LH.width	= EchoExperience.view.lh.frame:GetWidth()
@@ -95,28 +167,9 @@ function EchoExperience:LH_RestoreFrameInfo(calledFrom)
   end
   
   EchoExperience.view.lh.frame:ClearAnchors()
-  --EchoExperience.view.lh.frame:SetLeft(  EchoExperience.savedVariables.frame_LH.lastX )
-  --EchoExperience.view.lh.frame:SetTop(   EchoExperience.savedVariables.frame_LH.lastY	)
   EchoExperience.view.lh.frame:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, EchoExperience.savedVariables.frame_LH.lastX, EchoExperience.savedVariables.frame_LH.lastY)
   EchoExperience.view.lh.frame:SetWidth( EchoExperience.savedVariables.frame_LH.width )
   EchoExperience.view.lh.frame:SetHeight(EchoExperience.savedVariables.frame_LH.height)
-  
-  
-  --EchoExperience.view.lh.frame:SetAnchor(BOTTOMRIGHT, GuiRoot, TOPLEFT, EchoExperience.savedVariables.frame_LH.lastY, EchoExperience.savedVariables.frame_LH.lastX+EchoExperience.savedVariables.frame_LH.width)
-end
-
-------------
---- TOOLTIP
-function EchoExperience:LH_Misc2HeaderTipEnter(sender,key)
-  InitializeTooltip(EEXPTooltip, sender, TOPLEFT, 5, -56, TOPRIGHT)
-  EEXPTooltip:AddLine(key, "ZoFontHeader3")
-end
-
-------------
---- TOOLTIP
-function EchoExperience:LH_Misc2HeaderTipExit(sender)
-  --ClearTooltip(InformationTooltip)
-  ClearTooltip(EEXPTooltip)
 end
 
 ------------
@@ -211,16 +264,32 @@ end
 --- GUI: data
 function EchoExperience:LH_SetDataLinesData()
 	local curLine, curData
-	for i = 1, EchoExperience.view.lh.listholder.maxLines do
-		curLine = EchoExperience.view.lh.listholder.lines[i]
-		curData = EchoExperience.view.lh.listholder.dataLines[EchoExperience.view.lh.listholder.dataOffset + i]
-		EchoExperience.view.lh.listholder.lines[i] = curLine
+  --TODO update for EchoExperience.view.lh.search
+  EchoExperience.debugMsg2("LH_SetDataLinesData: "
+    , " search="  , EchoExperience.view.lh.search
+  )
 
-		if( curData ~= nil) then
-			EchoExperience:LH_fillLine(curLine, curData)
-		else
-			EchoExperience:LH_fillLine(curLine, nil)
-		end
+  local lineCount = EchoExperience.view.lh.listholder.maxLines
+  local i = 0
+  while lineCount > 0 do
+	--for i = 1, EchoExperience.view.lh.listholder.maxLines do    
+    i = i + 1
+    curLine = EchoExperience.view.lh.listholder.lines[i]
+    curData = EchoExperience.view.lh.listholder.dataLines[ EchoExperience.view.lh.listholder.dataOffset + i]
+    EchoExperience.view.lh.listholder.lines[i] = curLine
+    if( curData ~= nil) then
+      local okay = true
+      if(EchoExperience.view.lh.listholder.filtered) then
+        --EchoExperience.view.lh.search
+      end
+      if(okay) then
+        lineCount = lineCount - 1
+        EchoExperience:LH_fillLine(curLine, curData)
+      end
+    else
+      lineCount = lineCount - 1
+      EchoExperience:LH_fillLine(curLine, nil)
+    end
 	end
 end
 
@@ -231,7 +300,7 @@ function EchoExperience:LH_fillLine(curLine, curItem)
 	local color
 	if curItem == nil then
     curLine.time:SetText("")
-		curLine.itemLink = ""
+    curLine.link = nil
 		curLine.icon:SetTexture(nil)
 		curLine.icon:SetAlpha(0)
 		curLine.name:SetText("")
@@ -252,18 +321,22 @@ function EchoExperience:LH_fillLine(curLine, curItem)
         local icon = GetItemLinkIcon(curItem.link)
         curItem.icon = icon
     end
-    -- 
-		curLine.itemLink = curItem.link
-    curLine.time:SetText( curItem.time )
-    curLine.user:SetText( tostring(curItem.user) )
+		curLine.icon:SetTexture(curItem.icon)
+    curLine.icon:SetAlpha(1)
+    --
+    local strL = zo_strformat("<<1>>", curItem.user)
+    curLine.link     = curItem.link
+    curLine.time:SetText( curItem.timestr )
+    curLine.user:SetText( strL )
 		curLine.qty:SetText(curItem.qty)
 		--local text = zo_strformat(SI_TOOLTIP_ITEM_NAME, curItem.name)
 		--curLine.text:SetText(text)
 		--curLine.text:SetColor(r, g, b, a)
     curLine.name:SetText(curItem.link)
+    curLine.name.link = curItem.link
+    --curLine.name:SetLinkEnabled(true)
+    --curLine.name:SetLink( curItem.link )
     --curLine:SetLinkEnabled(true)
-		curLine.icon:SetTexture(curItem.icon)
-    curLine.icon:SetAlpha(1)
     --
     --curLine.quality = curItem.itemQuality
     --curLine.itemid = curItem.itemId
@@ -279,13 +352,23 @@ function EchoExperience:LH_fillLine(curLine, curItem)
       curLine.icon:SetTexture("esoui\art\inventory\inventory_stolenitem_icon.dds")
       curLine.icon:SetAlpha(1)
     end
-    --
+    EchoExperience.debugMsg2("LH_fillLine: curLine.link: ", curLine.link )    
+    --[[
+    curLine:SetMouseEnabled(true)
+    curLine:SetHandler('OnMouseEnter',function(self)
+      EchoExperience:LH_Misc2HeaderTipEnter(self, curLine.link )
+    end)
+    curLine:SetHandler('OnMouseExit',function(self)
+      EchoExperience:LH_Misc2HeaderTipExit(self)
+    end)
+    --]]
 	end
 end
 
 ------------
 --- GUI: data: From HISTORY into datalines
 function EchoExperience:LH_UpdateScrollDataLinesData()
+  EchoExperience.view.lh.frame.updating = true
   local tempDataLine = nil
 	local dataLines = {}
   local itemCount = 0
@@ -299,6 +382,7 @@ function EchoExperience:LH_UpdateScrollDataLinesData()
       dbItem.name = GetItemLinkName(dbItem.itemLink) 
       dbItem.icon = GetItemLinkIcon(dbItem.itemLink)
       dbItem.link = dbItem.itemLink
+      EchoExperience.debugMsg2("Tracking: dbItem.link: ", dbItem.link)
       --
       local itemQuality = GetItemLinkQuality(dbItem.link)
       local itemId      = GetItemLinkItemId(dbItem.link)
@@ -309,12 +393,13 @@ function EchoExperience:LH_UpdateScrollDataLinesData()
       local isStolen    = IsItemLinkStolen(dbItem.link)
       --
       tempDataLine = {
-        link = dbItem.itemLink,
-        qty  = dbItem.quantity,
-        icon = dbItem.icon,
-        name = dbItem.name,
-        time = dbItem.time,
-        user = dbItem.user, 
+        link    = dbItem.link,
+        qty     = dbItem.quantity,
+        icon    = dbItem.icon,
+        name    = dbItem.name,
+        time    = dbItem.time,
+        timestr = dbItem.timestr,
+        user    = dbItem.user, 
         --
         quality = itemQuality,
         itemid = itemId,
@@ -332,12 +417,14 @@ function EchoExperience:LH_UpdateScrollDataLinesData()
     EchoExperience.debugMsg2("Tracking: loot history is null!")
   end
   --  
+  --EchoExperience.view.lh.listholder.alldataLines = dataLines
 	EchoExperience.view.lh.listholder.dataLines = dataLines
 	EchoExperience:LH_Sort(EchoExperience.view.lh.listholder.dataLines)
 	EchoExperience.view.lh.listholder.dataOffset = 0
 
 	--EOL_GUI_ListHolder_Counts_Items:SetText("Item Count: " .. totItems)
 	--EOL_GUI_ListHolder_Counts_Slots:SetText("Appx. Slots Used: " .. #dataLines)
+  EchoExperience.view.lh.frame.updating = false
 end
 
 ------------
@@ -367,7 +454,7 @@ function EchoExperience:LH_CreateLine(i, predecessor, parent)
     line.name = line:GetNamedChild("Name")
     line.qty  = line:GetNamedChild("Qty")
     line.user = line:GetNamedChild("User")
-    line.div = line:GetNamedChild("Indicator")
+    line.div  = line:GetNamedChild("Indicator")
     --line.worn = line:GetNamedChild("IconWorn")
     --line.stolen = line:GetNamedChild("IconStolen")
     line:SetHidden(false)
@@ -385,6 +472,12 @@ function EchoExperience:LH_CreateLine(i, predecessor, parent)
     --line:SetHandler("OnMouseExit", function(self) IIfA:GuiLineOnMouseExit(self) end )
     --line:SetHandler("OnMouseDoubleClick", function(...) IIfA:GUIDoubleClick(...) end )
   end
+  
+  --
+  if(EchoExperience.view.lh.viewnamelength~=nil) then
+    line.name:SetWidth( EchoExperience.view.lh.viewnamelength )
+  end
+  
   EchoExperience.debugMsg2("Created line ", i , ".")
 	return line
 end
@@ -546,6 +639,36 @@ function EchoExperience:LH_ClearLootHistory()
   EchoExperience.view.loothistory = {}
 end
 
+--TOOLTIP
+function EchoExperience:LH_Misc2HeaderTipEnter(sender,textline)
+  --EchoExperience.debugMsg2("LH_Misc2HeaderTipEnter: called. deftype: ", textline )
+  --InitializeTooltip(EELHTooltip, sender, TOPLEFT, 5, -56, TOPRIGHT)
+  if(textline==nil or textline=="Link" and sender.link ~= nil) then
+    --EchoExperience.debugMsg2("LH_Misc2HeaderTipEnter: called. link: ", sender.link )
+    --EchoExperience.ItemTooltip(sender.link)
+		InitializeTooltip(EchoExperience.view.lh.tooltip, EchoExperience.view.lh.frame, TOPRIGHT, -50, 0, TOPLEFT)
+    local linkType = GetLinkType(sender.link)
+    if(linkType==LINK_TYPE_INVALID) then
+      EELHTooltip:AddLine(sender.link, "ZoFontHeader3")
+    else
+      EchoExperience.view.lh.tooltip:SetLink(sender.link)
+    end    
+  --EELHTooltip:AddLine(sender.link, "ZoFontHeader3")
+  else
+    --EchoExperience.ItemTooltip(textline)
+    --EELHTooltip:AddLine(textline, "ZoFontHeader3")
+    InitializeTooltip(EELHTooltip, sender, TOPLEFT, 5, -56, TOPRIGHT)
+    EELHTooltip:AddLine(textline, "ZoFontHeader3")
+  end
+end
+function EchoExperience:LH_Misc2HeaderTipExit(sender)
+  --ClearTooltip(InformationTooltip)
+  --EchoExperience.debugMsg2("LH_Misc2HeaderTipExit: called.")
+  ClearTooltip(EELHTooltip)
+  ClearTooltip(EchoExperience.view.lh.tooltip)
+end
+--LH_LineTipEnter
+--LH_LineTipExit
 ------------
 --EOF
 ------------

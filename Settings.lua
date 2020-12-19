@@ -540,6 +540,25 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
+  
+  optionsTable[#optionsTable+1] = {
+    type = "dropdown",
+    name    = GetString(SI_ECHOEXP_SETTINGS_LOOT_SELF_QUALITY_TITLE),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LOOT_SELF_QUALITY_TOOLTIP),
+    choices = EchoExperience:ListOfItemQualitySettings(),
+    getFunc = function() return EchoExperience.savedVariables.lootselfqualityname end,
+    setFunc = function(var) 
+      EchoExperience.savedVariables.lootselfqualityname = var 
+      EchoExperience.savedVariables.lootselfqualityid   = EchoExperience:ListOfItemQualitySettingsXalte(var)
+      EchoExperience.debugMsg2("quality setting  ID:="  , EchoExperience.savedVariables.lootselfqualityid )
+      EchoExperience.debugMsg2("quality setting NME:="  , EchoExperience.savedVariables.lootselfqualityname )
+    end,
+    width = "half",	--or "half" (optional)
+    reference = "EchoExpSelfLootQOutput", -- unique global reference to control (optional)
+  }
+  
+  --
+  --
   optionsTable[#optionsTable+1] = {		
     type = "checkbox",
     name    = GetString(SI_ECHOEXP_SETTINGS_LOOT_GROUP_TITLE), -- "Show other group member's Looted items?",
@@ -560,10 +579,13 @@ function EchoExperience.LoadSettings()
     setFunc = function(var) 
       EchoExperience.savedVariables.lootgroupqualityname = var 
       EchoExperience.savedVariables.lootgroupqualityid   = EchoExperience:ListOfItemQualitySettingsXalte(var)
+      EchoExperience.debugMsg2("quality setting  ID:="   , EchoExperience.savedVariables.lootgroupqualityid )
+      EchoExperience.debugMsg2("quality setting NME:="   , EchoExperience.savedVariables.lootgroupqualityname )
     end,
     width = "half",	--or "half" (optional)
     reference = "EchoExpGroupLootQOutput", -- unique global reference to control (optional)
   }
+  --
   --
   optionsTable[#optionsTable+1] = {
     type = "description",

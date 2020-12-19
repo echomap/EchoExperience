@@ -121,14 +121,17 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_LOOT_GROUP_TITLE     = "Show other group member's Looted items?",
   SI_ECHOEXP_SETTINGS_LOOT_GROUP_TOOLTIP   = "Verbose reporting if Looted is on?",
   SI_ECHOEXP_SETTINGS_LOOT_OUTPUTS_NAME    = "Loot Output Config",
-  SI_ECHOEXP_SETTINGS_LOOT_OUTPUTS_TOOLTIP = "Loot output entries for (window/tab/color).",
+  SI_ECHOEXP_SETTINGS_LOOT_OUTPUTS_TOOLTIP = "Shows Loot output entries in format: (window/tab/color). Use this to view or delete.",
   SI_ECHOEXP_SETTINGS_LOOT_OUTPUTS_DELETE  = "Delete selected Loot's Data!",
   SI_ECHOEXP_SETTINGS_LOOT_TRAIT_NAME            = "On Loot, show Trait",
   SI_ECHOEXP_SETTINGS_LOOT_TRAIT_TOOLTIP         = "On Loot, show Trait",
   SI_ECHOEXP_SETTINGS_LOOT_SETCOLLECTION_NAME    = "On Loot, show if collected",
   SI_ECHOEXP_SETTINGS_LOOT_SETCOLLECTION_TOOLTIP = "On Loot, show if collected",
-  SI_ECHOEXP_SETTINGS_LOOT_GROUP_QUALITY_TITLE   = "Select the item to report on or above",
-  SI_ECHOEXP_SETTINGS_LOOT_GROUP_QUALITY_TOOLTIP = "The selection here is the lowest loot type reported to chat, ie if arcane, then only arcane, if magic, then magic, legendary, artifact and arcane are returned.",
+  SI_ECHOEXP_SETTINGS_LOOT_SELF_QUALITY_TITLE   = "(Self) Select the item to report on or above",
+  SI_ECHOEXP_SETTINGS_LOOT_SELF_QUALITY_TOOLTIP = "(Self) The selection here is the lowest loot type reported to chat",
+  
+  SI_ECHOEXP_SETTINGS_LOOT_GROUP_QUALITY_TITLE   = "(Group) Select the item to report on or above",
+  SI_ECHOEXP_SETTINGS_LOOT_GROUP_QUALITY_TOOLTIP = "(Group) The selection here is the lowest loot type reported to chat.",
   
   SI_ECHOEXP_SETTINGS_LOOT_NEWOUTPUTS_TEXT = "Add new Loot output:",
   SI_ECHOEXP_SETTINGS_LOOT_NEWOUTPUTS_NAME = "Add Loot Output",
@@ -232,7 +235,7 @@ local localization_strings = {
   SI_ECHOEXP_QUEST_STEPDONE1 = "You finished a step of the quest [<<1>>]",
   -- name, points, id, link)
   SI_ECHOEXP_ACHIEVEMENT_AWARDED = "You have earned the achievment [<<4>>] !!!",
-  SI_ECHOEXP_LEVEL_GAIN = "*** You feel more powerful! *** You have reached the level [<<1>>] ! ***",
+  SI_ECHOEXP_LEVEL_GAIN = "*** You feel more powerful! *** You have reached level [<<1>>] ! ***",
   --isname, itemSetId, numPieces, numSlotsUnlocked, itemLink
   SI_ECHOEXP_SETCOLLECTION_UPDATED2 = "You collected a piece in the [<<5>>] set [<<4>>/<<3>>].",
   SI_ECHOEXP_SETCOLLECTION_COLLECTED = "",
@@ -324,13 +327,13 @@ local localization_strings = {
 	SI_ECHOLOOT_YOU_QUEST_4 = "You looted: <<3>>x |t14:14:<<1>>|t [<<2>>] (<<4>>) (quest item).",
 
 	--<<1>>receivedBy, <<2>>icon, <<3>>itemName, <<4>>quantity, <<5>>extraInfo 
-  SI_ECHOLOOT_OTHER_GAIN_1  = "<<1>> looted |t14:14:<<2>>|t [<<3>>] <<5>>",
-	SI_ECHOLOOT_OTHER_PICK_1  = "<<1>> acquired |t14:14:<<2>>|t [<<3>>] <<5>>",
+  SI_ECHOLOOT_OTHER_GAIN_1  = "<<1>> looted |t14:14:<<2>>|t [<<3>>] <<5>> <<6>>",
+	SI_ECHOLOOT_OTHER_PICK_1  = "<<1>> acquired |t14:14:<<2>>|t [<<3>>] <<5>> <<6>>",
 	SI_ECHOLOOT_OTHER_QUEST_1 = "<<1>> acquired |t14:14:<<2>>|t [<<3>>] (quest item).",
 		
 	--<<1>>receivedBy, <<2>>icon, <<3>>itemName, <<4>>quantity, <<5>>traitName 
-	SI_ECHOLOOT_OTHER_GAIN_2  = "<<1>> looted |t14:14:<<2>>|t [<<3>>] x<<4>> <<5>>",
-	SI_ECHOLOOT_OTHER_PICK_2  = "<<1>> acquired |t14:14:<<2>>|t [<<3>>] x<<4>> <<5>>",
+	SI_ECHOLOOT_OTHER_GAIN_2  = "<<1>> looted |t14:14:<<2>>|t [<<3>>] x<<4>> <<5>> <<6>>",
+	SI_ECHOLOOT_OTHER_PICK_2  = "<<1>> acquired |t14:14:<<2>>|t [<<3>>] x<<4>> <<5>> <<6>>",
 	SI_ECHOLOOT_OTHER_QUEST_2 = "<<1>> looted |t14:14:<<2>>|t [<<3>>] (quest item).",
 	
 	------------------------------

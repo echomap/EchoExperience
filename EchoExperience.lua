@@ -428,6 +428,15 @@ end
 function EchoExperience:outputToChanelSub(text,outputSettings,filter)
   if(text==nil) then return end
   if outputSettings == nil then return end
+  if(EchoExperience.view.libmsgwindow==nil) then
+    EchoExperience:SetupLibMsgWin()
+  end
+  if(EchoExperience.savedVariables.uselibmsgwin and LibMsgWin~=nil and EchoExperience.view.libmsgwindow ~=nil ) then
+    if( not EchoExperience.view.libmsgwindow:IsControlHidden() ) then
+      EchoExperience.view.libmsgwindow:AddText(text, 1, 1, 1)
+    end
+  end
+  
   for k, v in pairs(outputSettings) do
     if(v.window~=nil and v.tab~=nil and v.window>0 and v.tab>0 and v.color~=nil and v.color.r~=nil) then
       local skip = false
@@ -4130,6 +4139,24 @@ function EchoExperience.SetupLitanyOfBlood()
 		--EchoExperience.savedVariables.LitanyOfBlood = EchoExperience:deepcopy(EchoExperience.LitanyOfBlood)
 	--TESTINGend
   EchoExperience.savedVariables.LitanyOfBlood = nil
+end
+
+------------------------------
+-- LIBMSGWIN
+function EchoExperience.SetupLibMsgWin()
+  EchoExperience.debugMsg2("SetupLibMsgWin: LibMsgWin=", LibMsgWin, " sv='",EchoExperience.savedVariables.uselibmsgwin, "'")
+  if(LibMsgWin~=nil and EchoExperience.view.libmsgwindow==nil) then
+    EchoExperience.view.libmsgwindow = LibMsgWin:CreateMsgWindow("EchoExperienceLibMsgWin","EchoExperienceOutput", 0, 0 )
+    --TODO close window?
+  end
+  if(EchoExperience.view.libmsgwindow~=nil) then
+    if(EchoExperience.savedVariables.uselibmsgwin) then
+      EchoExperience.view.libmsgwindow:SetHidden(false)
+    else
+      EchoExperience.view.libmsgwindow:SetHidden(true)
+    end
+  end
+  EchoExperience.debugMsg2("SetupLibMsgWin: LibMsgWin=", LibMsgWin, " use='", EchoExperience.view.libmsgwindow, "' sv='",EchoExperience.savedVariables.uselibmsgwin, "'")
 end
 
 ------------------------------

@@ -49,6 +49,8 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_LOREOBOOK_SHOW_TT     = "Show Lorebook events found/learned/collected",
   SI_ECHOEXP_SETTINGS_ASYNCALL_NM = "Use ASYNC Library for all",
   SI_ECHOEXP_SETTINGS_ASYNCALL_TT = "Async might help with disconnects, but will show events slower",
+  SI_ECHOEXP_SETTINGS_LIBMSGWIN_SHOW_NM = "Use discrete/seperate window for loot output",
+  SI_ECHOEXP_SETTINGS_LIBMSGWIN_SHOW_TT = "Use discrete/seperate window for loot output",
   
   SI_ECHOEXP_SETTINGS_ALPHA_NAME    = "Show Alpha events?",
   SI_ECHOEXP_SETTINGS_ALPHA_TT      = "Dev Alpha?",

@@ -6,7 +6,7 @@
 ## Description: EchoExperience will show experience gains in chat.
 ## SavedVariables: EchoExperienceSavedVariables EchoExperienceAccountSavedVariables
 ## DependsOn: LibAddonMenu-2.0 
-## OptionalDependsOn: EchoTracking LibAsync LibShifterBox
+## OptionalDependsOn: EchoTracking LibAsync LibShifterBox LibMsgWin-1.0
 ## IsLibrary: false
 
 ## This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. 

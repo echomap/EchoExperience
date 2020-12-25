@@ -228,6 +228,23 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",
   }
+  
+  --LibMsgWin
+  if(LibMsgWin) then
+    --lib:CreateMsgWindow(_UniqueName, _LabelText, _FadeDelay, _FadeTime)
+    optionsTable[#optionsTable+1] = {
+      type = "checkbox",
+      name    = GetString(SI_ECHOEXP_SETTINGS_LIBMSGWIN_SHOW_NM),
+      tooltip = GetString(SI_ECHOEXP_SETTINGS_LIBMSGWIN_SHOW_TT), 
+      getFunc = function() return EchoExperience.savedVariables.uselibmsgwin end,
+      setFunc = function(value)
+        EchoExperience.savedVariables.uselibmsgwin = value
+        EchoExperience.SetupLibMsgWin()
+      end,
+      width = "full",--TODO
+    }
+  end
+  --LibMsgWin
 
   --
   optionsTable[#optionsTable+1] = {

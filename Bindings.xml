@@ -7,6 +7,9 @@
       <Action name="EE_DISPLAY2">
 		    <Up>EchoExperience:ToggleLitanyFrame()</Up>
       </Action>
+      <Action name="EE_DISPLAY3">
+		    <Up>EchoExperience:ToggleLootHistoryFrame()</Up>
+      </Action>
     </Category>
   </Layer>
 </Bindings>

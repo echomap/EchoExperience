@@ -4,8 +4,8 @@
 -- 
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.44",                   -- A nuisance to match to the Manifest.
-    versionnumeric  =  44,                        -- A nuisance to match to the Manifest.
+    version         = "0.0.46",                   -- A nuisance to match to the Manifest.
+    versionnumeric  =  46,                        -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -88,19 +88,13 @@ local defaultSettings = {
 ------------------------------
 -- UTIL
 function EchoExperience.debugMsg(text)
-	if EchoExperience.savedVariables.debug then
-    local val = zo_strformat( "(EchoExp) <<1>>",text)
-    d(val)
-	end
+  EchoExperience.debugMsg2(text)
 end
 
 ------------------------------
 -- UTIL
 function EchoExperience.outputMsg(text)
-  if text ~= nil then
-    local val = zo_strformat( "[EchoExp] <<1>>",text)
-    d(val)
-  end
+  EchoExperience.outputMsg2(text)
 end
 
 ------------------------------
@@ -365,18 +359,18 @@ function EchoExperience.outputToChanel(text,msgType,filter)
 	if msgType == msgTypeSYS then
 		d(text)
 	elseif msgType == msgTypeEXP then
-    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.expsettings, filter )
+    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.expsettings, filter, msgType )
     return
 	elseif msgType == msgTypeLOOT then
-    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.lootsettings, filter)
+    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.lootsettings, filter, msgType)
     return
 	elseif msgType == msgTypeGUILD then
-    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.guildsettings, filter)
+    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.guildsettings, filter, msgType)
   elseif msgType == msgTypeGUILD2 then
-    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.guildsettings, filter)
+    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.guildsettings, filter, msgType)
     --for later, when i seperate the LOGXX with the join/leave
   elseif msgType == msgTypeQuest then
-    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.questsettings, filter)
+    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.questsettings, filter, msgType)
   end
   --
   if(EchoExperience.error)then
@@ -425,15 +419,27 @@ end
 
 ------------------------------
 -- OUTPUT
-function EchoExperience:outputToChanelSub(text,outputSettings,filter)
+function EchoExperience:outputToChanelSub(text,outputSettings,filter, msgType)
   if(text==nil) then return end
   if outputSettings == nil then return end
   if(EchoExperience.view.libmsgwindow==nil) then
     EchoExperience:SetupLibMsgWin()
   end
-  if(EchoExperience.savedVariables.uselibmsgwin and LibMsgWin~=nil and EchoExperience.view.libmsgwindow ~=nil ) then
+  if(EchoExperience.savedVariables.showlibmsgwin and LibMsgWin~=nil and EchoExperience.view.libmsgwindow~=nil ) then
     if( not EchoExperience.view.libmsgwindow:IsControlHidden() ) then
-      EchoExperience.view.libmsgwindow:AddText(text, 1, 1, 1)
+      local showInSepWindow = false
+      if(msgType==msgTypeLOOT and EchoExperience.savedVariables.uselibmsgwinExp)then
+        showInSepWindow = true
+      elseif( (msgType==msgTypeGUILD or msgType==msgTypeGUILD2) and EchoExperience.savedVariables.uselibmsgwinGuild)then
+        showInSepWindow = true
+      elseif( (msgType==msgTypeEXP) and EchoExperience.savedVariables.uselibmsgwinExp)then
+        showInSepWindow = true
+      elseif( (msgType==msgTypeQuest) and EchoExperience.savedVariables.uselibmsgwinQuest)then
+        showInSepWindow = true
+      end
+      if(showInSepWindow) then
+        EchoExperience.view.libmsgwindow:AddText(text, 1, 1, 1)
+      end
     end
   end
   
@@ -1865,9 +1871,9 @@ function EchoExperience.OnCurrencyUpdateWork(eventCode, currencyType, currencyLo
     --
   end--Tracking
   -- ----------
-  if( IsBankOpen() or IsGuildBankOpen() ) then
+  --if( IsBankOpen() or IsGuildBankOpen() ) then
     --Don't report as should be in another method
-  end
+  --end
   
   -- TODO IsCurrencyCapped(number CurrencyType currencyType, number CurrencyLocation currencyLocation) Returns: boolean isCapped
 
@@ -2320,7 +2326,7 @@ function EchoExperience.OnLootReceivedWork(eventCode,receivedBy,itemName,quantit
 		--if itemType ~= ITEMTYPE_ARMOR_TRAIT and itemType ~= ITEMTYPE_WEAPON_TRAIT -- lootType ~= LOOT_TYPE_COLLECTIBLE
 		local traitName, setName = EchoExperience:GetExtraInfo(itemName)
 		if( traitName ~= nil and setName ~= nil and traitName ~= "" and setName ~= "") then
-			extraInfo = string.format("%s, %s set",traitName, setName)
+			extraInfo = string.format("(%s) %s set",traitName, setName)
 		elseif( traitName ~= nil) then
 			extraInfo = string.format("%s",traitName)
 		elseif( setName ~= nil) then
@@ -2623,32 +2629,72 @@ function EchoExperience.OnUnitDestroyed(eventCode, unitTag)
 		)
 end
 
+
+------------------------------
+-- EVENT
+--EVENT_PLAYER_COMBAT_STATE
+--OnCombatEnterExit (bool inCombat)
+function EchoExperience.OnCombatEnterExit(eventCode, inCombat)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnCombatEnterExitWork(eventCode, inCombat)
+      end
+    )
+  else
+    EchoExperience.OnCombatEnterExitWork(eventCode, inCombat)
+  end
+end
+  
+--
+function EchoExperience.OnCombatEnterExitWork(eventCode, inCombat)
+  EchoExperience.debugMsg2("OnCombatEnterExitWork: "
+      , " eventCode=" , (eventCode)
+      , " inCombat="  , (inCombat)
+  )
+  --inCombat is a number? I'm so confused!  
+  local isInCombat = IsUnitInCombat("player")
+  if( EchoExperience.view.inCombat ~= isInCombat) then
+    EchoExperience.view.inCombat = isInCombat
+    --EchoExperience.view.inCombat = IsUnitInCombat("player")
+    if(isInCombat) then
+      local sentence = GetString(SI_ECHOEXP_COMBAT_ENTER)
+      local strL = zo_strformat(sentence )
+      EchoExperience.outputToChanel(strL,msgTypeQuest)
+    else
+      local sentence = GetString(SI_ECHOEXP_COMBAT_EXIT)
+      local strL = zo_strformat(sentence )
+      EchoExperience.outputToChanel(strL,msgTypeQuest)
+    end
+  end
+end
+
 ------------------------------
 -- EVENT
 --EVENT_COMBAT_EVENT (number eventCode, ActionResult result, boolean isError, string abilityName, number abilityGraphic, ActionSlotType abilityActionSlotType, string sourceName, CombatUnitType sourceType, string targetName, CombatUnitType targetType, number hitValue, CombatMechanicType powerType, DamageType damageType, boolean log, number sourceUnitId, number targetUnitId, number abilityId) 
-function EchoExperience.OnCombatSomethingDied(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
+function EchoExperience.OnCombatEvent(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
   if(isError)then
     return
   end
   if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
     EchoExperience.view.task:Call(
       function()
-        EchoExperience.OnCombatSomethingDiedWork(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
+        EchoExperience.OnCombatEventWork(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
       end
     )
   else
-    EchoExperience.OnCombatSomethingDiedWork(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
+    EchoExperience.OnCombatEventWork(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
   end
 end
   
 --
-function EchoExperience.OnCombatSomethingDiedWork(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
+function EchoExperience.OnCombatEventWork(eventCode, result, isError, abilityName, abilityGraphic, abilityActionSlotType, sourceName, sourceType, targetName, targetType, hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
   if(isError)then
     return
   end
 
   if(result==ACTION_RESULT_IN_COMBAT ) then  
-    EchoExperience.debugMsg2("OnCombatSomethingDied: "
+    EchoExperience.debugMsg2("OnCombatEvent: "
       , " eventCode="      , tostring(eventCode)
       , " sourceName="     , tostring(sourceName)      
       , " targetName="     , tostring(targetName)
@@ -2664,14 +2710,14 @@ function EchoExperience.OnCombatSomethingDiedWork(eventCode, result, isError, ab
   --ACTION_RESULT_DIED_XP ???
   --ACTION_RESULT_TARGET_DEAD 
   if(result~=ACTION_RESULT_DIED and result~=ACTION_RESULT_DIED_XP)then
-    --EchoExperience.debugMsg("OnCombatSomethingDied: not dead event")
+    --EchoExperience.debugMsg("OnCombatEvent: not dead event")
     return
   end
 
   --sourceName==nil or sourceName=="" or
   if(isError or targetName==nil or targetName=="") then
-    EchoExperience.debugMsg("OnCombatSomethingDied: but no good data !!!")
-    EchoExperience.debugMsg2("OnCombatSomethingDied: "
+    EchoExperience.debugMsg("OnCombatEvent: but no good data !!!")
+    EchoExperience.debugMsg2("OnCombatEvent: "
     , " eventCode="      , tostring(eventCode)
     , " sourceName="     , tostring(sourceName)      
     , " targetName="     , tostring(targetName)
@@ -2684,7 +2730,7 @@ function EchoExperience.OnCombatSomethingDiedWork(eventCode, result, isError, ab
   )
     return
   else
-    EchoExperience.debugMsg2("OnCombatSomethingDied: "
+    EchoExperience.debugMsg2("OnCombatEvent: "
       , " sourceUnitId=" , tostring(sourceUnitId)
       , " targetUnitId=" , tostring(targetUnitId) 
       , " result="       , tostring(result) 
@@ -2719,7 +2765,8 @@ function EchoExperience.OnCombatSomethingDiedWork(eventCode, result, isError, ab
   --TODO localize etc  
   
   if(EchoExperience.savedVariables.showmdk) then
-    --[14:28] [14:28] (EchoExp) OnCombatSomethingDied: sourceUnitId=0 targetUnitId=58426 result=2260(ACTION_RESULT_DIED)
+    --[14:28] [14:28] (EchoExp) OnCombatEvent: sourceUnitId=0 targetUnitId=58426 result=2260(ACTION_RESULT_DIED)
+    --or EchoExperience.view.iamDisplayName == targetUnitId
     if(sourceUnitId==targetUnitId) then
       local sentence = GetString(SI_ECHOEXP_DIED)
       local strL     = zo_strformat(sentence )
@@ -2867,7 +2914,23 @@ end
 
 ------------------------------
 -- EVENT
-    -- EVENT_QUEST_ADVANCED (number eventCode, number journalIndex, string questName, boolean isPushed, boolean isComplete, boolean mainStepChanged)
+-- Alpha
+--EVENT_GUILD_INVITE_ADDED
+--(number eventCode, number guildId, string guildName, Alliance guildAlliance, string inviterDisplayName)
+function EchoExperience.OnEventGuildInviteAdded(eventCode, guildId, guildName, guildAlliance, inviterDisplayName)
+  --TESTING
+  EchoExperience.outputMsg2("OnEventGuildInviteAdded: "
+    , " eventCode="      , tostring(eventCode)
+    , " guildId="   , tostring(guildId) 
+    , " guildName="     , tostring(guildName) 
+    , " guildAlliance="     , tostring(guildAlliance) 
+    , " inviterDisplayName="        , tostring(inviterDisplayName) 
+  )
+end
+
+------------------------------
+-- EVENT
+-- EVENT_QUEST_ADVANCED (number eventCode, number journalIndex, string questName, boolean isPushed, boolean isComplete, boolean mainStepChanged)
 function EchoExperience.OnEventQuestAdvanced(eventCode, journalIndex, questName, isPushed, isComplete, mainStepChanged)
   if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
     EchoExperience.view.task:Call(
@@ -3879,6 +3942,11 @@ function EchoExperience.SetupAlphaEvents(reportMe)
     eventNamespace = EchoExperience.name.."EVENT_QUEST_SHARED"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_QUEST_SHARED, EchoExperience.OnEventQuestSharedStart)
     
+    eventNamespace = EchoExperience.name.."EVENT_GUILD_INVITE_ADDED"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_GUILD_INVITE_ADDED, EchoExperience.OnEventGuildInviteAdded)
+    --EVENT_GUILD_INVITE_ADDED (number eventCode, number guildId, string guildName, Alliance guildAlliance, string inviterDisplayName)
+    
+    
     --EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_EFFECT_CHANGED",	EVENT_EFFECT_CHANGED, EchoExperience.OnCombatEffectChanged)    
     --EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_UNIT_DESTROYED",	EVENT_UNIT_DESTROYED, EchoExperience.OnUnitDestroyed)
   else
@@ -3890,6 +3958,8 @@ function EchoExperience.SetupAlphaEvents(reportMe)
     EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_QUEST_SHARE_REMOVED)
     eventNamespace = EchoExperience.name.."EVENT_QUEST_SHARED"
     EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_QUEST_SHARED)
+    eventNamespace = EchoExperience.name.."EVENT_GUILD_INVITE_ADDED"
+    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_GUILD_INVITE_ADDED, EchoExperience.OnEventGuildInviteAdded)
   end
 end
 
@@ -3934,7 +4004,10 @@ function EchoExperience.SetupMiscEvents(reportMe)
   if( EchoExperience.savedVariables.sessiontracking or EchoExperience.savedVariables.showmdk ) then
     --if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_XXX_HIDE),msgTypeSYS) end
     local eventNamespace = EchoExperience.name.."EVENT_COMBAT_EVENT"
-    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMBAT_EVENT, EchoExperience.OnCombatSomethingDied)
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMBAT_EVENT, EchoExperience.OnCombatEvent)
+    EchoExperience.view.inCombat = IsUnitInCombat("player")
+    --eventNamespace = EchoExperience.name.."EVENT_PLAYER_COMBAT_STATE"
+    --EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMBAT_EVENT, EchoExperience.OnCombatEnterExit)
     --EVENT_MANAGER:AddFilterForEvent(eventNamespace, eventId, filterType, varying filterParameter)
     --EVENT_MANAGER:AddFilterForEvent(eventNamespace, EVENT_COMBAT_EVENT, REGISTER_FILTER_COMBAT_RESULT, ACTION_RESULT_DIED)
     --EVENT_MANAGER:AddFilterForEvent(eventNamespace, EVENT_COMBAT_EVENT, REGISTER_FILTER_IS_ERROR, false)
@@ -3942,21 +4015,18 @@ function EchoExperience.SetupMiscEvents(reportMe)
     --EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_UNIT_DESTROYED",	EVENT_UNIT_DESTROYED, EchoExperience.OnUnitDestroyed)
     eventNamespace = EchoExperience.name.."EVENT_BATTLEGROUND_KILL"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_BATTLEGROUND_KILL, EchoExperience.OnBattlegroundKill)
-    --
     -- Triggers when you leave a guild (guildId / guildName)
     eventNamespace = EchoExperience.name.."EVENT_GUILD_SELF_LEFT_GUILD"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_GUILD_SELF_LEFT_GUILD, EchoExperience.OnGuildSelfLeft)
     -- Triggers when you join a guild (guildId / guildName)
     eventNamespace = EchoExperience.name.."EVENT_GUILD_SELF_JOINED_GUILD"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_GUILD_SELF_JOINED_GUILD, EchoExperience.OnGuildSelfJoined)
-    --
   else
     --if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_XXX_HIDE),msgTypeSYS) end
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_COMBAT_EVENT",	      EVENT_COMBAT_EVENT)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_BATTLEGROUND_KILL",	EVENT_BATTLEGROUND_KILL)
-    --EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_UNIT_DESTROYED",	EVENT_UNIT_DESTROYED, EchoExperience.OnUnitDestroyed)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_COMBAT_EVENT",	        EVENT_COMBAT_EVENT)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_BATTLEGROUND_KILL",	  EVENT_BATTLEGROUND_KILL)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_PLAYER_COMBAT_STATE",	EVENT_PLAYER_COMBAT_STATE)    
   end
-  --EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_UNIT_DESTROYED",	EVENT_UNIT_DESTROYED, EchoExperience.OnUnitDestroyed)
 end
 
 ------------------------------
@@ -4144,20 +4214,105 @@ end
 ------------------------------
 -- LIBMSGWIN
 function EchoExperience.SetupLibMsgWin()
-  EchoExperience.debugMsg2("SetupLibMsgWin: LibMsgWin=", LibMsgWin, " sv='",EchoExperience.savedVariables.uselibmsgwin, "'")
-  if(LibMsgWin~=nil and EchoExperience.view.libmsgwindow==nil) then
+  --EchoExperience.debugMsg2("SetupLibMsgWin: LibMsgWin=", LibMsgWin, " sv='", EchoExperience.savedVariables.showlibmsgwin, "'")
+  --
+  EchoExperience.savedVariables.showlibmsgwin = false
+  if( EchoExperience.savedVariables.uselibmsgwinLoot or EchoExperience.savedVariables.uselibmsgwinGuild or EchoExperience.savedVariables.uselibmsgwinExp or EchoExperience.savedVariables.uselibmsgwinQuest) then
+    EchoExperience.savedVariables.showlibmsgwin = true
+  end
+  
+  if( LibMsgWin ~= nil and EchoExperience.view.libmsgwindow == nil ) then
     EchoExperience.view.libmsgwindow = LibMsgWin:CreateMsgWindow("EchoExperienceLibMsgWin","EchoExperienceOutput", 0, 0 )
-    --TODO close window?
+    --add close window
+    local pClose = WINDOW_MANAGER:CreateControl("Echoexp_CloseBtn", EchoExperience.view.libmsgwindow, CT_BUTTON) 
+    if(pClose==nil)then
+      d("EchoesOfLore: Failed to create LibMsgWin!")
+      return
+    end
+    pClose:ClearAnchors()
+    pClose:SetAnchor(TOPRIGHT, EchoExperience.view.libmsgwindow, TOPRIGHT, -10, 10 )
+    pClose:SetDimensions(100,25)
+    pClose:SetFont("ZoFontGame")
+    pClose:SetText("Close")
+    pClose:SetDrawLayer(1)
+    --
+    pClose:SetClickSound('Click')
+    pClose:SetMouseOverTexture('EsoUI/Art/ActionBar/actionBar_mouseOver.dds')
+    pClose:SetNormalTexture('EsoUI/Art/ActionBar/abilityFrame64_up.dds')
+    pClose:SetPressedMouseOverTexture('EsoUI/Art/ActionBar/abilityFrame64_down.dds')
+    pClose:SetHandler('OnClicked',function(self)
+      EchoExperience.view.libmsgwindow:SetHidden(true)  
+      EchoExperience.savedVariables.showlibmsgwin = false
+    end)
+    EchoExperience.view.libmsgwindow:SetHandler('OnResizeStart',function(self)
+        EchoExperience:LibMsgWin_onResizeStart()
+    end)
+    EchoExperience.view.libmsgwindow:SetHandler('OnResizeStop',function(self)
+        EchoExperience:LibMsgWin_onResizeStop("onResizeStop")
+    end)
   end
   if(EchoExperience.view.libmsgwindow~=nil) then
-    if(EchoExperience.savedVariables.uselibmsgwin) then
+    if(EchoExperience.savedVariables.showlibmsgwin) then
       EchoExperience.view.libmsgwindow:SetHidden(false)
+      EchoExperience:LibMsgWin_RestoreFrameInfo("onShow")
     else
       EchoExperience.view.libmsgwindow:SetHidden(true)
     end
   end
-  EchoExperience.debugMsg2("SetupLibMsgWin: LibMsgWin=", LibMsgWin, " use='", EchoExperience.view.libmsgwindow, "' sv='",EchoExperience.savedVariables.uselibmsgwin, "'")
+  EchoExperience.debugMsg2("SetupLibMsgWin: LibMsgWin=", LibMsgWin, " frame='", EchoExperience.view.libmsgwindow, "' show?='",EchoExperience.savedVariables.showlibmsgwin, "'")
 end
+
+------------
+--- GUI
+function EchoExperience:LibMsgWin_onResizeStart()
+--[[
+EVENT_MANAGER:RegisterForUpdate(EchoExperience.name.."LibMsgWin_OnWindowResize", 50, 
+    function()
+      EchoExperience.debugMsg2( "LibMsgWin_onResizeStart: called" )
+    end)
+--]]
+  EchoExperience.debugMsg2("LibMsgWin_onResizeStart") 
+end
+
+------------
+--- GUI
+function EchoExperience:LibMsgWin_onResizeStop()
+  EchoExperience.debugMsg2("LibMsgWin_onResizeStop") 
+	--EVENT_MANAGER:UnregisterForUpdate(EchoExperience.name.."LibMsgWin_OnWindowResize")
+	EchoExperience:LibMsgWin_SaveFrameInfo("onResizeStop")
+end
+
+
+------------
+--- GUI
+function EchoExperience:LibMsgWin_SaveFrameInfo(calledFrom)
+	if (calledFrom == "onHide") then return end
+  if(EchoExperience.savedVariables.frame_LMW==null)then
+    EchoExperience.savedVariables.frame_LMW = {}
+  end
+  --
+  EchoExperience.savedVariables.frame_LMW.lastX	= EchoExperience.view.libmsgwindow:GetLeft()
+  EchoExperience.savedVariables.frame_LMW.lastY	= EchoExperience.view.libmsgwindow:GetTop()
+  EchoExperience.savedVariables.frame_LMW.width	= EchoExperience.view.libmsgwindow:GetWidth()
+  EchoExperience.savedVariables.frame_LMW.height= EchoExperience.view.libmsgwindow:GetHeight()
+end
+
+------------
+--- GUI
+function EchoExperience:LibMsgWin_RestoreFrameInfo(calledFrom)
+	EchoExperience.debugMsg2("LibMsgWin_RestoreFrameInfo: Called")
+  if (calledFrom == "onHide") then return end
+  if( EchoExperience.savedVariables.frame_LMW==nil )then
+    return
+  end
+  EchoExperience.debugMsg2("LibMsgWin_RestoreFrameInfo: Working")
+  
+  EchoExperience.view.libmsgwindow:ClearAnchors()
+  EchoExperience.view.libmsgwindow:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, EchoExperience.savedVariables.frame_LMW.lastX, EchoExperience.savedVariables.frame_LMW.lastY)
+  EchoExperience.view.libmsgwindow:SetWidth( EchoExperience.savedVariables.frame_LMW.width )
+  EchoExperience.view.libmsgwindow:SetHeight(EchoExperience.savedVariables.frame_LMW.height)
+end
+
 
 ------------------------------
 -- SETUP defaults/savedvars, called from DelayedStart

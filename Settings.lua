@@ -215,8 +215,6 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
-  
-  
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
     name    = GetString(SI_ECHOEXP_SETTINGS_LOREOBOOK_SHOW),
@@ -228,7 +226,6 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",
   }
-  
   --LibMsgWin
   if(LibMsgWin) then
     --lib:CreateMsgWindow(_UniqueName, _LabelText, _FadeDelay, _FadeTime)
@@ -236,16 +233,16 @@ function EchoExperience.LoadSettings()
       type = "checkbox",
       name    = GetString(SI_ECHOEXP_SETTINGS_LIBMSGWIN_SHOW_NM),
       tooltip = GetString(SI_ECHOEXP_SETTINGS_LIBMSGWIN_SHOW_TT), 
-      getFunc = function() return EchoExperience.savedVariables.uselibmsgwin end,
+      getFunc = function() return EchoExperience.savedVariables.uselibmsgwinQuest end,
       setFunc = function(value)
-        EchoExperience.savedVariables.uselibmsgwin = value
+        EchoExperience.savedVariables.uselibmsgwinQuest = value
         EchoExperience.SetupLibMsgWin()
       end,
       width = "full",--TODO
     }
   end
   --LibMsgWin
-
+  
   --
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
@@ -418,6 +415,23 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
+  
+  --LibMsgWin
+  if(LibMsgWin) then
+    --lib:CreateMsgWindow(_UniqueName, _LabelText, _FadeDelay, _FadeTime)
+    optionsTable[#optionsTable+1] = {
+      type = "checkbox",
+      name    = GetString(SI_ECHOEXP_SETTINGS_LIBMSGWIN_SHOW_NM),
+      tooltip = GetString(SI_ECHOEXP_SETTINGS_LIBMSGWIN_SHOW_TT), 
+      getFunc = function() return EchoExperience.savedVariables.uselibmsgwinExp end,
+      setFunc = function(value)
+        EchoExperience.savedVariables.uselibmsgwinExp = value
+        EchoExperience.SetupLibMsgWin()
+      end,
+      width = "full",--TODO
+    }
+  end
+  --LibMsgWin
   
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
@@ -603,6 +617,24 @@ function EchoExperience.LoadSettings()
     reference = "EchoExpGroupLootQOutput", -- unique global reference to control (optional)
   }
   --
+  
+  --LibMsgWin
+  if(LibMsgWin) then
+    --lib:CreateMsgWindow(_UniqueName, _LabelText, _FadeDelay, _FadeTime)
+    optionsTable[#optionsTable+1] = {
+      type = "checkbox",
+      name    = GetString(SI_ECHOEXP_SETTINGS_LIBMSGWIN_SHOW_NM),
+      tooltip = GetString(SI_ECHOEXP_SETTINGS_LIBMSGWIN_SHOW_TT), 
+      getFunc = function() return EchoExperience.savedVariables.uselibmsgwinLoot end,
+      setFunc = function(value)
+        EchoExperience.savedVariables.uselibmsgwinLoot = value
+        EchoExperience.SetupLibMsgWin()
+      end,
+      width = "full",--TODO
+    }
+  end
+  --LibMsgWin
+
   --
   optionsTable[#optionsTable+1] = {
     type = "description",
@@ -748,7 +780,23 @@ function EchoExperience.LoadSettings()
       EchoExperience.SetupGuildEvents()
     end,
     width = "half",	--or "half" (optional)
-  }
+  }  
+  --LibMsgWin
+  if(LibMsgWin) then
+    --lib:CreateMsgWindow(_UniqueName, _LabelText, _FadeDelay, _FadeTime)
+    optionsTable[#optionsTable+1] = {
+      type = "checkbox",
+      name    = GetString(SI_ECHOEXP_SETTINGS_LIBMSGWIN_SHOW_NM),
+      tooltip = GetString(SI_ECHOEXP_SETTINGS_LIBMSGWIN_SHOW_TT), 
+      getFunc = function() return EchoExperience.savedVariables.uselibmsgwinGuild end,
+      setFunc = function(value)
+        EchoExperience.savedVariables.uselibmsgwinGuild = value
+        EchoExperience.SetupLibMsgWin()
+      end,
+      width = "full",--TODO
+    }
+  end
+  --LibMsgWin
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
     name    = GetString(SI_ECHOEXP_SETTINGS_GUILD_OUTPUTS_NAME),-- "Guild Output Tabs",
@@ -912,7 +960,7 @@ function EchoExperience.LoadSettings()
     getFunc = function() return EchoExperience.savedVariables.lifetimetracking end,
     setFunc = function(value)
       EchoExperience.savedVariables.lifetimetracking = value
-      EchoExperience.lifetimetracking(true)
+      --EchoExperience.lifetimetracking(true)
     end,
     width = "half",	--or "half" (optional)
   }

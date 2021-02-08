@@ -33,12 +33,16 @@ LitanyOfBlood Gui still a mess
 
 
 ## [Testing branch]
+0.0.46
+- update to 100034 "Flames of Ambition"
+- LootHistory updates
+
+## EchoExp [Versions]
 0.0.45
 - Mail tracking alpha?
 - Update Loot History View
 - Added settings to limit reporting on loot by quality
-
-## EchoExp [Versions]
+-If using LibMsgWin library can see separate  view for loot/guilds/exp
 0.0.44
 - options to not show collected and trait info
 - options to not show others loot by quality

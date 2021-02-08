@@ -8,12 +8,16 @@ function EchoExperience:LH_Setup()
   EchoExperience.debugMsg2( "LH_Setup: called" )
   EchoExperience.view.lh = {}
   EchoExperience.view.lh.frame      = EOL_LOOTHISTORY_Frame
-  EchoExperience.view.lh.list       = EOL_LOOTHISTORY_FrameList
-  EchoExperience.view.lh.filter     = EOL_LOOTHISTORY_FrameList_FilterDrop
-  EchoExperience.view.lh.search     = EOL_LOOTHISTORY_FrameList_Search_Box
-  EchoExperience.view.lh.listholder = EOL_LOOTHISTORY_FrameList_ListHolder
-  EchoExperience.view.lh.sortbar    = EOL_LOOTHISTORY_FrameListHeaders
-  EchoExperience.view.lh.slider     = EOL_LOOTHISTORY_FrameList_ListHolder_Slider
+  EchoExperience.view.lh.list       = EOL_LOOTHISTORY_Frame_List
+  EchoExperience.view.lh.TopBar     = EOL_LOOTHISTORY_Frame_List_TopBar
+  --EchoExperience.view.lh.searchlbl  = EOL_LOOTHISTORY_Frame_List_TopBar_SearchLabel
+  EchoExperience.view.lh.filter     = EOL_LOOTHISTORY_Frame_List_TopBar_FilterDrop
+  EchoExperience.view.lh.searchmain = EOL_LOOTHISTORY_Frame_List_TopBar_Search
+  EchoExperience.view.lh.search     = EOL_LOOTHISTORY_Frame_List_TopBar_Search_Box
+  EchoExperience.view.lh.searchbtn  = EOL_LOOTHISTORY_Frame_List_TopBar_Search_Btn
+  EchoExperience.view.lh.listholder = EOL_LOOTHISTORY_Frame_List_ListHolder
+  EchoExperience.view.lh.sortbar    = EOL_LOOTHISTORY_Frame_List_Headers
+  EchoExperience.view.lh.slider     = EOL_LOOTHISTORY_Frame_List_ListHolder_Slider
   
 	EchoExperience.view.lh.listholder.rowHeight = 24
 	EchoExperience.view.lh.listholder:SetDrawLayer(0)
@@ -42,10 +46,14 @@ function EchoExperience:LH_Setup()
   comboBox:ClearItems()  
   comboBox:SetSortsItems(false)
   local function OnItemSelect1(_, choiceText, choice)
-    EchoExperience:debugMsg(" choiceText=" .. choiceText .. " choice=" .. tostring(choice) )    
+    EchoExperience:debugMsg("choiceText=" .. choiceText .. " choice=" .. tostring(choice) )    
     --local viewIdx = EchoExperience.view.viewLookupIdxFromName[choiceText]
     --EchoExperience:ShowAndSetView(choiceText,viewIdx,nil)
     EchoExperience.view.lh.listholder.filtered = true
+    EchoExperience.view.lh.listholder.filter   = choiceText
+    EchoExperience.view.lh.listholder.filterN  = EchoExperience:ListOfItemQualitySettingsXalte(choiceText)
+    EchoExperience:LH_ClearDataLinesData()
+    EchoExperience:LH_onResizeStop()
     PlaySound(SOUNDS.POSITIVE_CLICK)
   end
   local validChoices = EchoExperience:ListOfItemQualitySettings()
@@ -85,6 +93,8 @@ function EchoExperience:LH_Show()
   --
   EchoExperience.view.lh.search:SetText("")
   EchoExperience.view.lh.listholder.filtered = false
+  EchoExperience.view.lh.listholder.filter   = nil
+  EchoExperience.view.lh.listholder.filterN  = nil
   
   --name bar size?
   local sortName = EchoExperience.view.lh.sortbar:GetNamedChild("_Sort_Name")
@@ -125,7 +135,51 @@ function EchoExperience:LH_onResizeStop()
 	EchoExperience:LH_SaveFrameInfo("onResizeStop")
   --<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)"    relativePoint="BOTTOMRIGHT" offsetX="-35" offsetY="-10"/>
   --EchoExperience.view.lh.listholder:SetAnchor(BOTTOMRIGHT, EchoExperience.view.lh.list, BOTTOMRIGHT, 0, EchoExperience.altData.fieldYOffset )
+  
+  EchoExperience.outputMsg2( "LH_onResizeStop: framewidth: ", EchoExperience.view.lh.frame:GetWidth() )
+  if( EchoExperience.view.lh.frame:GetWidth() < 350 ) then
+    EchoExperience.outputMsg( "LH_onResizeStop: resizing internal thingies" )
+    --<Anchor point="TOP"     relativeTo="$(parent)" relativePoint="TOP"  offsetY="30" />
+    --<Anchor point="BOTTOM"  relativeTo="$(parent)" relativePoint="TOP"  offsetY="60" />
+    EchoExperience.view.lh.TopBar:SetAnchor( TOP, EchoExperience.view.lh.frame, TOP, 0, 30 )
+    EchoExperience.view.lh.TopBar:SetAnchor( BOTTOM, EchoExperience.view.lh.frame, TOP, 0, 60 )
 
+    --<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$(parent)" offsetX="10" offsetY="0" /> TOPBAR
+    --EchoExperience.view.lh.searchlbl:SetAnchor( TOPLEFT, EchoExperience.view.lh.TopBar, TOPLEFT, 10, 0 )   
+    
+    --<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$(parent)" offsetX="10" offsetY="0" />
+    EchoExperience.view.lh.searchmain:SetAnchor( TOPLEFT, EchoExperience.view.lh.TopBar, TOPLEFT, 10, 0 )
+    EchoExperience.view.lh.filter:SetAnchor( TOPLEFT, EchoExperience.view.lh.searchmain, BOTTOMLEFT, 10, 0 )
+    
+    --<Anchor point="LEFT" relativeTo="$(parent)" relativePoint="LEFT"  offsetX="0" offsetY="0" />
+    --<Anchor point="TOP"  relativeTo="$(parent)_TopBar" relativePoint="BOTTOM" offsetX="0" offsetY="5" />
+    EchoExperience.view.lh.sortbar:SetAnchor( LEFT, EchoExperience.view.lh.list, LEFT, 0, 0 )
+    EchoExperience.view.lh.sortbar:SetAnchor( TOP, EchoExperience.view.lh.TopBar, BOTTOM, 0, 20 )
+  else
+    --<Anchor point="TOP"     relativeTo="$(parent)" relativePoint="TOP"  offsetY="30" />
+    --<Anchor point="BOTTOM"  relativeTo="$(parent)" relativePoint="TOP"  offsetY="60" />
+    EchoExperience.view.lh.TopBar:SetAnchor( TOP, EchoExperience.view.lh.frame, TOP, 0, 30 )
+    EchoExperience.view.lh.TopBar:SetAnchor( BOTTOM, EchoExperience.view.lh.frame, TOP, 0, 60 )
+
+    --<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$(parent)" offsetX="10" offsetY="0" /> TOPBAR
+    --EchoExperience.view.lh.searchlbl:SetAnchor( TOPLEFT, EchoExperience.view.lh.TopBar, TOPLEFT, 10, 0 )   
+
+    --<Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$(parent)" offsetX="10" offsetY="0" />
+    EchoExperience.view.lh.searchmain:SetAnchor( TOPLEFT, EchoExperience.view.lh.TopBar, TOPLEFT, 10, 0 )       
+    EchoExperience.view.lh.filter:SetAnchor( TOPLEFT, EchoExperience.view.lh.searchbtn, TOPRIGHT, 10, 0 )       
+    
+    --<Anchor point="LEFT" relativeTo="$(parent)" relativePoint="LEFT"  offsetX="0" offsetY="0" />
+    --<Anchor point="TOP"  relativeTo="$(parent)_TopBar" relativePoint="BOTTOM" offsetX="0" offsetY="5" />
+    EchoExperience.view.lh.sortbar:SetAnchor( LEFT, EchoExperience.view.lh.list, LEFT, 0, 0 )       
+    EchoExperience.view.lh.sortbar:SetAnchor( TOP, EchoExperience.view.lh.TopBar, BOTTOM, 0, 0 )       
+    
+    --<Anchor point="TOPLEFT" relativeTo="$(parent)_Headers" relativePoint="BOTTOMLEFT"  offsetX="0"   offsetY="10"/>
+    --<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)"    relativePoint="BOTTOMRIGHT" offsetX="-35" offsetY="-10"/>
+    EchoExperience.view.lh.listholder:SetAnchor( TOPLEFT, EchoExperience.view.lh.sortbar, BOTTOMLEFT, 0, 10 )       
+    EchoExperience.view.lh.listholder:SetAnchor( BOTTOMRIGHT, EchoExperience.view.lh.frame, BOTTOMRIGHT, -35, -10 )       
+    
+  end
+  
   --
   EchoExperience:LH_UpdateScrollDataLinesData()
 	EchoExperience:LH_GuiResizeScroll()	
@@ -262,6 +316,17 @@ end
 
 ------------
 --- GUI: data
+function EchoExperience:LH_ClearDataLinesData()
+	local curLine, curData
+  local lineCount = EchoExperience.view.lh.listholder.maxLines
+	for i = 1, lineCount do    
+    curLine = EchoExperience.view.lh.listholder.lines[i]
+    EchoExperience:LH_fillLine(curLine, nil)
+  end
+end
+
+------------
+--- GUI: data
 function EchoExperience:LH_SetDataLinesData()
 	local curLine, curData
   --TODO update for EchoExperience.view.lh.search
@@ -279,12 +344,27 @@ function EchoExperience:LH_SetDataLinesData()
     EchoExperience.view.lh.listholder.lines[i] = curLine
     if( curData ~= nil) then
       local okay = true
-      if(EchoExperience.view.lh.listholder.filtered) then
+      if(EchoExperience.view.lh.listholder.filtered and EchoExperience.view.lh.listholder.filterN ~= nil ) then
         --EchoExperience.view.lh.search
+        local qlty = curData.quality
+        if(qlty~=nil) then
+            EchoExperience.debugMsg2("LH_SetDataLinesData: "
+              , " qlty="  , qlty
+              , " filter="  , EchoExperience.view.lh.listholder.filter
+              , " filterN="  , EchoExperience.view.lh.listholder.filterN
+            )
+            if(EchoExperience.view.lh.listholder.filterN>qlty) then
+              okay = false
+              EchoExperience.debugMsg2("LH_SetDataLinesData: failed qlty filter")
+            end
+        end
       end
       if(okay) then
         lineCount = lineCount - 1
         EchoExperience:LH_fillLine(curLine, curData)
+      else
+        --lineCount = lineCount - 1
+        --EchoExperience:LH_fillLine(curLine, nil)
       end
     else
       lineCount = lineCount - 1
@@ -305,6 +385,7 @@ function EchoExperience:LH_fillLine(curLine, curItem)
 		curLine.icon:SetAlpha(0)
 		curLine.name:SetText("")
 		curLine.qty:SetText("")
+    curLine.user:SetText("")
 		--curLine.worn:SetHidden(true)
 		--curLine.stolen:SetHidden(true)
 		--Hide the FCOIS marker icons at the line (do not create them if not needed) -> File plugins/FCOIS/IIfA_FCOIS.lua

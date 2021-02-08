@@ -258,6 +258,8 @@ local localization_strings = {
   SI_ECHOEXP_BG_KILLEDBY = "You were killed by <<1>>.",
   SI_ECHOEXP_DIED = "You died!",
   
+  SI_ECHOEXP_COMBAT_ENTER = "*Combat started*",
+  SI_ECHOEXP_COMBAT_EXIT  = "*Combat ended*",
 	------------------------------
   -- EXP
 	SI_ECHOEXP_XP_GAIN         = "You gained <<1>> experience.",

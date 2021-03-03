@@ -4,8 +4,8 @@
 -- 
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.46",                   -- A nuisance to match to the Manifest.
-    versionnumeric  =  46,                        -- A nuisance to match to the Manifest.
+    version         = "0.0.47",                   -- A nuisance to match to the Manifest.
+    versionnumeric  =  47,                        -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -83,6 +83,10 @@ local defaultSettings = {
   lootshowsetcollection = true,
   lootshowtrait         = true,
   loothistorymaxsize    = 110,
+  lootHistoryMax = 110,
+  lootHistoryCull = 9,
+  expHistoryMax = 50,
+  expHistoryCull = 9,
 }
 
 ------------------------------
@@ -639,6 +643,8 @@ function EchoExperience.SlashCommandHandler(text)
       EchoExperience:ToggleLootHistoryFrame()    
     elseif options[1] == "lhclear" or options[1] == "lhc" then
       EchoExperience:LH_ClearLootHistory()
+    elseif options[1] == "eh" or options[1] == "ehs" then
+      EchoExperience:ToggleExpHistoryFrame()
     --
     elseif options[1] == "outputs" then
       EchoExperience.ShowOutputs()
@@ -772,6 +778,17 @@ function EchoExperience:ToggleLootHistoryFrame()
     EchoExperience:LH_Setup()
   end
   EchoExperience:LH_Show()
+end
+
+------------------------------
+-- UI
+function EchoExperience:ToggleExpHistoryFrame()
+  --EchoExperience.outputMsg2("Show Loot history")
+	EOL_EXPHISTORY_Frame:SetHidden(not EOL_EXPHISTORY_Frame:IsControlHidden())
+  if( EOL_EXPHISTORY_Frame.setup == nil) then
+    EchoExperience:EH_Setup()
+  end
+  EchoExperience:EH_Show()
 end
 
 ------------------------------
@@ -1140,7 +1157,6 @@ function EchoExperience.OnAbilityExperienceUpdateWork(eventCode, progressionInde
       , " morph="..tostring(morph)
       , " diff="..tostring(diff)
     )
-    
     --
     local nameFmt = name2
     local qualifier = 1
@@ -1173,6 +1189,7 @@ function EchoExperience.OnAbilityExperienceUpdateWork(eventCode, progressionInde
     local sentence = GetString(qualStr,qualifier)    
     local strL = zo_strformat(sentence, tostring(name2), ZO_CommaDelimitNumber(currentXP), ZO_CommaDelimitNumber(nextRankXP), ZO_CommaDelimitNumber(diff), thisGain, texture )
 		EchoExperience.outputToChanel(strL,msgTypeEXP)
+    EchoExperience.ExpHistory(name2,currentXP,nextRankXP,diff,thisGain, texture )
     -- Table to keep old values of player curent exp to be able to diff
     if(nextRankXP==0 or currentXP>nextRankXP) then
       EchoExperience.savedVariables.skilltracking[tableKey] = nil
@@ -1586,7 +1603,7 @@ function EchoExperience.OnExperienceUpdateWork(eventCode, unitTag, currentExp, m
   )
   -- TODO CHECKBOX TO ENABLE!
   --
-  if( IsChampionSystemUnlocked() ) then 
+  if( IsChampionSystemUnlocked() and CanUnitGainChampionPoints("player") ) then 
     EchoExperience.OnExperienceUpdateCP(eventCode, unitTag, currentExp, maxExp, reason)
   else
     --is it only working sub 50?
@@ -3658,7 +3675,6 @@ function EchoExperience:LootHistory(itemLink,quantity,receivedBy)
   if(EchoExperience.savedVariables.sessiontracking) then
     if(EchoExperience.view.loothistory == nil) then
       EchoExperience.view.loothistory = {}
-      EchoExperience.view.loothistoryminidx = 1
     end
     if(receivedBy==nil) then
       receivedBy = "Me"
@@ -3675,30 +3691,56 @@ function EchoExperience:LootHistory(itemLink,quantity,receivedBy)
     elem.user       = receivedBy
     --
     table.insert(EchoExperience.view.loothistory, elem)  
-    EchoExperience.debugMsg2("LootHistory", tostring(itemLink) )
+    EchoExperience.debugMsg2("LootHistory", tostring(itemLink) )    
     --
-    --check max length and remove old? TODO
+    --check max length and purge/remove old? TODO
     local cnt = #EchoExperience.view.loothistory
-    if(cnt>110) then
-      --EchoExperience.outputMsg2("LootHistory table is getting large, consider clearing it with /echoexp lhclear")  
-    --else if(cnt>110) then
-    --remove up to 10 at once?
-      --EchoExperience.view.loothistory[EchoExperience.view.loothistoryminidx] = nil
-      local numtoremove = 9
-      for ii = EchoExperience.view.loothistoryminidx, EchoExperience.view.loothistoryminidx + numtoremove do
-        if(EchoExperience.view.loothistory[ii]~=nil) then
-          EchoExperience.debugMsg2("LootHistory removed: " , EchoExperience.view.loothistory[ii].itemLink )
-        end
-        table.remove(EchoExperience.view.loothistory, ii)
+    if(cnt>EchoExperience.savedVariables.lootHistoryMax) then
+      local numtoremove = EchoExperience.savedVariables.lootHistoryCull
+      for ii = 1, numtoremove do
+        table.remove(EchoExperience.view.loothistory,1)
       end
-      EchoExperience.debugMsg2("LootHistory table auto deleted idx: "
-        , tostring(EchoExperience.view.loothistoryminidx), ", new size is: "
-        , tostring(#EchoExperience.view.loothistory) )
-      EchoExperience.view.loothistoryminidx = EchoExperience.view.loothistoryminidx + numtoremove
     end
     --Update gui?
     if( not EOL_LOOTHISTORY_Frame:IsControlHidden() ) then
       EchoExperience:LH_UpdateViewData()
+    end
+  end
+end
+------------------------------
+-- Tracking
+function EchoExperience:ExpHistory(name,currentXP,nextRankXP,diff,thisGain, texture)
+  if(EchoExperience.savedVariables.sessiontracking) then
+    if(EchoExperience.view.exphistory == nil) then
+      EchoExperience.view.exphistory = {}
+    end
+    --
+    local elem = {}
+    -- seconds in UTC based on the player's OS time.
+    elem.timestr    = GetTimeString()
+    elem.time       = GetTimeStamp()
+    elem.frame      = GetFrameTimeSeconds()
+    elem.name        = name
+    elem.currentXP  = currentXP
+    elem.nextRankXP = nextRankXP
+    elem.diff       = diff
+    elem.thisGain   = thisGain
+    elem.texture    = texture
+    --
+    table.insert(EchoExperience.view.exphistory, elem)  
+    EchoExperience.debugMsg2("ExpHistory", tostring(name) )    
+    --
+    --check max length and purge/remove old? TODO
+    local cnt = #EchoExperience.view.exphistory
+    if(cnt>EchoExperience.savedVariables.expHistoryMax) then
+      local numtoremove = EchoExperience.savedVariables.expHistoryCull      
+      for ii = 1, numtoremove do
+        table.remove(EchoExperience.view.exphistory,1)
+      end
+    end
+    --Update gui?
+    if( not EOL_EXPHISTORY_Frame:IsControlHidden() ) then
+      EchoExperience:EH_UpdateViewData()
     end
   end
 end
@@ -4424,7 +4466,7 @@ function EchoExperience.CheckVerifyDefaults()
     EchoExperience.savedVariables.banditsidepanel = true
   end
   --[[	Bandits User Interface Side Panel ]]--
-  if(BUI~=nil and not EchoExperience.view.buisetup and EchoExperience.savedVariables.banditsidepanel) then
+  if(BUI~=nil and BUI.Vars~=nil and not EchoExperience.view.buisetup and EchoExperience.savedVariables.banditsidepanel) then
     EchoExperience.view.buisetup = true
     local content = {
         {--TrackingGui

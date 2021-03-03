@@ -10,6 +10,9 @@
       <Action name="EE_DISPLAY3">
 		    <Up>EchoExperience:ToggleLootHistoryFrame()</Up>
       </Action>
+      <Action name="EE_DISPLAY4">
+		    <Up>EchoExperience:ToggleExpHistoryFrame()</Up>
+      </Action>
     </Category>
   </Layer>
 </Bindings>

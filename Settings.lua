@@ -215,6 +215,7 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
+  
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
     name    = GetString(SI_ECHOEXP_SETTINGS_LOREOBOOK_SHOW),
@@ -226,6 +227,7 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",
   }
+  
   --LibMsgWin
   if(LibMsgWin) then
     --lib:CreateMsgWindow(_UniqueName, _LabelText, _FadeDelay, _FadeTime)
@@ -434,6 +436,29 @@ function EchoExperience.LoadSettings()
   --LibMsgWin
   
   optionsTable[#optionsTable+1] = {
+    type = "slider",
+    name = GetString(SI_ECHOEXP_SETTINGS_EXPHISTORY_MAX_NM),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXPHISTORY_MAX_TT),
+    min = 1,
+    max = 50,
+    step = 1,	--(optional)
+    getFunc = function() return tostring(EchoExperience.savedVariables.expHistoryMax) end,
+    setFunc = function(var) EchoExperience.savedVariables.expHistoryMax = tonumber(var) end,
+    width = "half",	--or "half" (optional)
+  }
+  optionsTable[#optionsTable+1] = {
+    type = "slider",
+    name = GetString(SI_ECHOEXP_SETTINGS_EXPHISTORY_CULL_NM),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXPHISTORY_CULL_TT),
+    min = 1,
+    max = 50,
+    step = 1,	--(optional)
+    getFunc = function() return tostring(EchoExperience.savedVariables.expHistoryCull) end,
+    setFunc = function(var) EchoExperience.savedVariables.expHistoryCull = tonumber(var) end,
+    width = "half",	--or "half" (optional)
+  }
+  
+  optionsTable[#optionsTable+1] = {
     type = "dropdown",
     name = GetString(SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_NAME), --"Exp Output Tabs",
     tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_TOOLTIP), --"Tab(s) for Exp output.",
@@ -635,6 +660,29 @@ function EchoExperience.LoadSettings()
   end
   --LibMsgWin
 
+  optionsTable[#optionsTable+1] = {
+    type = "slider",
+    name = GetString(SI_ECHOEXP_SETTINGS_LOOTHISTORY_MAX_NM),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LOOTHISTORY_MAX_TT),
+    min = 0,
+    max = 200,
+    step = 1,	--(optional)
+    getFunc = function() return tostring(EchoExperience.savedVariables.lootHistoryMax) end,
+    setFunc = function(var) EchoExperience.savedVariables.lootHistoryMax = tonumber(var) end,
+    width = "half",	--or "half" (optional)
+  }
+  optionsTable[#optionsTable+1] = {
+    type = "slider",
+    name = GetString(SI_ECHOEXP_SETTINGS_LOOTHISTORY_CULL_NM),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_LOOTHISTORY_CULL_TT),
+    min = 1,
+    max = 50,
+    step = 1,	--(optional)
+    getFunc = function() return tostring(EchoExperience.savedVariables.lootHistoryCull) end,
+    setFunc = function(var) EchoExperience.savedVariables.lootHistoryCul = tonumber(var) end,
+    width = "half",	--or "half" (optional)
+  }
+  
   --
   optionsTable[#optionsTable+1] = {
     type = "description",

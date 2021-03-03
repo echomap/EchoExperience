@@ -1,6 +1,6 @@
 ## Title: EchoExperience
-## Version: 0.0.46
-## AddOnVersion: 0046
+## Version: 0.0.47
+## AddOnVersion: 0047
 ## APIVersion: 100033 100034
 ## Author: Echomap
 ## Description: EchoExperience will show experience gains in chat.
@@ -24,11 +24,13 @@ EchoExperience.xml
 EchoExp_Tracking.xml
 EchoExp_Litany.xml
 EchoExp_LootHistory.xml
+EchoExp_ExpHistory.xml
 
 EchoExperience.lua
 EchoExp_Settings.lua
 EchoExp_Tracking.lua
 EchoExp_LootHistory.lua
+EchoExp_ExpHistory.lua
 EchoExp_Litany.lua
 ##EchoExp_Events.lua
 Settings.lua

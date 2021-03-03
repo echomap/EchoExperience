@@ -4,6 +4,7 @@ local localization_strings = {
   SI_BINDING_NAME_EE_DISPLAY1    = "Show EchoExp Tracking UI",
   SI_BINDING_NAME_EE_DISPLAY2    = "Show EchoExp Litany UI",
   SI_BINDING_NAME_EE_DISPLAY3    = "Show EchoExp Loot History UI",
+  SI_BINDING_NAME_EE_DISPLAY4    = "Show EchoExp EXP History UI",
   ------------------------------
   -- 
 	SI_ECHOEXP_EXPGAINS_SHOW   = "EchoExp is showing Experience Gains",
@@ -51,6 +52,16 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_ASYNCALL_TT = "Async might help with disconnects, but will show events slower",
   SI_ECHOEXP_SETTINGS_LIBMSGWIN_SHOW_NM = "Use discrete/seperate window for loot output",
   SI_ECHOEXP_SETTINGS_LIBMSGWIN_SHOW_TT = "Use discrete/seperate window for loot output",
+  
+  SI_ECHOEXP_SETTINGS_LOOTHISTORY_MAX_NM = "Loot History Max memory",
+  SI_ECHOEXP_SETTINGS_LOOTHISTORY_MAX_TT = "Loot History Max memory",
+  SI_ECHOEXP_SETTINGS_LOOTHISTORY_CULL_NM = "Loot History Cull",
+  SI_ECHOEXP_SETTINGS_LOOTHISTORY_CULL_TT = "Loot History Cull",
+  
+  SI_ECHOEXP_SETTINGS_EXPHISTORY_MAX_NM = "Exp History Max memory",
+  SI_ECHOEXP_SETTINGS_EXPHISTORY_MAX_TT = "Exp History Max memory",
+  SI_ECHOEXP_SETTINGS_EXPHISTORY_CULL_NM = "Exp History Cull memory",
+  SI_ECHOEXP_SETTINGS_EXPHISTORY_CULL_TT = "Exp History Cull memory",
   
   SI_ECHOEXP_SETTINGS_ALPHA_NAME    = "Show Alpha events?",
   SI_ECHOEXP_SETTINGS_ALPHA_TT      = "Dev Alpha?",

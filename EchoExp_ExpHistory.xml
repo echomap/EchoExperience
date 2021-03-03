@@ -1,0 +1,212 @@
+<GuiXml>
+	<Controls>
+  
+		<TopLevelControl name="EOL_EXPHISTORY_Frame" clampedToScreen="true" mouseEnabled="true" movable="true" moveable="true" hidden="true" resizeHandleSize="10" >
+			<DimensionConstraints minX="220" minY="250" x="700" y="300" />
+			<Anchor point="TOPRIGHT"   relativeTo="GUI_ROOT" relativePoint="TOPRIGHT" offsetX="-200" offsetY="450" />
+      <Anchor point="BOTTOMLEFT" relativeTo="GUI_ROOT" relativePoint="TOPRIGHT" offsetX="-700" offsetY="850" />
+      <OnMoveStop>EchoExperience:EH_SaveFrameInfo("onMoveStop")</OnMoveStop>
+			<OnResizeStart>EchoExperience:EH_onResizeStart()</OnResizeStart>
+			<OnResizeStop> EchoExperience:EH_onResizeStop() </OnResizeStop>
+
+			<Controls>
+
+				<Control name="$(parent)_List" resizeToFitDescendents="false">
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" />
+					<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" offsetX="0" />
+					<Controls>
+            <Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" > <AnchorFill/> </Backdrop>
+            
+            <Label name="$(parent)_TitleLabel" text="SI_BINDING_NAME_EE_DISPLAY3" font="ZoFontGameLargeBold" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_NORMAL">
+              <Anchor point="TOP" relativePoint="TOP" relativeTo="$(parent)" offsetX="6" offsetY="4" />
+            </Label>
+            <Button name="$(parent)_BtnClose" verticalAlignment="CENTER" horizontalAlignment="CENTER" mouseEnabled="true">
+              <Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-10" offsetY="0" />
+              <Dimensions x="35" y="35" />
+              <Textures normal="EsoUI/art/buttons/decline_up.dds"
+                    pressed="EsoUI/art/buttons/decline_down.dds"
+                    mouseOver="EsoUI/art/buttons/decline_over.dds"
+              />
+              <OnMouseEnter> EchoExperience:EH_Misc2HeaderTipEnter(self,"Close") </OnMouseEnter>
+              <OnMouseExit>  EchoExperience:EH_Misc2HeaderTipExit(self)  </OnMouseExit>
+              <OnMouseUp>EchoExperience:EH_CloseUI(self)</OnMouseUp>
+            </Button>
+
+            <!--Control: List_TopBar-->
+            <Control name="$(parent)_TopBar" resizeToFitDescendents="true" >
+              <Anchor point="TOP"     relativeTo="$(parent)" relativePoint="TOP"  offsetY="30" />
+              <Anchor point="BOTTOM"  relativeTo="$(parent)" relativePoint="TOP"  offsetY="60" />
+              <Controls>
+                <Backdrop name="$(parent)_Search" tier="HIGH" inherits="ZO_SingleLineEditBackdrop_Keyboard">
+                  <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$(parent)" offsetX="10" offsetY="0" />
+                  <Dimensions x="200" />
+                  <Controls>
+                    <EditBox name="$(parent)_Box" inherits="ZO_DefaultEditForBackdrop ZO_EditDefaultText" />
+                  </Controls>
+                </Backdrop>
+                <Button name="$(parent)_Search_Btn" text="Search" font="ZoFontGameLargeBold" verticalAlignment="CENTER" horizontalAlignment="LEFT" mouseEnabled="true" >
+                    <Dimensions x="55" y="20"/>
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)_Search" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>      
+                    <!--
+                    <OnMouseEnter> EchoExperience:EH_Misc2HeaderTipEnter(self,"Sort by Time") </OnMouseEnter>
+                    <OnMouseExit>  EchoExperience:EH_Misc2HeaderTipExit(self)  </OnMouseExit>    
+                    <OnMouseUp> EchoExperience:EH_DoGuiSort(self, false, "div")</OnMouseUp>
+                    -->
+                    <Textures
+                      normal="EsoUI/Art/ActionBar/abilityFrame64_up.dds"
+                      pressed="EsoUI/Art/ActionBar/abilityFrame64_down.dds"
+                      mouseOver="EsoUI/Art/ActionBar/actionBar_mouseOver.dds"
+                      disabled="EsoUI/Art/ActionBar/abilityFrame64_up.dds"
+                    />
+                  </Button>
+                <Control name="$(parent)_FilterDrop" inherits="ZO_ComboBox">
+                  <Dimensions x="110" />
+                  <Anchor point="TOPLEFT" relativeTo="$(parent)_Search_Btn" relativePoint="TOPRIGHT" offsetX="10" offsetY="0"/>      
+                </Control>
+              </Controls>
+            </Control>
+            <!--Control: List_TopBar-->
+
+            <!--Control: List_Headers-->
+						<Control name="$(parent)_Headers" resizeToFitDescendents="true" >
+							<Anchor point="LEFT" relativeTo="$(parent)" relativePoint="LEFT"  offsetX="0" offsetY="0" />
+							<Anchor point="TOP"  relativeTo="$(parent)_TopBar" relativePoint="BOTTOM" offsetX="0" offsetY="5" />
+							<Dimensions y="32" />
+							<Controls>
+                <Button name="$(parent)_Sort_Icon" text="Icon" font="ZoFontGameLargeBold" verticalAlignment="CENTER" horizontalAlignment="LEFT" mouseEnabled="true" >
+                  <Dimensions x="35" y="20"/>
+                  <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="5" offsetY="0"/>      
+                  <OnMouseEnter> EchoExperience:EH_Misc2HeaderTipEnter(self,"Sort by Time") </OnMouseEnter>
+                  <OnMouseExit>  EchoExperience:EH_Misc2HeaderTipExit(self)  </OnMouseExit>    
+                  <OnMouseUp> EchoExperience:EH_DoGuiSort(self, false, "icon")</OnMouseUp>
+                </Button>
+                <Button name="$(parent)_Sort_Div" text="*" font="ZoFontGameLargeBold" verticalAlignment="CENTER" horizontalAlignment="LEFT" mouseEnabled="true" >
+                  <Dimensions x="20" y="20"/>
+                  <Anchor point="TOPLEFT" relativeTo="$(parent)_Sort_Icon" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>      
+                  <OnMouseEnter> EchoExperience:EH_Misc2HeaderTipEnter(self,"Sort by Time") </OnMouseEnter>
+                  <OnMouseExit>  EchoExperience:EH_Misc2HeaderTipExit(self)  </OnMouseExit>    
+                  <OnMouseUp> EchoExperience:EH_DoGuiSort(self, false, "div")</OnMouseUp>
+                </Button>      
+                <Button name="$(parent)_Sort_Time" text="Time" font="ZoFontGameLargeBold" verticalAlignment="CENTER" horizontalAlignment="LEFT" mouseEnabled="true" >
+                  <Dimensions x="55" y="20"/>
+                  <Anchor point="TOPLEFT" relativeTo="$(parent)_Sort_Div" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>      
+                  <OnMouseEnter> EchoExperience:EH_Misc2HeaderTipEnter(self,"Sort by Time") </OnMouseEnter>
+                  <OnMouseExit>  EchoExperience:EH_Misc2HeaderTipExit(self)  </OnMouseExit>    
+                  <OnMouseUp> EchoExperience:EH_DoGuiSort(self, false, "time")</OnMouseUp>
+                </Button>
+                <Button name="$(parent)_Sort_Qty" text="Qty" font="ZoFontGameLargeBold" verticalAlignment="CENTER" horizontalAlignment="LEFT" mouseEnabled="true" >
+                  <Dimensions x="35" y="20"/>
+                  <Anchor point="TOPLEFT" relativeTo="$(parent)_Sort_Time" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>      
+                  <OnMouseEnter> EchoExperience:EH_Misc2HeaderTipEnter(self,"Sort by Time") </OnMouseEnter>
+                  <OnMouseExit>  EchoExperience:EH_Misc2HeaderTipExit(self)  </OnMouseExit>    
+                  <OnMouseUp> EchoExperience:EH_DoGuiSort(self, false, "qty")</OnMouseUp>
+                </Button>          
+                <Button name="$(parent)_Sort_Name" text="Name" font="ZoFontGameLargeBold" verticalAlignment="CENTER" horizontalAlignment="LEFT" mouseEnabled="true" >
+                  <Dimensions x="250" y="20"/>
+                  <Anchor point="TOPLEFT" relativeTo="$(parent)_Sort_Qty" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>      
+                  <OnMouseEnter> EchoExperience:EH_Misc2HeaderTipEnter(self,"Sort by Time") </OnMouseEnter>
+                  <OnMouseExit>  EchoExperience:EH_Misc2HeaderTipExit(self)  </OnMouseExit>    
+                  <OnMouseUp> EchoExperience:EH_DoGuiSort(self, false, "name")</OnMouseUp>
+                </Button>
+                <Button name="$(parent)_Sort_User" text="User" font="ZoFontGameLargeBold" verticalAlignment="CENTER" horizontalAlignment="LEFT" mouseEnabled="true" >
+                  <Dimensions x="100" y="20"/>
+                  <Anchor point="TOPLEFT" relativeTo="$(parent)_Sort_Name" relativePoint="TOPRIGHT" offsetX="5" offsetY="0"/>      
+                  <OnMouseEnter> EchoExperience:EH_Misc2HeaderTipEnter(self,"Sort by Time") </OnMouseEnter>
+                  <OnMouseExit>  EchoExperience:EH_Misc2HeaderTipExit(self)  </OnMouseExit>    
+                  <OnMouseUp> EchoExperience:EH_DoGuiSort(self, false, "user")</OnMouseUp>
+                </Button>
+							</Controls>
+						</Control>
+            <!--Control: List_Headers-->
+
+            <!--Control: List_ListHolder-->
+            <Control name="$(parent)_ListHolder" mouseEnabled="true" resizeToFitDescendents="false">
+              <DimensionConstraints  minY="52"/>
+              <Anchor point="TOPLEFT" relativeTo="$(parent)_Headers" relativePoint="BOTTOMLEFT"  offsetX="0"   offsetY="10"/>
+              <Anchor point="BOTTOMRIGHT" relativeTo="$(parent)"    relativePoint="BOTTOMRIGHT" offsetX="-35" offsetY="-10"/>
+              <OnMouseWheel>EchoExperience:EH_GuiOnScroll(self, delta)</OnMouseWheel>
+
+              <Controls>
+                <Backdrop name="$(parent)_bg" inherits="ZO_ThinBackdrop" centerColor="591141"></Backdrop>
+                <!--Backdrop name="$(parent)_bg" alpha="0" centerColor="40FF0000" edgeColor="60FF0000"></Backdrop-->
+                <Slider name="$(parent)_Slider" mouseEnabled="true" step="1" inherits="ZO_VerticalScrollbarBase">
+                  <Anchor point="TOPRIGHT"    relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="16" offsetY="14"/>
+                  <Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="23" offsetY="-14"/>
+                  <OnMouseDown>self.locked=false</OnMouseDown>
+                  <OnMouseUp>self.locked=true</OnMouseUp>
+                  <OnValueChanged>EchoExperience:EH_GuiOnSliderUpdate(self, value)</OnValueChanged>
+                </Slider>
+              </Controls>
+            </Control>
+            <!--Control: List_ListHolder-->
+
+            <!--Control: List_XXXX-->
+						<Label name="$(parent)Counter" font="ZoFontGameSmall" horizontalAlignment="RIGHT" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_DISABLED">
+							<Anchor point="TOPRIGHT" relativeTo="$(parent)List" relativePoint="BOTTOMRIGHT" offsetY="6" />
+						</Label>
+            <!--Control: List_XXXX-->
+            
+					</Controls>
+				</Control>
+<!--
+				<Label name="$(parent)History" font="ZoFontGameSmall" horizontalAlignment="LEFT" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_DISABLED" mouseEnabled="true">
+					<Anchor point="TOPLEFT" relativeTo="$(parent)List" relativePoint="BOTTOMLEFT" offsetX="30" offsetY="-26" />
+					<OnMouseUp>
+						ExpLog.OpenSettingsPanel()
+					</OnMouseUp>
+				</Label>
+-->
+			</Controls>
+		</TopLevelControl>
+
+		<Control name="EchoExp_EH_SlotTemplate" inherits="ZO_ListInventorySlotBehavior" virtual="true">
+			<Dimensions x="300" y="30" />
+			<Controls>
+				<Texture name="$(parent)Bg" textureFile="EsoUI/Art/Miscellaneous/listItem_backdrop.dds" alpha="0.4">
+					<AnchorFill />
+					<TextureCoords left="0" right="1" top="0" bottom=".8125" />
+				</Texture>
+
+				<Button name="$(parent)Button" inherits="ZO_InventorySlotNoMouseover">
+					<Dimensions x="20" y="20" />
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" offsetX="20" offsetY="2" />
+				</Button>
+        
+				<Texture name="$(parent)Indicator" textureFile="/esoui/art/miscellaneous/gamepad/gp_icon_new.dds" tier="HIGH">
+					<Anchor point="TOPLEFT" relativeTo="$(parent)Button" relativePoint="TOPRIGHT" offsetX="6" offsetY="0" />
+					<Dimensions x="20" y="18" />
+				</Texture>
+        
+				<Label name="$(parent)Time" font="ZoFontGameShadow" horizontalAlignment="RIGHT" verticalAlignment="CENTER">
+					<Dimensions x="50" y="30"/>
+					<Anchor point="TOPLEFT" relativeTo="$(parent)Indicator" relativePoint="TOPRIGHT" offsetX="6" offsetY="0" />
+				</Label>
+
+				<Label name="$(parent)Qty" font="ZoFontGameShadow" horizontalAlignment="RIGHT" verticalAlignment="CENTER">
+					<Dimensions x="40" y="30"/>
+					<Anchor point="TOPLEFT" relativeTo="$(parent)Time" relativePoint="TOPRIGHT" offsetX="6" offsetY="0" />
+				</Label>
+
+        <Button name="$(parent)Name" text="*" font="ZoFontGameShadow" verticalAlignment="CENTER" horizontalAlignment="LEFT" mouseEnabled="true" wrapMode="ELLIPSIS" linkEnabled="true" >
+          <Dimensions x="250" y="30" />
+          <Anchor point="TOPLEFT" relativeTo="$(parent)Qty" relativePoint="TOPRIGHT" offsetX="6" offsetY="0"/>
+          <OnMouseEnter> EchoExperience:EH_Misc2HeaderTipEnter(self,"Link") </OnMouseEnter>
+          <OnMouseExit>  EchoExperience:EH_Misc2HeaderTipExit(self)  </OnMouseExit>
+        </Button>  
+        				
+        <Label name="$(parent)User" font="ZoFontGameShadow" wrapMode="ELLIPSIS" verticalAlignment="CENTER">
+					<Dimensions y="30"/>
+					<Anchor point="TOPLEFT" relativeTo="$(parent)Name" relativePoint="TOPRIGHT" offsetX="6" offsetY="0"/>
+					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="0" offsetY="0"/>
+				</Label>
+        
+			</Controls>
+		</Control>
+ 
+  <Tooltip name="EEEHTooltip" inherits="ZO_ItemIconTooltip" mouseEnabled="true" movable="true" hidden="true">
+    <ResizeToFitPadding   width="40" height="30"/>
+    <DimensionConstraints minX="30" maxX="200" />
+  </Tooltip>
+
+	</Controls>
+</GuiXml>

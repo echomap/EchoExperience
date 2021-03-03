@@ -33,11 +33,18 @@ LitanyOfBlood Gui still a mess
 
 
 ## [Testing branch]
+0.0.48
+- 
+
+## EchoExp [Versions]
+0.0.47
+- Bug fix
+- ToggleExpHistoryFrame binding
+- LootHistory updates
+- eh or ehs slash command for Exp History Frame
 0.0.46
 - update to 100034 "Flames of Ambition"
 - LootHistory updates
-
-## EchoExp [Versions]
 0.0.45
 - Mail tracking alpha?
 - Update Loot History View

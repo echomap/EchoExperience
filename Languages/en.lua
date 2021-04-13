@@ -35,6 +35,8 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_LOAD_MSG        = "Load settings from saved profile?",
   SI_ECHOEXP_SETTINGS_IMMERSIVE       = "Immersive",
   SI_ECHOEXP_SETTINGS_BEIMMERSIVE     = "Be immersive? on or off.",
+  SI_ECHOEXP_SETTINGS_AUTOUSEDEF_NM   = "Automatically use saved settings on new character?",
+  SI_ECHOEXP_SETTINGS_AUTOUSEDEF_TT   = "If checked, this addon will use the saved default settings when a new character is loaded.",
   
   SI_ECHOEXP_SETTINGS_KILLS_SHOW        = "Show kills/deaths?",
   SI_ECHOEXP_SETTINGS_KILLS_SHOW_TT     = "Show kills/deaths?",
@@ -389,7 +391,7 @@ local localization_strings = {
 	SI_ECHOLOOT_BANK_GET_6 = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>>  <<6>> (Total: <<5>>)",
 
   --QUEST Output
-  SI_ECHOLOOT_QUEST_SHARED_TO_YOU = "The quest [<<1>>] was shared to you.", 
+  SI_ECHOLOOT_QUEST_SHARED_TO_YOU = "The quest [<<1>>] was shared to you by <<2>>.", 
   --questName, shareTargetCharacterName, shareTargetDisplayName, resultString)
   SI_ECHOEXP_QUEST_SHARE_RESULT = "Quest [<<1>>] <<4>> by <<2>>@<<3>> .",  
   SI_ECHOEXP_QUEST_ACCEPTED = "was Accepted",

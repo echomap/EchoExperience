@@ -360,7 +360,7 @@ end
 -- OUTPUT Main Output Function used by addon to control output and style
 function EchoExperience.outputToChanel(text,msgType,filter)
 	--Output to where
-	if msgType == msgTypeSYS then
+	if msgType == nil or msgType == msgTypeSYS then
 		d(text)
 	elseif msgType == msgTypeEXP then
     EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.expsettings, filter, msgType )
@@ -684,7 +684,19 @@ function EchoExperience.SlashCommandHandler(text)
       EchoExperience.TrackingSessionShowSessionReport()
     elseif options[1] == "cleartracking" then
       EchoExperience:TrackingSessionClear()
-      EchoExperience.outputMsg("Tracking data reset") 
+      EchoExperience.outputMsg("Tracking data reset")
+    --
+    elseif options[1] == "startexptrack" then
+      EchoExperience.outputToChanel("Start tracking exp")
+      EchoExperience.view.startexptracking = true  
+      EchoExperience.view.exptracking = {}
+      EchoExperience.view.exptracking.startexp = -1
+      EchoExperience.view.exptracking.endexp   = -1
+    elseif options[1] == "stopexptrack" or options[1] == "endexptrack"  then
+      EchoExperience.outputToChanel("End tracking exp")
+      EchoExperience.view.startexptracking = false
+      EchoExperience.EndExperienceTracking()
+    --
     --
     --Testing
     elseif options[1] == "testevents" then
@@ -1022,6 +1034,17 @@ function EchoExperience:GetTrackingSession(trackingid)
   end
   return currentSession
 end
+
+------------------------------
+-- TRACKING
+function EchoExperience.EndExperienceTracking()
+  local strL = zo_strformat("EndExperienceTracking: start: <<1>> end: <<2>>", 
+    ZO_CommaDelimitNumber(EchoExperience.view.exptracking.startexp),
+    ZO_CommaDelimitNumber(EchoExperience.view.exptracking.endexp)
+  )
+  EchoExperience.outputToChanel(strL)
+end
+
 ------------------------------
 -- EVENT
 --ONEvent  shows skill exp gains
@@ -1044,7 +1067,11 @@ end
 function EchoExperience.OnSkillExperienceUpdateWork(eventCode, skillType, skillIndex, reason, rank, previousXP, currentXPIn)
 	local skillLineName, currentSkillRank, available = GetSkillLineInfo(skillType, skillIndex)
 	local lastRankXP, nextRankXP, currentXP          = GetSkillLineXPInfo(skillType, skillIndex)
-	
+  EchoExperience.debugMsg2("OnSkillExperienceUpdateWork:"
+      , " name="..tostring(skillLineName)
+      , " rank="..tostring(currentSkillRank)
+      , " available="..tostring(available)
+    )
 	local pressed, normal, mouseOver, announce = ZO_Skills_GetIconsForSkillType(skillType)
   -- (this used to work, but that stopped working? so put into ability gains)
   --Oh! there are changes to these calls when you hit 50! ??
@@ -1067,8 +1094,10 @@ function EchoExperience.OnSkillExperienceUpdateWork(eventCode, skillType, skillI
 		local strI = GetString("SI_ECHOEXP_XP_SKILL_GAIN_",qualifier)
 		local skillLineNameI = skillLineName
 		if normal ~= nil and skillLineName~=nil then
+      --TODO skillLineNameI = zo_strformat(
 			skillLineNameI = "|t14:14:"..normal.."|t" .. skillLineName
 		end
+    skillLineNameI = zo_strformat("<<1>> [<<2>>]",skillLineNameI, currentSkillRank)
 		--EchoExperience.outputToChanel("skillLineNameI '"..skillLineNameI.."'", msgTypeEXP)
 		local strL = zo_strformat(strI, ZO_CommaDelimitNumber(XPgain), skillLineNameI, ZO_CommaDelimitNumber(curCur), ZO_CommaDelimitNumber(curNext), ZO_CommaDelimitNumber(diff) )
 		EchoExperience.outputToChanel(strL,msgTypeEXP)
@@ -1155,6 +1184,7 @@ function EchoExperience.OnAbilityExperienceUpdateWork(eventCode, progressionInde
       , " name="..tostring(name)
       , " name2="..tostring(name2)
       , " morph="..tostring(morph)
+      , " aIdx="..tostring(abilityIndex)
       , " diff="..tostring(diff)
     )
     --
@@ -1609,7 +1639,15 @@ function EchoExperience.OnExperienceUpdateWork(eventCode, unitTag, currentExp, m
     --is it only working sub 50?
     if(EchoExperience.savedVariables.currentExp == nil or EchoExperience.savedVariables.currentExp<0 ) then
       -- Can't report on what we don't know.
-    else    
+    else
+      if( EchoExperience.view.startexptracking and EchoExperience.view.exptracking.startexp<0) then
+        EchoExperience.view.exptracking.startexp = currentExp
+      end
+      if( not EchoExperience.view.startexptracking and EchoExperience.view.exptracking ~= nil) then
+        EchoExperience.view.exptracking.endexp = currentExp
+        EchoExperience.EndExperienceTracking()
+      end      
+      
       local XPgain = currentExp - EchoExperience.savedVariables.currentExp
       EchoExperience.debugMsg2(EchoExperience.name .. " EVENT_EXPERIENCE_UPDATE: "
         , " XPgain=" .. XPgain
@@ -2881,7 +2919,7 @@ function EchoExperience.OnEventQuestSharedStart(eventCode, questId)
   --Returns: string questName, string characterName, number millisecondsSinceRequest, string displayName  
   local questName, characterName, millisecondsSinceRequest, displayName = GetOfferedQuestShareInfo( questId )
   local sentence = GetString(SI_ECHOLOOT_QUEST_SHARED_TO_YOU)
-  local strL = zo_strformat(sentence, questName, questId )
+  local strL = zo_strformat(sentence, questName, characterName, questId )
   EchoExperience.outputToChanel(strL, msgTypeQuest)
   --  
 end    

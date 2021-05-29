@@ -79,7 +79,9 @@ function EchoExperience:LH_Setup()
       )
     end )
  --]]
-
+  --20210528 
+  EchoExperience:LH_onResizeStop()
+  --
   EchoExperience.debugMsg2( "LH_Setup: done" )
 end
 
@@ -343,29 +345,8 @@ function EchoExperience:LH_SetDataLinesData()
     curData = EchoExperience.view.lh.listholder.dataLines[ EchoExperience.view.lh.listholder.dataOffset + i]
     EchoExperience.view.lh.listholder.lines[i] = curLine
     if( curData ~= nil) then
-      local okay = true
-      if(EchoExperience.view.lh.listholder.filtered and EchoExperience.view.lh.listholder.filterN ~= nil ) then
-        --EchoExperience.view.lh.search
-        local qlty = curData.quality
-        if(qlty~=nil) then
-            EchoExperience.debugMsg2("LH_SetDataLinesData: "
-              , " qlty="  , qlty
-              , " filter="  , EchoExperience.view.lh.listholder.filter
-              , " filterN="  , EchoExperience.view.lh.listholder.filterN
-            )
-            if(EchoExperience.view.lh.listholder.filterN>qlty) then
-              okay = false
-              EchoExperience.debugMsg2("LH_SetDataLinesData: failed qlty filter")
-            end
-        end
-      end
-      if(okay) then
-        lineCount = lineCount - 1
-        EchoExperience:LH_fillLine(curLine, curData)
-      else
-        --lineCount = lineCount - 1
-        --EchoExperience:LH_fillLine(curLine, nil)
-      end
+      lineCount = lineCount - 1
+      EchoExperience:LH_fillLine(curLine, curData)
     else
       lineCount = lineCount - 1
       EchoExperience:LH_fillLine(curLine, nil)
@@ -491,8 +472,27 @@ function EchoExperience:LH_UpdateScrollDataLinesData()
         --filter = itemTypeFilter,
         --worn = bWorn
       }
-      table.insert(dataLines, tempDataLine)
-      totItems = totItems + (itemCount or 0)
+      
+      local okay = true
+      if(EchoExperience.view.lh.listholder.filtered and EchoExperience.view.lh.listholder.filterN ~= nil ) then
+        --EchoExperience.view.lh.search
+        local qlty = tempDataLine.quality
+        if(qlty~=nil) then
+            EchoExperience.debugMsg2("updatelines: "
+              , " qlty="  , qlty
+              , " filter="  , EchoExperience.view.lh.listholder.filter
+              , " filterN="  , EchoExperience.view.lh.listholder.filterN
+            )
+            if(EchoExperience.view.lh.listholder.filterN>qlty) then
+              okay = false
+              EchoExperience.debugMsg2("updatelines: failed qlty filter")
+            end
+        end
+      end
+      if(okay) then
+        table.insert(dataLines, tempDataLine)
+        totItems = totItems + (itemCount or 0)
+      end
     end
   else
     EchoExperience.debugMsg2("Tracking: loot history is null!")

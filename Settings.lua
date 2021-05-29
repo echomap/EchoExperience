@@ -381,8 +381,8 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
-    name = GetString(SI_ECHOEXP_SETTINGS_EXP_VERB_NAME), --"Verbose Experience",
-    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_VERB_TOOLTIP), --"Verbose reporting if experience is on?",
+    name = GetString(SI_ECHOEXP_SETTINGS_EXP_VERB_NAME),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_VERB_TOOLTIP),
     getFunc = function() return EchoExperience.savedVariables.verboseExp end,
     setFunc = function(value)
       EchoExperience.savedVariables.verboseExp = value
@@ -390,6 +390,20 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
+  
+  --EchoExperience.savedVariables.showcompanions
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name    = GetString(SI_ECHOEXP_SETTINGS_EXP_COMPANIONS_TITLE), 
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_COMPANIONS_TOOLTIP),
+    getFunc = function() return EchoExperience.savedVariables.showcompanions end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.showcompanions = value
+      --EchoExperience.SetupExpGainsEvents(false)
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  
   optionsTable[#optionsTable+1] = {
     type = "description",
     text = "",

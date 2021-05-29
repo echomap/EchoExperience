@@ -4,8 +4,8 @@
 -- 
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.47",                   -- A nuisance to match to the Manifest.
-    versionnumeric  =  47,                        -- A nuisance to match to the Manifest.
+    version         = "0.0.48",                   -- A nuisance to match to the Manifest.
+    versionnumeric  =  48,                        -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -74,6 +74,7 @@ local defaultSettings = {
 	showdiscovery          = true,
   showachievements       = true,
   showachievementdetails = false,
+  showcompanions         = false,
   showachievementmax     = 10,
   lorebooktracking       = false,  
   showalpha        = false,
@@ -2410,7 +2411,6 @@ function EchoExperience.OnLootReceivedWork(eventCode,receivedBy,itemName,quantit
  
     --I can't remember why this... TODO derp
     if( not EchoExperience.savedVariables.extendedLoot and quantity>0 ) then
-      
       --
       local qualifier = 1
       if(quantity==1) then
@@ -2460,6 +2460,7 @@ function EchoExperience.OnLootReceivedWork(eventCode,receivedBy,itemName,quantit
     end --isSelf and not extendedLoot
   elseif (EchoExperience.savedVariables.groupLoot and receivedBy~=nil) then
     --ItemQuality
+    --TODO account name?
     local showGL = true
     EchoExperience.debugMsg2("CHECK OTHER: quality setting A:=" , EchoExperience.savedVariables.lootgroupqualityid )
     EchoExperience.debugMsg2("CHECK OTHER: quality setting B:=" , EchoExperience.savedVariables.lootgroupqualityname )
@@ -3507,6 +3508,70 @@ end
 ------------------------------
 
 ------------------------------
+-- EVENT_COMPANION_ACTIVATED (*integer* _companionId_)
+function EchoExperience.OnCompanionActivated(eventCode, companionId)
+  EchoExperience.debugMsg2( "OnCompanionActivated: companionId='", tostring(companionId), "'")
+end
+  
+------------------------------
+-- EVENT_COMPANION_DEACTIVATED ( )
+function EchoExperience.OnCompanionDeactivated(eventCode)
+  EchoExperience.debugMsg2( "OnCompanionDeactivated: called" )
+end
+    
+------------------------------
+-- EVENT_COMPANION_EXPERIENCE_GAIN (*integer* _companionId_, *integer* _level_, *integer* _previousExperience_, *integer* _currentExperience_)
+function EchoExperience.OnCompanionExpGain(eventCode, companionId, level, previousExperience, currentExperience )
+  EchoExperience.debugMsg2( "OnCompanionExpGain: companionId='", (companionId), "' level: '", (level), "' previousExperience: '", (previousExperience), "' currentExperience: '", (currentExperience), "'" )
+end
+
+------------------------------
+-- EVENT_COMPANION_RAPPORT_UPDATE (*integer* _companionId_, *integer* _previousRapport_, *integer* _currentRapport_)
+function EchoExperience.OnCompanionRapportUpdate(eventCode, companionId, previousRapport, currentRapport )
+  EchoExperience.debugMsg2( "OnCompanionRapportUpdate: companionId='", tostring(companionId), "' warningType: '" , (warningType), "'" )
+end
+
+------------------------------
+-- EVENT_COMPANION_SKILLS_FULL_UPDATE (*bool* _isInit_)
+function EchoExperience.OnCompanionSkillsFullUpdate(eventCode, isInit)
+  EchoExperience.debugMsg2( "OnCompanionSkillsFullUpdate: isInit='", tostring(isInit), "'")
+end
+
+------------------------------
+-- EVENT_COMPANION_SKILL_LINE_ADDED (** _skillLineId_)
+function EchoExperience.OnCompanionSkilllineAdded(eventCode, skillLineId)
+  EchoExperience.debugMsg2( "OnCompanionSkilllineAdded: skillLineId='", tostring(skillLineId), "'")
+end
+
+------------------------------
+-- EVENT_COMPANION_SKILL_RANK_UPDATE (*integer* _skillLineId_, *luaindex* _rank_)
+function EchoExperience.OnCompanionSkillRankUpdate(eventCode, skillLineId, rank )
+  EchoExperience.debugMsg2( "OnCompanionSkillRankUpdate: skillLineId='", tostring(skillLineId), "' rank: '", (rank), "'" )
+end
+
+------------------------------
+-- EVENT_COMPANION_SKILL_XP_UPDATE (*integer* _skillLineId_, *integer* _reason_, *luaindex* _rank_, *integer* _previousXP_, *integer* _currentXP_)
+function EchoExperience.OnCompanionSkillXpUpdate(eventCode, skillLineId, reason, rank, previousXP, currentXP )
+  EchoExperience.debugMsg2( "OnCompanionSkillXpUpdate: skillLineId='", (skillLineId), "' reason: '", (reason), "' rank: '", (rank), "' previousXP: '", (previousXP), "'", "' currentXP: '", (currentXP), "'" )
+end
+
+------------------------------
+-- VENT_COMPANION_ULTIMATE_FAILURE (*[CompanionUltimateFailureReason|#CompanionUltimateFailureReason]* _reason_, *string* _companionName_)
+function EchoExperience.OnCompanionUltimateFailure(eventCode, reason, companionName )
+  EchoExperience.debugMsg2( "OnCompanionUltimateFailure: reason='", tostring(reason), "' companionName: '", (companionName), "'" )
+end
+    
+------------------------------
+-- EVENT_COMPANION_WARNING (*[CompanionWarningType|#CompanionWarningType]* _warningType_, *integer* _companionId_)
+function EchoExperience.OnCompanionWarning(eventCode, warningType, companionId)
+  EchoExperience.debugMsg2( "OnCompanionWarning: companionId='", tostring(companionId), "' warningType: '" , (warningType), "'" )
+end
+  
+------------------------------
+------------------------------
+  
+
+------------------------------
 -- EVENT
 function EchoExperience.OnLitanyOfBlood(targetNameL, targetUnitId)
   --name coming in might not be a string
@@ -3611,6 +3676,8 @@ function EchoExperience:DoSaveProfileSettings()
   EchoExperience.accountVariables.defaults.showdiscovery    = EchoExperience.savedVariables.showdiscovery
   EchoExperience.accountVariables.defaults.sessiontracking  = EchoExperience.savedVariables.sessiontracking
   EchoExperience.accountVariables.defaults.lifetimetracking = EchoExperience.savedVariables.lifetimetracking
+  EchoExperience.accountVariables.defaults.showcompanions   = EchoExperience.savedVariables.showcompanions
+
   --
   EchoExperience.accountVariables.defaults.groupLoot       = EchoExperience.savedVariables.groupLoot
   EchoExperience.accountVariables.defaults.showGuildLogin  = EchoExperience.savedVariables.showGuildLogin
@@ -3651,6 +3718,7 @@ function EchoExperience:DoLoadProfileSettings()
     EchoExperience.savedVariables.showdiscovery    = EchoExperience.accountVariables.defaults.showdiscovery
     EchoExperience.savedVariables.sessiontracking  = EchoExperience.accountVariables.defaults.sessiontracking
     EchoExperience.savedVariables.lifetimetracking = EchoExperience.accountVariables.defaults.lifetimetracking
+    EchoExperience.savedVariables.showcompanions   = EchoExperience.accountVariables.defaults.showcompanions
     --
     EchoExperience.savedVariables.verboseExp      = EchoExperience.accountVariables.defaults.verboseExp
     EchoExperience.savedVariables.showAllSkillExp = EchoExperience.accountVariables.defaults.showAllSkillExp	
@@ -4135,6 +4203,45 @@ function EchoExperience.SetupEventsQuest(reportMe)
   end
 end
 
+------------------------------
+-- SETUP
+function EchoExperience.SetupCompanionEvents(reportMe)
+  if( EchoExperience.savedVariables.sessiontracking or EchoExperience.savedVariables.showcompanions ) then
+    local eventNamespace = nil
+    --* EVENT_COMPANION_ACTIVATED (*integer* _companionId_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_ACTIVATED"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMPANION_ACTIVATED, EchoExperience.OnCompanionActivated )
+    --* EVENT_COMPANION_DEACTIVATED
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_DEACTIVATED"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMPANION_DEACTIVATED, EchoExperience.OnCompanionDeactivated )
+    --* EVENT_COMPANION_EXPERIENCE_GAIN (*integer* _companionId_, *integer* _level_, *integer* _previousExperience_, *integer* _currentExperience_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_EXPERIENCE_GAIN"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMPANION_EXPERIENCE_GAIN, EchoExperience.OnCompanionExpGain )
+    --* EVENT_COMPANION_RAPPORT_UPDATE (*integer* _companionId_, *integer* _previousRapport_, *integer* _currentRapport_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_RAPPORT_UPDATE"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMPANION_RAPPORT_UPDATE, EchoExperience.OnCompanionRapportUpdate )
+    --* EVENT_COMPANION_SKILLS_FULL_UPDATE (*bool* _isInit_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_SKILLS_FULL_UPDATE"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMPANION_SKILLS_FULL_UPDATE, EchoExperience.OnCompanionSkillsFullUpdate )
+    --* EVENT_COMPANION_SKILL_LINE_ADDED (** _skillLineId_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_SKILL_LINE_ADDED"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMPANION_SKILL_LINE_ADDED, EchoExperience.OnCompanionSkilllineAdded )
+    --* EVENT_COMPANION_SKILL_RANK_UPDATE (*integer* _skillLineId_, *luaindex* _rank_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_SKILL_RANK_UPDATE"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMPANION_SKILL_RANK_UPDATE, EchoExperience.OnCompanionSkillRankUpdate )
+    --* EVENT_COMPANION_SKILL_XP_UPDATE (*integer* _skillLineId_, *integer* _reason_, *luaindex* _rank_, *integer* _previousXP_, *integer* _currentXP_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_SKILL_XP_UPDATE"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMPANION_SKILL_XP_UPDATE, EchoExperience.OnCompanionSkillXpUpdate )
+    --* EVENT_COMPANION_ULTIMATE_FAILURE (*[CompanionUltimateFailureReason|#CompanionUltimateFailureReason]* _reason_, *string* _companionName_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_ULTIMATE_FAILURE"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMPANION_ULTIMATE_FAILURE, EchoExperience.OnCompanionUltimateFailure )
+    --* EVENT_COMPANION_WARNING (*[CompanionWarningType|#CompanionWarningType]* _warningType_, *integer* _companionId_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_WARNING"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMPANION_WARNING, EchoExperience.OnCompanionWarning )
+  else
+  
+  end
+end
 ------------------------------
 -- SETUP
 --In case of big version changes

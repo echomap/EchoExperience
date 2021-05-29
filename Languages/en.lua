@@ -113,6 +113,8 @@ local localization_strings = {
   SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_NAME    = "Exp Output Config",
   SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_TOOLTIP = "Experience output entries for (window/tab/color).",
   SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_DELETE  = "Delete selected Exp's Data!",
+  SI_ECHOEXP_SETTINGS_EXP_COMPANIONS_TITLE   = "Show Companion Experience Events",
+  SI_ECHOEXP_SETTINGS_EXP_COMPANIONS_TOOLTIP = "Show Companion Experience Events",
   
   SI_ECHOEXP_SETTINGS_BANDITSIDEPANEL_NM = "Show EchoExp in Bandit's sidepanel",
   SI_ECHOEXP_SETTINGS_BANDITSIDEPANEL_TT = "Show EchoExp in Bandit's sidepanel",

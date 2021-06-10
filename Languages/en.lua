@@ -15,6 +15,9 @@ local localization_strings = {
 	SI_ECHOEXP_LOOTGAINSE_HIDE = "EchoExp is not showing Extended Loot Gains",
 	SI_ECHOEXP_QUEST_SHOW      = "EchoExp is showing Quest related things",
 	SI_ECHOEXP_QUEST_HIDE      = "EchoExp is not showing Quest related things",
+  
+  SI_ECHOEXP_COMPANION_SHOW      = "EchoExp is showing Companion related things",
+  SI_ECHOEXP_COMPANION_HIDE      = "EchoExp is not showing Companion related things",
 
   ------------------------------
   -- 
@@ -390,7 +393,7 @@ local localization_strings = {
 	SI_ECHOLOOT_BANK_GET_3 = "You withdrawl [|t14:14:<<1>>|t <<2>>] (<<4>>) <<6>>",
 	SI_ECHOLOOT_BANK_GET_4 = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>> (<<4>>) <<6>>",
   SI_ECHOLOOT_BANK_GET_5 = "You withdrawl [|t14:14:<<1>>|t <<2>>] <<6>> (Total: <<5>>)",
-	SI_ECHOLOOT_BANK_GET_6 = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>>  <<6>> (Total: <<5>>)",
+	SI_ECHOLOOfT_BANK_GET_6 = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>>  <<6>> (Total: <<5>>)",
 
   --QUEST Output
   SI_ECHOLOOT_QUEST_SHARED_TO_YOU = "The quest [<<1>>] was shared to you by <<2>>.", 
@@ -405,6 +408,29 @@ local localization_strings = {
   SI_ECHOEXP_GUILD_SELFJOIN   = "You joined the guild <<1>>.",
   
   SI_ECHOEXP_LITANY_SCANFOUND = "Scan added <<1>> to the litany DONE list",
+  
+  -- COMPANIONS
+  SI_ECHOEXP_COMPANION_ACTIVE        = "Companion [<<1>>] arrived. (lvl:<<2>>) (rapp:<<3>>).",
+  SI_ECHOEXP_COMPANION_DEACTIVE      = "Companion left.",
+  --cname, level, diff, previousExperience, currentExperience, xplevel 
+  SI_ECHOEXP_COMPANION_EXPGAIN       = "Companion [<<1>>(<<2>>)] gained <<3>>xp (<<5>>/<<6>>).",
+  SI_ECHOEXP_COMPANION_LEVELUP       = "Companion [<<1>>(<<2>>)] gained <<3>>xp, and LEVELLED UP!",
+  --cname, diff, previousRapport, currentRapport
+  SI_ECHOEXP_COMPANION_RAPPORTGAIN   = "Companion [<<1>>] gained <<2>> rapport (<<4>/<<3>>).",
+  SI_ECHOEXP_COMPANION_RAPPORTLOSS   = "Companion [<<1>>] lost <<2>> rapport (<<4>/<<3>>).",
+  --
+  --OnCompanionSkillsFullUpdate
+  --slName, skillLineId
+  SI_ECHOEXP_COMPANION_SKILLLINEADD  = "Companion gained the <<1>> skillline!",
+  --skillLineId, skillLineName, rank
+  SI_ECHOEXP_COMPANION_SKILLRANKGAIN = "Companion gained rank <<2>> in [<<2>>]", --xp in [<<2>>] (<<3>>/<<4>>) need <<5>>xp
+  --slName, diff, rank
+  SI_ECHOEXP_COMPANION_SKILLXPUPD    = "Companion gained <<2>>xp in <<1>>[<<3>>].",
+  --
+  --OnCompanionUltimateFailure
+  --
+  --OnCompanionWarning
+  SI_ECHOEXP_COMPANION_X = "",
 }
 ------------------------------
 -- 

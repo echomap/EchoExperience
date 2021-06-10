@@ -33,11 +33,14 @@ LitanyOfBlood Gui still a mess
 username not character name reporting?
 
 ## [Testing branch]
-0.0.49
-- Companion events start??
+0.0.51
 - 
 
 ## EchoExp [Versions]
+0.0.50
+- Companion fixes? lvlup
+0.0.49
+- Companion events start
 0.0.48
 - update api to 100035 
 - output current level of skill in exp gains

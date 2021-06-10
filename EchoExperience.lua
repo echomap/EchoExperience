@@ -4,8 +4,8 @@
 -- 
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.48",                   -- A nuisance to match to the Manifest.
-    versionnumeric  =  48,                        -- A nuisance to match to the Manifest.
+    version         = "0.0.50",                   -- A nuisance to match to the Manifest.
+    versionnumeric  =  50,                        -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -3510,61 +3510,125 @@ end
 ------------------------------
 -- EVENT_COMPANION_ACTIVATED (*integer* _companionId_)
 function EchoExperience.OnCompanionActivated(eventCode, companionId)
-  EchoExperience.debugMsg2( "OnCompanionActivated: companionId='", tostring(companionId), "'")
+  EchoExperience.debugMsg2( "OnCompanionActivated: eventCode: '", eventCode, "' companionId='", tostring(companionId), "'")
+  local cname = GetCompanionName(companionId)
+ 
+  local level, currentExperience = GetActiveCompanionLevelInfo()
+  local currentRapport           = GetActiveCompanionRapport()
+
+  local strI  = GetString(SI_ECHOEXP_COMPANION_ACTIVE)
+  local strL  = zo_strformat(strI, cname, level, currentRapport, currentExperience)
+  EchoExperience.outputToChanel(strL,msgTypeEXP)
 end
   
 ------------------------------
 -- EVENT_COMPANION_DEACTIVATED ( )
 function EchoExperience.OnCompanionDeactivated(eventCode)
-  EchoExperience.debugMsg2( "OnCompanionDeactivated: called" )
+  EchoExperience.debugMsg2( "OnCompanionDeactivated: eventCode: '", tostring(eventCode), "'")
+  local strI = GetString(SI_ECHOEXP_COMPANION_DEACTIVE)
+  local strL = zo_strformat(strI, cname)
+  EchoExperience.outputToChanel(strL,msgTypeEXP)
 end
     
 ------------------------------
 -- EVENT_COMPANION_EXPERIENCE_GAIN (*integer* _companionId_, *integer* _level_, *integer* _previousExperience_, *integer* _currentExperience_)
 function EchoExperience.OnCompanionExpGain(eventCode, companionId, level, previousExperience, currentExperience )
-  EchoExperience.debugMsg2( "OnCompanionExpGain: companionId='", (companionId), "' level: '", (level), "' previousExperience: '", (previousExperience), "' currentExperience: '", (currentExperience), "'" )
+  EchoExperience.debugMsg2( "OnCompanionExpGain: eventCode: '", eventCode, "' companionId='", (companionId), 
+    "' level: '", (level), 
+    "' previousExperience: '", (previousExperience), "' currentExperience: '", (currentExperience), "'" )
+  local cname   = GetCompanionName(companionId)
+  local xplevel = GetNumExperiencePointsInCompanionLevel(level+1)
+  EchoExperience.debugMsg2( "OnCompanionExpGain: xplevel: '", xplevel, "'")
+  --xplevel = xplevel + previousExperience
+  --** _Returns:_ *integer* _level_, *integer* _currentExperience_ = GetActiveCompanionLevelInfo()
+	local diff = currentExperience - previousExperience
+  if(diff>0) then
+    local strI  = GetString(SI_ECHOEXP_COMPANION_EXPGAIN)
+    if(currentExperience> xplevel) then
+      strI  = GetString(SI_ECHOEXP_COMPANION_LEVELUP)
+    end
+    local strL  = zo_strformat(strI, cname, level, diff, previousExperience, currentExperience, xplevel  )
+    EchoExperience.outputToChanel(strL,msgTypeEXP)
+  end
 end
 
 ------------------------------
 -- EVENT_COMPANION_RAPPORT_UPDATE (*integer* _companionId_, *integer* _previousRapport_, *integer* _currentRapport_)
 function EchoExperience.OnCompanionRapportUpdate(eventCode, companionId, previousRapport, currentRapport )
-  EchoExperience.debugMsg2( "OnCompanionRapportUpdate: companionId='", tostring(companionId), "' warningType: '" , (warningType), "'" )
+  EchoExperience.debugMsg2( "OnCompanionRapportUpdate: eventCode: '", eventCode, 
+    "' companionId='", tostring(companionId), "' warningType: '" , tostring(warningType), 
+    "' previousRapport: '", (previousRapport), "' currentRapport: '", (currentRapport), "'" )
+  local cname = GetCompanionName(companionId)
+	local diff = currentRapport - previousRapport
+  -- local _maxRapport_ = GetMaximumRapport()
+  -- _local minRapport_ = GetMinimumRapport()
+  --_Returns:_ *[CompanionRapportLevel|#CompanionRapportLevel]* _rapportLevel_ = GetActiveCompanionRapportLevel()
+  -- _Returns:_ *integer* _rapport_ = GetActiveCompanionRapport()
+  local strI = GetString(SI_ECHOEXP_COMPANION_RAPPORTGAIN)
+  if(diff<0) then
+    strI = GetString(SI_ECHOEXP_COMPANION_RAPPORTLOSS)
+    diff = diff*-1
+  end
+  local strL = zo_strformat(strI, cname, diff, previousRapport, currentRapport)
+  EchoExperience.outputToChanel(strL,msgTypeEXP)
 end
 
 ------------------------------
 -- EVENT_COMPANION_SKILLS_FULL_UPDATE (*bool* _isInit_)
 function EchoExperience.OnCompanionSkillsFullUpdate(eventCode, isInit)
-  EchoExperience.debugMsg2( "OnCompanionSkillsFullUpdate: isInit='", tostring(isInit), "'")
+  EchoExperience.debugMsg2( "OnCompanionSkillsFullUpdate: eventCode: '", eventCode, "' isInit='", tostring(isInit), "'")
+  --TODO
 end
 
 ------------------------------
 -- EVENT_COMPANION_SKILL_LINE_ADDED (** _skillLineId_)
 function EchoExperience.OnCompanionSkilllineAdded(eventCode, skillLineId)
-  EchoExperience.debugMsg2( "OnCompanionSkilllineAdded: skillLineId='", tostring(skillLineId), "'")
+  EchoExperience.debugMsg2( "OnCompanionSkilllineAdded: eventCode: '", eventCode, "' skillLineId='", tostring(skillLineId), "'")
+  local slName = GetSkillLineNameById(skillLineId)
+  local strI = GetString(SI_ECHOEXP_COMPANION_SKILLLINEADD)
+  local strL = zo_strformat(strI, slName, skillLineId )
+  EchoExperience.outputToChanel(strL,msgTypeEXP)
 end
 
 ------------------------------
 -- EVENT_COMPANION_SKILL_RANK_UPDATE (*integer* _skillLineId_, *luaindex* _rank_)
 function EchoExperience.OnCompanionSkillRankUpdate(eventCode, skillLineId, rank )
-  EchoExperience.debugMsg2( "OnCompanionSkillRankUpdate: skillLineId='", tostring(skillLineId), "' rank: '", (rank), "'" )
+  EchoExperience.debugMsg2( "OnCompanionSkillRankUpdate: eventCode: '", eventCode, "' skillLineId='", tostring(skillLineId), "' rank: '", (rank), "'" )
+  --local cname = GetCompanionName(companionId)
+  local strI = GetString(SI_ECHOEXP_COMPANION_SKILLRANKGAIN)
+  local skillLineName = GetCompanionSkillLineNameById(skillLineId)
+  local strL = zo_strformat(strI, skillLineId, skillLineName, rank )
+  EchoExperience.outputToChanel(strL,msgTypeEXP)
 end
 
 ------------------------------
 -- EVENT_COMPANION_SKILL_XP_UPDATE (*integer* _skillLineId_, *integer* _reason_, *luaindex* _rank_, *integer* _previousXP_, *integer* _currentXP_)
 function EchoExperience.OnCompanionSkillXpUpdate(eventCode, skillLineId, reason, rank, previousXP, currentXP )
-  EchoExperience.debugMsg2( "OnCompanionSkillXpUpdate: skillLineId='", (skillLineId), "' reason: '", (reason), "' rank: '", (rank), "' previousXP: '", (previousXP), "'", "' currentXP: '", (currentXP), "'" )
+  EchoExperience.debugMsg2( "OnCompanionSkillXpUpdate: eventCode: '", eventCode, 
+    "' skillLineId='", (skillLineId), "' reason: '", (reason), "' rank: '", (rank), 
+    "' previousXP: '", (previousXP), "'", "' currentXP: '", (currentXP), "'" )
+  --local cname = GetCompanionName(companionId)
+  local slName = GetSkillLineNameById(skillLineId)
+	local diff = currentXP - previousXP
+  local strI = GetString(SI_ECHOEXP_COMPANION_SKILLXPUPD)
+  local strL = zo_strformat(strI, slName, diff, rank )
+  EchoExperience.outputToChanel(strL,msgTypeEXP)
 end
 
 ------------------------------
 -- VENT_COMPANION_ULTIMATE_FAILURE (*[CompanionUltimateFailureReason|#CompanionUltimateFailureReason]* _reason_, *string* _companionName_)
 function EchoExperience.OnCompanionUltimateFailure(eventCode, reason, companionName )
-  EchoExperience.debugMsg2( "OnCompanionUltimateFailure: reason='", tostring(reason), "' companionName: '", (companionName), "'" )
+  EchoExperience.outputMsg2( "OnCompanionUltimateFailure: eventCode: '", eventCode, 
+    "' reason='", tostring(reason), "' companionName: '", (companionName), "'" )
+  --TODO
 end
     
 ------------------------------
 -- EVENT_COMPANION_WARNING (*[CompanionWarningType|#CompanionWarningType]* _warningType_, *integer* _companionId_)
 function EchoExperience.OnCompanionWarning(eventCode, warningType, companionId)
-  EchoExperience.debugMsg2( "OnCompanionWarning: companionId='", tostring(companionId), "' warningType: '" , (warningType), "'" )
+  EchoExperience.outputMsg2( "OnCompanionWarning: eventCode: '", eventCode, 
+    "' companionId='", tostring(companionId), "' warningType: '" , tostring(warningType), "'" )
+  --TODO
 end
   
 ------------------------------
@@ -4207,6 +4271,7 @@ end
 -- SETUP
 function EchoExperience.SetupCompanionEvents(reportMe)
   if( EchoExperience.savedVariables.sessiontracking or EchoExperience.savedVariables.showcompanions ) then
+    if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_COMPANION_SHOW),msgTypeSYS) end
     local eventNamespace = nil
     --* EVENT_COMPANION_ACTIVATED (*integer* _companionId_)
     eventNamespace = EchoExperience.name.."EVENT_COMPANION_ACTIVATED"
@@ -4239,7 +4304,38 @@ function EchoExperience.SetupCompanionEvents(reportMe)
     eventNamespace = EchoExperience.name.."EVENT_COMPANION_WARNING"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMPANION_WARNING, EchoExperience.OnCompanionWarning )
   else
-  
+    if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_COMPANION_HIDE),msgTypeSYS) end
+     local eventNamespace = nil
+    --* EVENT_COMPANION_ACTIVATED (*integer* _companionId_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_ACTIVATED"
+    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_COMPANION_ACTIVATED, EchoExperience.OnCompanionActivated )
+    --* EVENT_COMPANION_DEACTIVATED
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_DEACTIVATED"
+    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_COMPANION_DEACTIVATED, EchoExperience.OnCompanionDeactivated )
+    --* EVENT_COMPANION_EXPERIENCE_GAIN (*integer* _companionId_, *integer* _level_, *integer* _previousExperience_, *integer* _currentExperience_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_EXPERIENCE_GAIN"
+    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_COMPANION_EXPERIENCE_GAIN, EchoExperience.OnCompanionExpGain )
+    --* EVENT_COMPANION_RAPPORT_UPDATE (*integer* _companionId_, *integer* _previousRapport_, *integer* _currentRapport_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_RAPPORT_UPDATE"
+    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_COMPANION_RAPPORT_UPDATE, EchoExperience.OnCompanionRapportUpdate )
+    --* EVENT_COMPANION_SKILLS_FULL_UPDATE (*bool* _isInit_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_SKILLS_FULL_UPDATE"
+    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_COMPANION_SKILLS_FULL_UPDATE, EchoExperience.OnCompanionSkillsFullUpdate )
+    --* EVENT_COMPANION_SKILL_LINE_ADDED (** _skillLineId_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_SKILL_LINE_ADDED"
+    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_COMPANION_SKILL_LINE_ADDED, EchoExperience.OnCompanionSkilllineAdded )
+    --* EVENT_COMPANION_SKILL_RANK_UPDATE (*integer* _skillLineId_, *luaindex* _rank_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_SKILL_RANK_UPDATE"
+    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_COMPANION_SKILL_RANK_UPDATE, EchoExperience.OnCompanionSkillRankUpdate )
+    --* EVENT_COMPANION_SKILL_XP_UPDATE (*integer* _skillLineId_, *integer* _reason_, *luaindex* _rank_, *integer* _previousXP_, *integer* _currentXP_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_SKILL_XP_UPDATE"
+    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_COMPANION_SKILL_XP_UPDATE, EchoExperience.OnCompanionSkillXpUpdate )
+    --* EVENT_COMPANION_ULTIMATE_FAILURE (*[CompanionUltimateFailureReason|#CompanionUltimateFailureReason]* _reason_, *string* _companionName_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_ULTIMATE_FAILURE"
+    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_COMPANION_ULTIMATE_FAILURE, EchoExperience.OnCompanionUltimateFailure )
+    --* EVENT_COMPANION_WARNING (*[CompanionWarningType|#CompanionWarningType]* _warningType_, *integer* _companionId_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_WARNING"
+    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_COMPANION_WARNING, EchoExperience.OnCompanionWarning )
   end
 end
 ------------------------------
@@ -4718,6 +4814,7 @@ function EchoExperience.DelayedStart()
   EchoExperience.SetupDiscoveryEvents()
   EchoExperience.SetupAlphaEvents()
   EchoExperience.SetupLitanyOfBlood()
+  EchoExperience.SetupCompanionEvents()
   --
   EchoExperience.SetupMailEvents()
   --

@@ -34,7 +34,9 @@ username not character name reporting?
 
 ## [Testing branch]
 0.0.51
-- 
+- Api version to 35
+- Add H/M/L to traitname of armor
+- Companion events obey ASYNC settings
 
 ## EchoExp [Versions]
 0.0.50

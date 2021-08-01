@@ -249,10 +249,10 @@ local localization_strings = {
   SI_ECHOEXP_LEST_WORLDEVENT = "did a world event",
   
   --questName, count, 25
-  SI_ECHOEXP_QUEST_ACCEPT   = "You accepted the quest [<<1>>] (<<2>>/<<3>>)",
-  SI_ECHOEXP_QUEST_COMPLETE = "You completed the quest [<<1>>] (<<2>>/<<3>>)",
+  SI_ECHOEXP_QUEST_ACCEPT   = "You accepted the quest [<<t:1>>] (<<2>>/<<3>>)",
+  SI_ECHOEXP_QUEST_COMPLETE = "You completed the quest [<<t:1>>] (<<2>>/<<3>>)",
   SI_ECHOEXP_QUEST_REMOVED  = "The quest [<<1>>] was removed from your log. (<<2>>/<<3>>)",
-  SI_ECHOEXP_QUEST_STEPDONE1 = "You finished a step of the quest [<<1>>]",
+  SI_ECHOEXP_QUEST_STEPDONE1 = "You finished a step of the quest [<<t:1>>]",
   -- name, points, id, link)
   SI_ECHOEXP_ACHIEVEMENT_AWARDED = "You have earned the achievment [<<4>>] !!!",
   SI_ECHOEXP_LEVEL_GAIN = "*** You feel more powerful! *** You have reached level [<<1>>] ! ***",

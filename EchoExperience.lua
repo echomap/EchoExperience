@@ -2296,7 +2296,21 @@ function EchoExperience.OnInventorySingleSlotUpdateWork(eventCode, bagId, slotId
   --TODO to show count? use verbose setting or EchoExperience.savedVariables.extendedLoot ?
   if(not hasTraitInfo and EchoExperience.savedVariables.extendedLoot and bagId ~= BAG_SUBSCRIBER_BANK and bagId ~= BAG_VIRTUAL) then
     qualifier = qualifier + 4
+    --traitName
   end
+  --
+  local armorType = GetItemArmorType(bagId, slotId)
+  if(armorType~=ARMORTYPE_NONE) then
+    if(armorType == ARMORTYPE_HEAVY) then
+      armorType = "H"
+    elseif(armorType == ARMORTYPE_MEDIUM) then
+      armorType = "M"
+    elseif(armorType == ARMORTYPE_LIGHT) then
+      armorType = "L"
+    end
+    traitName = zo_strformat("<<1>> [<<2>>]", traitName, armorType)
+  end
+  
   -- Output
   
  --ItemQuality
@@ -3530,9 +3544,25 @@ function EchoExperience.OnCompanionDeactivated(eventCode)
   EchoExperience.outputToChanel(strL,msgTypeEXP)
 end
     
+
 ------------------------------
 -- EVENT_COMPANION_EXPERIENCE_GAIN (*integer* _companionId_, *integer* _level_, *integer* _previousExperience_, *integer* _currentExperience_)
 function EchoExperience.OnCompanionExpGain(eventCode, companionId, level, previousExperience, currentExperience )
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    --Does this help at all??? is this how it is supposed to work? no idea!
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnCompanionExpGainWork(eventCode, companionId, level, previousExperience, currentExperience )
+      end
+    )
+  else
+    EchoExperience.OnCompanionExpGainWork(eventCode, companionId, level, previousExperience, currentExperience )
+  end
+end
+    
+------------------------------
+-- EVENT_COMPANION_EXPERIENCE_GAIN (*integer* _companionId_, *integer* _level_, *integer* _previousExperience_, *integer* _currentExperience_)
+function EchoExperience.OnCompanionExpGainWork(eventCode, companionId, level, previousExperience, currentExperience )
   EchoExperience.debugMsg2( "OnCompanionExpGain: eventCode: '", eventCode, "' companionId='", (companionId), 
     "' level: '", (level), 
     "' previousExperience: '", (previousExperience), "' currentExperience: '", (currentExperience), "'" )
@@ -3555,6 +3585,21 @@ end
 ------------------------------
 -- EVENT_COMPANION_RAPPORT_UPDATE (*integer* _companionId_, *integer* _previousRapport_, *integer* _currentRapport_)
 function EchoExperience.OnCompanionRapportUpdate(eventCode, companionId, previousRapport, currentRapport )
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    --Does this help at all??? is this how it is supposed to work? no idea!
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnCompanionRapportUpdateWork(eventCode, companionId, previousRapport, currentRapport )
+      end
+    )
+  else
+    EchoExperience.OnCompanionRapportUpdateWork(eventCode, companionId, previousRapport, currentRapport )
+  end
+end
+
+------------------------------
+-- EVENT_COMPANION_RAPPORT_UPDATE (*integer* _companionId_, *integer* _previousRapport_, *integer* _currentRapport_)
+function EchoExperience.OnCompanionRapportUpdateWork(eventCode, companionId, previousRapport, currentRapport )
   EchoExperience.debugMsg2( "OnCompanionRapportUpdate: eventCode: '", eventCode, 
     "' companionId='", tostring(companionId), "' warningType: '" , tostring(warningType), 
     "' previousRapport: '", (previousRapport), "' currentRapport: '", (currentRapport), "'" )
@@ -3583,6 +3628,21 @@ end
 ------------------------------
 -- EVENT_COMPANION_SKILL_LINE_ADDED (** _skillLineId_)
 function EchoExperience.OnCompanionSkilllineAdded(eventCode, skillLineId)
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    --Does this help at all??? is this how it is supposed to work? no idea!
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnCompanionSkilllineAddedWork(eventCode, skillLineId)
+      end
+    )
+  else
+    EchoExperience.OnCompanionSkilllineAddedWork(eventCode, skillLineId)
+  end
+end
+
+------------------------------
+-- EVENT_COMPANION_SKILL_LINE_ADDED (** _skillLineId_)
+function EchoExperience.OnCompanionSkilllineAddedWork(eventCode, skillLineId)
   EchoExperience.debugMsg2( "OnCompanionSkilllineAdded: eventCode: '", eventCode, "' skillLineId='", tostring(skillLineId), "'")
   local slName = GetSkillLineNameById(skillLineId)
   local strI = GetString(SI_ECHOEXP_COMPANION_SKILLLINEADD)
@@ -3593,6 +3653,21 @@ end
 ------------------------------
 -- EVENT_COMPANION_SKILL_RANK_UPDATE (*integer* _skillLineId_, *luaindex* _rank_)
 function EchoExperience.OnCompanionSkillRankUpdate(eventCode, skillLineId, rank )
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    --Does this help at all??? is this how it is supposed to work? no idea!
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnCompanionSkillRankUpdateWork(eventCode, skillLineId, rank )
+      end
+    )
+  else
+    EchoExperience.OnCompanionSkillRankUpdateWork(eventCode, skillLineId, rank )
+  end
+end
+
+------------------------------
+-- EVENT_COMPANION_SKILL_RANK_UPDATE (*integer* _skillLineId_, *luaindex* _rank_)
+function EchoExperience.OnCompanionSkillRankUpdateWork(eventCode, skillLineId, rank )
   EchoExperience.debugMsg2( "OnCompanionSkillRankUpdate: eventCode: '", eventCode, "' skillLineId='", tostring(skillLineId), "' rank: '", (rank), "'" )
   --local cname = GetCompanionName(companionId)
   local strI = GetString(SI_ECHOEXP_COMPANION_SKILLRANKGAIN)
@@ -3604,6 +3679,21 @@ end
 ------------------------------
 -- EVENT_COMPANION_SKILL_XP_UPDATE (*integer* _skillLineId_, *integer* _reason_, *luaindex* _rank_, *integer* _previousXP_, *integer* _currentXP_)
 function EchoExperience.OnCompanionSkillXpUpdate(eventCode, skillLineId, reason, rank, previousXP, currentXP )
+  if(EchoExperience.savedVariables.useasyncall and EchoExperience.view.task~=nil) then
+    --Does this help at all??? is this how it is supposed to work? no idea!
+    EchoExperience.view.task:Call(
+      function()
+        EchoExperience.OnCompanionSkillXpUpdateWork(eventCode, skillLineId, reason, rank, previousXP, currentXP )
+      end
+    )
+  else
+    EchoExperience.OnCompanionSkillXpUpdateWork(eventCode, skillLineId, reason, rank, previousXP, currentXP )
+  end
+end
+
+------------------------------
+-- EVENT_COMPANION_SKILL_XP_UPDATE (*integer* _skillLineId_, *integer* _reason_, *luaindex* _rank_, *integer* _previousXP_, *integer* _currentXP_)
+function EchoExperience.OnCompanionSkillXpUpdateWork(eventCode, skillLineId, reason, rank, previousXP, currentXP )
   EchoExperience.debugMsg2( "OnCompanionSkillXpUpdate: eventCode: '", eventCode, 
     "' skillLineId='", (skillLineId), "' reason: '", (reason), "' rank: '", (rank), 
     "' previousXP: '", (previousXP), "'", "' currentXP: '", (currentXP), "'" )
@@ -4233,6 +4323,7 @@ function EchoExperience.SetupMiscEvents(reportMe)
     -- Triggers when you join a guild (guildId / guildName)
     eventNamespace = EchoExperience.name.."EVENT_GUILD_SELF_JOINED_GUILD"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_GUILD_SELF_JOINED_GUILD, EchoExperience.OnGuildSelfJoined)
+    --
   else
     --if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_XXX_HIDE),msgTypeSYS) end
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_COMBAT_EVENT",	        EVENT_COMBAT_EVENT)

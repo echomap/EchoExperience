@@ -1,6 +1,6 @@
 ## Title: |cC8FBEDEcho|rExperience
-## Version: 0.0.50
-## AddOnVersion: 0050
+## Version: 0.0.51
+## AddOnVersion: 0051
 ## APIVersion: 100034 100035
 ## Author: |cC8FBEDEcho|rmap
 ## Description: EchoExperience will show |c3961abExperience and Loot|r gains to chat.

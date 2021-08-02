@@ -4,8 +4,8 @@
 -- 
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.50",                   -- A nuisance to match to the Manifest.
-    versionnumeric  =  50,                        -- A nuisance to match to the Manifest.
+    version         = "0.0.51",                   -- A nuisance to match to the Manifest.
+    versionnumeric  =  51,                        -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",

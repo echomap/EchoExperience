@@ -483,7 +483,7 @@ function EchoExperience:LH_UpdateScrollDataLinesData()
               , " filter="  , EchoExperience.view.lh.listholder.filter
               , " filterN="  , EchoExperience.view.lh.listholder.filterN
             )
-            if(EchoExperience.view.lh.listholder.filterN>qlty) then
+            if( EchoExperience.view.lh.listholder.filterN > qlty ) then
               okay = false
               EchoExperience.debugMsg2("updatelines: failed qlty filter")
             end

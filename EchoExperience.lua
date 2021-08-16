@@ -4361,7 +4361,7 @@ end
 ------------------------------
 -- SETUP
 function EchoExperience.SetupCompanionEvents(reportMe)
-  if( EchoExperience.savedVariables.sessiontracking or EchoExperience.savedVariables.showcompanions ) then
+  if( EchoExperience.savedVariables.showcompanions ) then
     if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_COMPANION_SHOW),msgTypeSYS) end
     local eventNamespace = nil
     --* EVENT_COMPANION_ACTIVATED (*integer* _companionId_)

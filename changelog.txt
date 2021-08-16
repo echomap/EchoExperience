@@ -34,7 +34,7 @@ username not character name reporting?
 
 ## [Testing branch]
 0.0.52
-- 
+- qlty fix update
 
 ## EchoExp [Versions]
 0.0.51

@@ -24,21 +24,36 @@ EchoExperience = {
     LitanyOfBlood = {
       version = 1,
       list = {
-        ["Cimalire"] = { done=false, ZoneName="Skywatch",   SubZoneName2="Auridon",      tooltip="She has two paths, one from the Mage's guild or out of Ingamircil's house .. look it up.", id=1 },
-        ["Dirdelas"] = { done=false, ZoneName="Elden Root", SubZoneName2="Grahtwood",    tooltip="Found wandering between the Outside Inn and the Tree's Defense shop near the Elden Root wayshrine, as well as fishing near the stables", id=2  },
-        ["Calareth"] = { done=false, ZoneName="Marbruk",    SubZoneName2="Greenshade",       tooltip="Found in or walking between in the Merchant's Plaza and Fighters Guild or found inside the Fighters Guild. She can occasionally follow another patrol path, which takes her from the wayshrine to the cemetery northeast of the furnishing merchants",id=3  },
-        ["Sihada"]   = { done=false, ZoneName="Vulkwasten", SubZoneName2="Malabal Tor",    tooltip="Found in the center of the town. She wanders around the center of town.",id=4 },
-        ["Dablir"]   = { done=false, ZoneName="Rawl'Kha",   SubZoneName2="Reaper's March",      tooltip="Found wandering the marketplace in Rawl'kha.", id=5  },
-        ["Dinor Girano"]  = { done=false, ZoneName="Davon's Watch", SubZoneName2="Stonefalls",  tooltip="TODO",id=6  },
-        ["Cindiri Malas"] = { done=false, ZoneName="Mournhold", SubZoneName2="Deshaan",     tooltip="Found patrolling the west side of the Mournhold bank all the way to the bridge out of town", id=7  },
-        ["Gideelar"] = { done=false, ZoneName="Stormhold",  SubZoneName2="Shadowfen",       tooltip="Found in several places around the city",id=8  },
-        ["Hakida"] = { done=false, ZoneName="Windhelm",     SubZoneName2="Eastmarch",       tooltip="Found walking around the Mages Guild or a circuit of the Konunleikar festivities,",id=9  },
-        ["Eldfyr"] = { done=false, ZoneName="Riften",       SubZoneName2="The Rift",        tooltip="Found fishing on the western docks, walking around the artisans hall, praying at the stones east of Fighters Guild, or inside the Fighters Guild.", id=10  },
-        ["Cesarel Hedier"] = { done=false, ZoneName="Dagerfall", SubZoneName2="Glenumbra",tooltip="",id=11  },
-        ["Alix Edette"] = { done=false, ZoneName="Wayrest Docks", SubZoneName2="Stormhaven",    tooltip="Found wandering the docks by the Dock Warehouse", id=12 },
-        ["Bolaag"] = { done=false, ZoneName="Shornhelm",     SubZoneName2="Rivenspire",     tooltip="TODO",id=13  },
-        ["Ebrayd"] = { done=false, ZoneName="Sentinel",     SubZoneName2="Alik'r Desert",   tooltip="Found near the crafting stations",id=14 },
-        ["Berea"] = { done=false, ZoneName="Evermore",      SubZoneName2="Bangkorai",       tooltip="Found walking between Evermore Wayshrine graveyard, the Stalls, and the road to Tordrak's Eldritch Emporium.",id=15  },
+        ["Cimalire"]     = { done=false, SubZoneName="Skywatch",     ZoneName="Auridon",
+          tooltip="She has two paths, one from the Mage's guild or out of Ingamircil's house .. she also stops and sits at these coords, and there's a hedge behind her...", id=1 , coord="48:42" },
+        ["Dirdelas"]     = { done=false, SubZoneName="Elden Root",   ZoneName="Grahtwood",    
+          tooltip="Found wandering between the Outside Inn and the Tree's Defense shop near the Elden Root wayshrine, as well as fishing near the stables", id=2 , coord="26:62" },
+        ["Caraleth"]     = { done=false, SubZoneName="Marbruk",      ZoneName="Greenshade",       
+          tooltip="Found in or walking between in the Merchant's Plaza and Fighters Guild or found inside the Fighters Guild. She can occasionally follow another patrol path, which takes her from the wayshrine to the cemetery northeast of the furnishing merchants",id=3 , coord="69:34"  },
+        ["Sihada"]       = { done=false, SubZoneName="Vulkwasten",   ZoneName="Malabal Tor",    
+          tooltip="Found in the center of the town, in a white dress, sweeping. She wanders around the center of town.",id=4 , coord="53:79" },
+        ["Dablir"]       = { done=false, SubZoneName="Rawl'kha",     ZoneName="Reaper's March",      
+          tooltip="Found wandering the marketplace in Rawl'kha, goes back to the hidden temple grounds...", id=5 , coord="66:55" },
+        ["Dinor Girano"] = { done=false, SubZoneName="Davon's Watch", ZoneName="Stonefalls", 
+          tooltip="Walks about, but can be found on this bridge.", id=6  , coord="58:58"},
+        ["Cindiri Malas"]= { done=false, SubZoneName="Mournhold",   ZoneName="Deshaan",     
+          tooltip="Found patrolling the west side of the Mournhold bank all the way to the bridge out of town", id=7 , coord="45:50" },
+        ["Gideelar"]     = { done=false, SubZoneName="Stormhold",    ZoneName="Shadowfen",       
+          tooltip="Found in the city, this lizard does some landscaping by the Outlaw Refuge entrance, but she has no time for talk.",id=8 , coord="62:17"  },
+        ["Hakida"]       = { done=false, SubZoneName="Windhelm",     ZoneName="Eastmarch",
+          tooltip="Found walking around the Mages Guild or a circuit of the Konunleikar festivities,",id=9 , coord="33:62" },
+        ["Eldfyr"]       = { done=false, SubZoneName="Riften",       ZoneName="The Rift",       
+          tooltip="Found fishing on the western docks, walking around the artisans hall, praying at the stones east of Fighters Guild, or inside the Fighters Guild.", id=10  , coord="58:85"},
+        ["Cesarel Hedier"] = { done=false, SubZoneName="Daggerfall", ZoneName="Glenumbra",
+          tooltip="NE Corner of city, near clotheslines and residences.",id=11  , coord="65:24"},
+        ["Alix Edette"]  = { done=false, SubZoneName="Wayrest Docks", ZoneName="Stormhaven",    
+          tooltip="Found wandering the docks by the Dock Warehouse", id=12, coord="62:68" },
+        ["Bolaag"]       = { done=false, SubZoneName="Shornhelm",     ZoneName="Rivenspire",     
+          tooltip="She jugles knives in the front marketplace, will travel to behind the bank" ,id=13, coord="66:47"  },
+        ["Ebrayd"]       = { done=false, SubZoneName="Sentinel",      ZoneName="Alik'r Desert",   
+          tooltip="Found near the crafting stations",id=14, coord="65:42" },
+        ["Berea"]        = { done=false, SubZoneName="Evermore",      ZoneName="Bangkorai",       
+          tooltip="Found walking in her purple dress, between Evermore Wayshrine graveyard, the Stalls, and the road to Tordrak's Eldritch Emporium.",id=15, coord="56:27"  },
       },
      }
 }
@@ -153,6 +168,12 @@ function EchoExperience.debugMsg2(...)
   end
   local val = zo_strformat( "(EchoExp) <<1>>",printResult)
   d(val)
+end
+
+------------------------------
+-- 
+function EchoExperience.starts_with(str, start)
+  return str:sub(1, #start) == start
 end
 
 ------------------------------
@@ -3756,49 +3777,54 @@ function EchoExperience.OnLitanyOfBlood(targetNameL, targetUnitId)
   end  
   -- found person on list 
   EchoExperience.debugMsg("Corpse may be on list for Litany")
-  local elemLBZoneName = zo_strformat("<<1>>", elemLB["ZoneName"] )
-  EchoExperience.debugMsg2("LitanyOfBlood1: "
-    , " elemLBZoneName='" , tostring(elemLBZoneName), "'"
+  local targetZoneName = zo_strformat("<<1>>", elemLB["ZoneName"] )
+  EchoExperience.debugMsg2("Litany: "
+    , " TargetZoneName='" , tostring(targetZoneName), "'"
   )        
-  local elemLBSubzoneName = zo_strformat("<<1>>", elemLB["SubzoneName"] ) 
-  EchoExperience.debugMsg2("LitanyOfBlood1: "
-    , " elemLBSubzoneName='", tostring(elemLBSubzoneName), "'"
+  local targetSubzoneName = zo_strformat("<<1>>", elemLB["SubZoneName"] ) 
+  EchoExperience.debugMsg2("Litany: "
+    , " TargetSubzoneName='", tostring(targetSubzoneName), "'"
   )
-  local subzoneNamePL = zo_strformat("<<1>>",  GetPlayerActiveSubzoneName() )
-  local zoneNamePL    = zo_strformat("<<1>>", GetPlayerActiveZoneName() )
-   EchoExperience.debugMsg2("LitanyOfBlood1: "
-    , " zoneNamePL='"      , tostring(zoneNamePL) , "'"
-  )
-  EchoExperience.debugMsg2("LitanyOfBlood1: "
-    , " subzoneNamePL='"      , tostring(subzoneNamePL) , "'"
+  local subzoneNamePL = zo_strformat("<<1>>", GetPlayerActiveSubzoneName() )
+  local zoneNamePL    = zo_strformat("<<1>>", GetPlayerActiveZoneName()    )
+  EchoExperience.debugMsg2("Litany: " , " CorpseZoneName='", tostring(zoneNamePL) 
+     , "' CorpseSubzoneName='" , tostring(subzoneNamePL) , "'"
   )
   local lbDataHasSubzone = true
-  if(elemLBSubzoneName==nil or elemLBSubzoneName=="" ) then
+  if(targetSubzoneName==nil or targetSubzoneName=="" ) then
     lbDataHasSubzone = false
   end
   local playerHasSubzone = true
   if(subzoneNamePL==nil or subzoneNamePL=="" ) then
     playerHasSubzone = false
   end
-  EchoExperience.debugMsg2("LitanyOfBlood1: "
-    , " lbDataHasSubzone='"      , tostring(lbDataHasSubzone) , "'"
+  EchoExperience.debugMsg2("Litany: "
+    , " lbDataHasSubzone='"   , tostring(lbDataHasSubzone) 
+    , "' playerHasSubzone='"  , tostring(playerHasSubzone) , "'"
   )
-  EchoExperience.debugMsg2("LitanyOfBlood1: "
-    , " playerHasSubzone='"      , tostring(playerHasSubzone) , "'"
-  )
-  
   --
-  local lbMatch = false
-  if( lbDataHasSubzone and playerHasSubzone ) then
-    EchoExperience.debugMsg("LitanyOfBlood1: check subzone")
-    if( elemLBZoneName == zoneNamePL and elemLBSubzoneName == subzoneNamePL ) then
-      EchoExperience.debugMsg("LitanyOfBlood1: MATCH")
+  local lbMatch = false  
+  if( targetZoneName == zoneNamePL) then
+    EchoExperience.debugMsg("Litany: zone match")
+    if( lbDataHasSubzone and playerHasSubzone ) then
+      EchoExperience.debugMsg("Litany: check subzone too")
+      EchoExperience.debugMsg2("Litany: " , " subzoneNamePL='", tostring(subzoneNamePL) 
+        , "' targetSubzoneName='" , tostring(targetSubzoneName) , "'"
+      )
+      if( subzoneNamePL==targetSubzoneName) then
+        EchoExperience.debugMsg("Litany: exact MATCH")
+        lbMatch = true
+      elseif( EchoExperience.starts_with(subzoneNamePL, targetSubzoneName) ) then
+        EchoExperience.debugMsg("Litany: partial MATCH")
+        lbMatch = true
+      end
+    elseif( targetZoneName == zoneNamePL or subzoneNamePL == targetZoneName ) then
+      EchoExperience.debugMsg("Litany: just check zone")
+      EchoExperience.debugMsg("Litany: MATCH")
       lbMatch = true
     end
-  elseif( elemLBZoneName == zoneNamePL or elemLBZoneName == subzoneNamePL ) then
-    EchoExperience.debugMsg("LitanyOfBlood1: just check zone")
-    EchoExperience.debugMsg("LitanyOfBlood1: MATCH")
-    lbMatch = true
+  else
+    EchoExperience.debugMsg("Litany: Zone doesn't match target")
   end
   --found person on list 
   if(lbMatch) then

@@ -20,7 +20,7 @@ function EchoExperience:Litany_SetupUI()
     EchoExperience.view.shifterBox:SetAnchor(TOPLEFT, EOL_GUI_Litany_ListHolder, TOPLEFT, 15, 10) --there can be only one!
     --EchoExperience.view.shifterBox:SetAnchor(BOTTOMRIGHT, EOL_GUI_Litany_ListHolder, BOTTOMRIGHT, 10, 10)
     -- optionally set your own overall dimensions of the shifterBox
-    EchoExperience.view.shifterBox:SetDimensions(500, 300) 
+    EchoExperience.view.shifterBox:SetDimensions(620, 250) 
     -- add three entries to the left list
     --EchoExperience.view.shifterBox:AddEntriesToLeftList({[1] = "AAA", [2] = "BBB", [3] = "CCC"}) 
     -- add one entry to the right list
@@ -39,7 +39,7 @@ function EchoExperience:Litany_SetupUI()
   EchoExperience.view.shifterBoxHints = {}
   --LEFT
   for k, v in pairs(EchoExperience.LitanyOfBlood.list) do
-    local ltext = zo_strformat( "<<1>> (<<2>>)", k, v.ZoneName)
+    local ltext = zo_strformat( "<<1>> (<<2>>/<<3>>)[<<4>>]", k, v.ZoneName, v.SubZoneName, v.coord )
     if( EchoExperience.savedVariables.LitanyOfBloodDone[k] == nil ) then
       EchoExperience.view.shifterBox:AddEntryToLeftList(v.id, ltext )
     end
@@ -57,6 +57,12 @@ function EchoExperience:Litany_SetupUI()
   end
     
   --EOL_GUI_Litany_Header_BtnClose:SetFocus()
+end
+
+------------------------------
+-- LitanyUI
+function EchoExperience:Litany_GuiOnScroll()
+  
 end
 
 ------------------------------
@@ -99,6 +105,11 @@ function EchoExperience:Litany_onResizeStop()
 	EchoExperience:Litany_SaveFrameInfo("onResizeStop")
 	EchoExperience:Litany_GuiResizeScroll()	
   EchoExperience:Litany_UpdateDataScroll()
+end
+
+function EchoExperience:Litany_GuiResizeScroll()
+end
+function EchoExperience:Litany_UpdateDataScroll()
 end
 
 ------------------------------
@@ -165,11 +176,11 @@ function EchoExperience:Litany_ScanAchievements(btn)
               --"Slay the Target in <<1>> with the Blade of Woe
               local match2 = string.match(description, 'Slay the Target in (.+) with the Blade of Woe')
               EchoExperience.debugMsg2("Criteria: match2: " .. tostring(match2))
-              --match list for SubZoneName2
+              --match list for SubZoneName
               for k, v in pairs(EchoExperience.LitanyOfBlood.list) do
-                if( v.SubZoneName2 == match2 ) then
+                if( v.SubZoneName == match2 ) then
                   local sentence = GetString(SI_ECHOEXP_LITANY_SCANFOUND)
-                  local val = zo_strformat( sentence, k, v.SubZoneName2 )
+                  local val = zo_strformat( sentence, k, v.SubZoneName )
                   EchoExperience.outputMsg(val)
                   local targetName = k
                   EchoExperience.savedVariables.LitanyOfBloodDone[targetName] = {}
@@ -177,7 +188,6 @@ function EchoExperience:Litany_ScanAchievements(btn)
                   EchoExperience.savedVariables.LitanyOfBloodDone[targetName].id   = v.id
                   EchoExperience.savedVariables.LitanyOfBloodDone[targetName].zonename     = v.ZoneName
                   EchoExperience.savedVariables.LitanyOfBloodDone[targetName].subzonename  = v.SubZoneName
-                  EchoExperience.savedVariables.LitanyOfBloodDone[targetName].subzonename2 = v.SubZoneName2
                   EchoExperience.savedVariables.LitanyOfBloodDone[targetName].tooltip      = v.tooltip
                 end
               end--if done

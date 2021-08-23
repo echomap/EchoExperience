@@ -399,7 +399,7 @@ function EchoExperience.LoadSettings()
     getFunc = function() return EchoExperience.savedVariables.showcompanions end,
     setFunc = function(value)
       EchoExperience.savedVariables.showcompanions = value
-      --EchoExperience.SetupExpGainsEvents(false)
+      EchoExperience.SetupCompanionEvents(false)
     end,
     width = "half",	--or "half" (optional)
   }

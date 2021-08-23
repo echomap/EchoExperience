@@ -3,7 +3,7 @@
     
   	<TopLevelControl name="EOL_GUI_Litany" clampedToScreen="true" mouseEnabled="true" movable="true" moveable="true" hidden="true" resizeHandleSize="10">
 			<!--DimensionConstraints minX="600" minY="400" maxY="500" -->
-      <Dimensions x="550" y="425" />
+      <Dimensions x="690" y="360" />
 			<Anchor point="TOPRIGHT" relativeTo="GUI_ROOT" relativePoint="TOPRIGHT" offsetX="-260" offsetY="475" />
       <OnMoveStop>EchoExperience:Litany_SaveFramePosition("onMoveStop")</OnMoveStop>
 			<OnResizeStart>EchoExperience:Litany_onResizeStart()</OnResizeStart>
@@ -17,6 +17,20 @@
 					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-10" offsetY="10" />
 
 					<Controls>
+          
+            <Button name="$(parent)_BtnClose2" verticalAlignment="CENTER" horizontalAlignment="CENTER" mouseEnabled="true">
+              <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="20" offsetY="0" />
+              <Dimensions x="30" y="30" />
+              <Textures normal="EsoUI/art/buttons/decline_up.dds"
+                    pressed="EsoUI/art/buttons/decline_down.dds"
+                    mouseOver="EsoUI/art/buttons/decline_over.dds"
+              />
+              <OnMouseEnter> EchoExperience:Litany_Misc2HeaderTipEnter(self,"Close/Cancel Frame") </OnMouseEnter>
+              <OnMouseExit>  EchoExperience:Litany_Misc2HeaderTipExit(self)  </OnMouseExit>
+              <OnMouseUp>EchoExperience:Litany_CloseUI(self)</OnMouseUp>
+            </Button> 
+            
+            
 						<Label name="$(parent)_Label" mouseEnabled="false" font="ZoFontBookPaper" text="-EchoExp Litany Of Blood Tracking-" >
 							<Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" offsetX="0" offsetY="0"/>
 						</Label>
@@ -56,14 +70,12 @@
               <OnMouseExit>  EchoExperience:Litany_Misc2HeaderTipExit(self)  </OnMouseExit>
               <OnMouseUp>EchoExperience:Litany_CloseUI(self)</OnMouseUp>
             </Button> 
-            
-            
-            
+
           </Controls>
         </Control>
         
         <Control name="$(parent)_ListHolder" mouseEnabled="true" resizeToFitDescendents="true">
-					<Anchor point="TOPLEFT" relativeTo="$(parent)_Header" relativePoint="TOPLEFT"  offsetX="0" offsetY="30"/>
+					<Anchor point="TOPLEFT"     relativeTo="$(parent)_Header" relativePoint="TOPLEFT"  offsetX="0" offsetY="30"/>
 					<Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="0" offsetY="-20"/>
 					<OnMouseWheel>EchoExperience:Litany_GuiOnScroll(self, delta)</OnMouseWheel>
 					<Controls>
@@ -71,8 +83,8 @@
           </Controls>
 				</Control>
             
-        <Label name="$(parent)_HintText" mouseEnabled="false" font="ZoFontBookPaper" text="Hover over entry to see hints" >
-          <Anchor point="TOPLEFT" relativeTo="$(parent}_ListHolder" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="0"/>
+        <Label name="$(parent)_HintText" mouseEnabled="false" font="ZoFontBookPaper" text="Click on entry to see hints" >
+          <Anchor point="TOPLEFT" relativeTo="$(parent}_ListHolder" relativePoint="BOTTOMLEFT" offsetX="0" offsetY="-10"/>
         </Label>
 
       </Controls>

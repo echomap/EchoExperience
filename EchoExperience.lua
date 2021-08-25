@@ -4,8 +4,8 @@
 -- 
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.51",                   -- A nuisance to match to the Manifest.
-    versionnumeric  =  51,                        -- A nuisance to match to the Manifest.
+    version         = "0.0.52",                   -- A nuisance to match to the Manifest.
+    versionnumeric  =  52,                        -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -3837,6 +3837,7 @@ function EchoExperience.OnLitanyOfBlood(targetNameL, targetUnitId)
     EchoExperience.savedVariables.LitanyOfBloodDone[targetName].subzonename  = targetData.SubZoneName
     EchoExperience.savedVariables.LitanyOfBloodDone[targetName].subzonename2 = targetData.SubZoneName2
     EchoExperience.savedVariables.LitanyOfBloodDone[targetName].tooltip      = targetData.tooltip
+    EchoExperience.savedVariables.LitanyOfBloodDone[targetName].coord        = targetData.coord
   else
     local sentence = GetString(SI_ECHOEXP_KILL_LB0)
     EchoExperience.outputMsg(sentence)

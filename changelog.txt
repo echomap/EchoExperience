@@ -33,10 +33,14 @@ LitanyOfBlood Gui still a mess
 username not character name reporting?
 
 ## [Testing branch]
-0.0.52
-- qlty fix update
+0.0.53
+- fix scan achievesfor litany of blood
 
 ## EchoExp [Versions]
+0.0.52
+- qlty fix update
+- litany gui updates
+- Waking Flame DLC  101031
 0.0.51
 - Api version to 35
 - Add H/M/L to traitname of armor

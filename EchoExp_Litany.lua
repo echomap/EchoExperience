@@ -48,7 +48,8 @@ function EchoExperience:Litany_SetupUI()
   --RIGHT
   local entryId = 1
   for k, v in pairs(EchoExperience.savedVariables.LitanyOfBloodDone) do
-    local ltext = zo_strformat( "<<1>> (<<2>>)", k, v.zonename)
+    --local ltext = zo_strformat( "<<1>> (<<2>>)", k, v.zonename)
+    local ltext = zo_strformat( "<<1>> (<<2>>/<<3>>)[<<4>>]", k, v.zonename, v.subzonename, v.coord )
     if(v.id == nil or ltext == nil or ltext ==" ") then
         EchoExperience.savedVariables.LitanyOfBloodDone[k] = nil
     else
@@ -157,13 +158,13 @@ function EchoExperience:Litany_ScanAchievements(btn)
   for topLevelIndex = 1, GetNumAchievementCategories() do
     local cname, numSubCatgories, numAchievements, earnedPoints, totalPoints, hidesPoints = GetAchievementCategoryInfo(topLevelIndex)
     if("Dark Brotherhood" == cname) then
-      EchoExperience.debugMsg2("Category: " .. cname)
+      EchoExperience.debugMsg2("-Category: " , cname)
       for achievementIndex = 1, numAchievements do
         local achievementId = GetAchievementId(topLevelIndex, nil, achievementIndex) --(Nil subcat,,, ie: General)
         achievementIndex = achievementIndex + 1
         local aname, description, points, icon, completed, date, time = GetAchievementInfo(achievementId)
         if("Litany of Blood" == aname) then    
-          EchoExperience.debugMsg2("name: " .. aname)
+          EchoExperience.debugMsg2("-name: " , aname)
           if(completed) then
             --
           else
@@ -172,13 +173,13 @@ function EchoExperience:Litany_ScanAchievements(btn)
           for criteriaIndex = 1, numCriteria do
             local description, numCompleted, numRequired =  GetAchievementCriterion(achievementId, criteriaIndex)
             if(numCompleted == numRequired) then
-              EchoExperience.debugMsg2("Criteria: description: " .. description)
+              EchoExperience.debugMsg2("-Criteria: description: " .. description)
               --"Slay the Target in <<1>> with the Blade of Woe
               local match2 = string.match(description, 'Slay the Target in (.+) with the Blade of Woe')
-              EchoExperience.debugMsg2("Criteria: match2: " .. tostring(match2))
+              EchoExperience.debugMsg2("-Criteria: zone to match: '" , tostring(match2) , "'" )
               --match list for SubZoneName
               for k, v in pairs(EchoExperience.LitanyOfBlood.list) do
-                if( v.SubZoneName == match2 ) then
+                if( v.ZoneName == match2 or v.SubZoneName == match2 ) then
                   local sentence = GetString(SI_ECHOEXP_LITANY_SCANFOUND)
                   local val = zo_strformat( sentence, k, v.SubZoneName )
                   EchoExperience.outputMsg(val)

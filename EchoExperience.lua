@@ -2357,7 +2357,7 @@ function EchoExperience.OnInventorySingleSlotUpdateWork(eventCode, bagId, slotId
       local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName, totalBagCount, collectionString )
       EchoExperience.outputToChanel(strL,msgTypeLOOT)
       --EchoExperience:LootHistory(itemLink,stackCountChange)
-    elseif( stackCountChange~=0 and( IsBankOpen() or IsGuildBankOpen()) )then
+    elseif( stackCountChange~=0 and( IsBankOpen() or IsGuildBankOpen() ) )then
       local sentence = GetString("SI_ECHOLOOT_BANK_GET_", qualifier)
       local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName, totalBagCount, collectionString )
       EchoExperience.outputToChanel(strL,msgTypeLOOT)
@@ -3589,13 +3589,20 @@ function EchoExperience.OnCompanionExpGainWork(eventCode, companionId, level, pr
     "' previousExperience: '", (previousExperience), "' currentExperience: '", (currentExperience), "'" )
   local cname   = GetCompanionName(companionId)
   local xplevel = GetNumExperiencePointsInCompanionLevel(level+1)
+  if(level<1) then
+    xplevel = GetNumExperiencePointsInCompanionLevel(1)
+  end
+  if(xplevel==nil) then 
+    EchoExperience.debugMsg2( "OnCompanionExpGain: xplevel nil error")
+    return
+  end
   EchoExperience.debugMsg2( "OnCompanionExpGain: xplevel: '", xplevel, "'")
   --xplevel = xplevel + previousExperience
   --** _Returns:_ *integer* _level_, *integer* _currentExperience_ = GetActiveCompanionLevelInfo()
 	local diff = currentExperience - previousExperience
   if(diff>0) then
     local strI  = GetString(SI_ECHOEXP_COMPANION_EXPGAIN)
-    if(currentExperience> xplevel) then
+    if(currentExperience > xplevel) then
       strI  = GetString(SI_ECHOEXP_COMPANION_LEVELUP)
     end
     local strL  = zo_strformat(strI, cname, level, diff, previousExperience, currentExperience, xplevel  )

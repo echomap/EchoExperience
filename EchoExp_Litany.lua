@@ -38,19 +38,25 @@ function EchoExperience:Litany_SetupUI()
   -- Regenerate list, or we could fix lists dynamically.... TODO
   EchoExperience.view.shifterBoxHints = {}
   --LEFT
+  EchoExperience.debugMsg("litany: setup LEFT" )
   for k, v in pairs(EchoExperience.LitanyOfBlood.list) do
     local ltext = zo_strformat( "<<1>> (<<2>>/<<3>>)[<<4>>]", k, v.ZoneName, v.SubZoneName, v.coord )
+    EchoExperience.debugMsg("litany: list: k: '" .. tostring(k).."'" )
     if( EchoExperience.savedVariables.LitanyOfBloodDone[k] == nil ) then
+      EchoExperience.debugMsg("litany: k:", k , " found already" )
       EchoExperience.view.shifterBox:AddEntryToLeftList(v.id, ltext )
     end
     EchoExperience.view.shifterBoxHints[ltext] = v.tooltip
   end
   --RIGHT
+  EchoExperience.debugMsg("litany: setup RIGHT" )
   local entryId = 1
   for k, v in pairs(EchoExperience.savedVariables.LitanyOfBloodDone) do
     --local ltext = zo_strformat( "<<1>> (<<2>>)", k, v.zonename)
+    EchoExperience.debugMsg("litany: done: k: '" .. tostring(k).."'" )
     local ltext = zo_strformat( "<<1>> (<<2>>/<<3>>)[<<4>>]", k, v.zonename, v.subzonename, v.coord )
     if(v.id == nil or ltext == nil or ltext ==" ") then
+        EchoExperience.debugMsg("litany: k:", k , " issue with ltext or ID " )
         EchoExperience.savedVariables.LitanyOfBloodDone[k] = nil
     else
       EchoExperience.view.shifterBox:AddEntryToRightList(v.id, ltext )
@@ -139,15 +145,27 @@ end
 ------------------------------
 -- LitanyUI
 function EchoExperience:Litany_SaveAchievements(btn)
-  EchoExperience.debugMsg("Litany_SaveAchievements: btn="..tostring(btn) .. "idx:"..tostring(idx)  )  
+  EchoExperience.debugMsg("Litany_SaveAchievements: btn="..tostring(btn) .. " idx:"..tostring(idx)  )  
   --get right list.
   --add those to done list: EchoExperience.savedVariables.LitanyOfBloodDone[k]
   --from "EchoExperience.LitanyOfBlood.list" data
   local righttable = EchoExperience.view.shifterBox:GetRightListEntries(false)
   EchoExperience.savedVariables.LitanyOfBloodDone = {}
-  for k, v in pairs(righttable) do
-    local dv = EchoExperience.LitanyOfBlood.list[k]
-    EchoExperience.savedVariables.LitanyOfBloodDone[k] = dv
+  for k2, v2 in pairs(righttable) do
+    local dv  = EchoExperience.LitanyOfBlood.list[k2]
+    EchoExperience.debugMsg("Litany_SaveAchievements: k="..tostring(k2) .. "'" )
+    for k, v in pairs(EchoExperience.LitanyOfBlood.list) do
+      if(v.id == k) then
+        EchoExperience.debugMsg2("litany: adding done as name: " , k )
+        local targetName = k
+        EchoExperience.savedVariables.LitanyOfBloodDone[targetName] = {}
+        EchoExperience.savedVariables.LitanyOfBloodDone[targetName].time        = GetTimeStamp()
+        EchoExperience.savedVariables.LitanyOfBloodDone[targetName].id           = v.id
+        EchoExperience.savedVariables.LitanyOfBloodDone[targetName].zonename     = v.ZoneName
+        EchoExperience.savedVariables.LitanyOfBloodDone[targetName].subzonename  = v.SubZoneName
+        EchoExperience.savedVariables.LitanyOfBloodDone[targetName].tooltip      = v.tooltip
+      end
+    end
   end
 end
 
@@ -178,26 +196,30 @@ function EchoExperience:Litany_ScanAchievements(btn)
               local match2 = string.match(description, 'Slay the Target in (.+) with the Blade of Woe')
               EchoExperience.debugMsg2("-Criteria: zone to match: '" , tostring(match2) , "'" )
               --match list for SubZoneName
-              for k, v in pairs(EchoExperience.LitanyOfBlood.list) do
-                if( v.ZoneName == match2 or v.SubZoneName == match2 ) then
-                  local sentence = GetString(SI_ECHOEXP_LITANY_SCANFOUND)
-                  local val = zo_strformat( sentence, k, v.SubZoneName )
-                  EchoExperience.outputMsg(val)
-                  local targetName = k
-                  EchoExperience.savedVariables.LitanyOfBloodDone[targetName] = {}
-                  EchoExperience.savedVariables.LitanyOfBloodDone[targetName].time = GetTimeStamp()
-                  EchoExperience.savedVariables.LitanyOfBloodDone[targetName].id   = v.id
-                  EchoExperience.savedVariables.LitanyOfBloodDone[targetName].zonename     = v.ZoneName
-                  EchoExperience.savedVariables.LitanyOfBloodDone[targetName].subzonename  = v.SubZoneName
-                  EchoExperience.savedVariables.LitanyOfBloodDone[targetName].tooltip      = v.tooltip
-                end
-              end--if done
+              if(match2~=nil) then
+                for k, v in pairs(EchoExperience.LitanyOfBlood.list) do
+                  if( v.ZoneName == match2 or v.SubZoneName == match2 ) then
+                    local sentence = GetString(SI_ECHOEXP_LITANY_SCANFOUND) -- Scan found person was already killed
+                    local val = zo_strformat( sentence, k, v.SubZoneName )
+                    EchoExperience.outputMsg(val)
+                    EchoExperience.debugMsg2("litany: adding done as name: " , k )
+                    local targetName = k
+                    EchoExperience.savedVariables.LitanyOfBloodDone[targetName] = {}
+                    EchoExperience.savedVariables.LitanyOfBloodDone[targetName].time = GetTimeStamp()
+                    EchoExperience.savedVariables.LitanyOfBloodDone[targetName].id   = v.id
+                    EchoExperience.savedVariables.LitanyOfBloodDone[targetName].zonename     = v.ZoneName
+                    EchoExperience.savedVariables.LitanyOfBloodDone[targetName].subzonename  = v.SubZoneName
+                    EchoExperience.savedVariables.LitanyOfBloodDone[targetName].tooltip      = v.tooltip
+                  end
+                end--if
+              end--match2
             end
           end
         end
       end--achieve
     end--darkbrothers
   end--top
+  --EchoExperience:Litany_SaveAchievements(btn)
   EchoExperience:Litany_SetupUI()
   EchoExperience.outputMsg("Done scan of achieves for Litany of Blood")
 end

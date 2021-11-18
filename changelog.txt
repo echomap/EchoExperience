@@ -34,7 +34,8 @@ username not character name reporting?
 
 ## [Testing branch]
 0.0.53
-- fix scan achievesfor litany of blood
+- fix scan achieves for litany of blood
+- fix companion zero level bug maybe?
 
 ## EchoExp [Versions]
 0.0.52

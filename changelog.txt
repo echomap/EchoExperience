@@ -33,11 +33,15 @@ LitanyOfBlood Gui still a mess
 username not character name reporting?
 
 ## [Testing branch]
-0.0.53
-- fix scan achieves for litany of blood
-- fix companion zero level bug maybe?
+0.0.54
+- 
+- 
 
 ## EchoExp [Versions]
+0.0.53
+- update version
+- fix scan achieves for litany of blood
+- fix companion zero level bug maybe?
 0.0.52
 - qlty fix update
 - litany gui updates

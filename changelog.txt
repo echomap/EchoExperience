@@ -33,11 +33,13 @@ LitanyOfBlood Gui still a mess
 username not character name reporting?
 
 ## [Testing branch]
-0.0.54
+0.0.55
 - 
 - 
 
 ## EchoExp [Versions]
+0.0.54
+- updated version to 35/36
 0.0.53
 - update version
 - fix scan achieves for litany of blood

@@ -38,8 +38,10 @@ username not character name reporting?
 - 
 
 ## EchoExp [Versions]
+0.0.55
+- updated apiversion to 38/39
 0.0.54
-- updated version to 35/36
+- updated apiversion to 35/36
 0.0.53
 - update version
 - fix scan achieves for litany of blood

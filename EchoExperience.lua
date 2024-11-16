@@ -199,35 +199,37 @@ end
 function EchoExperience:ShowTracking(trackingTableElement)
   d ( zo_strformat( "<<1>> (<<2>>) <<3>>","Session Tracked ", tostring(EchoExperience.savedVariables.sessiontracking), "Start==>") )
   --
-  d ( "General:") 
-  for k, v in pairs(trackingTableElement) do
-      for kk, vv in pairs(trackingTableElement[k]) do
-        if(vv~=nil and vv.quantity~=nil)then
-          d ( zo_strformat( "<<3>>=<<2>>",kk, vv.quantity, vv.itemlink) )
-        end
-      end
-  end
-  --
-   d ( "Specfic") 
-  for k, v in pairs(trackingTableElement.items) do
-    if(v~=nil and v.quantity~=nil)then
-      d ( zo_strformat( "<<3>>=<<2>>",k, v.quantity, v.itemlink) )
-    end
-  end
-  for k, v in pairs(trackingTableElement.currency) do
-    if(v~=nil and v.quantity~=nil)then
-      local currname = GetCurrencyName(k, true, false)
-      d ( zo_strformat( "<<1>>=<<2>>", currname, v.quantity) )
-      d ( zo_strformat( "--plus=<<2>>", currname, v.plus) )
-      d ( zo_strformat( "--minus=<<2>>", currname, v.minus) )
-    end
-  end  
-  for k, v in pairs(trackingTableElement.mobs) do
-    if(v~=nil and v.quantity~=nil)then
-      local ctype = EchoExperience:GetCombatUnitType(v.targetType)
-      d ( zo_strformat( "<<1>>=<<2>> (<<4>>)", k, v.quantity, v.itemlink, ctype)  )
-    end
-  end
+  if(trackingTableElement~=nil) then
+	  d ( "General:") 
+	  for k, v in pairs(trackingTableElement) do
+		  for kk, vv in pairs(trackingTableElement[k]) do
+			if(vv~=nil and vv.quantity~=nil)then
+			  d ( zo_strformat( "<<3>>=<<2>>",kk, vv.quantity, vv.itemlink) )
+			end
+		  end
+	  end
+	  --
+	   d ( "Specfic") 
+	  for k, v in pairs(trackingTableElement.items) do
+		if(v~=nil and v.quantity~=nil)then
+		  d ( zo_strformat( "<<3>>=<<2>>",k, v.quantity, v.itemlink) )
+		end
+	  end
+	  for k, v in pairs(trackingTableElement.currency) do
+		if(v~=nil and v.quantity~=nil)then
+		  local currname = GetCurrencyName(k, true, false)
+		  d ( zo_strformat( "<<1>>=<<2>>", currname, v.quantity) )
+		  d ( zo_strformat( "--plus=<<2>>", currname, v.plus) )
+		  d ( zo_strformat( "--minus=<<2>>", currname, v.minus) )
+		end
+	  end  
+	  for k, v in pairs(trackingTableElement.mobs) do
+		if(v~=nil and v.quantity~=nil)then
+		  local ctype = EchoExperience:GetCombatUnitType(v.targetType)
+		  d ( zo_strformat( "<<1>>=<<2>> (<<4>>)", k, v.quantity, v.itemlink, ctype)  )
+		end
+	  end
+  end -- nil check 
   d("<==Session Tracked Done")
   --EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.expsettings,   "EXP outputs")
   --EchoExperience:ShowOutputsSub(EchoExperience.savedVariables.lootsettings,  "LOOT outputs", msgTypeLOOT)
@@ -644,16 +646,17 @@ function EchoExperience.SlashCommandHandler(text)
 
 	if #options == 0 or options[1] == "help" then
 		EchoExperience.outputMsg("user commands include:")
-    EchoExperience.outputMsg("-- 'outputs' to show in text what will happen ")
-    EchoExperience.outputMsg("-- 'mute/unmute': should silence/unsilence EchoExp.")
-    EchoExperience.outputMsg("The tracking module is in alpha:")
-    EchoExperience.outputMsg("-- 'showtracking' for text output, 'trackinggui' for GUI output")
-    EchoExperience.outputMsg("-- 'startsession', 'pausesession', 'deletesession', 'newsession', 'sessionsreport' " )
-    EchoExperience.outputMsg("-- 'showlifetime', 'clearlifetimedata' ")
-    EchoExperience.outputMsg("Gui/Console commands:")
-    EchoExperience.outputMsg("-- 'litanygui' to show alpha ui for litany of blood")
+		EchoExperience.outputMsg("-- 'outputs' to show in text what will happen ")
+		EchoExperience.outputMsg("-- 'mute/unmute': should silence/unsilence EchoExp.")
+		EchoExperience.outputMsg("The tracking module: (is in alpha):")
+		EchoExperience.outputMsg("-- 'showtracking' for text output")
+		EchoExperience.outputMsg("-- 'trackinggui' for GUI output")
+		EchoExperience.outputMsg("-- 'startsession', 'pausesession', 'deletesession', 'newsession', 'sessionsreport' " )
+		EchoExperience.outputMsg("-- 'showlifetime', 'clearlifetimedata' ")
+		EchoExperience.outputMsg("Gui/Console commands:")
+		EchoExperience.outputMsg("-- 'litanygui' to show (alpha ui) for litany of blood")
 		EchoExperience.outputMsg("debug commands include:")
-    EchoExperience.outputMsg("-- 'debug', 'testexp', 'testloot', 'testfull' ")
+		EchoExperience.outputMsg("-- 'debug', 'testexp', 'testloot', 'testfull' ")
     -- MAIN
   elseif #options == 1 and options[1] then
     if options[1] == "debug" or options[1] == "d" then
@@ -1465,6 +1468,10 @@ end
   
 --
 function EchoExperience.OnDiscoveryExperienceGainWork(event, eventCode, areaName, level, previousExperience, currentExperience, championPoints)
+	EchoExperience.debugMsg2("OnDiscovery:",
+		"areaName:",tostring(areaName),
+		"level:",tostring(level)
+	)
 	--[[
 	if EchoExperience.savedVariables.debug then
 		d(EchoExperience.name .. " OnDiscovery: "

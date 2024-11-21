@@ -2359,15 +2359,24 @@ function EchoExperience.OnInventorySingleSlotUpdateWork(eventCode, bagId, slotId
     )
   end
   if(showSL) then
+     EchoExperience.debugMsg2("OnInventorySingleSlotUpdate: "
+      , " isNewItem="    , isNewItem
+	  , " stackCountChange=" , stackCountChange
+	  , " qualifier="    , qualifier
+      , " IsBankOpen()=" , IsBankOpen()    
+      , " IsGuildBankOpen()=" , IsGuildBankOpen() 
+    )
     if(isNewItem) then
       local sentence = GetString("SI_ECHOLOOT_RECEIVE_", qualifier)
       local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName, totalBagCount, collectionString )
       EchoExperience.outputToChanel(strL,msgTypeLOOT)
       --EchoExperience:LootHistory(itemLink,stackCountChange)
-    elseif( stackCountChange~=0 and( IsBankOpen() or IsGuildBankOpen() ) )then
-      local sentence = GetString("SI_ECHOLOOT_BANK_GET_", qualifier)
-      local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName, totalBagCount, collectionString )
-      EchoExperience.outputToChanel(strL,msgTypeLOOT)
+    elseif( stackCountChange~=0 and ( IsBankOpen() or IsGuildBankOpen() ) ) then
+		local sentence = GetString("SI_ECHOLOOT_BANK_GET_", qualifier)
+		EchoExperience.debugMsg2("OnInventorySingleSlotUpdate: ", " sentence=" , tostring(sentence) )
+		local strL = zo_strformat(sentence, icon, itemLink, stackCountChange, traitName, totalBagCount, collectionString )
+		EchoExperience.debugMsg2("OnInventorySingleSlotUpdate: ", " strL=" , tostring(strL) )
+		EchoExperience.outputToChanel(strL,msgTypeLOOT)
     end
   end  
   
@@ -2902,7 +2911,7 @@ function EchoExperience.OnGuildSelfLeft(eventCode, guildId, guildName)
   EchoExperience.view.guildids   = nil
   EchoExperience.view.guildnames = nil
   --
-  local sentence = GetString(SI_ECHOEXP_GUILD_SELFJOIN)
+  local sentence = GetString(SI_ECHOEXP_GUILD_SELFLEFT)
   local strL     = zo_strformat(sentence, guildName )
   EchoExperience.outputToChanel(strL, msgTypeGUILD2)
 end
@@ -2922,7 +2931,7 @@ function EchoExperience.OnGuildSelfJoined(eventCode, guildId, guildName)
   EchoExperience.view.guildids   = nil
   EchoExperience.view.guildnames = nil  
   --
-  local sentence = GetString(SI_ECHOEXP_GUILD_SELFLEFT)
+  local sentence = GetString(SI_ECHOEXP_GUILD_SELFJOIN)
   local strL     = zo_strformat(sentence, guildName )
   EchoExperience.outputToChanel(strL, msgTypeGUILD2)
 end

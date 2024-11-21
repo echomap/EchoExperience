@@ -34,8 +34,9 @@ username not character name reporting?
 
 ## [Testing branch]
 0.0.55
-- 
-- 
+- updates misc
+- left/joined guild were reversed!?
+- message about depositing missing
 
 ## EchoExp [Versions]
 0.0.55

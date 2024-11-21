@@ -377,23 +377,24 @@ local localization_strings = {
 	SI_ECHOLOOT_RECEIVE_2 = "You receive [|t14:14:<<1>>|t <<2>>] x<<3>> <<6>>",
 	SI_ECHOLOOT_RECEIVE_3 = "You receive [|t14:14:<<1>>|t <<2>>] (<<4>>) <<6>>",
 	SI_ECHOLOOT_RECEIVE_4 = "You receive [|t14:14:<<1>>|t <<2>>] x<<3>> (<<4>>) <<6>>",  
-  SI_ECHOLOOT_RECEIVE_5 = "You receive [|t14:14:<<1>>|t <<2>>] <<6>> (Total: <<5>>)",
+	SI_ECHOLOOT_RECEIVE_5 = "You receive [|t14:14:<<1>>|t <<2>>] <<6>> (Total: <<5>>)",
 	SI_ECHOLOOT_RECEIVE_6 = "You receive [|t14:14:<<1>>|t <<2>>] x<<3>>  <<6>> (Total: <<5>>)",
 
-  --
+	--
 	SI_ECHOLOOT_LOSE_1    = "You lose |t14:14:<<1>>|t <<2>>",
 	SI_ECHOLOOT_LOSE_2    = "You lose|t14:14:<<1>>|t <<2>> x<<3>>",
-  --texture, iconFileIndex, name
-  SI_ECHOANTIQ_RECEIVE  = "You found the lead [|t14:14:<<1>>|t <<3>>] !!",  
+	--texture, iconFileIndex, name
+	SI_ECHOANTIQ_RECEIVE  = "You found the lead [|t14:14:<<1>>|t <<3>>] !!",  
   
-  --icon, itemLink, stackCountChange
-  SI_ECHOLOOT_BANK_DEP   = "You deposit [|t14:14:<<1>>|t <<2>>] x<<3>> ", 
+	--icon, itemLink, stackCountChange
+	SI_ECHOLOOT_BANK_DEP   = "You deposit [|t14:14:<<1>>|t <<2>>] x<<3>> ", 
 	SI_ECHOLOOT_BANK_GET_1 = "You withdrawl [|t14:14:<<1>>|t <<2>>] <<6>>",
 	SI_ECHOLOOT_BANK_GET_2 = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>> <<6>>",
 	SI_ECHOLOOT_BANK_GET_3 = "You withdrawl [|t14:14:<<1>>|t <<2>>] (<<4>>) <<6>>",
 	SI_ECHOLOOT_BANK_GET_4 = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>> (<<4>>) <<6>>",
-  SI_ECHOLOOT_BANK_GET_5 = "You withdrawl [|t14:14:<<1>>|t <<2>>] <<6>> (Total: <<5>>)",
-	SI_ECHOLOOfT_BANK_GET_6 = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>>  <<6>> (Total: <<5>>)",
+	SI_ECHOLOOT_BANK_GET_5 = "You withdrawl [|t14:14:<<1>>|t <<2>>] <<6>> (Total: <<5>>)",
+	SI_ECHOLOOT_BANK_GET_5 = "You withdrawl [|t14:14:<<1>>|t <<2>>] <<6>> (Total: <<5>>)",
+	SI_ECHOLOOT_BANK_GET_6 = "You withdrawl [|t14:14:<<1>>|t <<2>>] x<<3>>  <<6>> (Total: <<5>>)",
 
   --QUEST Output
   SI_ECHOLOOT_QUEST_SHARED_TO_YOU = "The quest [<<1>>] was shared to you by <<2>>.", 

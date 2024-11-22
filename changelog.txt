@@ -33,12 +33,14 @@ LitanyOfBlood Gui still a mess
 username not character name reporting?
 
 ## [Testing branch]
-0.0.55
+0.0.57
+- 
+
+## EchoExp [Versions]
+0.0.56
 - updates misc
 - left/joined guild were reversed!?
 - message about depositing missing
-
-## EchoExp [Versions]
 0.0.55
 - updated apiversion to 38/39
 0.0.54

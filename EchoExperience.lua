@@ -9,18 +9,21 @@ EchoExperience = {
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
-    defaultMaxLines  = 10,
-    defaultMaxLines2 = 15,
     view            = {},
     -- Saved settings.
     savedVariables = {},
     accountVariables = {},
+	-- locals
+    defaultMaxLines  = 10,
+    defaultMaxLines2 = 15,
     rgbaBase   = {
       ["r"] = 1,
       ["g"] = 1,
       ["b"] = 1,
       ["a"] = 0.9,
     },
+	currentCompanionId = nil,
+	currentPartyMembers = { },	
     LitanyOfBlood = {
       version = 1,
       list = {
@@ -63,6 +66,7 @@ local msgTypeLOOT    = 4
 local msgTypeGUILD   = 6 -- 
 local msgTypeGUILD2  = 7 -- Guild Admin Messages
 local msgTypeQuest   = 8
+local msgTypeCOMP    = 9
 
 --local PCHAT = LibStub("PCHAT")
 ------------------------------
@@ -383,29 +387,31 @@ end
 ------------------------------
 -- OUTPUT Main Output Function used by addon to control output and style
 function EchoExperience.outputToChanel(text,msgType,filter)
-	--Output to where
+--Output to where
 	if msgType == nil or msgType == msgTypeSYS then
 		d(text)
 	elseif msgType == msgTypeEXP then
-    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.expsettings, filter, msgType )
-    return
+		EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.expsettings, filter, msgType )
+		return
 	elseif msgType == msgTypeLOOT then
-    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.lootsettings, filter, msgType)
-    return
+		EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.lootsettings, filter, msgType)
+		return
 	elseif msgType == msgTypeGUILD then
-    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.guildsettings, filter, msgType)
-  elseif msgType == msgTypeGUILD2 then
-    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.guildsettings, filter, msgType)
-    --for later, when i seperate the LOGXX with the join/leave
-  elseif msgType == msgTypeQuest then
-    EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.questsettings, filter, msgType)
-  end
+		EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.guildsettings, filter, msgType)
+	elseif msgType == msgTypeGUILD2 then
+		EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.guildsettings, filter, msgType)
+		--for later, when I seperate the LOGXX with the join/leave
+	elseif msgType == msgTypeQuest then
+		EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.questsettings, filter, msgType)
+	elseif msgType == msgTypeCOMP then
+		EchoExperience:outputToChanelSub(text, EchoExperience.savedVariables.expsettings, filter, msgTypeEXP)
+	end
   --
   if(EchoExperience.error)then
       EchoExperience.error = false
       EchoExperience.savedVariables.showGuildLogin  = false
       EchoExperience.savedVariables.showGuildLogout = false
-      EchoExperience.outputMsg("Guild notifications are turned off")
+      EchoExperience.outputMsg( GetString(SI_ECHOEXP_GUILD_AUTO_OFFMSG) )
   end
 end
 
@@ -728,6 +734,8 @@ function EchoExperience.SlashCommandHandler(text)
       EchoExperience.savedVariables.showGuildMisc  = not EchoExperience.savedVariables.showGuildMisc
       EchoExperience.outputMsg("ShowGuildMisc = " .. tostring(EchoExperience.savedVariables.showGuildMisc) )
       EchoExperience.SetupGuildEvents()
+	elseif options[1] == "test1" then
+		EchoExperience.RunTest1()
     elseif options[1] == "testexp" then
       EchoExperience.outputToChanel("Gained 0 xp in [Test] (1000/10000) need 9000xp",msgTypeEXP)
     elseif options[1] == "testloot" then
@@ -762,6 +770,24 @@ function EchoExperience.SlashCommandHandler(text)
     --
   end
   --
+end
+
+function EchoExperience:RunTest1()
+	EchoExperience.outputMsg("Test1-->")
+	local gsize = GetGroupSize()
+	EchoExperience.outputMsg("-GetGroupSize= " .. gsize)
+    for i = 1, gsize do
+		local unitTag = GetGroupUnitTagByIndex(i)
+        if unitTag then
+            local rawCharacterName = GetRawUnitName(unitTag)
+            local displayName = GetUnitDisplayName(unitTag) or ""
+			EchoExperience.outputMsg("*rawCharacterName= " .. rawCharacterName)
+			EchoExperience.outputMsg("**displayName= "     .. displayName)
+			--
+			EchoExperience.currentPartyMembers[rawCharacterName] = displayName
+		end
+	end
+	EchoExperience.outputMsg("<--Test1")
 end
 
 ------------------------------
@@ -2457,6 +2483,11 @@ function EchoExperience.OnLootReceivedWork(eventCode,receivedBy,itemName,quantit
   
   local icon = GetItemLinkIcon(itemName)
   --local itemLink  = GetItemLink(bagId, slotId, LINK_STYLE_BRACKETS)
+  local accountName = EchoExperience.currentPartyMembers[ tostring(receivedBy) ]
+  EchoExperience.debugMsg2("OnLootReceivedWork: "
+    .." accountName='"    .. tostring(accountName) .."'"
+	.." receivedBy='"     .. tostring(receivedBy)  .."'"
+  )  
   --
   if(isSelf) then
  
@@ -2556,7 +2587,11 @@ function EchoExperience.OnLootReceivedWork(eventCode,receivedBy,itemName,quantit
       elseif(lootType==LOOT_TYPE_QUEST_ITEM) then
         sentence = GetString("SI_ECHOLOOT_OTHER_QUEST_", qualifier)
       end
-      local strL = zo_strformat(sentence, receivedBy, icon, itemName, quantity, extraInfo, collectionString)
+	  local rby = receivedBy
+	  if(accountName~=nil and EchoExperience.savedVariables.useaccountnamepref ) then
+		rby = accountName
+	  end
+      local strL = zo_strformat(sentence, rby, icon, itemName, quantity, extraInfo, collectionString)
       EchoExperience.outputToChanel(strL,msgTypeLOOT)
     end
   end--self check
@@ -3559,17 +3594,68 @@ end
 ------------------------------
 
 ------------------------------
+-- EVENT_GROUP_MEMBER_JOINED (number eventCode, string memberCharacterName, string memberDisplayName, boolean isLocalPlayer) - Changed in 100028
+function EchoExperience.OnGroupMemberJoin(eventCode, memberCharacterName, memberDisplayName,  isLocalPlayer)
+	--
+  EchoExperience.debugMsg("OnGroupMemberJoin: "
+    .." eventCode="     .. tostring(eventCode) 
+    .." memberCharacterName=" .. tostring(memberCharacterName)
+    .." memberDisplayName="   .. tostring(memberDisplayName)
+    .." isLocalPlayer="       .. tostring(isLocalPlayer)
+  )
+  EchoExperience.currentPartyMembers[memberCharacterName] = memberDisplayName
+  if(memberDisplayName==EchoExperience.view.iamDisplayName) then
+	local gsize = GetGroupSize()
+	EchoExperience.debugMsg("-GetGroupSize= " .. gsize)
+    for i = 1, gsize do
+		local unitTag = GetGroupUnitTagByIndex(i)
+        if unitTag then
+            local rawCharacterName = GetRawUnitName(unitTag)
+            local displayName      = GetUnitDisplayName(unitTag) or ""
+			EchoExperience.debugMsg("*rawCharacterName= " .. rawCharacterName)
+			EchoExperience.debugMsg("**displayName= "     .. displayName)
+			EchoExperience.currentPartyMembers[rawCharacterName] = displayName
+		end
+	end
+  end
+  --
+end
+
+------------------------------
+-- EVENT_GROUP_MEMBER_LEFT(characterName, reason, isLocalPlayer, isLeader, displayName)
+function EchoExperience.OnGroupMemberLeft(eventCode, characterName, reason, isLocalPlayer, isLeader, displayName)
+	--
+  EchoExperience.debugMsg("OnGroupMemberLeft: "
+    .." eventCode="     .. tostring(eventCode) 
+    .." characterName="  .. tostring(characterName)
+    .." reason="        .. tostring(reason)
+    .." isLocalPlayer="  .. tostring(isLocalPlayer)
+    .." isLeader="    .. tostring(isLeader)
+    .." isLeader="    .. tostring(displayName)
+  )
+  if(EchoExperience.currentPartyMembers and EchoExperience.currentPartyMembers[memberCharacterName]) then
+	EchoExperience.currentPartyMembers[memberCharacterName] = nil
+  end
+  
+  EchoExperience.currentPartyMembers[EchoExperience.view.iamCharacterName] = EchoExperience.view.iamDisplayName
+end
+
+------------------------------
 -- EVENT_COMPANION_ACTIVATED (*integer* _companionId_)
 function EchoExperience.OnCompanionActivated(eventCode, companionId)
   EchoExperience.debugMsg2( "OnCompanionActivated: eventCode: '", eventCode, "' companionId='", tostring(companionId), "'")
+  if(EchoExperience.currentCompanionId~=nil and EchoExperience.currentCompanionId==companionId) then
+	return; -- skip as they are already out and we just probably changed zones
+  end  
+  --
   local cname = GetCompanionName(companionId)
- 
   local level, currentExperience = GetActiveCompanionLevelInfo()
   local currentRapport           = GetActiveCompanionRapport()
-
+  --
   local strI  = GetString(SI_ECHOEXP_COMPANION_ACTIVE)
   local strL  = zo_strformat(strI, cname, level, currentRapport, currentExperience)
-  EchoExperience.outputToChanel(strL,msgTypeEXP)
+  EchoExperience.outputToChanel(strL,msgTypeCOMP)
+  EchoExperience.currentCompanionId = companionId
 end
   
 ------------------------------
@@ -3578,9 +3664,9 @@ function EchoExperience.OnCompanionDeactivated(eventCode)
   EchoExperience.debugMsg2( "OnCompanionDeactivated: eventCode: '", tostring(eventCode), "'")
   local strI = GetString(SI_ECHOEXP_COMPANION_DEACTIVE)
   local strL = zo_strformat(strI, cname)
-  EchoExperience.outputToChanel(strL,msgTypeEXP)
+  EchoExperience.outputToChanel(strL,msgTypeCOMP)
+  EchoExperience.currentCompanionId = nil
 end
-    
 
 ------------------------------
 -- EVENT_COMPANION_EXPERIENCE_GAIN (*integer* _companionId_, *integer* _level_, *integer* _previousExperience_, *integer* _currentExperience_)
@@ -3622,7 +3708,7 @@ function EchoExperience.OnCompanionExpGainWork(eventCode, companionId, level, pr
       strI  = GetString(SI_ECHOEXP_COMPANION_LEVELUP)
     end
     local strL  = zo_strformat(strI, cname, level, diff, previousExperience, currentExperience, xplevel  )
-    EchoExperience.outputToChanel(strL,msgTypeEXP)
+    EchoExperience.outputToChanel(strL,msgTypeCOMP)
   end
 end
 
@@ -3659,14 +3745,14 @@ function EchoExperience.OnCompanionRapportUpdateWork(eventCode, companionId, pre
     diff = diff*-1
   end
   local strL = zo_strformat(strI, cname, diff, previousRapport, currentRapport)
-  EchoExperience.outputToChanel(strL,msgTypeEXP)
+  EchoExperience.outputToChanel(strL,msgTypeCOMP)
 end
 
 ------------------------------
 -- EVENT_COMPANION_SKILLS_FULL_UPDATE (*bool* _isInit_)
 function EchoExperience.OnCompanionSkillsFullUpdate(eventCode, isInit)
   EchoExperience.debugMsg2( "OnCompanionSkillsFullUpdate: eventCode: '", eventCode, "' isInit='", tostring(isInit), "'")
-  --TODO
+  --TODO msgTypeCOMP
 end
 
 ------------------------------
@@ -3691,7 +3777,7 @@ function EchoExperience.OnCompanionSkilllineAddedWork(eventCode, skillLineId)
   local slName = GetSkillLineNameById(skillLineId)
   local strI = GetString(SI_ECHOEXP_COMPANION_SKILLLINEADD)
   local strL = zo_strformat(strI, slName, skillLineId )
-  EchoExperience.outputToChanel(strL,msgTypeEXP)
+  EchoExperience.outputToChanel(strL,msgTypeCOMP)
 end
 
 ------------------------------
@@ -3717,7 +3803,7 @@ function EchoExperience.OnCompanionSkillRankUpdateWork(eventCode, skillLineId, r
   local strI = GetString(SI_ECHOEXP_COMPANION_SKILLRANKGAIN)
   local skillLineName = GetCompanionSkillLineNameById(skillLineId)
   local strL = zo_strformat(strI, skillLineId, skillLineName, rank )
-  EchoExperience.outputToChanel(strL,msgTypeEXP)
+  EchoExperience.outputToChanel(strL,msgTypeCOMP)
 end
 
 ------------------------------
@@ -3743,18 +3829,18 @@ function EchoExperience.OnCompanionSkillXpUpdateWork(eventCode, skillLineId, rea
     "' previousXP: '", (previousXP), "'", "' currentXP: '", (currentXP), "'" )
   --local cname = GetCompanionName(companionId)
   local slName = GetSkillLineNameById(skillLineId)
-	local diff = currentXP - previousXP
+  local diff = currentXP - previousXP
   local strI = GetString(SI_ECHOEXP_COMPANION_SKILLXPUPD)
   local strL = zo_strformat(strI, slName, diff, rank )
-  EchoExperience.outputToChanel(strL,msgTypeEXP)
+  EchoExperience.outputToChanel(strL,msgTypeCOMP)
 end
 
 ------------------------------
 -- VENT_COMPANION_ULTIMATE_FAILURE (*[CompanionUltimateFailureReason|#CompanionUltimateFailureReason]* _reason_, *string* _companionName_)
 function EchoExperience.OnCompanionUltimateFailure(eventCode, reason, companionName )
-  EchoExperience.outputMsg2( "OnCompanionUltimateFailure: eventCode: '", eventCode, 
+  EchoExperience.debugMsg2( "OnCompanionUltimateFailure: eventCode: '", eventCode, 
     "' reason='", tostring(reason), "' companionName: '", (companionName), "'" )
-  --TODO
+  --TODO msgTypeCOMP
 end
     
 ------------------------------
@@ -3762,7 +3848,7 @@ end
 function EchoExperience.OnCompanionWarning(eventCode, warningType, companionId)
   EchoExperience.outputMsg2( "OnCompanionWarning: eventCode: '", eventCode, 
     "' companionId='", tostring(companionId), "' warningType: '" , tostring(warningType), "'" )
-  --TODO
+  --TODO msgTypeCOMP
 end
   
 ------------------------------
@@ -4410,6 +4496,30 @@ end
 
 ------------------------------
 -- SETUP
+function EchoExperience.SetupGroupEvents(reportMe)
+	--if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_COMPANION_SHOW),msgTypeSYS) end
+	local eventNamespace = nil
+    eventNamespace = EchoExperience.name.."EVENT_GROUP_MEMBER_JOINED"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_GROUP_MEMBER_JOINED, EchoExperience.OnGroupMemberJoin )
+	--
+	eventNamespace = EchoExperience.name.."EVENT_GROUP_MEMBER_LEFT"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_GROUP_MEMBER_LEFT, EchoExperience.OnGroupMemberLeft )
+end
+
+------------------------------
+-- SETUP
+function EchoExperience.UnsetupGroupEvents(reportMe)
+	--if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_COMPANION_SHOW),msgTypeSYS) end
+	local eventNamespace = nil
+    eventNamespace = EchoExperience.name.."EVENT_GROUP_MEMBER_JOINED"
+    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_GROUP_MEMBER_JOINED, EchoExperience.OnGroupMemberJoin )
+	--
+	eventNamespace = EchoExperience.name.."EVENT_GROUP_MEMBER_LEFT"
+    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_GROUP_MEMBER_LEFT, EchoExperience.OnGroupMemberLeft )
+end
+
+------------------------------
+-- SETUP
 function EchoExperience.SetupCompanionEvents(reportMe)
   if( EchoExperience.savedVariables.showcompanions ) then
     if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_COMPANION_SHOW),msgTypeSYS) end
@@ -4886,7 +4996,7 @@ end
 ------------------------------
 -- SETUP  setup event handling
 function EchoExperience.SetupView()
-  --
+  -- d("EchoExp SetupView Called")
   EchoExperience.view = {}
   EchoExperience.view.GuildEventsReg = false
   EchoExperience.view.settingstemp = {}
@@ -4914,6 +5024,21 @@ function EchoExperience.SetupView()
   --
   EchoExperience.view.iamDisplayName   = GetDisplayName() --GetUnitDisplayName("player")
   EchoExperience.view.iamCharacterName = GetUnitName("player")
+  
+  -- EchoExperience.currentPartyMembers[CharacterName] = AccountName
+  EchoExperience.currentPartyMembers[EchoExperience.view.iamCharacterName] = EchoExperience.view.iamDisplayName
+  EchoExperience.debugMsg("SetupView: "
+    .." iamCharacterName='"    .. tostring(EchoExperience.view.iamCharacterName) .."'"
+    .." iamDisplayName='"    .. tostring(EchoExperience.view.iamDisplayName) .."'"
+    .." accountName='"    .. tostring(accountName) .."'"
+	.." receivedBy='"     .. tostring(receivedBy)  .."'"
+  ) 
+  local printEntries = ""
+  for kName, kVal in pairs(EchoExperience.currentPartyMembers) do
+    printEntries = zo_strformat("<<1>> {<<2>>=<<3>>},", printEntries, kName, kVal )
+  end
+  printEntries = "List of chars stored: " .. printEntries
+  ElderScrollsOfAlts.outputMsg(printEntries)
   --
   EchoExperience.view.asyncName = EchoExperience.pre_view.asyncName
   EchoExperience.view.async     = EchoExperience.pre_view.async
@@ -4945,8 +5070,9 @@ function EchoExperience.DelayedStart()
   EchoExperience:UpgradeSettings()
   
 	--Setup Events Related
-	EchoExperience.SetupExpGainsEvents()
-	EchoExperience.SetupLootGainsEvents()
+  EchoExperience.SetupGroupEvents()
+  EchoExperience.SetupExpGainsEvents()
+  EchoExperience.SetupLootGainsEvents()
   EchoExperience.SetupGuildEvents()
   EchoExperience.SetupMiscEvents()  
   EchoExperience.SetupLoreBookEvents()
@@ -4973,7 +5099,7 @@ end
 -- SETUP on player activated called delayed start
 function EchoExperience.Activated(e)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name, EVENT_PLAYER_ACTIVATED)
-    --d(EchoExperience.name .. GetString(SI_ECHOEXP_MESSAGE)) -- Prints to chat.
+    d(EchoExperience.name .. GetString(SI_ECHOEXP_MESSAGE)) -- Prints to chat.
     --ZO_AlertNoSuppression(UI_ALERT_CATEGORY_ALERT, nil,
     --    EchoExperience.name .. GetString(SI_NEW_ADDON_MESSAGE)) -- Top-right alert.
     --d("EchoExperience.view.iamDisplayName = " .. tostring(EchoExperience.view.iamDisplayName) )
@@ -5003,11 +5129,13 @@ function EchoExperience.OnAddOnLoaded(event, addonName)
   else
     --d("EE Created NOT !!! ASYNC Task")
   end
-
+  --
+  --EchoExperience.SetupView()
   -- Settings menu in Settings.lua.
   --EchoExperience:RestoreSettings()
   EchoExperience.LoadSettings() --Setup Addon Settings MENU
 
+  
   --[[
   if( EchoExperience.savedVariables.sversion == "0.0.6" ) then
     --EchoExperience:UpgradeSettings()

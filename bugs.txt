@@ -1,0 +1,33 @@
+-= EchoExperience =-
+
+## TODO: Features
+overall: Localization
+feature: Guild logon format customization
+feature: brackets around names and links? Option?
+feature: Option for timestamp and format
+feature: more events:
+  You recieve mail with 
+  You craft
+  deconstruct/ you receive
+clean: Add filters wiki.esoui.com/AddFilterEvent
+feature: Add filters for lifetime view
+feature: Add search for lifetime view
+feature: Add filter item/mob/currency for GUI view
+feature: login in /out add/remove, linkable names, color changes
+feature: get SCROLL working
+feature: Join/Remove to seperate messaging?
+feature: track mail?
+loot bags free space warn on low bag space?
+immersion more?
+EVENT_RECIPE_LEARNED (number eventCode, number recipeListIndex, number recipeIndex)
+EVENT_STYLE_LEARNED (number eventCode, number itemStyleId, number chapterIndex, boolean isDefaultRacialStyle)
+EVENT_TRAIT_LEARNED (number eventCode, string itemName, string itemTrait)
+craft deconstruct event?
+fanfare option?
+filter loot color/rarity for others
+
+## TODO: Bugs
+bug: update lifetime on close?
+Add check for recieved and looted item, to not double report
+LitanyOfBlood Gui still a mess
+username not character name reporting?

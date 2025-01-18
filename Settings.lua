@@ -101,7 +101,17 @@ function EchoExperience.LoadSettings()
       width = "half",	--or "half" (optional)
     }
   end
-  --
+  -- 
+  optionsTable[#optionsTable+1] = {
+      type = "checkbox",
+      name    = GetString(SI_ECHOEXP_SETTINGS_ACCOUNTNAMES_NM),
+      tooltip = GetString(SI_ECHOEXP_SETTINGS_ACCOUNTNAMES_TT), 
+      getFunc = function() return EchoExperience.savedVariables.useaccountnamepref end,
+      setFunc = function(value)
+        EchoExperience.savedVariables.useaccountnamepref = value
+      end,
+      width = "half",	--or "half" (optional)
+    }
   
   -- Save/Load Settings
   optionsTable[#optionsTable+1] = {

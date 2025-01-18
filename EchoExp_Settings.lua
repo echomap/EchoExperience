@@ -217,11 +217,11 @@ function EchoExperience:DoSaveGuildTab()
   local window = EchoExperience.view.settingstemp.windowGuild
   local tab    = EchoExperience.view.settingstemp.tabGuild
   local color  = EchoExperience.view.settingstemp.colorGuild
- 
+  --
   if EchoExperience.savedVariables.guildsettings == nil then
     EchoExperience.savedVariables.guildsettings = {}
   end
-  
+  --
   local elem = {}
   elem["window"]=window
   elem["tab"]=tab
@@ -229,18 +229,28 @@ function EchoExperience:DoSaveGuildTab()
   local gs = {}
   if(EchoExperience.view.settingstemp.guild1) then
     gs[EchoExperience:GetGuildId(1)] = true
+  else
+	gs[EchoExperience:GetGuildId(1)] = false
   end
   if(EchoExperience.view.settingstemp.guild2) then
     gs[EchoExperience:GetGuildId(2)] = true
+  else
+	gs[EchoExperience:GetGuildId(2)] = false
   end
   if(EchoExperience.view.settingstemp.guild3) then
     gs[EchoExperience:GetGuildId(3)] = true
+  else
+	gs[EchoExperience:GetGuildId(3)] = false
   end
   if(EchoExperience.view.settingstemp.guild4) then
     gs[EchoExperience:GetGuildId(4)] = true
+  else
+	gs[EchoExperience:GetGuildId(4)] = false
   end
   if(EchoExperience.view.settingstemp.guild5) then
     gs[EchoExperience:GetGuildId(5)] = true
+  else
+	gs[EchoExperience:GetGuildId(5)] = false
   end
   --[[
   gs["guild1"]=EchoExperience.view.settingstemp.guild1

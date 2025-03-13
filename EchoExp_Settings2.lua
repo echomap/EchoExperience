@@ -1,40 +1,43 @@
---[[ Settings GUI ]]-- 
- 
+---------------------------------
+--[[ EchoExp : Settings2     ]]-- 
+---------------------------------
+
 ----------------------------------------
--- Functions to SHOW Settings data --
+-- Functions to Setup Settings data --
 ----------------------------------------
 
 ------------------------------
--- 
-function EchoExperience.LoadSettings()
-  --local LAM = LibStub("LibAddonMenu-2.0")
+-- Initiallize the Settings Panel (Called donce)
+function EchoExperience.InitSettings()
+	local LAM = LibAddonMenu2
+	local panelData = {
+		type = "panel",
+		name = EchoExperience.menuDisplayName,
+		displayName = EchoExperience.Colorize(EchoExperience.menuDisplayName),
+		author  = EchoExperience.Colorize(EchoExperience.author, "AAF0BB"),
+		version = EchoExperience.Colorize(EchoExperience.version, "AA00FF"),
+		slashCommand = "/EchoExperience",
+		registerForRefresh  = true,
+		registerForDefaults = true,
+	}
+	LAM:RegisterAddonPanel(EchoExperience.menuName, panelData)
+ end
+ 
+------------------------------
+-- Populate the Settings Panel
+function EchoExperience.BuildSettings()
   local LAM = LibAddonMenu2
-  local panelData = {
-    type = "panel",
-    name = EchoExperience.menuDisplayName,
-    displayName = EchoExperience.Colorize(EchoExperience.menuDisplayName),
-    author  = EchoExperience.Colorize(EchoExperience.author, "AAF0BB"),
-    version = EchoExperience.Colorize(EchoExperience.version, "AA00FF"),
-    slashCommand = "/EchoExperience",
-    registerForRefresh  = true,
-    registerForDefaults = true,
-  }
-  LAM:RegisterAddonPanel(EchoExperience.menuName, panelData)
   local optionsTable = { }
-  --[[  
-  optionsTable[1] = {
-    type = "header",
-    name = "",
-    width = "full",	--or "half" (optional)
-  }
-  --]]
+  --
+  -------------------- SECTION: Main  --------------------
+  -- 
   optionsTable[1] = {
     type = "button",
     name = GetString(SI_ECHOEXP_SETTINGS_REFRESH_TEXT), --"Refresh dropdowns",
     tooltip = GetString(SI_ECHOEXP_SETTINGS_REFRESH_TOOLTIP), --"Refresh dropdown Data. (Use in case things just don't look right, or on first use)",
     func = function()  EchoExperience:DoRefreshDropdowns() end,
     width = "half",	--or "half" (optional)
-  } 
+  }
   
   optionsTable[#optionsTable+1] = {
     type = "header",
@@ -132,7 +135,9 @@ function EchoExperience.LoadSettings()
     warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
   
-  --SECTION: QUEST
+  --
+  -------------------- SECTION: QUEST  --------------------
+  -- 
   optionsTable[#optionsTable+1] = {
     type = "header",
     title = nil,	--(optional)
@@ -199,6 +204,7 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
+  --
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
     name    = GetString(SI_ECHOEXP_SETTINGS_ACHIEVEMENTDETAIL_SHOW),
@@ -210,7 +216,7 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
-  
+  --
   optionsTable[#optionsTable+1] = {
     type = "slider",
     name    = GetString(SI_ECHOEXP_SETTINGS_ACHIEVEMENTDETAIL_SLIDER),
@@ -225,7 +231,7 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
-  
+  --
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
     name    = GetString(SI_ECHOEXP_SETTINGS_LOREOBOOK_SHOW),
@@ -234,6 +240,18 @@ function EchoExperience.LoadSettings()
     setFunc = function(value)
       EchoExperience.savedVariables.lorebooktracking = value
       EchoExperience:SetupLoreBookEvents(true)
+    end,
+    width = "half",
+  }
+  --
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name    = GetString(SI_ECHOEXP_SETTINGS_ENDEAVOR_SHOW),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_ENDEAVOR_SHOW_TT), 
+    getFunc = function() return EchoExperience.savedVariables.endeavortracking end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.endeavortracking = value
+      EchoExperience:SetupEndeavors(true)
     end,
     width = "half",
   }
@@ -258,7 +276,7 @@ function EchoExperience.LoadSettings()
   --
   optionsTable[#optionsTable+1] = {
     type = "dropdown",
-    name = GetString(SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_NAME), --"Quest Output Tabs",
+    name = GetString(SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_NAME), --"Quest Output Config",
     tooltip = GetString(SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_TOOLTIP), --"Tab(s) for Quest output.",
     choices = EchoExperience:ListOfQuestTabs(),
     getFunc = function() return "Select" end,
@@ -312,7 +330,7 @@ function EchoExperience.LoadSettings()
       EchoExperience.view.settingstemp.colorQuest.g,
       EchoExperience.view.settingstemp.colorQuest.b,
       EchoExperience.view.settingstemp.colorQuest.a
-    end,	--(alpha is optional)    
+    end,
     setFunc = 	function(r,g,b,a)
       --(alpha is optional)
       --d(r, g, b, a)
@@ -334,7 +352,108 @@ function EchoExperience.LoadSettings()
     width = "half",	--or "half" (optional)
     warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
-  --QUEST
+	--
+	if EchoExperience.savedVariables.showalpha then
+		-- Quest Submenus per line of settings
+		optionsTable[#optionsTable+1] = {
+			type = "description",
+			title = "Quest: view -- issues still with adding/deleting",
+			text = qval,
+			reference = "QuestTab"..tostring(index).."decsription"
+		}
+		local submenuQuest = {}
+		for index, data in pairs(EchoExperience.savedVariables.questsettings) do
+			--print(index)
+			--for key, value in pairs(data) do
+			--	print('\t', key, value)
+			--end
+			local c = ZO_ColorDef:New(data.color.r, data.color.g, data.color.b, data.color.a)
+			local ctext = c:Colorize("COLOR")
+			local qval = zo_strformat( "Win:<<1>> Tab:<<2>> Color:<<3>>", data.window,data.tab,ctext )
+			submenuQuest[#submenuQuest+1] = {
+				type = "description",
+				title = "Quest: win/tab/color",
+				text = qval,
+				reference = "QuestTab"..tostring(index).."quest"
+			}
+			submenuQuest[#submenuQuest+1] = {
+				type = "dropdown",
+				name = GetString(SI_ECHOEXP_SETTINGS_EXP_WINDOW_NAME), --"Exp Output to Window",
+				tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_WINDOW_TOOLTIP), --"Window for Exp output.",
+				warning = "Changing this value makes immediate changes",
+				choices = {"1","2","3","4","5"},
+				getFunc = function() return tostring(data.window) end,
+				setFunc = function(var)
+					EchoExperience.savedVariables.questsettings[index].window = tonumber(var)
+					EchoExperience:DoRefreshDropdowns()
+				end,
+				width = "half",	--or "half" (optional)
+			}
+			submenuQuest[#submenuQuest+1] = {
+				type = "dropdown",
+				name = GetString(SI_ECHOEXP_SETTINGS_EXP_TAB_NAME), --"Exp Output to Window",
+				tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_TAB_NAME), --"Window for Exp output.",
+				warning = "Changing this value makes immediate changes",
+				choices = {"1", "2", "3", "4", "5", "6"},
+				getFunc = function() return tostring(data.tab) end,
+				setFunc = function(var)
+					EchoExperience.savedVariables.questsettings[index].tab = tonumber(var)
+					EchoExperience:DoRefreshDropdowns()
+				end,
+				width = "half",	--or "half" (optional)
+			}
+			submenuQuest[#submenuQuest+1] = {
+				type = "colorpicker",
+				name = GetString(SI_ECHOEXP_SETTINGS_EXP_COLOR_TEXT), --"EXP Output Color",
+				tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_COLOR_TOOLTIP), --"What Color to use for Exp text.",
+				warning = "Changing this value makes immediate changes",
+				getFunc = function() 
+					return              
+						data.color.r,
+						data.color.g,
+						data.color.b,
+						data.color.a
+				end,
+				setFunc = 	function(r,g,b,a)
+					EchoExperience.savedVariables.questsettings[index].color = {}
+					EchoExperience.savedVariables.questsettings[index].color.r = r
+					EchoExperience.savedVariables.questsettings[index].color.g = g
+					EchoExperience.savedVariables.questsettings[index].color.b = b
+					EchoExperience.savedVariables.questsettings[index].color.a = a
+					EchoExperience:DoRefreshDropdowns()
+				end,
+				width = "half",	--or "half" (optional)
+			}
+			submenuQuest[#submenuQuest+1] = {
+				type = "button",
+				name = GetString(SI_ECHOEXP_SETTINGS_BTN_DELETE), --"Delete",
+				tooltip = GetString(SI_ECHOEXP_SETTINGS_QUEST_OUTPUTS_DELETE), --"Delete selected Quest's Data!",
+				warning = "Changing this value makes immediate changes",
+				func = function()
+					EchoExperience:DoDeleteQuestTabByIndex(index)
+					local myQuestSubmenuControl = WINDOW_MANAGER:GetControlByName("QuestTab"..tostring(index).."quest", "")
+					if(myQuestSubmenuControl~=nil) then
+						myQuestSubmenuControl.enabled = false --todo not working?
+						myQuestSubmenuControl.hidden  = true  --todo not working?
+					end
+					EchoExperience:DoRefreshDropdowns()
+				end,
+				width = "half",	--or "half" (optional)
+				warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
+			} 
+		end
+		optionsTable[#optionsTable+1] = {
+			type = "submenu",
+			name = "Quest Submenu", --TODO
+			tooltip = "TODO", --"Save selected Quest chat Data!",
+			--width = "half",	--or "half" (optional)
+			controls = submenuQuest,
+			reference = "QuestSubMenuTab"
+		}
+	end
+  --
+  -------------------- SECTION: Experience  --------------------
+  -- 
   
   --SECTION: EXP
   optionsTable[#optionsTable+1] = {
@@ -432,7 +551,7 @@ function EchoExperience.LoadSettings()
   }
   optionsTable[#optionsTable+1] = {
     type = "checkbox",
-    name    = GetString(SI_ECHOEXP_SETTINGS_EXP_VERBSKILLLINE_TITLE), --""Verbose Skill Experience",
+    name    = GetString(SI_ECHOEXP_SETTINGS_EXP_VERBSKILLLINE_TITLE),   --""Verbose Skill Experience",
     tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_VERBSKILLLINE_TOOLTIP), --""Verbose reporting if experience is on?",
     getFunc = function() return EchoExperience.savedVariables.showAllSkillExp end,
     setFunc = function(value)
@@ -538,7 +657,7 @@ function EchoExperience.LoadSettings()
       EchoExperience.view.settingstemp.colorExp.g,
       EchoExperience.view.settingstemp.colorExp.b,
       EchoExperience.view.settingstemp.colorExp.a
-    end,	--(alpha is optional)    
+    end,
     setFunc = 	function(r,g,b,a)
       --(alpha is optional)
       --d(r, g, b, a)
@@ -561,7 +680,11 @@ function EchoExperience.LoadSettings()
     warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
   
-  --SECTION: LOOT
+  --
+  -------------------- SECTION: LOOT  --------------------
+  --
+  
+  --
   optionsTable[#optionsTable+1] = {        
     type = "header",
     name = "",
@@ -815,8 +938,12 @@ function EchoExperience.LoadSettings()
     width = "half",	--or "half" (optional)
     warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
+    
+  --
+  -------------------- SECTION: GUILD  --------------------
+  -- 
   
-  --SECTION: GUILD
+  --
   optionsTable[#optionsTable+1] = {
     type = "header",
     name = "",
@@ -849,6 +976,18 @@ function EchoExperience.LoadSettings()
     setFunc = function(value)
       EchoExperience.savedVariables.showGuildLogout = value
       --EchoExperience.SetupMiscEvents()
+      EchoExperience.SetupGuildEvents()
+    end,
+    width = "half",	--or "half" (optional)
+  }  
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name    = GetString(SI_ECHOEXP_SETTINGS_GUILD_JOINLEAVE_NAME),
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_GUILD_JOINLEAVE_TOOLTIP),
+    getFunc = function() return EchoExperience.savedVariables.showGuildJoinLeave end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.showGuildJoinLeave = value
+	  --showGuildMisc?
       EchoExperience.SetupGuildEvents()
     end,
     width = "half",	--or "half" (optional)
@@ -990,8 +1129,12 @@ function EchoExperience.LoadSettings()
     width = "full",	--or "half" (optional)
     warning = GetString(SI_ECHOEXP_SETTINGS_NOCONFIRM),
   }
+      
+  --
+  -------------------- SECTION: DEVelopment  --------------------
+  --
   
-  --SECTION: DEVs
+  --
   optionsTable[#optionsTable+1] = {
     type = "header",
     name = "",
@@ -1036,8 +1179,14 @@ function EchoExperience.LoadSettings()
     end,
     width = "half",	--or "half" (optional)
   }
-
+      
+  --
+  -------------------- SECTION: REGISTER  --------------------
+  --
+  
   LAM:RegisterOptionControls(EchoExperience.menuName, optionsTable)
 end
 
---EOF
+---------------------------------
+--[[ EchoExp : Settings2     ]]-- 
+---------------------------------

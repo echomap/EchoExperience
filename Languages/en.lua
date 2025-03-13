@@ -57,6 +57,8 @@ local localization_strings = {
 	SI_ECHOEXP_SETTINGS_ACHIEVEMENTDETAIL_SLIDER_TT = "How many lines to show max for achievements that have multiple criteria (10=all)",
 	SI_ECHOEXP_SETTINGS_LOREOBOOK_SHOW        = "Show Lorebooks?",
 	SI_ECHOEXP_SETTINGS_LOREOBOOK_SHOW_TT     = "Show Lorebook events found/learned/collected",
+	SI_ECHOEXP_SETTINGS_ENDEAVOR_SHOW        = "Show Endeavors?",
+	SI_ECHOEXP_SETTINGS_ENDEAVOR_SHOW_TT     = "Show Endeavors events completed",
 	SI_ECHOEXP_SETTINGS_ASYNCALL_NM = "Use ASYNC Library for all",
 	SI_ECHOEXP_SETTINGS_ASYNCALL_TT = "Async might help with disconnects, but will show events slower",
 	SI_ECHOEXP_SETTINGS_LIBMSGWIN_SHOW_NM = "Use discrete/seperate window for loot output",
@@ -173,6 +175,8 @@ local localization_strings = {
 	SI_ECHOEXP_SETTINGS_GUILD_LOGON_TOOLTIP   = "Report? on or off.",
 	SI_ECHOEXP_SETTINGS_GUILD_LOGOFF_NAME     = "Show Guild LogOffs?",
 	SI_ECHOEXP_SETTINGS_GUILD_LOGOFF_TOOLTIP  = "Report? on or off.",
+	SI_ECHOEXP_SETTINGS_GUILD_JOINLEAVE_NAME     = "Show Guild Join/Leave?",
+	SI_ECHOEXP_SETTINGS_GUILD_JOINLEAVE_TOOLTIP  = "Report? on or off.",
 	SI_ECHOEXP_SETTINGS_GUILD_G1 = "G1",
 	SI_ECHOEXP_SETTINGS_GUILD_G2 = "G2",
 	SI_ECHOEXP_SETTINGS_GUILD_G3 = "G3",
@@ -332,6 +336,8 @@ local localization_strings = {
 	SI_ECHOEXP_GUILDADD_1    = "<<5>> *JOINED* (<<2>>) at <<4>>",
 	--<<1>> guildID, <<2>>guild, <<3>>characterName, <<4>>ZO_FormatClockTime() , <<5>>pLink
 	SI_ECHOEXP_GUILDREM_1    = "<<5>> *LEFT* (<<2>>) at <<4>>",  
+	--
+	SI_ECHOEXP_GUILDINVITED    = "<<1>> Invited you to the guild (<<2>>)",  
   
 	------------------------------
 	-- LOOT
@@ -436,6 +442,12 @@ local localization_strings = {
 	--
 	--OnCompanionWarning
 	SI_ECHOEXP_COMPANION_X = "",
+	--TIMED Activity
+	SI_ECHOEXP_TIMEDACTIVITY_UPDATE0 = "You completed a Daily Endeavor!",
+	SI_ECHOEXP_TIMEDACTIVITY_UPDATE1 = "You completed a Weekly Endeavors!",
+	SI_ECHOEXP_TIMEDACTIVITY_DONE0 = "You finished all Daily Endeavors for today!",
+	SI_ECHOEXP_TIMEDACTIVITY_DONE1 = "You finished  all Weekly Endeavors for the week!",
+	
 }
 ------------------------------
 -- 

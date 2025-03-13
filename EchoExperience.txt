@@ -1,6 +1,6 @@
 ## Title: |cC8FBEDEcho|rExperience
-## Version: 0.0.56
-## AddOnVersion: 0056
+## Version: 0.0.57
+## AddOnVersion: 0057
 ## APIVersion: 101044 101045
 ## Author: |cC8FBEDEcho|rmap
 ## Description: EchoExperience will show |c3961abExperience and Loot|r gains to chat.
@@ -27,10 +27,16 @@ EchoExp_LootHistory.xml
 EchoExp_ExpHistory.xml
 
 EchoExperience.lua
+EchoExp_Init.lua
+EchoExp_Work.lua
+EchoExp_EventsReg.lua
+EchoExp_Events.lua
 EchoExp_Settings.lua
+EchoExp_Gui.lua
+EchoExp_Test.lua
+
 EchoExp_Tracking.lua
 EchoExp_LootHistory.lua
 EchoExp_ExpHistory.lua
 EchoExp_Litany.lua
-##EchoExp_Events.lua
-Settings.lua
+EchoExp_Settings2.lua

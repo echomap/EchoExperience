@@ -127,7 +127,7 @@ function EchoExperience:TrackUpdateDataScroll()
 	local index = 0
 	if EOL_GUI_ListHolder.dataOffset < 0 then EOL_GUI_ListHolder.dataOffset = 0 end
 	if EOL_GUI_ListHolder.maxLines == nil then
-		EOL_GUI_ListHolder.maxLines = EchoExperience.defaultMaxLines
+		EOL_GUI_ListHolder.maxLines = EchoExperience.staticdata.defaultMaxLines
 	end
   --d("UpdateDataScroll: offset="..EOL_GUI_ListHolder.dataOffset.." maxLines="..EOL_GUI_ListHolder.maxLines )  
 	EchoExperience:TrackSetDataLinesData()
@@ -435,7 +435,7 @@ function EchoExperience:TrackCreateInventoryScroll()
 	EOL_GUI_ListHolder.lines = {}
 	EOL_GUI_Header_SortBar.Icon = EOL_GUI_Header_SortBar:GetNamedChild("_Sort"):GetNamedChild("_Icon")
 	
-	EOL_GUI_ListHolder.maxLines = EchoExperience.defaultMaxLines
+	EOL_GUI_ListHolder.maxLines = EchoExperience.staticdata.defaultMaxLines
 	local predecessor = nil
 	for i=1, EOL_GUI_ListHolder.maxLines do
 		EOL_GUI_ListHolder.lines[i] = EchoExperience:TrackCreateLine(i, predecessor, EOL_GUI_ListHolder)

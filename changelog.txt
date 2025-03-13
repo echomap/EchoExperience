@@ -1,11 +1,17 @@
 ----EchoExperience----
 
 ## [Testing branch]
+0.0.59
+- 
+
+## EchoExp [Versions]
+0.0.58
+- Moving files and functions around for simplicity for me.
+- messages for Endeavors (quest channel).
+- messages for Guild Join/Leaves (options).
 0.0.57
 - currentCompanionId not constantly telling us they arrived
 - useaccountnamepref
-
-## EchoExp [Versions]
 0.0.56
 - updates misc
 - left/joined guild were reversed!?

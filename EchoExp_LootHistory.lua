@@ -285,7 +285,7 @@ function EchoExperience:LH_CreateInventoryScroll()
 	EchoExperience.view.lh.listholder.lines = {}
 	EchoExperience.view.lh.sortbar.Icon = EchoExperience.view.lh.sortbar:GetNamedChild("_Sort_Name"):GetNamedChild("_Icon")
 	
-	EchoExperience.view.lh.listholder.maxLines = EchoExperience.defaultMaxLines
+	EchoExperience.view.lh.listholder.maxLines = EchoExperience.staticdata.defaultMaxLines
 	local predecessor = EchoExperience.view.lh.listholder
   EchoExperience.debugMsg2("Creating ", EchoExperience.view.lh.listholder.maxLines , " lines")
 	for i=1, EchoExperience.view.lh.listholder.maxLines do
@@ -307,7 +307,7 @@ function EchoExperience:LH_UpdateDataScroll()
 	local index = 0
 	if EchoExperience.view.lh.listholder.dataOffset < 0 then EchoExperience.view.lh.listholder.dataOffset = 0 end
 	if EchoExperience.view.lh.listholder.maxLines == nil then
-		EchoExperience.view.lh.listholder.maxLines = EchoExperience.defaultMaxLines
+		EchoExperience.view.lh.listholder.maxLines = EchoExperience.staticdata.defaultMaxLines
 	end
   --d("UpdateDataScroll: offset="..EchoExperience.view.lh.listholder.dataOffset.." maxLines="..EchoExperience.view.lh.listholder.maxLines )  
 	EchoExperience:LH_SetDataLinesData()

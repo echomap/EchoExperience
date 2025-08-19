@@ -29,6 +29,7 @@ function EchoExperience:DoSaveProfileSettings()
   EchoExperience.accountVariables.defaults.showExpT1       = EchoExperience.savedVariables.showExpT1
   EchoExperience.accountVariables.defaults.showExpT2       = EchoExperience.savedVariables.showExpT2
   EchoExperience.accountVariables.defaults.verboseExp      = EchoExperience.savedVariables.verboseExp
+  EchoExperience.accountVariables.defaults.useaccountnamepref      = EchoExperience.savedVariables.useaccountnamepref
   
   --
   EchoExperience.accountVariables.defaults.showSkillExp    = EchoExperience.savedVariables.showSkillExp
@@ -84,6 +85,7 @@ function EchoExperience:DoLoadProfileSettings()
     EchoExperience.savedVariables.showachievementdetails = EchoExperience.accountVariables.defaults.showachievementdetails
     EchoExperience.savedVariables.lorebooktracking       = EchoExperience.accountVariables.defaults.lorebooktracking
 	EchoExperience.savedVariables.endeavortracking       = EchoExperience.accountVariables.defaults.endeavortracking
+	EchoExperience.savedVariables.useaccountnamepref	 = EchoExperience.accountVariables.defaults.useaccountnamepref
     --
     --Copy table Settings
     EchoExperience.savedVariables.guildsettings   = EchoExperience:deepcopy(EchoExperience.accountVariables.defaults.guildsettings)

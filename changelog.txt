@@ -2,7 +2,9 @@
 
 ## [Testing branch]
 0.0.59
-- 
+- U47 updates
+-- Api changed, ScriptEventManager:RegisterForEvent
+- Added 'Use Account Name' setting to save/load selection
 
 ## EchoExp [Versions]
 0.0.58

@@ -10,66 +10,66 @@
 --EVENT_DISCOVERY_EXPERIENCE (
 --EVENT_LEVEL_UPDATE
 function EchoExperience.SetupExpGainsEvents(reportMe)
-  --
-  if( EchoExperience.savedVariables.showExpT1 ==false and EchoExperience.savedVariables.showExpT2 == false) then
-    EchoExperience.savedVariables.showExp = false
-  end
-  --
+	--
+	if( EchoExperience.savedVariables.showExpT1 ==false and EchoExperience.savedVariables.showExpT2 == false) then
+		EchoExperience.savedVariables.showExp = false
+	end
+	--
 	if (EchoExperience.savedVariables.showExp) then
 		if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_EXPGAINS_SHOW),EchoExperience.staticdata.msgTypeSYS) end
-    local eventNamespace
-    eventNamespace = EchoExperience.name.."SkillXPGain"
+		local eventNamespace
+		eventNamespace = EchoExperience.name.."SkillXPGain"
 		EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_SKILL_XP_UPDATE, EchoExperience.OnSkillExperienceUpdate)
-    --eventNamespace = EchoExperience.name.."OnCombatState"
+		--eventNamespace = EchoExperience.name.."OnCombatState"
 		--EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_PLAYER_COMBAT_STATE,      EchoExperience.OnCombatState )
-    eventNamespace = EchoExperience.name.."SkillLineAdded"
+		eventNamespace = EchoExperience.name.."SkillLineAdded"
 		EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_SKILL_LINE_ADDED, EchoExperience.OnSkillLineAdded)
 		--TODO dont need sometimes?
-    eventNamespace = EchoExperience.name.."ChampionUnlocked"
+		eventNamespace = EchoExperience.name.."ChampionUnlocked"
 		EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_CHAMPION_SYSTEM_UNLOCKED, EchoExperience.OnChampionUnlocked)
-    eventNamespace = EchoExperience.name.."XPUpdate"
-    if(EchoExperience.savedVariables.showExpT2) then
-      EVENT_MANAGER:RegisterForEvent(eventNamespace,		EVENT_EXPERIENCE_UPDATE, EchoExperience.OnExperienceUpdate)
-    else
-      EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_EXPERIENCE_UPDATE, EchoExperience.OnExperienceUpdate)
-    end
-    eventNamespace = EchoExperience.name.."XPGain"
-    if(EchoExperience.savedVariables.showExpT1) then
-      EVENT_MANAGER:RegisterForEvent(eventNamespace,		  EVENT_EXPERIENCE_GAIN,   EchoExperience.OnExperienceGain)
-    else
-      EVENT_MANAGER:UnregisterForEvent(eventNamespace,		EVENT_EXPERIENCE_GAIN,   EchoExperience.OnExperienceGain)
-    end
-    eventNamespace = EchoExperience.name.."EVENT_CHAMPION_POINT_GAINED"
+		eventNamespace = EchoExperience.name.."XPUpdate"
+		if(EchoExperience.savedVariables.showExpT2) then
+			EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_EXPERIENCE_UPDATE, EchoExperience.OnExperienceUpdate)
+		else
+			EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_EXPERIENCE_UPDATE, EchoExperience.OnExperienceUpdate)
+		end
+		eventNamespace = EchoExperience.name.."XPGain"
+		if(EchoExperience.savedVariables.showExpT1) then
+			EVENT_MANAGER:RegisterForEvent(eventNamespace,		  EVENT_EXPERIENCE_GAIN,   EchoExperience.OnExperienceGain)
+		else
+			EVENT_MANAGER:UnregisterForEvent(eventNamespace,		EVENT_EXPERIENCE_GAIN,   EchoExperience.OnExperienceGain)
+		end
+		eventNamespace = EchoExperience.name.."EVENT_CHAMPION_POINT_GAINED"
 		EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_CHAMPION_POINT_GAINED, EchoExperience.OnChampionPointGain)
-    --eventNamespace = EchoExperience.name.."OnAlliancePtGain"
+		--eventNamespace = EchoExperience.name.."OnAlliancePtGain"
 		--EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_ALLIANCE_POINT_UPDATE,    EchoExperience.OnAlliancePtGain)
-    eventNamespace = EchoExperience.name.."OnSkillPtChange"
+		eventNamespace = EchoExperience.name.."OnSkillPtChange"
 		EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_SKILL_POINTS_CHANGED, EchoExperience.OnSkillPtChange)
 		--not really needed
-    eventNamespace = EchoExperience.name.."AbilityProgression"
-    EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_ABILITY_PROGRESSION_XP_UPDATE, EchoExperience.OnAbilityExperienceUpdate)
-    eventNamespace = EchoExperience.name.."EVENT_SKILL_RANK_UPDATE"
-    EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_SKILL_RANK_UPDATE, EchoExperience.OnSkillRankUpdate)
-    eventNamespace = EchoExperience.name.."EVENT_ABILITY_PROGRESSION_RANK_UPDATE"
-    EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_ABILITY_PROGRESSION_RANK_UPDATE, EchoExperience.OnSkillProgressRankUpdate)
-    eventNamespace = EchoExperience.name.."EVENT_RIDING_SKILL_IMPROVEMENT"
-    EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_RIDING_SKILL_IMPROVEMENT, EchoExperience.OnRidingSkillUpdate)
+		eventNamespace = EchoExperience.name.."AbilityProgression"
+		EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_ABILITY_PROGRESSION_XP_UPDATE, EchoExperience.OnAbilityExperienceUpdate)
+		eventNamespace = EchoExperience.name.."EVENT_SKILL_RANK_UPDATE"
+		EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_SKILL_RANK_UPDATE, EchoExperience.OnSkillRankUpdate)
+		eventNamespace = EchoExperience.name.."EVENT_ABILITY_PROGRESSION_RANK_UPDATE"
+		EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_ABILITY_PROGRESSION_RANK_UPDATE, EchoExperience.OnSkillProgressRankUpdate)
+		eventNamespace = EchoExperience.name.."EVENT_RIDING_SKILL_IMPROVEMENT"
+		EVENT_MANAGER:RegisterForEvent(eventNamespace, EVENT_RIDING_SKILL_IMPROVEMENT, EchoExperience.OnRidingSkillUpdate)
 	else -- showExp
-    if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_EXPGAINS_HIDE),EchoExperience.staticdata.msgTypeSYS) end    
+		if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_EXPGAINS_HIDE),EchoExperience.staticdata.msgTypeSYS) end    
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."SkillXPGain",	    EVENT_SKILL_XP_UPDATE)
-		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."SkillLineAdded",	  EVENT_SKILL_LINE_ADDED)
-		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."ChampionUnlocked", EVENT_CHAMPION_SYSTEM_UNLOCKED)
-		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."XPUpdate",		      EVENT_EXPERIENCE_UPDATE)    
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."SkillLineAdded",	    EVENT_SKILL_LINE_ADDED)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."ChampionUnlocked",   EVENT_CHAMPION_SYSTEM_UNLOCKED)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."XPUpdate",		    EVENT_EXPERIENCE_UPDATE)    
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."XPGain",		        EVENT_EXPERIENCE_GAIN)    
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_CHAMPION_POINT_GAINED", EVENT_CHAMPION_POINT_GAINED)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnAlliancePtGain",	EVENT_ALLIANCE_POINT_UPDATE)
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnSkillPtChange",	EVENT_SKILL_POINTS_CHANGED)
 
-		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnDiscoveryExp",		       EVENT_DISCOVERY_EXPERIENCE)
-		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."AbilityProgression",      EVENT_ABILITY_PROGRESSION_XP_UPDATE)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_SKILL_RANK_UPDATE", EVENT_SKILL_RANK_UPDATE)    
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ABILITY_PROGRESSION_RANK_UPDATE",EVENT_ABILITY_PROGRESSION_RANK_UPDATE)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_RIDING_SKILL_IMPROVEMENT",       EVENT_RIDING_SKILL_IMPROVEMENT)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnDiscoveryExp",		 EVENT_DISCOVERY_EXPERIENCE)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."AbilityProgression",  EVENT_ABILITY_PROGRESSION_XP_UPDATE)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_SKILL_RANK_UPDATE", EVENT_SKILL_RANK_UPDATE)    
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ABILITY_PROGRESSION_RANK_UPDATE", EVENT_ABILITY_PROGRESSION_RANK_UPDATE)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_RIDING_SKILL_IMPROVEMENT",        EVENT_RIDING_SKILL_IMPROVEMENT)
 	end
 end
 
@@ -79,57 +79,57 @@ function EchoExperience.SetupLootGainsEvents(reportMe)
 	if (EchoExperience.savedVariables.showLoot) then
 		EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."LootReceived",	EVENT_LOOT_RECEIVED, EchoExperience.OnLootReceived)
 		if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINS_SHOW),EchoExperience.staticdata.msgTypeSYS) end
-    --TODO redundency here can fix?
-    if (EchoExperience.savedVariables.extendedLoot) then
-      if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINSE_SHOW),EchoExperience.staticdata.msgTypeSYS) end
-      --
-      local eventNamespace
-      eventNamespace = EchoExperience.name.."OnLootFailed"
-      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_LOOT_ITEM_FAILED, EchoExperience.OnLootFailed)
-      eventNamespace = EchoExperience.name.."OnBankedCurrency"
-      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_BANKED_CURRENCY_UPDATE, EchoExperience.OnBankedCurrency)
-      eventNamespace = EchoExperience.name.."OnCurrencyUpdate"
-      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_CURRENCY_UPDATE, EchoExperience.OnCurrencyUpdate)
-      eventNamespace = EchoExperience.name.."OnSellReceipt"
-      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_SELL_RECEIPT, EchoExperience.OnSellReceipt)
-      eventNamespace = EchoExperience.name.."OnBuybackReceipt"
-      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_BUYBACK_RECEIPT, EchoExperience.OnBuybackReceipt)
-      eventNamespace = EchoExperience.name.."OnBuyReceipt"
-      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_BUY_RECEIPT, EchoExperience.OnBuyReceipt)
+		--TODO redundency here can fix?
+		if (EchoExperience.savedVariables.extendedLoot) then
+		  if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINSE_SHOW),EchoExperience.staticdata.msgTypeSYS) end
+		  --
+		  local eventNamespace
+		  eventNamespace = EchoExperience.name.."OnLootFailed"
+		  EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_LOOT_ITEM_FAILED, EchoExperience.OnLootFailed)
+		  eventNamespace = EchoExperience.name.."OnBankedCurrency"
+		  EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_BANKED_CURRENCY_UPDATE, EchoExperience.OnBankedCurrency)
+		  eventNamespace = EchoExperience.name.."OnCurrencyUpdate"
+		  EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_CURRENCY_UPDATE, EchoExperience.OnCurrencyUpdate)
+		  eventNamespace = EchoExperience.name.."OnSellReceipt"
+		  EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_SELL_RECEIPT, EchoExperience.OnSellReceipt)
+		  eventNamespace = EchoExperience.name.."OnBuybackReceipt"
+		  EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_BUYBACK_RECEIPT, EchoExperience.OnBuybackReceipt)
+		  eventNamespace = EchoExperience.name.."OnBuyReceipt"
+		  EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_BUY_RECEIPT, EchoExperience.OnBuyReceipt)
 
-      eventNamespace = EchoExperience.name.."OnAlliancePointUpdate"
-      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_ALLIANCE_POINT_UPDATE, EchoExperience.OnAlliancePointUpdate)
-      eventNamespace = EchoExperience.name.."OnInventoryItemDestroyed"
-      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_INVENTORY_ITEM_DESTROYED, EchoExperience.OnInventoryItemDestroyed)
-      eventNamespace = EchoExperience.name.."OnInventoryItemUsed"
-      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_INVENTORY_ITEM_USED, EchoExperience.OnInventoryItemUsed)
-      eventNamespace = EchoExperience.name.."OnInventorySingleSlotUpdate"
-      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_INVENTORY_SINGLE_SLOT_UPDATE, EchoExperience.OnInventorySingleSlotUpdate)
-      eventNamespace = EchoExperience.name.."OnInventorySingleSlotUpdate"
-      EVENT_MANAGER:AddFilterForEvent(eventNamespace, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, REGISTER_FILTER_INVENTORY_UPDATE_REASON, INVENTORY_UPDATE_REASON_DEFAULT)
-      eventNamespace = EchoExperience.name.."EVENT_ANTIQUITY_LEAD_ACQUIRED"
-      EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_ANTIQUITY_LEAD_ACQUIRED, EchoExperience.OnAntiquityLeadAcquired)
-      --Extended loot
-    else
-      if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINSE_HIDE),EchoExperience.staticdata.msgTypeSYS) end
-    end
+		  eventNamespace = EchoExperience.name.."OnAlliancePointUpdate"
+		  EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_ALLIANCE_POINT_UPDATE, EchoExperience.OnAlliancePointUpdate)
+		  eventNamespace = EchoExperience.name.."OnInventoryItemDestroyed"
+		  EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_INVENTORY_ITEM_DESTROYED, EchoExperience.OnInventoryItemDestroyed)
+		  eventNamespace = EchoExperience.name.."OnInventoryItemUsed"
+		  EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_INVENTORY_ITEM_USED, EchoExperience.OnInventoryItemUsed)
+		  eventNamespace = EchoExperience.name.."OnInventorySingleSlotUpdate"
+		  EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_INVENTORY_SINGLE_SLOT_UPDATE, EchoExperience.OnInventorySingleSlotUpdate)
+		  eventNamespace = EchoExperience.name.."OnInventorySingleSlotUpdate"
+		  EVENT_MANAGER:AddFilterForEvent(eventNamespace, EVENT_INVENTORY_SINGLE_SLOT_UPDATE, REGISTER_FILTER_INVENTORY_UPDATE_REASON, INVENTORY_UPDATE_REASON_DEFAULT)
+		  eventNamespace = EchoExperience.name.."EVENT_ANTIQUITY_LEAD_ACQUIRED"
+		  EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_ANTIQUITY_LEAD_ACQUIRED, EchoExperience.OnAntiquityLeadAcquired)
+		  --Extended loot
+		else
+		  if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINSE_HIDE),EchoExperience.staticdata.msgTypeSYS) end
+		end
 	else
 		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."LootReceived",	EVENT_LOOT_RECEIVED)
-    if (not EchoExperience.savedVariables.extendedLoot) then
-      if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINSE_HIDE),EchoExperience.staticdata.msgTypeSYS) end
-    end
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnLootFailed",     EVENT_LOOT_ITEM_FAILED)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnBankedCurrency",	EVENT_BANKED_CURRENCY_UPDATE)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnCurrencyUpdate",	EVENT_CURRENCY_UPDATE)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnSellReceipt",	  EVENT_SELL_RECEIPT)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnBuybackReceipt",	EVENT_BUYBACK_RECEIPT)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnBuyReceipt",	    EVENT_BUY_RECEIPT)
-  
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnAlliancePointUpdate",	  EVENT_ALLIANCE_POINT_UPDATE)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventoryItemDestroyed",	EVENT_INVENTORY_ITEM_DESTROYED)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventoryItemUsed",	    EVENT_INVENTORY_ITEM_USED)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventorySingleSlotUpdate",	  EVENT_INVENTORY_SINGLE_SLOT_UPDATE)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ANTIQUITY_LEAD_ACQUIRED",	EVENT_ANTIQUITY_LEAD_ACQUIRED)
+		if (not EchoExperience.savedVariables.extendedLoot) then
+		  if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINSE_HIDE),EchoExperience.staticdata.msgTypeSYS) end
+		end
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnLootFailed",     EVENT_LOOT_ITEM_FAILED)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnBankedCurrency", EVENT_BANKED_CURRENCY_UPDATE)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnCurrencyUpdate", EVENT_CURRENCY_UPDATE)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnSellReceipt",	  EVENT_SELL_RECEIPT)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnBuybackReceipt", EVENT_BUYBACK_RECEIPT)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnBuyReceipt",	  EVENT_BUY_RECEIPT)
+	  
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnAlliancePointUpdate",	       EVENT_ALLIANCE_POINT_UPDATE)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventoryItemDestroyed",	   EVENT_INVENTORY_ITEM_DESTROYED)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventoryItemUsed",	       EVENT_INVENTORY_ITEM_USED)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."OnInventorySingleSlotUpdate",   EVENT_INVENTORY_SINGLE_SLOT_UPDATE)
+		EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ANTIQUITY_LEAD_ACQUIRED", EVENT_ANTIQUITY_LEAD_ACQUIRED)
 		if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_LOOTGAINS_HIDE),EchoExperience.staticdata.msgTypeSYS) end
 	end
 end
@@ -170,7 +170,11 @@ end
 function EchoExperience.SetupAchievmentEvents(reportMe)
   if( EchoExperience.savedVariables.showachievements) then
     EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_AWARDED",	EVENT_ACHIEVEMENT_AWARDED, EchoExperience.OnAchievementAwarded)
-    EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_LEVEL_UPDATE",		    EVENT_LEVEL_UPDATE,          EchoExperience.OnExperienceLevelUpdate, REGISTER_FILTER_UNIT_TAG , "player" )
+	--* U47 RegisterForEvent(*string* _name_, *integer* _event_, *function* _callback_, *bool* _doOnce_)
+    EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_LEVEL_UPDATE",		    EVENT_LEVEL_UPDATE,          EchoExperience.OnExperienceLevelUpdate) -- U47, REGISTER_FILTER_UNIT_TAG , "player" )
+	--* AddFilterForEvent(*string* _name_, *integer* _event_, *variant* _filterParameter_)
+	EVENT_MANAGER:AddFilterForEvent(EchoExperience.name.."EVENT_LEVEL_UPDATE",		    EVENT_LEVEL_UPDATE, REGISTER_FILTER_UNIT_TAG , "player")	
+	--* 
     EVENT_MANAGER:RegisterForEvent(EchoExperience.name.."EVENT_ITEM_SET_COLLECTION_UPDATED",	EVENT_ITEM_SET_COLLECTION_UPDATED, EchoExperience.OnSetCollectionUpdated)
     if(EchoExperience.savedVariables.showachievementdetails) then
       --EchoExperience.debugMsg("Showing achievement details")
@@ -190,13 +194,13 @@ function EchoExperience.SetupAchievmentEvents(reportMe)
   else
     --EchoExperience.debugMsg("Not showing achievement details")
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_AWARDED",	EVENT_ACHIEVEMENT_AWARDED)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LEVEL_UPDATE", EVENT_LEVEL_UPDATE)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ITEM_SET_COLLECTION_UPDATED",	EVENT_ITEM_SET_COLLECTION_UPDATED)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LEVEL_UPDATE",         EVENT_LEVEL_UPDATE)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ITEM_SET_COLLECTION_UPDATED", EVENT_ITEM_SET_COLLECTION_UPDATED)
     --EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENTS_SEARCH_RESULTS_READY", EVENT_ACHIEVEMENTS_SEARCH_RESULTS_READY)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENTS_UPDATED", EVENT_ACHIEVEMENTS_UPDATED)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_UPDATED", EVENT_ACHIEVEMENT_UPDATED)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENTS_UPDATED",   EVENT_ACHIEVEMENTS_UPDATED)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_ACHIEVEMENT_UPDATED",    EVENT_ACHIEVEMENT_UPDATED)
     --EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_PLAYER_TITLES_UPDATE", EVENT_PLAYER_TITLES_UPDATE)
-    --EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_TITLE_UPDATE", EVENT_TITLE_UPDATE)
+    --EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_TITLE_UPDATE",         EVENT_TITLE_UPDATE)
   end
 end
 
@@ -287,11 +291,11 @@ function EchoExperience.SetupLoreBookEvents(reportMe)
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_LORE_LIBRARY_INITIALIZED, EchoExperience.OnLoreBookLibraryInit)    
   else
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LORE_BOOK_ALREADY_KNOWN",	EVENT_LORE_BOOK_ALREADY_KNOWN)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LORE_BOOK_LEARNED",	EVENT_LORE_BOOK_LEARNED)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LORE_BOOK_LEARNED",	    EVENT_LORE_BOOK_LEARNED)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LORE_BOOK_LEARNED_SKILL_EXPERIENCE",	EVENT_LORE_BOOK_LEARNED_SKILL_EXPERIENCE)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LORE_COLLECTION_COMPLETED",	EVENT_LORE_COLLECTION_COMPLETED)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LORE_COLLECTION_COMPLETED", EVENT_LORE_COLLECTION_COMPLETED)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LORE_COLLECTION_COMPLETED_SKILL_EXPERIENCE",	EVENT_LORE_COLLECTION_COMPLETED_SKILL_EXPERIENCE)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LORE_LIBRARY_INITIALIZED",	EVENT_LORE_LIBRARY_INITIALIZED)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_LORE_LIBRARY_INITIALIZED",	 EVENT_LORE_LIBRARY_INITIALIZED)
   end
   
 --[[ TODO BOOK EVENTS
@@ -331,7 +335,7 @@ function EchoExperience.SetupMiscEvents(reportMe)
   else
     --if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_XXX_HIDE),EchoExperience.staticdata.msgTypeSYS) end
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_COMBAT_EVENT",	        EVENT_COMBAT_EVENT)
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_BATTLEGROUND_KILL",	  EVENT_BATTLEGROUND_KILL)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_BATTLEGROUND_KILL",	EVENT_BATTLEGROUND_KILL)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_PLAYER_COMBAT_STATE",	EVENT_PLAYER_COMBAT_STATE)    
   end
 end
@@ -355,7 +359,7 @@ function EchoExperience.SetupEventsQuest(reportMe)
     end
   else
     if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_QUEST_HIDE),EchoExperience.staticdata.msgTypeSYS) end
-    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_ADDED",	EVENT_QUEST_ADDED)
+    EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_ADDED",	    EVENT_QUEST_ADDED)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_COMPLETE",	EVENT_QUEST_COMPLETE)
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_REMOVED",	EVENT_QUEST_REMOVED)    
     EVENT_MANAGER:UnregisterForEvent(EchoExperience.name.."EVENT_QUEST_ADVANCED",	EVENT_QUEST_ADVANCED)

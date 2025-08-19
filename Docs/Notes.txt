@@ -1,0 +1,34 @@
+Main type of output:
+	Quest/Loot/Guilds
+
+SubCategories:
+	Companion Events->Experience
+	Endeavor Events->Quest
+	XXX Events->Quest
+
+
+quest
+	finish part/finish all
+	add/remove
+	shared in/out
+loot
+	self
+		output win/tab/color/rarity
+	group
+		output win/tab/color/rarity
+
+guild
+	guild1
+		output win/tab/color
+		logoff/logon
+	guild2
+	guild3
+
+companion
+	exp
+	levelup
+	bigstuff
+endeavor
+	finish part/finish all
+
+

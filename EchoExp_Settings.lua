@@ -19,6 +19,7 @@ function EchoExperience:DoSaveProfileSettings()
   EchoExperience.accountVariables.defaults.sessiontracking  = EchoExperience.savedVariables.sessiontracking
   EchoExperience.accountVariables.defaults.lifetimetracking = EchoExperience.savedVariables.lifetimetracking
   EchoExperience.accountVariables.defaults.showcompanions   = EchoExperience.savedVariables.showcompanions
+  EchoExperience.accountVariables.defaults.showcompanions2  = EchoExperience.savedVariables.showcompanions2
 
   --
   EchoExperience.accountVariables.defaults.groupLoot       = EchoExperience.savedVariables.groupLoot
@@ -64,6 +65,7 @@ function EchoExperience:DoLoadProfileSettings()
     EchoExperience.savedVariables.sessiontracking  = EchoExperience.accountVariables.defaults.sessiontracking
     EchoExperience.savedVariables.lifetimetracking = EchoExperience.accountVariables.defaults.lifetimetracking
     EchoExperience.savedVariables.showcompanions   = EchoExperience.accountVariables.defaults.showcompanions
+	EchoExperience.savedVariables.showcompanions2  = EchoExperience.accountVariables.defaults.showcompanions2
     --
     EchoExperience.savedVariables.verboseExp      = EchoExperience.accountVariables.defaults.verboseExp
     EchoExperience.savedVariables.showAllSkillExp = EchoExperience.accountVariables.defaults.showAllSkillExp	

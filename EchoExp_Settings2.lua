@@ -533,6 +533,19 @@ function EchoExperience.BuildSettings()
     width = "half",	--or "half" (optional)
   }
   
+  --EchoExperience.savedVariables.showcompanions2
+  optionsTable[#optionsTable+1] = {
+    type = "checkbox",
+    name    = GetString(SI_ECHOEXP_SETTINGS_EXP_COMPANIONS_TITLE2), 
+    tooltip = GetString(SI_ECHOEXP_SETTINGS_EXP_COMPANIONS_TOOLTIP2),
+    getFunc = function() return EchoExperience.savedVariables.showcompanions2 end,
+    setFunc = function(value)
+      EchoExperience.savedVariables.showcompanions2 = value
+      EchoExperience.SetupCompanionEvents(false)
+    end,
+    width = "half",	--or "half" (optional)
+  }
+  
   optionsTable[#optionsTable+1] = {
     type = "description",
     text = "",

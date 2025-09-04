@@ -18,6 +18,8 @@ local localization_strings = {
   
 	SI_ECHOEXP_COMPANION_SHOW      = "EchoExp is showing Companion related things",
 	SI_ECHOEXP_COMPANION_HIDE      = "EchoExp is not showing Companion related things",
+	SI_ECHOEXP_COMPANION2_SHOW      = "EchoExp is showing Companion Rapport related things",
+	SI_ECHOEXP_COMPANION2_HIDE      = "EchoExp is not showing Companion Rapport related things",
 
 	------------------------------
 	-- 
@@ -124,6 +126,8 @@ local localization_strings = {
 	SI_ECHOEXP_SETTINGS_EXP_OUTPUTS_DELETE  = "Delete selected Exp's Data!",
 	SI_ECHOEXP_SETTINGS_EXP_COMPANIONS_TITLE   = "Show Companion Experience Events",
 	SI_ECHOEXP_SETTINGS_EXP_COMPANIONS_TOOLTIP = "Show Companion Experience Events",
+	SI_ECHOEXP_SETTINGS_EXP_COMPANIONS_TITLE2   = "Show Companion Rapport Events",
+	SI_ECHOEXP_SETTINGS_EXP_COMPANIONS_TOOLTIP2 = "Show Companion Rapport Events",
 
 	SI_ECHOEXP_SETTINGS_BANDITSIDEPANEL_NM = "Show EchoExp in Bandit's sidepanel",
 	SI_ECHOEXP_SETTINGS_BANDITSIDEPANEL_TT = "Show EchoExp in Bandit's sidepanel",

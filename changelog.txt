@@ -2,7 +2,7 @@
 
 ## [Testing branch]
 0.0.60
-- 
+- Divided showing Companion events into separate experience events vs Rapport events
 
 ## EchoExp [Versions]
 0.0.59

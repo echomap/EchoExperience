@@ -393,6 +393,21 @@ end
 ------------------------------
 -- SETUP
 function EchoExperience.SetupCompanionEvents(reportMe)
+  --
+  if( EchoExperience.savedVariables.showcompanions2 ) then
+	if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_COMPANION2_SHOW),EchoExperience.staticdata.msgTypeSYS) end
+	local eventNamespace = nil
+    --* EVENT_COMPANION_RAPPORT_UPDATE (*integer* _companionId_, *integer* _previousRapport_, *integer* _currentRapport_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_RAPPORT_UPDATE"
+    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMPANION_RAPPORT_UPDATE, EchoExperience.OnCompanionRapportUpdate )
+  else
+    if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_COMPANION2_HIDE),EchoExperience.staticdata.msgTypeSYS) end
+     local eventNamespace = nil
+	--* EVENT_COMPANION_RAPPORT_UPDATE (*integer* _companionId_, *integer* _previousRapport_, *integer* _currentRapport_)
+    eventNamespace = EchoExperience.name.."EVENT_COMPANION_RAPPORT_UPDATE"
+    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_COMPANION_RAPPORT_UPDATE, EchoExperience.OnCompanionRapportUpdate )
+  end
+  --
   if( EchoExperience.savedVariables.showcompanions ) then
     if(reportMe) then EchoExperience.outputToChanel(GetString(SI_ECHOEXP_COMPANION_SHOW),EchoExperience.staticdata.msgTypeSYS) end
     local eventNamespace = nil
@@ -406,8 +421,8 @@ function EchoExperience.SetupCompanionEvents(reportMe)
     eventNamespace = EchoExperience.name.."EVENT_COMPANION_EXPERIENCE_GAIN"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMPANION_EXPERIENCE_GAIN, EchoExperience.OnCompanionExpGain )
     --* EVENT_COMPANION_RAPPORT_UPDATE (*integer* _companionId_, *integer* _previousRapport_, *integer* _currentRapport_)
-    eventNamespace = EchoExperience.name.."EVENT_COMPANION_RAPPORT_UPDATE"
-    EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMPANION_RAPPORT_UPDATE, EchoExperience.OnCompanionRapportUpdate )
+    --eventNamespace = EchoExperience.name.."EVENT_COMPANION_RAPPORT_UPDATE"
+    --EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMPANION_RAPPORT_UPDATE, EchoExperience.OnCompanionRapportUpdate )
     --* EVENT_COMPANION_SKILLS_FULL_UPDATE (*bool* _isInit_)
     eventNamespace = EchoExperience.name.."EVENT_COMPANION_SKILLS_FULL_UPDATE"
     EVENT_MANAGER:RegisterForEvent(eventNamespace,	EVENT_COMPANION_SKILLS_FULL_UPDATE, EchoExperience.OnCompanionSkillsFullUpdate )
@@ -439,8 +454,8 @@ function EchoExperience.SetupCompanionEvents(reportMe)
     eventNamespace = EchoExperience.name.."EVENT_COMPANION_EXPERIENCE_GAIN"
     EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_COMPANION_EXPERIENCE_GAIN, EchoExperience.OnCompanionExpGain )
     --* EVENT_COMPANION_RAPPORT_UPDATE (*integer* _companionId_, *integer* _previousRapport_, *integer* _currentRapport_)
-    eventNamespace = EchoExperience.name.."EVENT_COMPANION_RAPPORT_UPDATE"
-    EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_COMPANION_RAPPORT_UPDATE, EchoExperience.OnCompanionRapportUpdate )
+    --eventNamespace = EchoExperience.name.."EVENT_COMPANION_RAPPORT_UPDATE"
+    --EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_COMPANION_RAPPORT_UPDATE, EchoExperience.OnCompanionRapportUpdate )
     --* EVENT_COMPANION_SKILLS_FULL_UPDATE (*bool* _isInit_)
     eventNamespace = EchoExperience.name.."EVENT_COMPANION_SKILLS_FULL_UPDATE"
     EVENT_MANAGER:UnregisterForEvent(eventNamespace,	EVENT_COMPANION_SKILLS_FULL_UPDATE, EchoExperience.OnCompanionSkillsFullUpdate )

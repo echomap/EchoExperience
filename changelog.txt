@@ -1,10 +1,13 @@
 ----EchoExperience----
 
 ## [Testing branch]
-0.0.60
-- Divided showing Companion events into separate experience events vs Rapport events
+0.0.61
+- 
 
 ## EchoExp [Versions]
+0.0.60
+- Divided showing Companion events into separate experience events vs Rapport events
+- API bump u48
 0.0.59
 - U47 updates
 -- Api changed, ScriptEventManager:RegisterForEvent

@@ -2657,10 +2657,11 @@ end
 
 ------------------------------
 -- EVENT_COMPANION_RAPPORT_UPDATE (*integer* _companionId_, *integer* _previousRapport_, *integer* _currentRapport_)
-function EchoExperience.OnCompanionRapportUpdateWork(eventCode, companionId, previousRapport, currentRapport )
+function EchoExperience.OnCompanionRapportUpdateWork(eventCode, companionId, previousRapport, currentRapport, adjustmentAmountType )
   EchoExperience.debugMsg2( "OnCompanionRapportUpdate: eventCode: '", eventCode, 
     "' companionId='", tostring(companionId), "' warningType: '" , tostring(warningType), 
-    "' previousRapport: '", (previousRapport), "' currentRapport: '", (currentRapport), "'" )
+    "' previousRapport: '", (previousRapport), "' currentRapport: '", (currentRapport), "'",
+	"' adjustmentAmountType: '", tostring(adjustmentAmountType), "'" )
   local cname = GetCompanionName(companionId)
 	local diff = currentRapport - previousRapport
   -- local _maxRapport_ = GetMaximumRapport()
@@ -2672,7 +2673,7 @@ function EchoExperience.OnCompanionRapportUpdateWork(eventCode, companionId, pre
     strI = GetString(SI_ECHOEXP_COMPANION_RAPPORTLOSS)
     diff = diff*-1
   end
-  local strL = zo_strformat(strI, cname, diff, previousRapport, currentRapport)
+  local strL = zo_strformat(strI, cname, diff, previousRapport, currentRapport )
   EchoExperience.outputToChanel(strL,EchoExperience.staticdata.msgTypeCOMP)
 end
 

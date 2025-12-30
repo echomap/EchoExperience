@@ -1,7 +1,10 @@
 ----EchoExperience----
 
+## TODO
+
 ## [Testing branch]
 0.0.61
+-companion rapport shows current+ not total
 - 
 
 ## EchoExp [Versions]

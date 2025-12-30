@@ -431,8 +431,8 @@ local localization_strings = {
 	SI_ECHOEXP_COMPANION_EXPGAIN       = "Companion [<<1>>(<<2>>)] gained <<3>>xp (<<5>>/<<6>>).",
 	SI_ECHOEXP_COMPANION_LEVELUP       = "Companion [<<1>>(<<2>>)] gained <<3>>xp, and LEVELLED UP!",
 	--cname, diff, previousRapport, currentRapport
-	SI_ECHOEXP_COMPANION_RAPPORTGAIN   = "Companion [<<1>>] gained <<2>> rapport (<<4>/<<3>>).",
-	SI_ECHOEXP_COMPANION_RAPPORTLOSS   = "Companion [<<1>>] lost <<2>> rapport (<<4>/<<3>>).",
+	SI_ECHOEXP_COMPANION_RAPPORTGAIN   = "Companion [<<1>>] gained <<2>> rapport (<<4>>/<<3>>).",
+	SI_ECHOEXP_COMPANION_RAPPORTLOSS   = "Companion [<<1>>] lost <<2>> rapport (<<4>>/<<3>>).",
 	--
 	--OnCompanionSkillsFullUpdate
 	--slName, skillLineId

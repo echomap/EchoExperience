@@ -7,8 +7,8 @@
 -- 
 EchoExperience = {
     name            = "EchoExperience",           -- Matches folder and Manifest file names.
-    version         = "0.0.59",                   -- A nuisance to match to the Manifest.
-    versionnumeric  =  59,                        -- A nuisance to match to the Manifest.
+    version         = "0.0.61",                   -- A nuisance to match to the Manifest.
+    versionnumeric  =  61,                        -- A nuisance to match to the Manifest.
     author          = "Echomap",
     menuName        = "EchoExperience_Options",   -- Unique identifier for menu object.
     menuDisplayName = "EchoExperience",
@@ -16,6 +16,7 @@ EchoExperience = {
 	staticdata      = {},
 	currentCompanionId = nil,
 	currentPartyMembers = { },
+	maxCompanionLevel = 20,
     -- Saved settings.
     savedVariables = {},
     accountVariables = {},
@@ -245,6 +246,19 @@ function EchoExperience.outputToChanel(text,msgType,filter)
   end
 end
 
+function EchoExperience.ChatTypeAsString(msgType)
+	if( msgType==EchoExperience.staticdata.msgTypeLOOT ) then
+		return "Loot"
+	elseif( msgType==EchoExperience.staticdata.msgTypeGUILD or msgType==EchoExperience.staticdata.msgTypeGUILD2 )then
+		return "Guild"
+	elseif( msgType==EchoExperience.staticdata.msgTypeEXP )then
+		return "Exp"
+	elseif( msgType==EchoExperience.staticdata.msgTypeQuest )then
+		return "Quest"
+	end
+	return "---"
+end
+
 ------------------------------
 -- OUTPUT
 function EchoExperience:outputToChanelSub(text,outputSettings,filter, msgType)
@@ -299,7 +313,14 @@ function EchoExperience:outputToChanelSub(text,outputSettings,filter, msgType)
           --TODO timestamp
           --EchoExperience.savedVariables.showTimeStamp
           --EchoExperience.savedVariables.timeStampFormat
-          CHAT_SYSTEM.containers[v.window].windows[v.tab].buffer:AddMessage(text2)
+		  --Check windows/tabs exist
+		  if( CHAT_SYSTEM.containers[v.window] == nil or CHAT_SYSTEM.containers[v.window].windows[v.tab] == nil) then
+			CHAT_SYSTEM.containers[1].windows[1].buffer:AddMessage(text2)
+			--todo localize
+			EchoExperience.outputMsg("Warning: Missing window tab pair for:", EchoExperience.ChatTypeAsString(msgType), " window=",tostring(v.window), " tab=",tostring(v.tab) )
+		  else
+			CHAT_SYSTEM.containers[v.window].windows[v.tab].buffer:AddMessage(text2)
+		  end
         end
       end
     else

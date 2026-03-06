@@ -1,13 +1,17 @@
 ----EchoExperience----
 
 ## TODO
+-double guild join msg?
+-litanygui needs update
+-litanygui save data not save
 
 ## [Testing branch]
-0.0.61
--companion rapport shows current+ not total
-- 
 
 ## EchoExp [Versions]
+0.0.61
+-companion rapport output message changed
+-Migrated the manifest from .txt to .addon
+-litanygui updates
 0.0.60
 - Divided showing Companion events into separate experience events vs Rapport events
 - API bump u48
@@ -15,7 +19,6 @@
 - U47 updates
 -- Api changed, ScriptEventManager:RegisterForEvent
 - Added 'Use Account Name' setting to save/load selection
-
 0.0.58
 - Moving files and functions around for simplicity for me.
 - messages for Endeavors (quest channel).

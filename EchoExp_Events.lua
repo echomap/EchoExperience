@@ -2578,10 +2578,25 @@ function EchoExperience.OnCompanionActivated(eventCode, companionId)
   --
   local cname = GetCompanionName(companionId)
   local level, currentExperience = GetActiveCompanionLevelInfo()
-  local currentRapport           = GetActiveCompanionRapport()
+  local currentRapport	= GetActiveCompanionRapport()
+  --** _Returns:_ *[CompanionRapportLevel|#CompanionRapportLevel]* _rapportLevel_
+  --local rappLevel		= GetActiveCompanionRapportLevel()
+  --** _Returns:_ *string* _rapportLevelDescription_
+  --local rappDesc = GetActiveCompanionRapportLevelDescription(rappLevel)
+  --** _Returns:_ *integer:nilable* _numXP_
+  local strI = nil
+  local needsExpTolvl = nil
+  if(EchoExperience.maxCompanionLevel==level) then
+	 strI  = GetString(SI_ECHOEXP_COMPANION_ACTIVE)
+  else
+    local numExpInlvl = GetNumExperiencePointsInCompanionLevel(level+1)
+	EchoExperience.debugMsg2( "OnCompanionActivated: numExpInlvl: '", tostring(numExpInlvl), "'")
+	strI  = GetString(SI_ECHOEXP_COMPANION_ACTIVE1)
+	needsExpTolvl = numExpInlvl - currentExperience
+  end
   --
-  local strI  = GetString(SI_ECHOEXP_COMPANION_ACTIVE)
-  local strL  = zo_strformat(strI, cname, level, currentRapport, currentExperience)
+  --local strI  = GetString(SI_ECHOEXP_COMPANION_ACTIVE)
+  local strL  = zo_strformat(strI, cname, level, currentRapport, currentExperience, needsExpTolvl)
   EchoExperience.outputToChanel(strL,EchoExperience.staticdata.msgTypeCOMP)
   EchoExperience.currentCompanionId = companionId
 end
@@ -2634,6 +2649,9 @@ function EchoExperience.OnCompanionExpGainWork(eventCode, companionId, level, pr
     local strI  = GetString(SI_ECHOEXP_COMPANION_EXPGAIN)
     if(currentExperience > xplevel) then
       strI  = GetString(SI_ECHOEXP_COMPANION_LEVELUP)
+	  local strI2 = GetString(SI_ECHOEXP_COMPANION_LEVELUP2)
+	  local strL2  = zo_strformat(strI2, cname, level, diff, previousExperience, currentExperience, xplevel  )
+	  EchoExperience.outputToChanel(strL2,EchoExperience.staticdata.msgTypeEXP) 
     end
     local strL  = zo_strformat(strI, cname, level, diff, previousExperience, currentExperience, xplevel  )
     EchoExperience.outputToChanel(strL,EchoExperience.staticdata.msgTypeCOMP)
@@ -2970,6 +2988,7 @@ function EchoExperience.OnLitanyOfBlood(targetNameL, targetUnitId)
     EchoExperience.savedVariables.LitanyOfBloodDone[targetName].subzonename2 = targetData.SubZoneName2
     EchoExperience.savedVariables.LitanyOfBloodDone[targetName].tooltip      = targetData.tooltip
     EchoExperience.savedVariables.LitanyOfBloodDone[targetName].coord        = targetData.coord
+	EchoExperience.savedVariables.LitanyOfBloodDone[targetName].killedby     = GetUnitName("player")
   else
     local sentence = GetString(SI_ECHOEXP_KILL_LB0)
     EchoExperience.outputMsg(sentence)

@@ -427,12 +427,14 @@ local localization_strings = {
 	-- COMPANIONS
 	SI_ECHOEXP_COMPANION_ACTIVE        = "Companion [<<1>>] arrived. (lvl:<<2>>) (rapp:<<3>>).",
 	SI_ECHOEXP_COMPANION_DEACTIVE      = "Companion left.",
+	SI_ECHOEXP_COMPANION_ACTIVE1       = "Companion [<<1>>] arrived. (lvl:<<2>> needs <<5>>exp) (rapp:<<3>>).",
 	--cname, level, diff, previousExperience, currentExperience, xplevel 
 	SI_ECHOEXP_COMPANION_EXPGAIN       = "Companion [<<1>>(<<2>>)] gained <<3>>xp (<<5>>/<<6>>).",
-	SI_ECHOEXP_COMPANION_LEVELUP       = "Companion [<<1>>(<<2>>)] gained <<3>>xp, and LEVELLED UP!",
+	SI_ECHOEXP_COMPANION_LEVELUP       = "Companion [<<1>>(<<2>>)] gained <<3>>xp, and ***LEVELLED UP!***",
+	SI_ECHOEXP_COMPANION_LEVELUP2       = "Companion [<<1>>] ***LEVELLED UP!***",
 	--cname, diff, previousRapport, currentRapport
-	SI_ECHOEXP_COMPANION_RAPPORTGAIN   = "Companion [<<1>>] gained <<2>> rapport (<<4>>/<<3>>).",
-	SI_ECHOEXP_COMPANION_RAPPORTLOSS   = "Companion [<<1>>] lost <<2>> rapport (<<4>>/<<3>>).",
+	SI_ECHOEXP_COMPANION_RAPPORTGAIN   = "Companion [<<1>>] gained <<2>> rapport (<<4>>, was <<3>>).",
+	SI_ECHOEXP_COMPANION_RAPPORTLOSS   = "Companion [<<1>>] lost <<2>> rapport (<<4>>, was <<3>>).",
 	--
 	--OnCompanionSkillsFullUpdate
 	--slName, skillLineId
@@ -452,6 +454,10 @@ local localization_strings = {
 	SI_ECHOEXP_TIMEDACTIVITY_DONE0 = "You finished all Daily Endeavors for today!",
 	SI_ECHOEXP_TIMEDACTIVITY_DONE1 = "You finished  all Weekly Endeavors for the week!",
 	
+	--
+	SI_ECHOEXP_DARKBROTHERHOOD_CAT = "Dark Brotherhood",
+	SI_ECHOEXP_DARKBROTHERHOOD_LOB = "Litany of Blood",
+	SI_ECHOEXP_DARKBROTHERHOOD_M1  = "Slay the Target in (.+) with the Blade of Woe",
 }
 ------------------------------
 -- 

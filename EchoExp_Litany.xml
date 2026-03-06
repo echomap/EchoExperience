@@ -2,17 +2,16 @@
 	<Controls>
     
   	<TopLevelControl name="EOL_GUI_Litany" clampedToScreen="true" mouseEnabled="true" movable="true" moveable="true" hidden="true" resizeHandleSize="10">
-			<!--DimensionConstraints minX="600" minY="400" maxY="500" -->
-      <Dimensions x="690" y="360" />
+		<!--DimensionConstraints minX="600" minY="400" maxY="500" -->
+		<Dimensions x="690" y="360" />
 			<Anchor point="TOPRIGHT" relativeTo="GUI_ROOT" relativePoint="TOPRIGHT" offsetX="-260" offsetY="475" />
-      <OnMoveStop>EchoExperience:Litany_SaveFramePosition("onMoveStop")</OnMoveStop>
+			<OnMoveStop>EchoExperience:Litany_SaveFramePosition("onMoveStop")</OnMoveStop>
 			<OnResizeStart>EchoExperience:Litany_onResizeStart()</OnResizeStart>
 			<OnResizeStop>EchoExperience:Litany_onResizeStop()</OnResizeStop>
 
-      <Controls>
-        <Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" > <AnchorFill/> </Backdrop>
-        
-        <Control name="$(parent)_Header" hidden="false" resizeToFitDescendents="false" >
+		<Controls>
+			<Backdrop name="$(parent)_BG" inherits="ZO_DefaultBackdrop" > <AnchorFill/> </Backdrop>
+			<Control name="$(parent)_Header" hidden="false" resizeToFitDescendents="false" >
 					<Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetY="10" offsetX="10"/>
 					<Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-10" offsetY="10" />
 
